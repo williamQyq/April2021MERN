@@ -10,6 +10,7 @@ const { MongoClient } = require('mongodb');
 //DB Config
 const db = require('./config/keys').mongoURI;
 const keys = require('./config/keys');
+const { DB } = require('./config/keys');
 //Connect to Mongo
 
 async function main() {
@@ -21,22 +22,29 @@ async function main() {
         
         // await createListing(client, {
         //     name: "DP ENVY",
-        //     price: "799"
+        //     price: "799",
+        //     status: "active"
         // })
-        await createMultipleListings(client, [
-            {
-                name: "CP ENVY",
-                price: "799"
-            },
-            {
-                name: "BP ENVY",
-                price: "799"
-            },
-            {
-                name: "AP ENVY",
-                price: "799"
-            },
-        ]);
+        // await createMultipleListings(client, [
+        //     {
+        //         name: "CP ENVY",
+        //         price: "799"
+        //     },
+        //     {
+        //         name: "BP ENVY",
+        //         price: "799"
+        //     },
+        //     {
+        //         name: "AP ENVY",
+        //         price: "799"
+        //     },
+        // ]);
+
+        // await findOneListingByName(client,"YP ENVY");
+        await findListingsWithActiveStatus(client, {
+            status: "active",
+            maximumNumberOfResults: 2
+        });
 
     } catch(e) {
         console.error(e);
@@ -57,7 +65,7 @@ async function createMultipleListings(client, newListings) {
 }
 
 async function createListing(client, newListing) {
-    const result = await client.db('DB').collection("ProductsPirceListings")
+    const result = await client.db(keys.DB).collection(keys.Collections.ProductsPriceListings)
     .insertOne(newListing);
 
     console.log(`New listing created with the following id: ${result.insertedId}`);
@@ -66,7 +74,41 @@ async function createListing(client, newListing) {
 
 //CRUD - read
 async function findOneListingByName(client, nameOfListing) {
-    // const result = await client.db(DB).collection("ProductsListings")
+    const result = await client.db(keys.DB).collection(keys.Collections.ProductsPriceListings)
+    .findOne({name: nameOfListing});
+    
+    if (result){
+        console.log(`Found a listing in the collection with the name '
+        ${nameOfListing}'`);
+        console.log(result);
+    } else {
+        console.log(`No listings found with the name '${nameOfListing}'`);
+    }
+}
+
+async function findListingsWithActiveStatus
+(client, {
+    status = "inactive",
+    maximumNumberOfResults = Number.MAX_SAFE_INTEGER
+} = {}) {
+
+    const cursor = client.db(keys.DB).collection(keys.Collections.ProductsPriceListings).find({
+        status: status
+    }).limit(maximumNumberOfResults);
+
+    const results = await cursor.toArray();
+
+    if(results.length>0) {
+        console.log(`Found listing(s) with status: ${status}`);
+        results.forEach((result,i) => {
+            date = new Date(result.last_review).toDateString();
+            console.log();
+            console.log(`${i+1}.name: ${result.name}`);
+            console.log(`   status: ${result.status}`);
+            console.log(`   price: ${result.price}`);
+            console.log(`   most recent last review date: ${new Date(result.last_review).toDateString()}`);
+        });
+    }
 }
 
 async function listDatabases(client) {
