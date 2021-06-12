@@ -25,6 +25,7 @@ async function main() {
         //     price: "799",
         //     status: "active"
         // })
+        
         // await createMultipleListings(client, [
         //     {
         //         name: "CP ENVY",
@@ -41,10 +42,16 @@ async function main() {
         // ]);
 
         // await findOneListingByName(client,"YP ENVY");
-        await findListingsWithActiveStatus(client, {
-            status: "active",
-            maximumNumberOfResults: 2
-        });
+        
+        // await findListingsWithActiveStatus(client, {
+        //     status: "active",
+        //     maximumNumberOfResults: 2
+        // });
+        
+        // await updateListingByName(client, "ZP ENVY", {price: 222});
+        // await upsertListingByName(client, "ZP ENVY",{name: "ZZ ENVY" , price: 111});
+        // await updateAllListingsToHaveStatus(client);
+        await deleteListingByName(client, "DP ENVY");
 
     } catch(e) {
         console.error(e);
@@ -109,6 +116,54 @@ async function findListingsWithActiveStatus
             console.log(`   most recent last review date: ${new Date(result.last_review).toDateString()}`);
         });
     }
+}
+
+//CRUD -- update
+async function updateListingByName(client, nameOfListing, updatedListing) {
+    const result = await client.db(keys.DB).collection(keys.Collections.ProductsPriceListings).updateOne({ name: 
+        nameOfListing},{ $set: updatedListing});
+    
+    console.log(`${result.matchedCount} document(s) matched the query criteria`);
+    console.log(`${result.modifiedCount} documents were updated`);
+}
+
+async function upsertListingByName(client, nameOfListing, updatedListing) {
+    const result = await client.db(keys.DB).collection(keys.Collections.ProductsPriceListings).updateOne({ name: 
+        nameOfListing},{ $set: updatedListing}, {upsert: true});
+    
+    console.log(`${result.matchedCount} document(s) matched the query criteria`);
+
+    if (result.upsertedCount >0){
+        console.log(`One document was inserted with the id ${result.upsertedId}`);
+    } else {
+        console.log(`${result.modifiedCount} document(s) was/were updated`);
+    }
+        
+}
+
+async function updateAllListingsToHaveStatus(client) {
+    const result = await client.db(keys.DB).collection(keys.Collections.ProductsPriceListings)
+    .updateMany({ status:{ $exists: false}},
+        { $set: { status: "unknow"}});
+
+    console.log(`${result.matchedCount} document(s) matched the query criteria`);
+    console.log(`${result.modifiedCount} document(s) was/were updated`);
+
+}
+
+//CRUD --delete
+async function deleteListingByName(client, nameOfListing) {
+    const result = await client.db(keys.DB).collection(keys.Collections.ProductsPriceListings)
+    .deleteOne({ name: nameOfListing});
+
+    console.log(`${result.deletedCount} document(s) was/were deleted`);
+}
+
+async function deleteListings(client, date) {
+    const result = await client.db(keys.DB).collection(keys.Collections.ProductsPriceListings)
+    .deleteMany({ "last_scraped": { $lt: date}});
+
+    console.log(`${result.deletedCount} document(s) was/were deleted`);
 }
 
 async function listDatabases(client) {
