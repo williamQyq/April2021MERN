@@ -5,7 +5,10 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "server": "nodemon server.js"
+    "server": "nodemon server.js",
+    "control": "node ./backend_control/server.js",
+    "client": "cd ../mern-project && npm start",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "author": "William Q",
   "license": "MIT",
