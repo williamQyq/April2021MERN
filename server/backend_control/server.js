@@ -43,7 +43,7 @@ async function main() {
         // await updateAllListingsToHaveStatus(client);
         // await deleteListingByName(client, "DP ENVY");
 
-        await deleteListings(client, new Date("2021-06-17"));
+        await deleteListings(client, Date.now);
 
     } catch(e) {
         console.error(e);
