@@ -4,6 +4,7 @@
   "description": "server built with mongodb nodejs and changestream",
   "main": "server.js",
   "scripts": {
+    "client-install": "cd ../mern-project && npm install",
     "start": "node server.js",
     "server": "nodemon server.js",
     "control": "node ./backend_control/server.js",
