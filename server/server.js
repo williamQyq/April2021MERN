@@ -5,6 +5,8 @@ const items = require('./routes/api/items');
 //DB Config
 const dbURI = require('./config/keys').mongoURI;
 const keys = require('./config/keys');
+
+
 //Bodyparser Middleware
 const app = express();
 app.use(express.json());
@@ -33,11 +35,9 @@ db.once('open',() =>{
 
         if(change.operationType === 'insert') {
             const listing = change.fullDocument;
-            
+
         }
     })
-
-   
 
 });
 

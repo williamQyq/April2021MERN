@@ -1,5 +1,5 @@
-const keys = require("./config/keys");
-const db = require('./config/keys').mongoURI;
+const keys = require("../config/keys");
+const db = require('../config/keys').mongoURI;
 const { MongoClient } = require('mongodb');
 
 async function main (){

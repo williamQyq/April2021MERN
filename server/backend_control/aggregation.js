@@ -1,5 +1,5 @@
-const db = require('./config/keys').mongoURI;
-const keys = require('./config/keys');
+const db = require('../config/keys').mongoURI;
+const keys = require('../config/keys');
 
 async function printSuburbs(client, status, maxNumberToPrint) {
     
