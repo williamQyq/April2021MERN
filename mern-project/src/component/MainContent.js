@@ -7,7 +7,6 @@ export default class MainContent extends React.Component {
     
     contentSelector = () =>{
         const key = this.props.getContentKey();
-        console.log(key);
         switch(key) {
             case 'PRICE_ALERT':
                 return <PriceAlert/>;

@@ -4,5 +4,12 @@ export const getItems = () => {
     return {
         type: GET_ITEMS
         // payload: res.data
-    }
-}
+    };
+};
+
+export const deleteItem = id => {
+    return {
+        type: DELETE_ITEM,
+        payload: id
+    };
+};

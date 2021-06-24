@@ -2,18 +2,11 @@ import React from 'react';
 import './styles/app.scss';
 // import './styles/app.less';
 import 'antd/dist/antd.css';
-import { Layout, Menu, Breadcrumb } from 'antd'; 
+import { Layout, Menu } from 'antd'; 
 import {
-  DesktopOutlined,
-  PieChartOutlined,
-  FileOutlined,
-  TeamOutlined,
   UserOutlined,
-  LaptopOutlined,
-  NotificationOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
-  UseroutLined,
   UploadOutlined,
   AlertOutlined,
   MonitorOutlined,
@@ -25,12 +18,12 @@ import PropTypes from 'prop-types';
 import MainContent from './component/MainContent'
 
 const { SubMenu } = Menu;
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content, Sider } = Layout;
 
 class App extends React.Component {
   //get from redux store
   componentDidMount() {
-    this.props.getItems();
+   this.props.getItems();
   }
 
   constructor(props){
@@ -52,7 +45,6 @@ class App extends React.Component {
   };
   getContentKey = () => {
     const content_key = this.state.content_key;
-    console.log(this.state.content_key);
     return content_key;
   }
 
@@ -67,7 +59,7 @@ class App extends React.Component {
           <Menu 
             theme="dark" 
             mode="inline" 
-            defaultSelectedKeys={['1']} 
+            defaultSelectedKeys={["PRICE_ALERT"]} 
             onClick={(e)=> this.handleContentKey(e.key)}
             >
             <SubMenu key = "sub1" icon={<AlertOutlined/>} title="Alert">
