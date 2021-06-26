@@ -12,8 +12,8 @@ class PriceAlert extends React.Component {
         this.props.getItems();
     }
 
-    onDeleteClick = (id) => {
-        this.props.deleteItem(id);
+    onDeleteClick = (_id) => {
+        this.props.deleteItem(_id);
     }
 
     render(){
@@ -32,7 +32,7 @@ class PriceAlert extends React.Component {
                         description="Ant Design, a design language for background applications, is refined by Ant UED Team"
                         />
                         <div>{item.price}</div>
-                        <Button danger onClick={this.onDeleteClick.bind(this, item.id)}> delete </Button>
+                        <Button danger onClick={this.onDeleteClick.bind(this, item._id)}> delete </Button>
                     </List.Item>
                 )}
             />

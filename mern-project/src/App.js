@@ -12,19 +12,12 @@ import {
   MonitorOutlined,
   RobotOutlined
 } from '@ant-design/icons';
-import { connect } from 'react-redux';
-import { getItems } from '../src/reducers/actions/itemActions';
-import PropTypes from 'prop-types';
 import MainContent from './component/MainContent'
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
 class App extends React.Component {
-  //get from redux store
-  componentDidMount() {
-   this.props.getItems();
-  }
 
   constructor(props){
     super(props)
@@ -49,8 +42,6 @@ class App extends React.Component {
   }
 
   render() {
-    //from redux store
-    const { items } = this.props.item;
 
     return (
       <Layout className="main-layout">
@@ -98,14 +89,4 @@ class App extends React.Component {
 
 }
 
-App.propTypes = {
-  getItems: PropTypes.func.isRequired,
-  item: PropTypes.object.isRequired,
-
-}
-
-const mapStateToProps = (state) => ({
-  item: state.item
-})
-
-export default connect(mapStateToProps, {getItems})(App);
+export default (App);
