@@ -6,6 +6,7 @@ const items = require('./routes/api/items');
 const dbURI = require('./config/keys').mongoURI;
 const keys = require('./config/keys');
 
+const path = require('path');
 
 //Bodyparser Middleware
 const app = express();
@@ -18,6 +19,18 @@ mongoose.connect(dbURI, {useUnifiedTopology:true, useNewUrlParser: true})
     .catch(err => console.log(err));
 
 app.use('/api/items',items);
+
+console.log(`dirname=${__dirname}`)
+
+if(process.env.NODE_ENV === 'production') {
+    app.use(express.static('../mern-project/build'));
+
+
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, '/../mern-project', 'build', 'index.html'));
+    });
+}
 
 const port = process.env.PORT || 5000;
 
