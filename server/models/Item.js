@@ -3,6 +3,10 @@ const Schema = mongoose.Schema;
 
 //Create Schema
 const ItemSchema = new Schema({
+    link:{
+        type: String,
+        require:true
+    },
     name:{
         type: String,
         require: true

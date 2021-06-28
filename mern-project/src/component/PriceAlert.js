@@ -4,9 +4,14 @@ import { connect } from 'react-redux';
 import { getItems, deleteItem } from '../reducers/actions/itemActions';
 import PropTypes from 'prop-types';
 import { Button } from 'antd';
-
+import '../styles/priceAlert.scss';
+import {
+    LaptopOutlined,
+} from '@ant-design/icons';
+import AddItemModal from "./AddItemModal"
 
 class PriceAlert extends React.Component {
+    
     
     componentDidMount(){
         this.props.getItems();
@@ -19,32 +24,36 @@ class PriceAlert extends React.Component {
     render(){
         const data = this.props.item.items;
         return(
+            <div>
+            <AddItemModal/>
             <List
                 itemLayout="horizontal"
                 dataSource={data}
                 renderItem={(item) => (
                     <List.Item>
-                        <List.Item.Meta
+                        <List.Item.Meta className="list-item"
                         avatar={
-                            <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                            // <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                            <LaptopOutlined twoToneColor="#52c41a"/>
                         }
-                        title={<a href="https://ant.design">{item.name}</a>}
-                        description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+                        title={<a href={item.link} target="_blank">{item.name}</a>}
+                        description={item.date}
                         />
-                        <div>{item.price}</div>
+                        <div className="list-item-price">${item.price}</div>
                         <Button danger onClick={this.onDeleteClick.bind(this, item._id)}> delete </Button>
                     </List.Item>
                 )}
             />
+            </div>
         );
     }
 }
 
-PriceAlert.propTypes = {
-    getItems: PropTypes.func.isRequired,
-    deleteItem: PropTypes.func.isRequired,
-    item: PropTypes.object.isRequired,
-}
+// PriceAlert.propTypes = {
+//     getItems: PropTypes.func.isRequired,
+//     deleteItem: PropTypes.func.isRequired,
+//     item: PropTypes.object.isRequired,
+// }
 
 const mapStateToProps = (state) => ({
     item: state.item

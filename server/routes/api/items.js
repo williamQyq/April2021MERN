@@ -14,6 +14,7 @@ router.get('/', (req, res) => {
 // @route POST api/items
 router.post('/', (req, res) => {
     const newItem = new Item({
+        link: req.body.link,
         name: req.body.name,
         price: req.body.price
     })
