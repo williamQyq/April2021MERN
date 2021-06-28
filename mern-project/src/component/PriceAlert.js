@@ -1,8 +1,8 @@
 import React from 'react';
-import { List, Avatar } from "antd";
+import { List } from "antd";
 import { connect } from 'react-redux';
 import { getItems, deleteItem } from '../reducers/actions/itemActions';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import { Button } from 'antd';
 import '../styles/priceAlert.scss';
 import {
@@ -36,7 +36,7 @@ class PriceAlert extends React.Component {
                             // <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
                             <LaptopOutlined twoToneColor="#52c41a"/>
                         }
-                        title={<a href={item.link} target="_blank">{item.name}</a>}
+                        title={<a href={item.link} target="_blank" rel="noopener noreferrer">{item.name}</a>}
                         description={item.date}
                         />
                         <div className="list-item-price">${item.price}</div>
