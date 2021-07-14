@@ -12,6 +12,14 @@ const path = require('path');
 const app = express();
 app.use(express.json());
 
+//socket io server listen port 3000 same as client
+const httpServer = require('http').createServer(app);
+const io = require("socket.io")(httpServer);
+
+
+io.on("connection", (socket) => {
+    console.log('a user connected');
+});
 
 //Connect to Mongo
 mongoose.connect(dbURI, {useUnifiedTopology:true, useNewUrlParser: true})
@@ -34,7 +42,7 @@ const port = process.env.PORT || 5000;
 
 const db = mongoose.connection;
 db.once('open',() =>{
-    app.listen(port, ()=> {
+    httpServer.listen(port, ()=> {
         console.log(`Server started on port ${port}`);
     });
 

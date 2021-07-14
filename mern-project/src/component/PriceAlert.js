@@ -10,6 +10,9 @@ import {
 } from '@ant-design/icons';
 import AddItemModal from "./AddItemModal"
 
+import io from 'socket.io-client';
+const socket = io()
+
 class PriceAlert extends React.Component {
     
     
