@@ -11,7 +11,7 @@ import {
 import AddItemModal from "./AddItemModal"
 
 import io from 'socket.io-client';
-const socket = io()
+const socket = io('http://localhost:3000');
 
 class PriceAlert extends React.Component {
     
