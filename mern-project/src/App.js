@@ -14,6 +14,17 @@ import {
 } from '@ant-design/icons';
 import MainContent from './component/MainContent'
 
+import io from 'socket.io-client';
+
+// const socket = io.connect('http://localhost:3000', {
+//     reconnection: true,
+//     reconnectionDelay: 1000,
+//     reconnectionDelayMax: 5000,
+//     reconnectionAttempts: Infinity
+// });
+const socket =io();
+
+
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
@@ -80,7 +91,7 @@ class App extends React.Component {
               minHeight: 280,
             }}
           >
-            <MainContent getContentKey={this.getContentKey}/>
+            <MainContent getContentKey={this.getContentKey} socket={socket}/>
           </Content>
         </Layout>
       </Layout>

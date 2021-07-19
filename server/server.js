@@ -20,52 +20,55 @@ const io = require("socket.io")(server);
 
 
 //Connect to Mongo
-mongoose.connect(dbURI, {useUnifiedTopology:true, useNewUrlParser: true})
-    .then(()=> console.log('MongoDB Connected...'))
+mongoose.connect(dbURI, { useUnifiedTopology: true, useNewUrlParser: true })
+    .then(() => console.log('MongoDB Connected...'))
     .catch(err => console.log(err));
 
-app.use('/api/items',items);
+app.use('/api/items', items);
 
 // console.log(`dirname=${__dirname}`)
 
-// if(process.env.NODE_ENV === 'production') {
-//     app.use(express.static('../mern-project/build'));
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static('../mern-project/build'));
 
-//     app.get('*', (req, res) => {
-//         res.sendFile(path.resolve(__dirname, '/../mern-project', 'build', 'index.html'));
-//     });
-// }
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, '/../mern-project', 'build', 'index.html'));
+    });
+}
 
 const port = process.env.PORT || 5000;
+let client;
 
+io.on("connection", (socket) => {
+    console.log(`A user Connected: ${socket.id}`)
+    socket.on(`disconnect`, () => {
+        console.log(`USER DISCONNECTED`);
+    })
+    client = socket;
+})
 const db = mongoose.connection;
-db.once('open',() =>{
+db.once('open', () => {
 
-    io.on("connection", (socket) => {
-        console.log('a user connected');
-    
-        socket.on("disconnect",() => {
-            console.log('USER DISCONNECTED')
-        })
-    
-        const productPriceListings = db.collection(keys.Collections.ProductsPriceListings);
-        const changeStream = productPriceListings.watch();
-        
-        changeStream.on('change',(change)=>{
-            console.log(change);
-            
+    const productPriceListings = db.collection(keys.Collections.ProductsPriceListings);
+    const changeStream = productPriceListings.watch();
+
+    changeStream.on('change', (change) => {
+        console.log(change);
+
+        if (change.operationType === 'insert') {
+            const listing = change.fullDocument;
             //socket.emit
-
-
-            if(change.operationType === 'insert') {
-                const listing = change.fullDocument;
-
-            }
-        })
-    });
+            client.emit(`server:changestream`, listing);
+        }
+        if (change.operationType === 'delete') {
+            const listing = change.fullDocument;
+            //socket.emit
+            client.emit(`server:changestream`, listing);
+        }
+    })
 
 });
 
-server.listen(port, ()=> {
-        console.log(`Server started on port ${port}`);
-    });
+server.listen(port, () => {
+    console.log(`Server started on port ${port}`);
+});
