@@ -58,12 +58,12 @@ db.once('open', () => {
         if (change.operationType === 'insert') {
             const listing = change.fullDocument;
             //socket.emit
-            client.emit(`server:changestream`, listing);
+            io.sockets.emit(`server:changestream`, listing);
         }
         if (change.operationType === 'delete') {
             const listing = change.fullDocument;
             //socket.emit
-            client.emit(`server:changestream`, listing);
+            io.sockets.emit(`server:changestream`, listing);
         }
     })
 

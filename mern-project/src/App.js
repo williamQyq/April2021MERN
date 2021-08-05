@@ -22,7 +22,7 @@ import io from 'socket.io-client';
 //     reconnectionDelayMax: 5000,
 //     reconnectionAttempts: Infinity
 // });
-const socket =io();
+const socket = io.connect('http://localhost:3000/');
 
 
 const { SubMenu } = Menu;
