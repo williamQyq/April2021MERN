@@ -5,19 +5,19 @@ const items = require('./routes/api/items');
 //DB Config
 const dbURI = require('./config/keys').mongoURI;
 const keys = require('./config/keys');
-
 const path = require('path');
 
 //Bodyparser Middleware
 const app = express();
 app.use(express.json());
 
-//socket io server listen port 3000 same as client
+//socket io server listen port 5000 same as client
 // const httpServer = require('http').createServer(app);
 const server = require("http").createServer(app)
 const io = require("socket.io")(server);
 
-
+//run python process
+const {py_process} = require('./py_process');
 
 //Connect to Mongo
 mongoose.connect(dbURI, { useUnifiedTopology: true, useNewUrlParser: true })
@@ -49,9 +49,12 @@ io.on("connection", (socket) => {
 const db = mongoose.connection;
 db.once('open', () => {
 
-    const productPriceListings = db.collection(keys.Collections.ProductsPriceListings);
-    const changeStream = productPriceListings.watch();
+    //let python process scrape website price
+    py_process();
 
+    const productPriceListings = db.collection(keys.Collections.ProductsPriceListings);
+
+    const changeStream = productPriceListings.watch();
     changeStream.on('change', (change) => {
         console.log(change);
 
@@ -72,3 +75,4 @@ db.once('open', () => {
 server.listen(port, () => {
     console.log(`Server started on port ${port}`);
 });
+
