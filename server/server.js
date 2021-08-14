@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-
 const items = require('./routes/api/items');
 //DB Config
 const dbURI = require('./config/keys').mongoURI;
@@ -11,13 +10,11 @@ const path = require('path');
 const app = express();
 app.use(express.json());
 
-//socket io server listen port 5000 same as client
-// const httpServer = require('http').createServer(app);
 const server = require("http").createServer(app)
 const io = require("socket.io")(server);
 
 //run python process
-const {py_process} = require('./py_process');
+const { py_process } = require('./py_process');
 
 //Connect to Mongo
 mongoose.connect(dbURI, { useUnifiedTopology: true, useNewUrlParser: true })
@@ -25,8 +22,6 @@ mongoose.connect(dbURI, { useUnifiedTopology: true, useNewUrlParser: true })
     .catch(err => console.log(err));
 
 app.use('/api/items', items);
-
-// console.log(`dirname=${__dirname}`)
 
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static('../mern-project/build'));
@@ -46,17 +41,30 @@ io.on("connection", (socket) => {
     })
     client = socket;
 })
+
+//python process server==========
+py_app = express()
+const py_port = 4000;
+
+py_app.get('/', (req, res) => {
+    //let python process scrape website price
+    py_process(res);
+})
+
+py_app.listen(py_port, () => {
+    console.log(`example app listing on port ${py_port}`)
+})
+//================================
+
+
 const db = mongoose.connection;
 db.once('open', () => {
-
-    //let python process scrape website price
-    py_process();
 
     const productPriceListings = db.collection(keys.Collections.ProductsPriceListings);
 
     const changeStream = productPriceListings.watch();
     changeStream.on('change', (change) => {
-        console.log(change);
+        // console.log(change);
 
         if (change.operationType === 'insert') {
             const listing = change.fullDocument;
@@ -64,6 +72,11 @@ db.once('open', () => {
             io.sockets.emit(`server:changestream`, listing);
         }
         if (change.operationType === 'delete') {
+            const listing = change.fullDocument;
+            //socket.emit
+            io.sockets.emit(`server:changestream`, listing);
+        }
+        if (change.operationType === 'update') {
             const listing = change.fullDocument;
             //socket.emit
             io.sockets.emit(`server:changestream`, listing);

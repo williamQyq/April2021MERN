@@ -25,8 +25,8 @@ const AddItemModal = (props) => {
 
         const newItem ={
             link: input,
-            name: `HP OMEN - 16.1" Laptop - AMD Ryzen 7 - 16GB Memory - AMD Radeon™ RX 6600M - 1TB SSD`,
-            price: 999
+            name: `Loading...`,
+            price: `Loading...`
         }
         props.addItem(newItem);
 
