@@ -1,9 +1,8 @@
 import React from 'react';
-import { List } from "antd";
 import { connect } from 'react-redux';
 import { getItems, deleteItem } from '../reducers/actions/itemActions';
 import PropTypes from 'prop-types';
-import { Button } from 'antd';
+import { Button, List } from 'antd';
 import '../styles/priceAlert.scss';
 import {
     LaptopOutlined,
@@ -14,7 +13,7 @@ class PriceAlert extends React.Component {
 
     state = {
         socket: this.props.socket,
-        change: {}
+        change: {},
     }
 
     componentDidMount() {
@@ -35,10 +34,10 @@ class PriceAlert extends React.Component {
 
     render() {
         const data = this.props.item.items;
-        // const data = this.state.data
         return (
-            <div>
-                <AddItemModal />
+
+            <React.Fragment>
+                <AddItemModal/>
                 <List
                     itemLayout="horizontal"
                     dataSource={data}
@@ -53,11 +52,11 @@ class PriceAlert extends React.Component {
                                 description={item.date}
                             />
                             <div className="list-item-price">${item.price}</div>
-                            <Button danger onClick={this.onDeleteClick.bind(this, item._id)}> delete </Button>
+                            <Button danger type="link" onClick={this.onDeleteClick.bind(this, item._id)}> Delete </Button>
                         </List.Item>
                     )}
                 />
-            </div>
+            </React.Fragment>
         );
     }
 }

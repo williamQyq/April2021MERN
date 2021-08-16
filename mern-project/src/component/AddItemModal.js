@@ -29,7 +29,6 @@ const AddItemModal = (props) => {
             price: `Loading...`
         }
         props.addItem(newItem);
-
         setIsModalVisible(false);
     };
 
