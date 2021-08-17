@@ -1,5 +1,7 @@
 import os
 from typing import final
+
+from selenium.webdriver.support.expected_conditions import element_located_selection_state_to_be
 from mypackage.module import WebDriverWait, EC, By
 
 
@@ -16,7 +18,12 @@ def track_instock_info(link_list, driver):
     for product in link_list:
         driver.get(product["link"])
         product["name"] = get_product_name(driver)
-        product["price"] = get_product_price(driver)
+
+        isInstock = check_product_instock(driver)
+        if isInstock:
+            product["price"] = get_product_price(driver)
+        else:
+            product["price"] = "Out of Stock"
 
 
 def get_product_name(driver):
@@ -36,7 +43,8 @@ def get_product_name(driver):
 def get_product_price(driver):
     try:
         element = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "priceView-customer-price"))
+            EC.presence_of_element_located(
+                (By.CLASS_NAME, "priceView-customer-price"))
         )
         dollar_price = WebDriverWait(element, 10).until(
             EC.presence_of_element_located((By.TAG_NAME, "span"))
@@ -46,3 +54,23 @@ def get_product_price(driver):
     except:
         price = "NA"
     return price
+
+
+def check_product_instock(driver):
+    
+    try:
+        element = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(
+                (By.CLASS_NAME, "btn-primary"))
+        )
+        return True
+    except:
+        try:
+            element = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located(
+                    (By.CLASS_NAME, "btn-disabled"))
+            )
+            return False
+        except:
+            pass
+ 
