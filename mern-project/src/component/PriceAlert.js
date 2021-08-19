@@ -50,7 +50,7 @@ class PriceAlert extends React.Component {
                                 title={<a href={item.link} target="_blank" rel="noopener noreferrer">{item.name}</a>}
                                 description={item.created_date}
                             />
-                            <div className="list-item-price">${item.price_timestamps[item.price_timestamps.length-1].price}</div>
+                            <div className="list-item-price">${item.price_timestamps[item.price_timestamps.length-1].price}</div>          
                             <Button danger type="link" onClick={this.onDeleteClick.bind(this, item._id)}> Delete </Button>
                         </List.Item>
                     )}

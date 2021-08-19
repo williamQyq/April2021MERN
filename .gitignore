@@ -1,4 +1,4 @@
-# server/config/keys.js
+server/config/keys.js
 server/node_modules
 server/python_packages/mypackage/chromedriver.exe
 server/python_packages/mypackage/__pycache__/
