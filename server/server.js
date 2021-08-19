@@ -52,17 +52,16 @@ db.once('open', () => {
         if (change.operationType === 'insert') {
             let arr = [];
             const doc = change.fullDocument;
-            console.log(doc)
-            // const product = {
-            //     _id: doc._id,
-            //     name: doc.name,
-            //     price_timestamp: doc.price_timestamps.pop()
-            // }
+            const product = {
+                _id: doc._id,
+                link: doc.link,
+                name: doc.name,
+                price_timestamp: doc.price_timestamps.pop()
+            }
             //socket.emit
-            // console.log(product)
             io.sockets.emit(`server:changestream`, doc);
-            // arr.push(product);
-            // py_process(arr);                                                                //py_process takes array of object
+            arr.push(product);
+            py_process(arr);                                                                //py_process takes array of object
 
         }
         if (change.operationType === 'delete') {

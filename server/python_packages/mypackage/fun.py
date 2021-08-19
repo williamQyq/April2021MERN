@@ -21,9 +21,9 @@ def track_instock_info(link_list, driver):
 
         isInstock = check_product_instock(driver)
         if isInstock:
-            product["price"] = get_product_price(driver)
+            product["price_timestamp"]["price"] = get_product_price(driver)
         else:
-            product["price"] = "Out of Stock"
+            product["price_timestamp"]["price"] = "Out of Stock"
 
 
 def get_product_name(driver):
