@@ -48,18 +48,20 @@ db.once('open', () => {
     const changeStream = productPriceListings.watch();
     changeStream.on('change', (change) => {
         // console.log(change);
-
         if (change.operationType === 'insert') {
             let arr = [];
             const doc = change.fullDocument;
+
             const product = {
                 _id: doc._id,
                 link: doc.link,
                 name: doc.name,
                 price_timestamp: doc.price_timestamps.pop()
             }
+
             //socket.emit
-            io.sockets.emit(`server:changestream`, doc);
+            io.sockets.emit(`server:changestream`, product);
+
             arr.push(product);
             py_process(arr);                                                                //py_process takes array of object
 
