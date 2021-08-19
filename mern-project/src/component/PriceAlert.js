@@ -49,9 +49,9 @@ class PriceAlert extends React.Component {
                                     <LaptopOutlined twoToneColor="#52c41a" />
                                 }
                                 title={<a href={item.link} target="_blank" rel="noopener noreferrer">{item.name}</a>}
-                                description={item.date}
+                                description={item.created_date}
                             />
-                            <div className="list-item-price">${item.price}</div>
+                            {/* <div className="list-item-price">${item.price}</div> */}
                             <Button danger type="link" onClick={this.onDeleteClick.bind(this, item._id)}> Delete </Button>
                         </List.Item>
                     )}

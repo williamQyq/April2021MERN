@@ -26,7 +26,9 @@ const AddItemModal = (props) => {
         const newItem ={
             link: input,
             name: `Loading...`,
-            price: `Loading...`
+            price_timestamps:[{
+                price: `Loading...`
+            }]
         }
         props.addItem(newItem);
         setIsModalVisible(false);

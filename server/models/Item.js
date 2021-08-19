@@ -11,11 +11,16 @@ const ItemSchema = new Schema({
         type: String,
         require: true
     },
-    price:{
-        type: String,
-        require: true
-    },
-    date:{
+    price_timestamps:[{
+        price:{
+            type: String,
+        },
+        date:{
+            type: Date,
+            default: Date.now
+        }
+    }],
+    created_date:{
         type: Date,
         default: Date.now
     }

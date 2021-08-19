@@ -7,7 +7,7 @@ const Item = require('../../models/Item');
 // @route GET api/items
 router.get('/', (req, res) => {
     Item.find()
-        .sort({date: -1})
+        .sort({created_date: -1})
         .then(items => res.json(items));
 });
 
@@ -16,7 +16,7 @@ router.post('/', (req, res) => {
     const newItem = new Item({
         link: req.body.link,
         name: req.body.name,
-        price: req.body.price
+        price_timestamps: req.body.price_timestamps
     })
 
     newItem.save().then(item => res.json(item));

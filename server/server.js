@@ -40,21 +40,6 @@ io.on("connection", (socket) => {
     })
 })
 
-//python process server==========
-// py_app = express()
-// const py_port = 4000;
-
-// py_app.get('/', (req, res) => {
-//     //let python process scrape website price
-//     py_process(res);
-// })
-
-// py_app.listen(py_port, () => {
-//     console.log(`example app listing on port ${py_port}`)
-// })
-//================================
-
-
 const db = mongoose.connection;                                                             //set up mongoose connection
 db.once('open', () => {
 
@@ -66,22 +51,29 @@ db.once('open', () => {
 
         if (change.operationType === 'insert') {
             let arr = [];
-            const listing = change.fullDocument;
+            const doc = change.fullDocument;
+            console.log(doc)
+            // const product = {
+            //     _id: doc._id,
+            //     name: doc.name,
+            //     price_timestamp: doc.price_timestamps.pop()
+            // }
             //socket.emit
-            io.sockets.emit(`server:changestream`, listing);
-            arr.push(listing);
-            py_process(arr);                                                                //py_process takes array of object
+            // console.log(product)
+            io.sockets.emit(`server:changestream`, doc);
+            // arr.push(product);
+            // py_process(arr);                                                                //py_process takes array of object
 
         }
         if (change.operationType === 'delete') {
-            const listing = change.fullDocument;
+            const doc = change.fullDocument;
             //socket.emit
-            io.sockets.emit(`server:changestream`, listing);
+            io.sockets.emit(`server:changestream`, doc);
         }
         if (change.operationType === 'update') {
-            const listing = change.fullDocument;
+            const doc = change.fullDocument;
             //socket.emit
-            io.sockets.emit(`server:changestream`, listing);
+            io.sockets.emit(`server:changestream`, doc);
         }
     })
 

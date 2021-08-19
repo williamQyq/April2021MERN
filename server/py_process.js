@@ -23,10 +23,16 @@ const py_process = (search_listings) => {
         //for each item in product_price_listing run python script scrape price and title
         for (let i = 0; i < productPriceList.length; i++) {
 
+            const price_timestamp = {
+                price: "999"
+            }
             Item.findByIdAndUpdate(productPriceList[i]._id, {
                 name: productPriceList[i].name,
-                price: productPriceList[i].price
-            }, { useFindAndModify: false }, (err, docs) => {
+            }, {
+                $push: {
+                    price_timestamps:price_timestamp
+                }
+            },{ useFindAndModify: false }, (err, docs) => {
                 if (err) {
                     console.log(`[Error]Update name and price by _id: ${productPriceList[i]._id} Failure`)
                 } else {
