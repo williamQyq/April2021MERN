@@ -16,7 +16,7 @@ def main():
     #     "name": "loading...",
     #     "price_timestamp":{
     #         "price": "loading...", 
-    #         "date": "2021-08-11T20:23:52.159Z",
+    #         "date": "2021-08-11T20:23:52.159Z"
     #     }
     #     }]
 
@@ -29,6 +29,5 @@ def main():
 
     driver.quit()
     sys.stdout.flush()
-
 
 main()

@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "client-install": "cd ../mern-project && npm install",
+    "server-install": "npm install concurrently && pip install selenium",
     "start": "node server.js",
     "server": "nodemon server.js",
     "control": "node ./backend_control/server.js",
@@ -16,7 +17,7 @@
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.19.0",
-    "concurrently": "^6.2.0",
+    "concurrently": "^6.2.1",
     "express": "^4.17.1",
     "mongoose": "^5.12.13",
     "socket.io": "^4.1.3"

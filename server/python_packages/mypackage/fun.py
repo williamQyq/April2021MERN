@@ -7,8 +7,9 @@ from mypackage.module import WebDriverWait, EC, By
 
 def get_Chrome_driver_path():
     cwd = os.getcwd()
-    driver_path = "\python_packages\mypackage\chromedriver.exe"
+    driver_path = '\python_packages\mypackage\chromedriver.exe'
     chrome_driver_path = cwd+driver_path
+    
     return chrome_driver_path
 
 # modify mutable list of dictionary link_list

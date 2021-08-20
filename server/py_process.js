@@ -13,7 +13,7 @@ const py_process = (search_listings) => {
     python.stdout.on('data', (data) => {
         console.log('Pipe data from python script...');
         productPriceList = JSON.parse(data.toString());
-        dataString = data.toString();
+        // dataString = data.toString();
     });
 
     python.on('close', (code) => {
