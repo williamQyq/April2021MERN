@@ -45,9 +45,13 @@ def get_product_price(driver):
     try:
         element = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "div[data-context='Product-Page']"))
+        )
+        price_element = WebDriverWait(element, 10).until(
+            EC.presence_of_element_located(
                 (By.CLASS_NAME, "priceView-customer-price"))
         )
-        dollar_price = WebDriverWait(element, 10).until(
+        dollar_price = WebDriverWait(price_element, 10).until(
             EC.presence_of_element_located((By.TAG_NAME, "span"))
         ).text
 
