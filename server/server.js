@@ -30,7 +30,7 @@ if (process.env.NODE_ENV === 'production') {
         res.sendFile(path.resolve(__dirname, '/../mern-project', 'build', 'index.html'));
     });
 }
-console.log(`dirname:===${__dirname}`)
+
 
 const port = process.env.PORT || 5000;
 
