@@ -2,8 +2,7 @@ const { spawn } = require('child_process')
 const Item = require('./models/Item')
 
 const py_process = (search_listings) => {
-    //find all price tracking list
-    // const docs = await Item.find();
+
     const json_str = JSON.stringify(search_listings)
 
     let productPriceList, dataString;
@@ -13,13 +12,13 @@ const py_process = (search_listings) => {
     python.stdout.on('data', (data) => {
         console.log('Pipe data from python script...');
         productPriceList = JSON.parse(data.toString());
-        // dataString = data.toString();
+        dataString = data.toString();
     });
 
     python.on('close', (code) => {
         console.log(`child process close all stdio with code ${code}`);
         // res.send(dataString)
-        // console.log(dataString)
+        console.log(dataString)
 
         //for each item in product_price_listing run python script scrape price and title
         for (let i = 0; i < productPriceList.length; i++) {

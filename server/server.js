@@ -64,7 +64,7 @@ db.once('open', () => {
             io.sockets.emit(`server:changestream`, product);
 
             arr.push(product);
-            // py_process(arr);                                                                //py_process takes array of object
+            py_process(arr);                                                                //py_process takes array of object
 
         }
         if (change.operationType === 'delete') {

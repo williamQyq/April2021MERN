@@ -13,8 +13,6 @@ def get_Chrome_driver_path():
     return chrome_driver_path
 
 # modify mutable list of dictionary link_list
-
-
 def track_instock_info(link_list, driver):
     for product in link_list:
         driver.get(product["link"])
@@ -42,11 +40,13 @@ def get_product_name(driver):
 
 
 def get_product_price(driver):
+   
     try:
         element = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located(
                 (By.CSS_SELECTOR, "div[data-context='Product-Page']"))
         )
+        
         price_element = WebDriverWait(element, 10).until(
             EC.presence_of_element_located(
                 (By.CLASS_NAME, "priceView-customer-price"))
@@ -54,7 +54,6 @@ def get_product_price(driver):
         dollar_price = WebDriverWait(price_element, 10).until(
             EC.presence_of_element_located((By.TAG_NAME, "span"))
         ).text
-
         price = dollar_price.strip().lstrip("$")
     except:
         price = "NA"
@@ -62,20 +61,17 @@ def get_product_price(driver):
 
 
 def check_product_instock(driver):
-    
     try:
         element = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located(
-                (By.CLASS_NAME, "btn-primary"))
+                (By.CLASS_NAME, "fulfillment-add-to-cart-button"))
+        )
+        add_to_cart_element = WebDriverWait(element, 10).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "button[data-button-state='ADD_TO_CART'"))
         )
         return True
     except:
-        try:
-            element = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located(
-                    (By.CLASS_NAME, "btn-disabled"))
-            )
             return False
-        except:
-            pass
+        
  
