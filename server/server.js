@@ -24,14 +24,14 @@ mongoose.connect(dbURI, { useUnifiedTopology: true, useNewUrlParser: true })    
 app.use('/api/items', items);
 
 if (process.env.NODE_ENV === 'production') {
-    app.use(express.static('../mern-project/build'));
+    app.use(express.static(path.resolve(__dirname, '../mern-project/build')));
 
     app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname, '/../mern-project', 'build', 'index.html'));
+        res.sendFile(path.resolve(__dirname, '../mern-project', 'build', 'index.html'));
     });
 }
 
-
+// console.log(`dirname=====${path.resolve(__dirname, '../mern-project', 'build', 'index.html')}`)
 const port = process.env.PORT || 5000;
 
 io.on("connection", (socket) => {

@@ -11,7 +11,7 @@
     "control": "cd ./server && node ./server/backend_control/server.js",
     "client": "cd ./mern-project && npm start",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false cd ./mern-project && npm install && npm run build"
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false cd mern-project && npm install && npm run build"
   },
   "author": "William Q",
   "license": "MIT",
