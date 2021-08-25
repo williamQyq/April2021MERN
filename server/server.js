@@ -14,7 +14,7 @@ const server = require("http").createServer(app)
 const io = require("socket.io")(server);
 
 //run python process
-// const { py_process } = require('./py_process');
+const { py_process } = require('./py_process');
 
 //Connect to Mongo
 mongoose.connect(dbURI, { useUnifiedTopology: true, useNewUrlParser: true })                //build mongoose connection
