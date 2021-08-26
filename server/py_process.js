@@ -11,7 +11,7 @@ const py_process = (search_listings) => {
 
     python.stdout.on('data', (data) => {
         console.log('Pipe data from python script...');
-        productPriceList = JSON.parse(data.toString());
+        // productPriceList = JSON.parse(data.toString());
         dataString = data.toString();
     });
 
@@ -21,26 +21,26 @@ const py_process = (search_listings) => {
         console.log(dataString)
 
         // for each item in product_price_listing run python script scrape price and title
-        if (productPriceList) {
-            for (let i = 0; i < productPriceList.length; i++) {
+        // if (productPriceList) {
+        //     for (let i = 0; i < productPriceList.length; i++) {
 
-                //update price and name returned from python script, push price_timestamp into price_timestamps
-                Item.findByIdAndUpdate(productPriceList[i]._id, {
-                    name: productPriceList[i].name,
-                    $push: {
-                        price_timestamps: {
-                            price: productPriceList[i].price_timestamp.price,
-                        }
-                    }
-                }, { useFindAndModify: false }, (err, docs) => {
-                    if (err) {
-                        console.log(`[Error]Update name and price by _id: ${productPriceList[i]._id} Failure`)
-                    } else {
-                        console.log(`Updated _id: ${productPriceList[i]._id} Success`)
-                    }
-                });
-            }
-        }
+        //         //update price and name returned from python script, push price_timestamp into price_timestamps
+        //         Item.findByIdAndUpdate(productPriceList[i]._id, {
+        //             name: productPriceList[i].name,
+        //             $push: {
+        //                 price_timestamps: {
+        //                     price: productPriceList[i].price_timestamp.price,
+        //                 }
+        //             }
+        //         }, { useFindAndModify: false }, (err, docs) => {
+        //             if (err) {
+        //                 console.log(`[Error]Update name and price by _id: ${productPriceList[i]._id} Failure`)
+        //             } else {
+        //                 console.log(`Updated _id: ${productPriceList[i]._id} Success`)
+        //             }
+        //         });
+        //     }
+        // }
     });
 
     // python.stderr.on('data', (data) => {
