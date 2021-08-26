@@ -1,9 +1,11 @@
+const { json } = require('body-parser')
 const { spawn } = require('child_process')
 const Item = require('./models/Item')
 
 const py_process = (search_listings) => {
 
     const json_str = JSON.stringify(search_listings)
+    console.log(`json_str: \n${json_str}`)
 
     let productPriceList, dataString;
     const python = spawn('python', ['./python_packages/priceTracker.py', json_str]);
@@ -18,7 +20,7 @@ const py_process = (search_listings) => {
     python.on('close', (code) => {
         console.log(`child process close all stdio with code ${code}`);
         // res.send(dataString)
-        console.log(dataString)
+        console.log(`datastring from python child process: ${dataString}`)
 
         // for each item in product_price_listing run python script scrape price and title
         if (productPriceList) {
