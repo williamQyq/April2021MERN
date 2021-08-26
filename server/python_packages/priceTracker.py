@@ -20,14 +20,14 @@ def main():
     #     }
     #     }]
 
-    # driver = init_chrome_driver()                           # init chrome driver for selenium
+    driver = init_chrome_driver()                           # init chrome driver for selenium
     
-    # track_instock_info(product_link_list, driver)           # modify mutable list of dictionay: product_link_list
+    track_instock_info(product_link_list, driver)           # modify mutable list of dictionay: product_link_list
 
     jsonString = json.dumps(product_link_list)              # convert dic to json string then print
     print(jsonString)
 
-    # driver.quit()
+    driver.quit()
     sys.stdout.flush()
 
 main()
