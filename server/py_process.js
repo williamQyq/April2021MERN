@@ -5,7 +5,6 @@ const Item = require('./models/Item')
 const py_process = (search_listings) => {
 
     const json_str = JSON.stringify(search_listings)
-    console.log(`json_str: \n${json_str}`)
 
     let productPriceList, dataString;
     const python = spawn('python', ['./python_packages/priceTracker.py', json_str]);
