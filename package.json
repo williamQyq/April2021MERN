@@ -5,13 +5,13 @@
   "main": "server.js",
   "scripts": {
     "client-install": "cd ./mern-project && npm install",
-    "server-install": "npm install concurrently && pip install selenium",
-    "server:prod": "cd ./server && node server.js",
-    "server:dev": "cd ./server && nodemon server.js",
+    "server-install": "npm install && pip install selenium",
+    "serverProd": "cd ./server && node server.js",
+    "serverDev": "cd ./server && nodemon server.js",
     "control": "cd ./server && node ./server/backend_control/server.js",
     "client": "cd ./mern-project && npm start",
-    "dev": "concurrently \"npm run server:dev\" \"npm run client\"",
-    "prod": "concurrently \"npm run server:prod\" \"npm run client\"",
+    "dev": "concurrently \"npm run serverDev\" \"npm run client\"",
+    "prod": "concurrently \"npm run serverProd\" \"npm run client\"",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false cd mern-project && npm install && npm run build"
   },
   "author": "William Q",
