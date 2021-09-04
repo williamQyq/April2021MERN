@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const items = require('./routes/api/items');
 //DB Config
 const dbURI = require('./config/keys').mongoURI;
 const keys = require('./config/keys');
@@ -17,11 +16,16 @@ const io = require("socket.io")(server);
 const { py_process } = require('./py_process');
 
 //Connect to Mongo
-mongoose.connect(dbURI, { useUnifiedTopology: true, useNewUrlParser: true })                //build mongoose connection
+mongoose.connect(dbURI, { 
+        useUnifiedTopology: true, 
+        useNewUrlParser: true,
+        useCreateIndex: true
+    })                //build mongoose connection
     .then(() => console.log('MongoDB Connected...'))
     .catch(err => console.log(err));
 
-app.use('/api/items', items);
+app.use('/api/items', require('./routes/api/items'));
+app.use('/api/users', require('./routes/api/users'));
 
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, '../mern-project/build')));
