@@ -15,6 +15,8 @@ const io = require("socket.io")(server);
 //run python process
 const { py_process } = require('./py_process');
 
+const Item = require("./models/Item");
+
 //Connect to Mongo
 mongoose.connect(dbURI, { 
         useUnifiedTopology: true, 

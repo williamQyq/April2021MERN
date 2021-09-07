@@ -4,13 +4,14 @@ import './styles/app.scss';
 import 'antd/dist/antd.css';
 import { Layout, Menu } from 'antd'; 
 import {
-  UserOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   UploadOutlined,
   AlertOutlined,
   MonitorOutlined,
-  RobotOutlined
+  RobotOutlined,
+  BarcodeOutlined,
+  BankOutlined,
 } from '@ant-design/icons';
 import MainContent from './component/MainContent'
 
@@ -58,13 +59,14 @@ class App extends React.Component {
             defaultSelectedKeys={["PRICE_ALERT"]} 
             onClick={(e)=> this.handleContentKey(e.key)}
             >
-            <SubMenu key = "sub1" icon={<AlertOutlined/>} title="Alert">
+            <SubMenu key = "ALERT" icon={<AlertOutlined/>} title="Alert">
               <Menu.Item key="PRICE_ALERT" icon={<MonitorOutlined/>}>Price Alert</Menu.Item>
               <Menu.Item key="PURCHASE_BOT" icon={<RobotOutlined/>}>Purchase Bot</Menu.Item>
             </SubMenu>
-            <Menu.Item key="3" icon={<UserOutlined />}>
-              nav 1
-            </Menu.Item>
+            <SubMenu key = "WAREHOUSE" icon={<BankOutlined/>} title="Warehouse">
+              <Menu.Item key="INBOUND" icon={<BarcodeOutlined/>}>Inbound</Menu.Item>
+              <Menu.Item key="OUTBOUND" icon={<BarcodeOutlined/>}>Outbound</Menu.Item>
+            </SubMenu>
             <Menu.Item key="4" icon={<UploadOutlined />}>
               nav 3
             </Menu.Item>

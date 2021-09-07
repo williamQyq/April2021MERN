@@ -1,6 +1,6 @@
 const { json } = require('body-parser')
 const { spawn } = require('child_process')
-const Item = require('./models/Item')
+// const Item = require('./models/Item')
 
 const py_process = (search_listings) => {
 

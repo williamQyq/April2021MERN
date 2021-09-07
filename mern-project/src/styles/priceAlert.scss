@@ -2,16 +2,28 @@
         height: 32px;
         margin: 16px;
 }
-.add-item{
-
+.add-item {
 }
-.list-item{
-
+.list-item {
 }
-.list-item-price{
-        margin-left: 5px;
+.list-item-price-down {
         margin-right: 35px;
-        // color: rgb(52, 199, 89);
-        color: rgb(36, 138, 61);
+
+        color: rgb(52, 199, 89);
         font-size: large;
+}
+.list-item-price-up {
+        margin-right: 35px;
+
+        color: rgb(255, 69, 58);
+        font-size: large;
+}
+.list-item-price-oos {
+        margin-right: 35px;
+        color: rgb(142, 142, 147);
+}
+
+.list-item-recent-changed-price {
+        margin-right: 10px;
+        color: rgb(142, 142, 147);
 }

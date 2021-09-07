@@ -13,7 +13,7 @@ const ItemSchema = new Schema({
     },
     price_timestamps:[{
         price:{
-            type: String,
+            type: Number,
         },
         date:{
             type: Date,
