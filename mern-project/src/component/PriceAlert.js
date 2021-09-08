@@ -10,6 +10,9 @@ import {
 import { Typography, Layout } from 'antd';
 
 import AddItemModal from "./AddItemModal";
+import ItemDetail from "./ItemDetail";
+import { Link } from "react-router-dom";
+
 const { Title, Text } = Typography;
 
 class PriceAlert extends React.Component {
@@ -41,14 +44,14 @@ class PriceAlert extends React.Component {
     }
 
     getMostRecentPrice = (item) => {
-        return item.price_timestamps.at(-1).price ?  item.price_timestamps.at(-1).price : "Loading";
+        return item.price_timestamps.at(-1).price ? item.price_timestamps.at(-1).price : "Loading";
     }
 
     getRecentChangedPrice = (item) => {
         const price_timestamps = item.price_timestamps;
         const most_recent_price = this.getMostRecentPrice(item);
-        for(let i = price_timestamps.length-1; i>=0; i--){
-            if(price_timestamps[i].price !== most_recent_price){
+        for (let i = price_timestamps.length - 1; i >= 0; i--) {
+            if (price_timestamps[i].price !== most_recent_price) {
                 return price_timestamps[i].price;
             }
         }
@@ -57,33 +60,38 @@ class PriceAlert extends React.Component {
     render() {
         const data = this.props.item.items;
         return (
+
             <React.Fragment>
-                <Row gutter={16} style= {{alignItems: 'center'}}>
+                <Row gutter={16} style={{ alignItems: 'center' }}>
                     <Title className="title">Lists</Title>
-                    <AddItemModal/>
+                    <AddItemModal />
                 </Row>
+
                 <List
                     itemLayout="horizontal"
                     dataSource={data}
                     renderItem={(item) => (
-                        <List.Item>
-                            <List.Item.Meta className="list-item"
-                                avatar={<LaptopOutlined twoToneColor="#52c41a" />}
-                                title={<a href={item.link} target="_blank" rel="noopener noreferrer">{this.getItemName(item)}</a>}
-                                description={item.created_date}
-                            />
-                            {this.getRecentChangedPrice(item) > 0?
-                                <Text className="list-item-recent-changed-price" delete>${this.getRecentChangedPrice(item)}</Text> : 
-                                <Text className="list-item-recent-changed-price" delete> Was $ </Text>
-                            }
-                            
-                            {this.getMostRecentPrice(item)!==-1? 
-                                <Text className={this.getMostRecentPrice(item)<this.getRecentChangedPrice(item)? "list-item-price-down":"list-item-price-up" }>
-                                    ${this.getMostRecentPrice(item)}</Text> : <Text className="list-item-price-oos">OUT OF STOCK
-                                </Text>
-                            }
-                            <Button danger type="link" onClick={this.onDeleteClick.bind(this, item._id)}> Delete </Button>
-                        </List.Item>
+                        // <Link to="/item-detail">
+                            <List.Item>
+                                <List.Item.Meta className="list-item"
+                                    avatar={<LaptopOutlined twoToneColor="#52c41a" />}
+                                    title={<a href={item.link} target="_blank" rel="noopener noreferrer">{this.getItemName(item)}</a>}
+                                    description={item.created_date}
+                                />
+                                {this.getRecentChangedPrice(item) > 0 ?
+                                    <Text className="list-item-recent-changed-price" delete>${this.getRecentChangedPrice(item)}</Text> :
+                                    <Text className="list-item-recent-changed-price" delete> Was $ </Text>
+                                }
+
+                                {this.getMostRecentPrice(item) !== -1 ?
+                                    <Text className={this.getMostRecentPrice(item) < this.getRecentChangedPrice(item) ? "list-item-price-down" : "list-item-price-up"}>
+                                        ${this.getMostRecentPrice(item)}</Text> : <Text className="list-item-price-oos">OUT OF STOCK
+                                    </Text>
+                                }
+                                <Button danger type="link" onClick={this.onDeleteClick.bind(this, item._id)}> Delete </Button>
+                            </List.Item>
+                        // </Link>
+
                     )}
                 />
             </React.Fragment>
