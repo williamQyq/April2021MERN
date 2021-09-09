@@ -3,7 +3,6 @@ const router = express.Router();
 
 //Item Model
 const Item = require('../../models/Item');
-
 // @route GET api/items
 router.get('/', (req, res) => {
     Item.find()

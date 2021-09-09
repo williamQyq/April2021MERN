@@ -13,10 +13,8 @@ const server = require("http").createServer(app)
 const io = require("socket.io")(server);
 
 //run python process
-const { py_process } = require('./py_process');
-
-const Item = require("./models/Item");
-
+const { py_process } = require('./python_packages/py_process');
+const { py_clock } = require('./python_packages/clock');
 //Connect to Mongo
 mongoose.connect(dbURI, { 
         useUnifiedTopology: true, 
@@ -51,12 +49,13 @@ const db = mongoose.connection;                                                 
 db.once('open', () => {
 
     const productPriceListings = db.collection(keys.Collections.ProductsPriceListings);
-
     const changeStream = productPriceListings.watch();
+
+    py_clock();
     changeStream.on('change', (change) => {
         // console.log(change);
         if (change.operationType === 'insert') {
-            let arr = [];
+           
             const doc = change.fullDocument;
 
             const product = {
@@ -69,8 +68,7 @@ db.once('open', () => {
             //socket.emit
             io.sockets.emit(`server:changestream`, product);
 
-            arr.push(product);
-            py_process(arr);                                                                //py_process takes array of object
+            py_process(product);                                                                //py_process takes array of object
 
         }
         if (change.operationType === 'delete') {
