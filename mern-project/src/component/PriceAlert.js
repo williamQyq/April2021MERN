@@ -25,8 +25,8 @@ class PriceAlert extends React.Component {
     }
     componentDidMount() {
         const socket = this.state.socket;
-
         this.props.getItems();
+        
         socket.on(`server:changestream`, listing => {
             this.setState({ change: listing });
             this.props.getItems();

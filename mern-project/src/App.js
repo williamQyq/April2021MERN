@@ -25,17 +25,16 @@ import PriceAlert from './component/PriceAlert';
 import InBound from './component/InBound';
 import ItemDetail from './component/ItemDetail';
 
-const socket = io.connect();
-
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
-
+const socket = io.connect();
 class App extends React.Component {
 
   constructor(props) {
     super(props)
     this.state = {
       collapsed: false,
+      socket:null,
     };
   };
 
@@ -74,7 +73,7 @@ class App extends React.Component {
             </Header>
             <Content className="site-layout-content">
               <Switch>
-                <Route path='/price-alert'> <PriceAlert socket={socket} /> </Route>
+                <Route path='/price-alert'> <PriceAlert  socket={socket}/> </Route>
                 <Route path='/inbound'> <InBound /> </Route>
                 <Route path='/item-detail'> <ItemDetail/></Route>
               </Switch>
