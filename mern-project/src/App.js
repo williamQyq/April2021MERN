@@ -54,14 +54,14 @@ class App extends React.Component {
             <div className="logo" />
             <Menu theme="dark" mode="inline">
               <SubMenu key="ALERT" icon={<AlertOutlined />} title="Alert">
-                <Menu.Item icon={<MonitorOutlined />}><Link to='/price-alert'>Price Alert</Link></Menu.Item>
-                <Menu.Item icon={<RobotOutlined />}> <Link to='/purchase-bot'>Purchase Bot</Link> </Menu.Item>
+                <Menu.Item key="PRICE-ALERT" icon={<MonitorOutlined />}><Link to='/price-alert'>Price Alert</Link></Menu.Item>
+                <Menu.Item key="PURCHASE-BOT"icon={<RobotOutlined />}> <Link to='/purchase-bot'>Purchase Bot</Link> </Menu.Item>
               </SubMenu>
               <SubMenu key="WAREHOUSE"icon={<BankOutlined />} title="Warehouse">
-                <Menu.Item icon={<BarcodeOutlined />}><Link to='/inbound'> <InBound/></Link></Menu.Item>
-                <Menu.Item icon={<BarcodeOutlined />}>Outbound</Menu.Item>
+                <Menu.Item key="INBOUND"icon={<BarcodeOutlined />}><Link to='/inbound'> <InBound/></Link></Menu.Item>
+                <Menu.Item key="OUTBOUND" icon={<BarcodeOutlined />}>Outbound</Menu.Item>
               </SubMenu>
-              <Menu.Item icon={<UploadOutlined />}>nav 3</Menu.Item>
+              <Menu.Item key="nav3" icon={<UploadOutlined />}>nav 3</Menu.Item>
             </Menu>
           </Sider>
 
@@ -72,14 +72,7 @@ class App extends React.Component {
                 onClick: this.toggle,
               })}
             </Header>
-            <Content
-              className="site-layout-background"
-              style={{
-                margin: '24px 16px',
-                padding: 24,
-                minHeight: 280,
-              }}
-            >
+            <Content className="site-layout-content">
               <Switch>
                 <Route path='/price-alert'> <PriceAlert socket={socket} /> </Route>
                 <Route path='/inbound'> <InBound /> </Route>

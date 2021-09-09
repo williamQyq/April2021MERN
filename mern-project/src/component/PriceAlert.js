@@ -2,12 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { getItems, deleteItem } from '../reducers/actions/itemActions';
 import PropTypes from 'prop-types';
-import { Button, List, Row } from 'antd';
 import '../styles/priceAlert.scss';
 import {
     LaptopOutlined,
 } from '@ant-design/icons';
-import { Typography, Layout } from 'antd';
+import { Typography, Layout, Row, Col, Button, List } from 'antd';
 
 import AddItemModal from "./AddItemModal";
 import ItemDetail from "./ItemDetail";
@@ -47,7 +46,7 @@ class PriceAlert extends React.Component {
         return item.price_timestamps.at(-1).price ? item.price_timestamps.at(-1).price : "Loading";
     }
 
-    getRecentChangedPrice = (item) => {
+    getPriceBeforeChanged = (item) => {
         const price_timestamps = item.price_timestamps;
         const most_recent_price = this.getMostRecentPrice(item);
         for (let i = price_timestamps.length - 1; i >= 0; i--) {
@@ -67,31 +66,36 @@ class PriceAlert extends React.Component {
                     <AddItemModal />
                 </Row>
 
-                <List
+                <List 
+                    className= "item-list"
+                    alignItems='center'
                     itemLayout="horizontal"
                     dataSource={data}
                     renderItem={(item) => (
-                        // <Link to="/item-detail">
-                            <List.Item>
-                                <List.Item.Meta className="list-item"
+                        <List.Item className="list-item" actions={[<Button danger type="link" onClick={this.onDeleteClick.bind(this, item._id)}> Delete </Button>]}>
+
+                            <Link to='/item-detail' className="list-item-link">
+
+                                <List.Item.Meta
                                     avatar={<LaptopOutlined twoToneColor="#52c41a" />}
                                     title={<a href={item.link} target="_blank" rel="noopener noreferrer">{this.getItemName(item)}</a>}
                                     description={item.created_date}
                                 />
-                                {this.getRecentChangedPrice(item) > 0 ?
-                                    <Text className="list-item-recent-changed-price" delete>${this.getRecentChangedPrice(item)}</Text> :
-                                    <Text className="list-item-recent-changed-price" delete> Was $ </Text>
+
+
+                                {this.getPriceBeforeChanged(item) > 0 ?
+                                    <Text className="list-item-price-before-changed" delete>${this.getPriceBeforeChanged(item)}</Text> :
+                                    <Text className="list-item-price-before-changed" delete> Was $ </Text>
                                 }
 
+
                                 {this.getMostRecentPrice(item) !== -1 ?
-                                    <Text className={this.getMostRecentPrice(item) < this.getRecentChangedPrice(item) ? "list-item-price-down" : "list-item-price-up"}>
+                                    <Text className={this.getMostRecentPrice(item) < this.getPriceBeforeChanged(item) ? "list-item-price-down" : "list-item-price-up"}>
                                         ${this.getMostRecentPrice(item)}</Text> : <Text className="list-item-price-oos">OUT OF STOCK
                                     </Text>
                                 }
-                                <Button danger type="link" onClick={this.onDeleteClick.bind(this, item._id)}> Delete </Button>
-                            </List.Item>
-                        // </Link>
-
+                            </Link>
+                        </List.Item>
                     )}
                 />
             </React.Fragment>
