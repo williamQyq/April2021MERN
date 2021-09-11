@@ -13,8 +13,8 @@ const server = require("http").createServer(app)
 const io = require("socket.io")(server);
 
 //run python process
-const { py_process } = require('./python_packages/py_process');
-const { py_clock } = require('./python_packages/clock');
+const { py_process, py_clock_cycle } = require('./python_packages/py_process');
+
 //Connect to Mongo
 mongoose.connect(dbURI, { 
         useUnifiedTopology: true, 
@@ -51,33 +51,23 @@ db.once('open', () => {
     const productPriceListings = db.collection(keys.Collections.ProductsPriceListings);
     const changeStream = productPriceListings.watch();
 
-    py_clock();
+    py_clock_cycle();
     changeStream.on('change', (change) => {
-        // console.log(change);
+        const doc = change.fullDocument;
+
         if (change.operationType === 'insert') {
-           
-            const doc = change.fullDocument;
-
-            const product = {
-                _id: doc._id,
-                link: doc.link,
-                name: doc.name,
-                price_timestamp: doc.price_timestamps.pop()
-            }
-
+    
             //socket.emit
-            io.sockets.emit(`server:changestream`, product);
-
-            py_process(product);                                                                //py_process takes array of object
-
+            io.sockets.emit(`server:changestream`, doc._id);
+            py_process(doc._id,doc.link);
+                                                                
         }
+
         if (change.operationType === 'delete') {
-            const doc = change.fullDocument;
             //socket.emit
             io.sockets.emit(`server:changestream`, doc);
         }
         if (change.operationType === 'update') {
-            const doc = change.fullDocument;
             //socket.emit
             io.sockets.emit(`server:changestream`, doc);
         }
