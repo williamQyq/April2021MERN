@@ -50,10 +50,14 @@ class PriceAlert extends React.Component {
         const price_timestamps = item.price_timestamps;
         const most_recent_price = this.getMostRecentPrice(item);
         for (let i = price_timestamps.length - 1; i >= 0; i--) {
-            if (price_timestamps[i].price !== most_recent_price) {
+            if (price_timestamps[i].price !== most_recent_price && price_timestamps[i].price !== null) {
                 return price_timestamps[i].price;
             }
         }
+        // return price_timestamps[1].price;
+    }
+    getItemUPC = (item)=> {
+        return item.upc ? item.upc : ""
     }
 
     render() {
@@ -75,11 +79,15 @@ class PriceAlert extends React.Component {
                         <List.Item className="list-item" actions={[<Button danger type="link" onClick={this.onDeleteClick.bind(this, item._id)}> Delete </Button>]}>
 
                             <Link to='/item-detail' className="list-item-link">
-
-                                <List.Item.Meta
+                                
+                                <List.Item.Meta className="list-item-meta"
                                     avatar={<LaptopOutlined twoToneColor="#52c41a" />}
-                                    title={<a href={item.link} target="_blank" rel="noopener noreferrer">{this.getItemName(item)}</a>}
-                                    description={item.created_date}
+                                    title={<Title level={5}>{this.getItemName(item)}</Title>}
+                                    description={<React.Fragment>
+                                    <Text className="list-item-upc">UPC: {this.getItemUPC}</Text>
+                                    <Text>{item.created_date}</Text>
+                                    </React.Fragment>
+                                }
                                 />
 
 

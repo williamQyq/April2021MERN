@@ -51,7 +51,7 @@ db.once('open', () => {
     const productPriceListings = db.collection(keys.Collections.ProductsPriceListings);
     const changeStream = productPriceListings.watch();
 
-    py_clock_cycle();
+    // py_clock_cycle();
     changeStream.on('change', (change) => {
         const doc = change.fullDocument;
 
