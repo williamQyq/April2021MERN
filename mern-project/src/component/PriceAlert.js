@@ -54,7 +54,7 @@ class PriceAlert extends React.Component {
                 return price_timestamps[i].price;
             }
         }
-        // return price_timestamps[1].price;
+        return false
     }
     getItemUPC = (item)=> {
         return item.upc ? item.upc : ""
@@ -93,9 +93,8 @@ class PriceAlert extends React.Component {
 
                                 {this.getPriceBeforeChanged(item) > 0 ?
                                     <Text className="list-item-price-before-changed" delete>${this.getPriceBeforeChanged(item)}</Text> :
-                                    <Text className="list-item-price-before-changed" delete> Was $ </Text>
+                                    <Text className="list-item-price-before-changed" delete>${this.getMostRecentPrice(item)}</Text>
                                 }
-
 
                                 {this.getMostRecentPrice(item) !== -1 ?
                                     <Text className={this.getMostRecentPrice(item) < this.getPriceBeforeChanged(item) ? "list-item-price-down" : "list-item-price-up"}>

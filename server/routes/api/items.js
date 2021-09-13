@@ -28,5 +28,15 @@ router.delete('/:id', (req, res) => {
         .catch(err => res.status(404).json({success: false}));
 });
 
+router.post('/push_price/:_id', (req, res) => {
+    Item.findByIdAndUpdate(req.params._id, {
+        $push: {
+            price_timestamps: {
+                price: req.body.currentPrice
+            }
+        }
+    },{ useFindAndModify: false }).then(item =>res.json({success:true}));
+});
+
 
 module.exports = router;
