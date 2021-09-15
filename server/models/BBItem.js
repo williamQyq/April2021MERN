@@ -24,6 +24,6 @@ const ItemSchema = new Schema({
         type: Date,
         default: Date.now
     }
-}, {collection: 'product_price_listings'});
+}, {collection: 'bb_item_listings'});
 
-module.exports = Item = mongoose.model('item', ItemSchema);
+module.exports = BBItem = mongoose.model('bb_item', ItemSchema);

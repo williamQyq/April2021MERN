@@ -12,6 +12,7 @@ import {
   RobotOutlined,
   BarcodeOutlined,
   BankOutlined,
+  ShoppingOutlined
 } from '@ant-design/icons';
 import {
   BrowserRouter as Router,
@@ -24,6 +25,7 @@ import io from 'socket.io-client';
 import PriceAlert from './component/PriceAlert';
 import InBound from './component/InBound';
 import ItemDetail from './component/ItemDetail';
+import BB from './component/BB';
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -53,6 +55,7 @@ class App extends React.Component {
             <div className="logo" />
             <Menu theme="dark" mode="inline">
               <SubMenu key="ALERT" icon={<AlertOutlined />} title="Alert">
+                <Menu.Item key="BestBuy" icon={<ShoppingOutlined />}><Link to='/bestbuy-list'>BestBuy</Link></Menu.Item>
                 <Menu.Item key="PRICE-ALERT" icon={<MonitorOutlined />}><Link to='/price-alert'>Price Alert</Link></Menu.Item>
                 <Menu.Item key="PURCHASE-BOT"icon={<RobotOutlined />}> <Link to='/purchase-bot'>Purchase Bot</Link> </Menu.Item>
               </SubMenu>
@@ -73,6 +76,7 @@ class App extends React.Component {
             </Header>
             <Content className="site-layout-content">
               <Switch>
+                <Route path='/bestbuy-list'><BB socket={socket}/></Route>
                 <Route path='/price-alert'> <PriceAlert  socket={socket}/> </Route>
                 <Route path='/inbound'> <InBound /> </Route>
                 <Route path='/item-detail'> <ItemDetail/></Route>

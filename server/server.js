@@ -24,8 +24,10 @@ mongoose.connect(dbURI, {
     .then(() => console.log('MongoDB Connected...'))
     .catch(err => console.log(err));
 
+app.use('/api/bb_items', require('./routes/api/bb_items'));
 app.use('/api/items', require('./routes/api/items'));
 app.use('/api/users', require('./routes/api/users'));
+
 
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, '../mern-project/build')));
@@ -47,11 +49,23 @@ io.on("connection", (socket) => {
 
 const db = mongoose.connection;                                                             //set up mongoose connection
 db.once('open', () => {
-
+    const bbProductListings = db.collection(keys.Collections.BBItemListings);
     const productPriceListings = db.collection(keys.Collections.ProductsPriceListings);
+    
     const changeStream = productPriceListings.watch();
+    const BBChangeStream = bbProductListings.watch();
 
-    // py_clock_cycle();
+    BBChangeStream.on('change', (change) => {
+        const doc = change.fullDocument;
+        
+        if(change.operationType === 'insert' || 'update') {
+            io.sockets.emit(`server:bbchangestream`, doc);
+
+        }
+
+    })
+
+    // py_clock_cycle();           // cycling item list push update tracked price
     changeStream.on('change', (change) => {
         const doc = change.fullDocument;
 
