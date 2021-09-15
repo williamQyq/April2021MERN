@@ -13,7 +13,7 @@ const server = require("http").createServer(app)
 const io = require("socket.io")(server);
 
 //run python process
-const { py_process, py_clock_cycle } = require('./python_packages/py_process');
+const { py_process, py_clock_cycle, Script, BBScript } = require('./python_packages/py_process');
 
 //Connect to Mongo
 mongoose.connect(dbURI, { 
@@ -58,9 +58,9 @@ db.once('open', () => {
     BBChangeStream.on('change', (change) => {
         const doc = change.fullDocument;
         
-        if(change.operationType === 'insert' || 'update') {
+        if(change.operationType === 'insert' || change.operationType === 'update') {
             io.sockets.emit(`server:bbchangestream`, doc);
-
+            
         }
 
     })
