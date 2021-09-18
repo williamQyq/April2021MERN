@@ -1,4 +1,2 @@
-server/node_modules/*
-node_modules/*
-server/python_packages/mypackage/chromedriver.exe
-server/python_packages/mypackage/__pycache__/*
+*.exe
+node_modules/
