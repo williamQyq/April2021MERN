@@ -17,7 +17,7 @@ def main():
     jsonString = json.dumps(product)              # convert dic to json string then print
     print(jsonString)
 
-    # driver.quit()
+    driver.quit()
     sys.stdout.flush()
 
 main()

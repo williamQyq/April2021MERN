@@ -3,98 +3,6 @@ const Item = require('../models/Item');
 const BBItem = require('../models/BBItem');
 const { Product } = require('../models/PriceProduct');
 
-class Script {
-    constructor(_id = null, link = null, model) {
-        this._id = _id;
-        this.link = link;
-        this.model = model;
-        this.script_path = './script_packages/priceTracker.py';
-    }
-    spawnScript() {
-        const product = new Product(this._id, this.link);
-        const product_arg = JSON.stringify(product);
-        console.log(`Start crawling product price...: ${product_arg}`)
-        return spawn('python', [this.script_path, product_arg]);
-    }
-
-    listenOn(python) {
-        python.stdout.on('data', (data) => {
-            console.log('Pipe data from script...');
-            this.data = JSON.parse(data.toString());
-        })
-    }
-
-    listenClose(python) {
-        python.on('close', (code) => {
-            console.log(`child process close all stdio with code ${code}`);
-            this.updateDB(this.model, this.product);
-        })
-    }
-
-    updateDB(Model, product) {
-        console.log(`update${JSON.stringify(product)}`)
-        //update price and name returned from python script, push price_timestamp into price_timestamps
-        Model.findByIdAndUpdate(product._id, {
-            name: product.name,
-            $push: {
-                price_timestamps: {
-                    price: product.currentPrice,
-                }
-            }
-        }, { useFindAndModify: false }, (err, docs) => {
-            if (err) {
-                console.log(`[Error]Update name and price by _id: ${product._id} Failure`)
-            } else {
-                console.log(`Updated _id: ${product._id} Success`)
-            }
-        });
-
-        console.log(`Updating price timestamps, name of product in DB...: ${JSON.stringify(product)}`)
-    }
-
-}
-
-class BBScript extends Script {
-    constructor(model) {
-        super(model);
-        this.get_items_num_script_path = './script_packages/bbLaptopsNum.py';
-        this.links = [];
-        this.allLaptopsLink = 'https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&browsedCategory=pcmcat138500050001&cp=1&id=pcat17071&iht=n&ks=960&list=y&qp=condition_facet%3DCondition~New&sc=Global&st=categoryid%24pcmcat138500050001&type=page&usc=All%20Categories';
-    }
-
-    spawnScript() {
-        console.log(`Start crawling BB all laptops Num...`)
-        return spawn('python', [this.get_items_num_script_path]);
-    }
-
-    numScriptListenOn(python) {
-        python.stdout.on('data', (data) => {
-            console.log('Pipe data from script...');
-            this.data = JSON.parse(data.toString());
-        })
-    }
-    numScriptListenClose(python) {
-        python.on('close', (code) => {
-            console.log(`child process close all stdio with code ${code}`);
-            return this.data;
-        })
-        return false;
-    }
-    spawnScript() {
-        const product = new Product(this._id, this.link);
-        const product_arg = JSON.stringify(product);
-        console.log(`Start crawling product price...: ${product_arg}`)
-        return spawn('python', [this.script_path, json_str, product_arg]);
-    }
-
-    initLinks() {
-        
-
-
-    }
-
-}
-
 const py_process = (_id, link) => {
     let tracked_product, dataString;
     const product = new Product(_id, link);
@@ -154,33 +62,107 @@ const py_clock_cycle = async () => {
 
 }
 
+class Script {
+    constructor(model) {
+        this.model = model;
+        this.script_path = './script_packages/priceTracker.py';
+    }
+    spawnScript() {
+        console.log(`Start crawling...`)
+        return spawn('python', [this.script_path]);
+    }
+
+    spawnlinkScript(_id, link) {
+        const product = new Product(_id, link);
+        const product_arg = JSON.stringify(product);
+        console.log(`Start crawling product price...: ${product_arg}`)
+        return spawn('python', [this.script_path, product_arg]);
+    }
+
+    listenOn(python) {
+        python.stdout.on('data', (data) => {
+            console.log('Pipe data from script...');
+            this.data = data.toString();
+            // this.result = JSON.parse(data.toString());
+        })
+    }
+
+    listenClose(python) {
+        python.on('close', (code) => {
+            console.log(`child process close all stdio with code ${code}`);
+            
+        })
+    }
+
+    updateDB(Model, product) {
+        console.log(`update${JSON.stringify(product)}`)
+        //update price and name returned from python script, push price_timestamp into price_timestamps
+        Model.findByIdAndUpdate(product._id, {
+            name: product.name,
+            $push: {
+                price_timestamps: {
+                    price: product.currentPrice,
+                }
+            }
+        }, { useFindAndModify: false }, (err, docs) => {
+            if (err) {
+                console.log(`[Error]Update name and price by _id: ${product._id} Failure`)
+            } else {
+                console.log(`Updated _id: ${product._id} Success`)
+            }
+        });
+
+        console.log(`Updating price timestamps, name of product in DB...: ${JSON.stringify(product)}`)
+    }
+
+}
+
+class BBScript extends Script {
+    constructor(model) {
+        super(model);
+        this.script_path = './script_packages/bbLaptops.py';
+        this.allLaptopsLink = 'https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&browsedCategory=pcmcat138500050001&cp=1&id=pcat17071&iht=n&ks=960&list=y&qp=condition_facet%3DCondition~New&sc=Global&st=categoryid%24pcmcat138500050001&type=page&usc=All%20Categories';
+    }
+
+    // spawnScript() {
+    //     const product = new Product(this._id, this.link);
+    //     const product_arg = JSON.stringify(product);
+    //     console.log(`Start crawling product price...: ${product_arg}`)
+    //     return spawn('python', [this.script_path, json_str, product_arg]);
+    // }
+
+}
+
+
 // load bb Condition New all products lists
 const py_bb_process = () => {
-    const BB = new BBScript();
+    let BB = new BBScript(BBItem);
 
     //spawn script to get items number
     const python = BB.spawnScript();
-    //listen for script stdout
-    BB.listenOn(python);
-    //listen closed then for each sku-item save to DB
-    BB.listenClose(python).then(() => {
-        links = BB.initLinks();
 
-        links.forEach((link) => {
-            const python = BB.spawnScript();
-            BB.listenOn(python);
-            BB.listenClose(python).then(() => {
-                BB.sku_items.forEach((sku_item) => {
-                    BBItem.findOneAndUpdate({ sku: sku_item.sku },{
-                        $push: {
-                            price_timestamps: {
-                            price: sku_item.currentPrice,
-                            }
-                        }})
-                })
-            })
-        })
-    })
+    // listen for script stdout
+    BB.listenOn(python);
+    BB.listenClose(python);
+    // //listen closed then for each sku-item save to DB
+    // BB.listenClose(python);
+    //     links = BB.initLinks();
+
+    //     links.forEach((link) => {
+    //         const python = BB.spawnScript();
+    //         BB.listenOn(python);
+    //         BB.listenClose(python).then(() => {
+    //             BB.sku_items.forEach((sku_item) => {
+    //                 BBItem.findOneAndUpdate({ sku: sku_item.sku },{
+    //                     $push: {
+    //                         price_timestamps: {
+    //                         price: sku_item.currentPrice,
+    //                         }
+    //                     }})
+    //             })
+    //         })
+    //     })
+    // })
 
 
 }
