@@ -1,10 +1,11 @@
 import React from 'react';
 import 'antd/dist/antd.css';
 import '../styles/bb.scss';
-import { Table, Input, Button, Space } from 'antd';
+import { Table, Input, Button, Space, Typography, Row } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
 
+const {Title} = Typography;
 const data = [];
 for (let i = 0; i < 100; i++) {
     data.push({
@@ -134,7 +135,7 @@ export default class BB extends React.Component {
                 dataIndex: 'qty',
                 key: 'quantity',
                 width: '10%',
-                ...this.getColumnSearchProps('quantity'),
+                
                 sorter: (a, b) => a.qty - b.qty,
                 sortDirections: ['descend', 'ascend'],
             },
@@ -143,17 +144,29 @@ export default class BB extends React.Component {
                 dataIndex: 'price',
                 key: 'price',
                 width: '10%',
-                ...this.getColumnSearchProps('price'),
             },
+            {
+                title: 'Action',
+                key: 'action',
+                width:'10%',
+                render: (text, record) => (
+                  <Space size="middle">
+                    <a>Add to Watch list</a>
+                  </Space>
+                ),
+              },
         ];
         const {loading} = this.state;
 
         return (
             <React.Fragment>
+                <Row gutter={16} style={{ alignItems: 'center' }}>
+                    <Title level={3} className="title">Best Buy</Title>
+                </Row>
                 <Button type="primary" onClick={this.start} disabled={loading} loading={loading}>
                     Reload
                 </Button>
-                <Table columns={columns} dataSource={data} pagination={{ pageSize: 20 }} scroll={{ y: "calc(100vh - 280px)" }} />
+                <Table columns={columns} dataSource={data} pagination={{ pageSize: 20 }} scroll={{ y: "calc(100vh - 320px)" }} />
 
             </React.Fragment>
         )

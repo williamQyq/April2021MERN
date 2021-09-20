@@ -7,7 +7,7 @@ from mypackage.module import WebDriverWait, EC, By
 
 def get_Chrome_driver_path():
     cwd = os.getcwd()
-    driver_path = '\python_packages\mypackage\chromedriver.exe'
+    driver_path = '\script_packages\mypackage\chromedriver.exe'
     # driver_path = '\mypackage\chromedriver.exe'
     chrome_driver_path = cwd+driver_path
 
@@ -70,7 +70,7 @@ def check_product_instock(driver):
         )
         add_to_cart_element = WebDriverWait(element, 10).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "button[data-button-state='ADD_TO_CART'"))
+                (By.CSS_SELECTOR, "button[data-button-state='ADD_TO_CART']"))
         )
         return True
     except:
