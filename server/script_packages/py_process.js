@@ -145,11 +145,24 @@ class BBSkuItemScript extends Script {
         this.script_path = './script_packages/bbSkuItem.py';
 
     }
-    findSkuAndUpdate(sku_items){
-        let query = {},
-            update = {}
+    // listenOn(python) {
+    //     python.stdout.on('data', (data) => {
+    //         console.log('Pipe data from script...');
+    //         this.data = JSON.parse(data.toString());
+    //         // this.result = JSON.parse(data.toString());
+    //     })
+    // }
+    findSkuAndUpdate(item){
+        // let query = {'sku':item.sku},
+        //     update = {},
+        //     options = { new:true }
 
-        this.model.findOneAndUpdate()
+        // this.model.findOneAndUpdate(query, update, options, (err,doc) => {
+        //     if (err) return;
+
+        //     console.log(`sku-item doc update:${doc}`);
+        // })
+        console.log(`itemsku:${item.sku}`)
     }
 
 }
@@ -175,7 +188,6 @@ const py_bb_process = () => {
         const item_num = BBNum.data;
         // const links = BBNum.initLinks(item_num);
         const links = BBNum.initLinks(1);
-        // console.log(`links:${links}`)
         links.forEach((link) => {
             const sku_items_python = BBSkuItem.spawnScript(link);
             BBSkuItem.listenOn(sku_items_python);
@@ -184,11 +196,14 @@ const py_bb_process = () => {
                 BBSkuItem.listenErr(python,reject);
             });
             getBBSkuItemsPromise.then(()=>{
-                const sku_items = BBSkuItem.data;
-                BBSkuItem.findSkuAndUpdate(sku_items);
+                const sku_items = JSON.stringify(BBSkuItem.data);
+                // sku_items.forEach((item)=>{
+                //     BBSkuItem.findSkuAndUpdate(item);
+                // })
+                console.log(sku_items)
+                
             })
         });
-
 
 
     }, () => {
