@@ -2,7 +2,7 @@
 import sys
 import json
 from mypackage.init import init_chrome_driver
-from mypackage.fun import get_sku_items_num
+from mypackage.fun import get_sku_items
 def main():
 
     sku_item_link = json.loads(sys.argv[1])
@@ -10,9 +10,9 @@ def main():
     driver = init_chrome_driver()                           # init chrome driver for selenium
     
     # do something
-    num = get_sku_items_num(driver,sku_item_link)
+    sku_items = get_sku_items(driver,sku_item_link)
 
-    print(num)
+    print(sku_items)
     driver.quit()
     sys.stdout.flush()
     

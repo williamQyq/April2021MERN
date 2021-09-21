@@ -52,7 +52,7 @@ class App extends React.Component {
       <Router>
         <Layout className="main-layout">
           <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
-            <div className="logo" />
+            <div className="logo">RS</div>
             <Menu theme="dark" mode="inline">
               <SubMenu key="ALERT" icon={<AlertOutlined />} title="Alert">
                 <Menu.Item key="BestBuy" icon={<ShoppingOutlined />}><Link to='/bestbuy-list'>BestBuy</Link></Menu.Item>

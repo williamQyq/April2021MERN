@@ -2,7 +2,6 @@ const { spawn } = require('child_process');
 const Item = require('../models/Item');
 const BBItem = require('../models/BBItem');
 const { Product } = require('../models/PriceProduct');
-const { resolve } = require('path');
 
 const py_process = (_id, link) => {
     let tracked_product, dataString;
@@ -68,9 +67,10 @@ class Script {
         this.model = model;
         this.script_path = './script_packages/priceTracker.py';
     }
-    spawnScript() {
+    spawnScript(arg) {
+        let arg_strfy = JSON.stringify(arg);
         console.log(`Start crawling...`)
-        return spawn('python', [this.script_path]);
+        return spawn('python', [this.script_path,arg_strfy]);
     }
 
     spawnlinkScript(_id, link) {
@@ -87,22 +87,23 @@ class Script {
             // this.result = JSON.parse(data.toString());
         })
     }
-    listenClose(python) {
+    listenClose(python,resolve) {
         python.on('close', (code) => {
             console.log(`child process close all stdio with code ${code}`);
+            resolve();
         })
     }
-    listenCloseAndUpdate(python, Model) {
-        python.on('close', (code) => {
-            console.log(`child process close all stdio with code ${code}`);
-            this.updateDB(Model, this.data);
+    listenErr(python,reject) {
+        python.on('error',()=>{
+            console.log(`child process close with ERROR`);
+            reject();
         })
     }
 
-    updateDB(Model, product) {
+    updateByIdDB(Model, product) {
         console.log(`update${JSON.stringify(product)}`)
         //update price and name returned from python script, push price_timestamp into price_timestamps
-        Model.findByIdAndUpdate(product._id, {
+        Model.findByIdAndUpdate(product.id, {
             name: product.name,
             $push: {
                 price_timestamps: {
@@ -111,9 +112,9 @@ class Script {
             }
         }, { useFindAndModify: false }, (err, docs) => {
             if (err) {
-                console.log(`[Error]Update name and price by _id: ${product._id} Failure`)
+                console.log(`[Error]Update name and price by _id: ${product.id} Failure`)
             } else {
-                console.log(`Updated _id: ${product._id} Success`)
+                console.log(`Updated _id: ${product.id} Success`)
             }
         });
 
@@ -126,6 +127,7 @@ class BBScript extends Script {
     constructor(model) {
         super(model);
         this.script_path = './script_packages/bbLaptopsNum.py';
+        this.link = `https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&browsedCategory=pcmcat138500050001&cp=1&id=pcat17071&iht=n&ks=960&list=y&qp=condition_facet%3DCondition~New&sc=Global&st=categoryid%24pcmcat138500050001&type=page&usc=All%20Categories`
     }
 
     initLinks(item_num) {
@@ -143,43 +145,27 @@ class BBSkuItemScript extends Script {
         this.script_path = './script_packages/bbSkuItem.py';
 
     }
-    spawnScript(sku_items_link) {
-        console.log(`Start crawling sku items...`)
-        return spawn('python', [this.script_path,sku_items_link]);
-    }
+    findSkuAndUpdate(sku_items){
+        let query = {},
+            update = {}
 
-    listenCloseAndUpdateSkuItem(python,Model){
-        python.on('close',(code) =>{
-            console.log(`child process close all stdio with code ${code}`);
-            this.findSkuAndUpdate(Model,this.data)
-        })
-    }
-    findSkuAndUpdate(Model,sku_items){
-        //Model.findOneAndUpdate(sku{})
+        this.model.findOneAndUpdate()
     }
 
 }
 
-
 // load bb Condition New all products lists
-//
 const py_bb_process = () => {
     let BBNum = new BBScript(BBItem);
     let BBSkuItem = new BBSkuItemScript(BBItem);
     //spawn script to get items number
-    const python = BBNum.spawnScript();
+    const python = BBNum.spawnScript(BBNum.link);
 
     // listen for script, get total items number
     BBNum.listenOn(python);
     const getBBNumPromise = new Promise((resolve, reject) => {
-        BBNum.listenClose(python);
-        setTimeout(() => {
-            if (BBNum.data) {
-                resolve("Success");
-            } else {
-                reject("failure");
-            }
-        }, 5000);
+        BBNum.listenClose(python,resolve);
+        BBNum.listenErr(python,reject);
     });
 
     //1. get bb sku-items num then
@@ -187,12 +173,23 @@ const py_bb_process = () => {
     //3. for each page, for each sku item, findskuAndUpdate.
     getBBNumPromise.then(() => {
         const item_num = BBNum.data;
-        const links = BBNum.initLinks(item_num);
-        // links.forEach((link) => {
-        //     const sku_item_python = BBSkuItem.spawnScript(link);
-        //     BBSkuItem.listenOn(sku_item_python);
-        //     BBSkuItem.listenCloseAndUpdateSkuItem(sku_item_python, BBItem);
-        // })
+        // const links = BBNum.initLinks(item_num);
+        const links = BBNum.initLinks(1);
+        // console.log(`links:${links}`)
+        links.forEach((link) => {
+            const sku_items_python = BBSkuItem.spawnScript(link);
+            BBSkuItem.listenOn(sku_items_python);
+            const getBBSkuItemsPromise = new Promise((resolve, reject) => {
+                BBSkuItem.listenClose(sku_items_python, resolve);
+                BBSkuItem.listenErr(python,reject);
+            });
+            getBBSkuItemsPromise.then(()=>{
+                const sku_items = BBSkuItem.data;
+                BBSkuItem.findSkuAndUpdate(sku_items);
+            })
+        });
+
+
 
     }, () => {
         console.log("BB Script Failure.");
