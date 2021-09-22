@@ -65,7 +65,7 @@ class PriceAlert extends React.Component {
         return (
 
             <React.Fragment>
-                <Row gutter={16} style={{ alignItems: 'center' }}>
+                <Row gutter={16}>
                     <Title className="title">Watch List</Title>
                     <AddItemModal />
                 </Row>

@@ -1,4 +1,5 @@
 const { spawn } = require('child_process');
+const JSON5 = require('json5')
 const Item = require('../models/Item');
 const BBItem = require('../models/BBItem');
 const { Product } = require('../models/PriceProduct');
@@ -83,8 +84,7 @@ class Script {
     listenOn(python) {
         python.stdout.on('data', (data) => {
             console.log('Pipe data from script...');
-            this.data = data.toString();
-            // this.result = JSON.parse(data.toString());
+            this.data = JSON5.parse(data.toString());
         })
     }
     listenClose(python,resolve) {
@@ -153,16 +153,21 @@ class BBSkuItemScript extends Script {
     //     })
     // }
     findSkuAndUpdate(item){
-        // let query = {'sku':item.sku},
-        //     update = {},
-        //     options = { new:true }
+        let query = { sku:item.sku },
+            update = { 
+                name:item.name,
+                link:item.link,
+                price_timestamps: [{
+                    price: item.currentPrice
+                }]
+            },
+            options = { upsert: true, new:true, setDefaultsOnInsert:true, useFindAndModify: false }
 
-        // this.model.findOneAndUpdate(query, update, options, (err,doc) => {
-        //     if (err) return;
+        this.model.findOneAndUpdate(query, update, options, (err,doc) => {
+            if (err) return;
 
-        //     console.log(`sku-item doc update:${doc}`);
-        // })
-        console.log(`itemsku:${item.sku}`)
+            // console.log(`sku-item doc update:${doc}`);
+        })
     }
 
 }
@@ -187,7 +192,7 @@ const py_bb_process = () => {
     getBBNumPromise.then(() => {
         const item_num = BBNum.data;
         // const links = BBNum.initLinks(item_num);
-        const links = BBNum.initLinks(1);
+        const links = BBNum.initLinks(100);
         links.forEach((link) => {
             const sku_items_python = BBSkuItem.spawnScript(link);
             BBSkuItem.listenOn(sku_items_python);
@@ -196,11 +201,10 @@ const py_bb_process = () => {
                 BBSkuItem.listenErr(python,reject);
             });
             getBBSkuItemsPromise.then(()=>{
-                const sku_items = JSON.stringify(BBSkuItem.data);
-                // sku_items.forEach((item)=>{
-                //     BBSkuItem.findSkuAndUpdate(item);
-                // })
-                console.log(sku_items)
+                const sku_items = BBSkuItem.data;
+                sku_items.forEach((item)=>{
+                    BBSkuItem.findSkuAndUpdate(item);
+                })
                 
             })
         });

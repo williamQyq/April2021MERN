@@ -53,17 +53,17 @@ db.once('open', () => {
     const productPriceListings = db.collection(keys.Collections.ProductsPriceListings);
     
     const changeStream = productPriceListings.watch();
-    // const BBChangeStream = bbProductListings.watch();
+    const BBChangeStream = bbProductListings.watch();
 
-    // BBChangeStream.on('change', (change) => {
-    //     const doc = change.fullDocument;
+    BBChangeStream.on('change', (change) => {
+        const doc = change.fullDocument;
         
-    //     if(change.operationType === 'insert' || change.operationType === 'update') {
-    //         io.sockets.emit(`server:bbchangestream`, doc);
+        if(change.operationType === 'insert' || change.operationType === 'update') {
+            io.sockets.emit(`server:changestream_bb`, doc);
             
-    //     }
+        }
 
-    // })
+    })
 
     py_bb_process();
     // py_clock_cycle();           // cycling item list push update tracked price

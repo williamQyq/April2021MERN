@@ -105,12 +105,13 @@ def get_sku_items(driver, sku_item_link):
         )
         for item_element in sku_items:
             item = dict()
-            item_price = get_sku_item_price(item_element)
-            item_name = get_sku_item_name(item_element)
-            
+
+            item_sku = item_element.get_attribute("data-sku-id")
+
+            item["link"] = 'https://www.bestbuy.com/site/'+item_sku+'.p?skuId='+item_sku
             item["sku"] = item_element.get_attribute("data-sku-id")
-            item["currentPrice"] = item_price
-            item["name"] = item_name
+            item["currentPrice"] = get_sku_item_price(item_element)
+            item["name"] = get_sku_item_name(item_element)
 
             sku_items_list.append(item)
     except:
@@ -151,4 +152,12 @@ def get_sku_item_name(driver):
     except:
         name = "NA"
 
-    return name
+    return validate_sku_item_name(name)
+
+def validate_sku_item_name(name):
+    only_ascii_string = ""
+    for char in name:
+        if char.isascii():
+            only_ascii_string += char
+    
+    return only_ascii_string

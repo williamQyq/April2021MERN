@@ -1,23 +1,16 @@
 import React from 'react';
 import 'antd/dist/antd.css';
 import '../styles/bb.scss';
+import { connect } from 'react-redux';
+import { getBBItems } from '../reducers/actions/itemBBActions';
+import PropTypes from 'prop-types';
 import { Table, Input, Button, Space, Typography, Row } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
 
-const {Title} = Typography;
-const data = [];
-for (let i = 0; i < 100; i++) {
-    data.push({
-        key: i,
-        name: `Edward King ${i}`,
-        upc: 32,
-        qty: i,
-        price: `$$$. ${i}`,
-    });
-}
+const { Title } = Typography;
 
-export default class BB extends React.Component {
+class BB extends React.Component {
     constructor(props) {
         super(props);
 
@@ -25,11 +18,24 @@ export default class BB extends React.Component {
             socket: this.props.socket,
             searchText: '',
             searchedColumn: '',
-            loading: false
+            loading: false,
+            itemsData:[]
         };
 
     }
 
+    componentDidMount() {
+        this.props.getBBItems();
+        // this.createStateTableData();
+
+        // this.state.socket.on(`server:changestream_bb`,()=>{
+        //     this.createStateTableData();
+        // })
+    }
+
+    createStateTableData() {
+        const items = this.props.bb_item.items;
+    }
 
     getColumnSearchProps = dataIndex => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -110,8 +116,10 @@ export default class BB extends React.Component {
     };
 
 
-
     render() {
+        const itemsData = this.props.bb_item.items;
+
+        //create columns data based on dataIndex
         const columns = [
             {
                 title: 'Name',
@@ -135,7 +143,7 @@ export default class BB extends React.Component {
                 dataIndex: 'qty',
                 key: 'quantity',
                 width: '10%',
-                
+
                 sorter: (a, b) => a.qty - b.qty,
                 sortDirections: ['descend', 'ascend'],
             },
@@ -146,17 +154,25 @@ export default class BB extends React.Component {
                 width: '10%',
             },
             {
+                title: 'Created Date',
+                dataIndex:'created_date',
+                key: 'created_date',
+                width: '10%',
+                sorter: (a, b) => a.qty - b.qty,
+                sortDirections: ['descend', 'ascend'],
+            },
+            {
                 title: 'Action',
                 key: 'action',
-                width:'10%',
+                width: '10%',
                 render: (text, record) => (
-                  <Space size="middle">
-                    <a>Add to Watch list</a>
-                  </Space>
+                    <Space size="middle">
+                        <a>Add to Watch list</a>
+                    </Space>
                 ),
-              },
+            },
         ];
-        const {loading} = this.state;
+        const { loading } = this.state;
 
         return (
             <React.Fragment>
@@ -166,9 +182,21 @@ export default class BB extends React.Component {
                 <Button type="primary" onClick={this.start} disabled={loading} loading={loading}>
                     Reload
                 </Button>
-                <Table columns={columns} dataSource={data} pagination={{ pageSize: 20 }} scroll={{ y: "calc(100vh - 320px)" }} />
+                <Table columns={columns} dataSource={itemsData} pagination={{ pageSize: 20 }} scroll={{ y: "calc(100vh - 320px)" }} />
 
             </React.Fragment>
         )
     }
 }
+
+BB.prototypes = {
+    getBBItems: PropTypes.func.isRequired,
+
+    bb_item: PropTypes.object.isRequired,
+}
+
+const mapStateToProps = (state) => ({
+    bb_item: state.bb_item
+})
+
+export default connect(mapStateToProps, { getBBItems })(BB);
