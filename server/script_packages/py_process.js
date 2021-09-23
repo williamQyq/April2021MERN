@@ -3,6 +3,7 @@ const JSON5 = require('json5')
 const Item = require('../models/Item');
 const BBItem = require('../models/BBItem');
 const { Product } = require('../models/PriceProduct');
+const { link } = require('fs');
 
 const py_process = (_id, link) => {
     let tracked_product, dataString;
@@ -67,11 +68,12 @@ class Script {
     constructor(model) {
         this.model = model;
         this.script_path = './script_packages/priceTracker.py';
+        this.link = `https://www.bestbuy.com/site/laptop-computers/all-laptops/pcmcat138500050001.c?id=pcmcat138500050001&qp=parent_operatingsystem_facet%3DParent%20Operating%20System~Windows`
     }
     spawnScript(arg) {
         let arg_strfy = JSON.stringify(arg);
-        console.log(`Start crawling...`)
-        return spawn('python', [this.script_path,arg_strfy]);
+        console.log(`Start crawling ${this.constructor.name}...`)
+        return spawn('python', [this.script_path, arg_strfy]);
     }
 
     spawnlinkScript(_id, link) {
@@ -83,19 +85,19 @@ class Script {
 
     listenOn(python) {
         python.stdout.on('data', (data) => {
-            console.log('Pipe data from script...');
+            console.log(`Pipe data from script: ${this.constructor.name}...`);
             this.data = JSON5.parse(data.toString());
         })
     }
-    listenClose(python,resolve) {
+    listenClose(python, resolve) {
         python.on('close', (code) => {
-            console.log(`child process close all stdio with code ${code}`);
+            console.log(`${this.constructor.name} child process close all stdio with code ${code}`);
             resolve();
         })
     }
-    listenErr(python,reject) {
-        python.on('error',()=>{
-            console.log(`child process close with ERROR`);
+    listenErr(python, reject) {
+        python.on('error', () => {
+            console.log(`${this.constructor.name} child process close with ERROR`);
             reject();
         })
     }
@@ -127,43 +129,36 @@ class BBScript extends Script {
     constructor(model) {
         super(model);
         this.script_path = './script_packages/bbLaptopsNum.py';
-        this.link = `https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&browsedCategory=pcmcat138500050001&cp=1&id=pcat17071&iht=n&ks=960&list=y&qp=condition_facet%3DCondition~New&sc=Global&st=categoryid%24pcmcat138500050001&type=page&usc=All%20Categories`
-    }
-
-    initLinks(item_num) {
-        let links = [];
-        for (let i = 1; i <= Math.ceil(item_num / 24); i++) {
-            links.push(`https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&browsedCategory=pcmcat138500050001&cp=${i}&id=pcat17071&iht=n&ks=960&list=y&qp=condition_facet%3DCondition~New&sc=Global&st=categoryid%24pcmcat138500050001&type=page&usc=All%20Categories`)
-        }
-        return links;
     }
 
 }
+
 class BBSkuItemScript extends Script {
     constructor(model) {
         super(model);
         this.script_path = './script_packages/bbSkuItem.py';
-
+        this.data=[]
     }
-    // listenOn(python) {
-    //     python.stdout.on('data', (data) => {
-    //         console.log('Pipe data from script...');
-    //         this.data = JSON.parse(data.toString());
-    //         // this.result = JSON.parse(data.toString());
-    //     })
-    // }
-    findSkuAndUpdate(item){
-        let query = { sku:item.sku },
-            update = { 
-                name:item.name,
-                link:item.link,
+
+    getLinkInfo(item_num) {
+        return ({
+            link: this.link,
+            link_index: Math.ceil(item_num / 24)
+        })
+    }
+
+    findSkuAndUpdate(item) {
+        let query = { sku: item.sku },
+            update = {
+                name: item.name,
+                link: item.link,
                 price_timestamps: [{
                     price: item.currentPrice
                 }]
             },
-            options = { upsert: true, new:true, setDefaultsOnInsert:true, useFindAndModify: false }
+            options = { upsert: true, new: true, setDefaultsOnInsert: true, useFindAndModify: false }
 
-        this.model.findOneAndUpdate(query, update, options, (err,doc) => {
+        this.model.findOneAndUpdate(query, update, options, (err, doc) => {
             if (err) return;
 
             // console.log(`sku-item doc update:${doc}`);
@@ -182,34 +177,30 @@ const py_bb_process = () => {
     // listen for script, get total items number
     BBNum.listenOn(python);
     const getBBNumPromise = new Promise((resolve, reject) => {
-        BBNum.listenClose(python,resolve);
-        BBNum.listenErr(python,reject);
+        BBNum.listenClose(python, resolve);
+        BBNum.listenErr(python, reject);
     });
 
     //1. get bb sku-items num then
     //2. Each laptops page contains 24 sku items, calculate and init array of links.
     //3. for each page, for each sku item, findskuAndUpdate.
     getBBNumPromise.then(() => {
-        const item_num = BBNum.data;
-        // const links = BBNum.initLinks(item_num);
-        const links = BBNum.initLinks(100);
-        links.forEach((link) => {
-            const sku_items_python = BBSkuItem.spawnScript(link);
-            BBSkuItem.listenOn(sku_items_python);
-            const getBBSkuItemsPromise = new Promise((resolve, reject) => {
-                BBSkuItem.listenClose(sku_items_python, resolve);
-                BBSkuItem.listenErr(python,reject);
-            });
-            getBBSkuItemsPromise.then(()=>{
-                const sku_items = BBSkuItem.data;
-                sku_items.forEach((item)=>{
-                    BBSkuItem.findSkuAndUpdate(item);
-                })
-                
-            })
+
+        const link_info = BBSkuItem.getLinkInfo(BBNum.data);
+        const sku_items_python = BBSkuItem.spawnScript(link_info);
+        BBSkuItem.listenOn(sku_items_python);
+        const getBBSkuItemsPromise = new Promise((resolve, reject) => {
+            BBSkuItem.listenClose(sku_items_python, resolve);
+            BBSkuItem.listenErr(python, reject);
         });
+        getBBSkuItemsPromise.then(() => {
+            const sku_items = BBSkuItem.data;
+            console.log(sku_items)
+            // sku_items.forEach((item) => {
+            //     BBSkuItem.findSkuAndUpdate(item);
+            // })
 
-
+        })
     }, () => {
         console.log("BB Script Failure.");
     })

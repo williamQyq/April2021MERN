@@ -3,17 +3,26 @@ import sys
 import json
 from mypackage.init import init_chrome_driver
 from mypackage.fun import get_sku_items
+
+
 def main():
 
-    sku_item_link = json.loads(sys.argv[1])
-    # sku_item_link = 'https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&browsedCategory=pcmcat138500050001&cp=1&id=pcat17071&iht=n&ks=960&list=y&qp=condition_facet%3DCondition~New&sc=Global&st=categoryid%24pcmcat138500050001&type=page&usc=All%20Categories'
-    driver = init_chrome_driver()                           # init chrome driver for selenium
-    
-    # do something
-    sku_items = get_sku_items(driver,sku_item_link)
+    # item_link_info = json.loads(sys.argv[1])
+    item_link_info = {
+        "link":'https://www.bestbuy.com/site/laptop-computers/all-laptops/pcmcat138500050001.c?id=pcmcat138500050001&qp=parent_operatingsystem_facet%3DParent%20Operating%20System~Windows',
+        "link_index": 2
+    }
 
+    link = item_link_info["link"]
+    index = item_link_info["link_index"]
+    # init chrome driver for selenium
+    driver = init_chrome_driver()
+    # # do something
+    sku_items = get_sku_items(driver, link, index)
     print(sku_items)
-    driver.quit()
-    sys.stdout.flush()
     
+    # driver.quit()
+    sys.stdout.flush()
+
+
 main()

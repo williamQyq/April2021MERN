@@ -1,9 +1,8 @@
 import os
-from typing import final
-
 from selenium.webdriver.support.expected_conditions import element_located_selection_state_to_be
 from mypackage.module import WebDriverWait, EC, By
 import re
+import time
 
 
 def get_Chrome_driver_path():
@@ -93,30 +92,32 @@ def get_sku_items_num(driver, sku_item_link):
     return re.sub('[^0-9]', '', item_count)
 
 
-def get_sku_items(driver, sku_item_link):
-    driver.get(sku_item_link)
+def get_sku_items(driver, link, index):
+    driver.get(link)
     sku_items_list = list()
 
-    try:
-        sku_items = WebDriverWait(driver, 10).until(
-            EC.presence_of_all_elements_located(
-                (By.CLASS_NAME, "sku-item")
+    for i in range(index):
+        try:
+            sku_items = WebDriverWait(driver, 10).until(
+                EC.presence_of_all_elements_located(
+                    (By.CLASS_NAME, "sku-item")
+                )
             )
-        )
-        for item_element in sku_items:
-            item = dict()
+            for item_element in sku_items:
+                item = dict()
+                item_sku = item_element.get_attribute("data-sku-id")
 
-            item_sku = item_element.get_attribute("data-sku-id")
+                item["link"] = 'https://www.bestbuy.com/site/' + \
+                    item_sku+'.p?skuId='+item_sku
+                item["sku"] = item_element.get_attribute("data-sku-id")
+                item["currentPrice"] = get_sku_item_price(item_element)
+                item["name"] = get_sku_item_name(item_element)
 
-            item["link"] = 'https://www.bestbuy.com/site/'+item_sku+'.p?skuId='+item_sku
-            item["sku"] = item_element.get_attribute("data-sku-id")
-            item["currentPrice"] = get_sku_item_price(item_element)
-            item["name"] = get_sku_item_name(item_element)
-
-            sku_items_list.append(item)
-    except:
-        return False
-
+                sku_items_list.append(item)
+        except:
+            return print(f"[Error--sku-item]: ===Failure unable to get sku items info===\n\n")
+        click_next_page(driver)
+        
     return sku_items_list
 
 
@@ -138,8 +139,9 @@ def get_sku_item_price(driver):
         price = dollar_price.strip().lstrip("$").replace(',', '')
     except:
         price = None
-        
+
     return price
+
 
 def get_sku_item_name(driver):
     try:
@@ -154,10 +156,20 @@ def get_sku_item_name(driver):
 
     return validate_sku_item_name(name)
 
+
 def validate_sku_item_name(name):
     only_ascii_string = ""
     for char in name:
         if char.isascii():
             only_ascii_string += char
-    
+
     return only_ascii_string
+
+
+def click_next_page(driver):
+    try:
+        element = WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.CLASS_NAME, "sku-list-page-next")))
+        element.click()
+    except:
+        return print(f"[Error--sku-list-page-next]: ===Failure unable to click next ===\n\n")
