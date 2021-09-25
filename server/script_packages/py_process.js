@@ -139,7 +139,12 @@ class BBSkuItemScript extends Script {
         this.script_path = './script_packages/bbSkuItem.py';
         this.data=[]
     }
-
+    listenOn(python) {
+        python.stdout.on('data', (data) => {
+            console.log(`Pipe data from script: ${this.constructor.name}...`);
+            this.data.push(JSON5.parse(data.toString()));
+        })
+    }
     getLinkInfo(item_num) {
         return ({
             link: this.link,
@@ -195,10 +200,14 @@ const py_bb_process = () => {
         });
         getBBSkuItemsPromise.then(() => {
             const sku_items = BBSkuItem.data;
-            console.log(sku_items)
-            // sku_items.forEach((item) => {
-            //     BBSkuItem.findSkuAndUpdate(item);
-            // })
+            
+            // count = 0;
+            sku_items.forEach((item) => {
+                console.log(item)
+                // console.log(`${count}--${item.sku}`)
+                // BBSkuItem.findSkuAndUpdate(item);
+                count++;
+            })
 
         })
     }, () => {

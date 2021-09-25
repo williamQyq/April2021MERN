@@ -10,18 +10,20 @@ def main():
     # item_link_info = json.loads(sys.argv[1])
     item_link_info = {
         "link":'https://www.bestbuy.com/site/laptop-computers/all-laptops/pcmcat138500050001.c?id=pcmcat138500050001&qp=parent_operatingsystem_facet%3DParent%20Operating%20System~Windows',
-        "link_index": 2
+        "link_index": 3
     }
 
     link = item_link_info["link"]
     index = item_link_info["link_index"]
+    
+    
     # init chrome driver for selenium
     driver = init_chrome_driver()
-    # # do something
+    # do something
     sku_items = get_sku_items(driver, link, index)
     print(sku_items)
     
-    # driver.quit()
+    driver.quit()
     sys.stdout.flush()
 
 
