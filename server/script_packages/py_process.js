@@ -1,58 +1,30 @@
 const { spawn } = require('child_process');
 const JSON5 = require('json5')
-const Item = require('../models/Item');
+const WL_Item = require('../models/WatchListItem');
 const BBItem = require('../models/BBItem');
 const { Product } = require('../models/PriceProduct');
-const { link } = require('fs');
 
 const py_process = (_id, link) => {
-    let tracked_product, dataString;
-    const product = new Product(_id, link);
+    //Script Object crawl product price from a link
+    let BBProdPrice = new BBScript(WL_Item);
 
-    let json_str = JSON.stringify(product);
-    console.log(`Start crawling product price: ${json_str}`)
-    const python = spawn('python', ['./script_packages/priceTracker.py', json_str]);
-    console.log(`Python script start piping...`)
-
-    //listen for python printout string data
-    python.stdout.on('data', (data) => {
-        console.log('Pipe data from python script...');
-        tracked_product = JSON.parse(data.toString());
-        dataString = data.toString();
-    });
-
-    //listen for python program close
-    python.on('close', (code) => {
-        console.log(`child process close all stdio with code ${code}`);
-        // console.log(`child process successful return data:${dataString}`)
-        if (tracked_product) {
-            update_product_db(tracked_product);
-        } else {
-            console.log(`child process close. Fail to get return from priceTracker`);
-        }
-    });
+    bbLaptopPricePromise(BBProdPrice,_id,link).then(()=>{
+        BBProdPrice.updateDBPriceById(WL_Item,BBProdPrice.data);
+    })
 
 }
+const bbLaptopPricePromise = (BBProdPrice,_id, link) => {
+    //spawn script process to get product price
+    const python = BBProdPrice.spawnPriceScript(_id, link);
 
-const update_product_db = (product) => {
-    console.log(`update${JSON.stringify(product)}`)
-    //update price and name returned from python script, push price_timestamp into price_timestamps
-    Item.findByIdAndUpdate(product.id, {
-        name: product.name,
-        $push: {
-            price_timestamps: {
-                price: product.currentPrice,
-            }
-        }
-    }, { useFindAndModify: false }, (err, docs) => {
-        if (err) {
-            console.log(`[Error]Update name and price by _id: ${product.id} Failure`)
-        } else {
-            console.log(`Updated _id: ${product.id} Success`)
-        }
+    //listen stdout of script, get product price info
+    BBProdPrice.listenOn(python);
+    const getLaptopPricePromise = new Promise((resolve, reject) => {
+        BBProdPrice.listenClose(python, resolve);
+        BBProdPrice.listenErr(python, reject);
     });
+    return getLaptopPricePromise;
 }
-
 
 const py_clock_cycle = async () => {
 
@@ -63,12 +35,12 @@ const py_clock_cycle = async () => {
     });
 
 }
-
-class Script {
+// parent BB script 
+class BBScript {
     constructor(model) {
         this.model = model;
         this.script_path = './script_packages/priceTracker.py';
-        this.link = `https://www.bestbuy.com/site/laptop-computers/all-laptops/pcmcat138500050001.c?id=pcmcat138500050001&qp=parent_operatingsystem_facet%3DParent%20Operating%20System~Windows`
+        this.link = `https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&browsedCategory=pcmcat138500050001&id=pcat17071&iht=n&ks=960&list=y&qp=condition_facet%3DCondition~New%5Eparent_operatingsystem_facet%3DParent%20Operating%20System~Windows&sc=Global&st=categoryid%24pcmcat138500050001&type=page&usc=All%20Categories`
     }
     spawnScript(arg) {
         let arg_strfy = JSON.stringify(arg);
@@ -76,7 +48,7 @@ class Script {
         return spawn('python', [this.script_path, arg_strfy]);
     }
 
-    spawnlinkScript(_id, link) {
+    spawnPriceScript(_id, link) {
         const product = new Product(_id, link);
         const product_arg = JSON.stringify(product);
         console.log(`Start crawling product price...: ${product_arg}`)
@@ -102,8 +74,7 @@ class Script {
         })
     }
 
-    updateByIdDB(Model, product) {
-        console.log(`update${JSON.stringify(product)}`)
+    updateDBPriceById(Model, product) {
         //update price and name returned from python script, push price_timestamp into price_timestamps
         Model.findByIdAndUpdate(product.id, {
             name: product.name,
@@ -120,12 +91,12 @@ class Script {
             }
         });
 
-        console.log(`Updating price timestamps, name of product in DB...: ${JSON.stringify(product)}`)
+        console.log(`Updated price timestamps, name of product in DB...:\n${JSON5.stringify(product)}`)
     }
 
 }
 
-class BBScript extends Script {
+class BBNumScript extends BBScript {
     constructor(model) {
         super(model);
         this.script_path = './script_packages/bbLaptopsNum.py';
@@ -133,16 +104,16 @@ class BBScript extends Script {
 
 }
 
-class BBSkuItemScript extends Script {
+class BBSkuItemScript extends BBScript {
     constructor(model) {
         super(model);
         this.script_path = './script_packages/bbSkuItem.py';
-        this.data=[]
+        this.data = []
     }
     listenOn(python) {
         python.stdout.on('data', (data) => {
             console.log(`Pipe data from script: ${this.constructor.name}...`);
-            this.data.push(JSON5.parse(data.toString()));
+            console.log(data.toString());
         })
     }
     getLinkInfo(item_num) {
@@ -174,48 +145,57 @@ class BBSkuItemScript extends Script {
 
 // load bb Condition New all products lists
 const py_bb_process = () => {
-    let BBNum = new BBScript(BBItem);
-    let BBSkuItem = new BBSkuItemScript(BBItem);
+    let BBNum = new BBNumScript(BBItem);
+    let BBSkuItems = new BBSkuItemScript(BBItem);
+    //1. get bb sku-items num then
+    //2. Each laptops page contains 24 sku items, calculate and init array of links.
+    //3. for each page, for each sku item, findskuAndUpdate.
+    bbAllLaptopsNewNumPromise(BBNum).then(() => {
+        bbAllLaptopsSkuItemsPromise(BBSkuItems, BBNum.data).then(() => {
+            const sku_items = BBSkuItems.data;
+            console.log(sku_items.sku)
+            // // count = 0;
+            // sku_items.forEach((item) => {
+            //     console.log(item)
+            //     // console.log(`${count}--${item.sku}`)
+            //     // BBSkuItem.findSkuAndUpdate(item);
+            //     count++;
+            // })
+
+        }, () => {
+            console.log("BBSkuItem Script Failure");
+        })
+    }, () => {
+        console.log("BBNum Script Failure.");
+    })
+
+}
+// get all laptops new condition number promise, resolve when retrieve items number.
+const bbAllLaptopsNewNumPromise = (BBNum) => {
+
     //spawn script to get items number
     const python = BBNum.spawnScript(BBNum.link);
 
     // listen for script, get total items number
     BBNum.listenOn(python);
-    const getBBNumPromise = new Promise((resolve, reject) => {
+    const getAllLaptopsNumPromise = new Promise((resolve, reject) => {
         BBNum.listenClose(python, resolve);
         BBNum.listenErr(python, reject);
     });
-
-    //1. get bb sku-items num then
-    //2. Each laptops page contains 24 sku items, calculate and init array of links.
-    //3. for each page, for each sku item, findskuAndUpdate.
-    getBBNumPromise.then(() => {
-
-        const link_info = BBSkuItem.getLinkInfo(BBNum.data);
-        const sku_items_python = BBSkuItem.spawnScript(link_info);
-        BBSkuItem.listenOn(sku_items_python);
-        const getBBSkuItemsPromise = new Promise((resolve, reject) => {
-            BBSkuItem.listenClose(sku_items_python, resolve);
-            BBSkuItem.listenErr(python, reject);
-        });
-        getBBSkuItemsPromise.then(() => {
-            const sku_items = BBSkuItem.data;
-            
-            // count = 0;
-            sku_items.forEach((item) => {
-                console.log(item)
-                // console.log(`${count}--${item.sku}`)
-                // BBSkuItem.findSkuAndUpdate(item);
-                count++;
-            })
-
-        })
-    }, () => {
-        console.log("BB Script Failure.");
-    })
-
+    return getAllLaptopsNumPromise;
 }
 
+// get all laptops sku-items promise, resolve when retrieve all skus, names, currentPrices.
+const bbAllLaptopsSkuItemsPromise = (BBSkuItems, num_of_pages) => {
+    const link_info = BBSkuItems.getLinkInfo(num_of_pages);
+    const sku_items_python = BBSkuItems.spawnScript(link_info);
+    BBSkuItems.listenOn(sku_items_python);
+    const getBBSkuItemsPromise = new Promise((resolve, reject) => {
+        BBSkuItems.listenClose(sku_items_python, resolve);
+        BBSkuItems.listenErr(sku_items_python, reject);
+    });
+    return getBBSkuItemsPromise;
+}
 module.exports = {
     py_process: py_process,
     py_clock_cycle: py_clock_cycle,

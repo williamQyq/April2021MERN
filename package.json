@@ -6,12 +6,10 @@
   "scripts": {
     "client-install": "cd ./mern-project && npm install",
     "server-install": "npm install && pip install selenium",
-    "serverProd": "cd ./server && node server.js",
-    "serverDev": "cd ./server && nodemon server.js",
+    "server": "cd ./server && nodemon server.js",
     "control": "cd ./server && node ./server/backend_control/server.js",
     "client": "cd ./mern-project && npm start",
-    "dev": "concurrently \"npm run serverDev\" \"npm run client\"",
-    "prod": "concurrently \"npm run serverProd\" \"npm run client\"",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false cd mern-project && npm install && npm run build"
   },
   "author": "William Q",
@@ -22,7 +20,7 @@
     "express": "^4.17.1",
     "json5": "^2.2.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.12.13",
+    "mongoose": "^5.13.9",
     "react-router-dom": "^5.3.0",
     "socket.io": "^4.1.3"
   },

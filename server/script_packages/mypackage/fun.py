@@ -2,6 +2,7 @@ import os
 from selenium.webdriver.support.expected_conditions import element_located_selection_state_to_be
 from mypackage.module import WebDriverWait, EC, By
 import re
+import time
 
 
 def get_Chrome_driver_path():
@@ -100,11 +101,12 @@ def get_sku_items(driver, link, index):
 
     for i in range(index):
         skus_before_changed = list()
-
+        
         # for each page index, get sku items in sku item list
         try:
             sku_items = WebDriverWait(driver, 10).until(
-                EC.presence_of_all_elements_located((By.CLASS_NAME, "sku-item"))
+                EC.presence_of_all_elements_located(
+                    (By.XPATH, "//li[@class='sku-item']"))
             )
             for item_element in sku_items:
                 item = dict()
@@ -117,21 +119,25 @@ def get_sku_items(driver, link, index):
                 item["name"] = get_sku_item_name(item_element)
 
                 result_list.append(item)
-                print(f'[{i}]-{count} item-sku = {item_sku}')
+                # print(f'[{i}]-{count} item-sku = {item_sku}')
                 skus_before_changed.append(item_sku)
                 count += 1
         except:
-            print(f"[Error--sku-item]: ===Failure unable to get sku items info===\n\n")
+            # print(f"[Error--sku-item]: ===Failure unable to get sku items info===\n\n")
+            return False
         # click next page until reach last page
         if(i < index-1):
             click_next_page(driver)
+            # sleep 20 sec
+            time.sleep(20)
             # wait until sku item list refreshed
             try:
-                WebDriverWait(driver, 30).until(
-                    lambda x: sku_attribute_changed(driver, skus_before_changed)
+                WebDriverWait(driver, 20).until(
+                    (lambda x: sku_attribute_changed(driver, skus_before_changed))
                 )
             except:
-                print("wait for sku id attribute change error")
+                # print("wait for sku id attribute change error")
+                return False
     return result_list
 
 
@@ -187,23 +193,25 @@ def click_next_page(driver):
         element.click()
     except:
         # print(f"[Error--sku-list-page-next]: ===Failure unable to click next ===\n\n")
-        return
+        return False
+
 
 def sku_attribute_changed(driver, skus_before_changed):
     try:
-        sku_items = WebDriverWait(driver, 30).until(
+        sku_items = WebDriverWait(driver, 20).until(
             EC.presence_of_all_elements_located(
-                (By.CLASS_NAME, "sku-item")
+                (By.XPATH, "//li[@class='sku-item']")
             )
         )
         count = 0
         for item_element in sku_items:
+
             item_sku = item_element.get_attribute("data-sku-id")
 
-            print(f'item_sku: {item_sku} ==? {skus_before_changed[count]} item_sku before')
+            # print(f'item_sku: {item_sku} ==? {skus_before_changed[count]} item_sku before')
             # check if list elements being refreshed
             if(item_sku == skus_before_changed[count] or item_sku == None):
-                print(f'sku_item not refreshed')
+                # print(f'sku_item not refreshed')
                 return False
             count += 1
         return sku_items
