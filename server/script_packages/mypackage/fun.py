@@ -3,6 +3,7 @@ from selenium.webdriver.support.expected_conditions import element_located_selec
 from mypackage.module import WebDriverWait, EC, By
 import re
 import time
+import json
 
 
 def get_Chrome_driver_path():
@@ -96,7 +97,7 @@ def get_sku_items_num(driver, sku_item_link):
 
 def get_sku_items(driver, link, index):
     driver.get(link)
-    result_list = list()
+    # result_list = list()
     count = 0
 
     for i in range(index):
@@ -118,7 +119,8 @@ def get_sku_items(driver, link, index):
                 item["currentPrice"] = get_sku_item_price(item_element)
                 item["name"] = get_sku_item_name(item_element)
 
-                result_list.append(item)
+                print(json.dumps(item))
+                # result_list.append(item)
                 # print(f'[{i}]-{count} item-sku = {item_sku}')
                 skus_before_changed.append(item_sku)
                 count += 1
@@ -138,7 +140,7 @@ def get_sku_items(driver, link, index):
             except:
                 # print("wait for sku id attribute change error")
                 return False
-    return result_list
+    # return result_list
 
 
 def get_sku_item_price(driver):

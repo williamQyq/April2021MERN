@@ -111,11 +111,18 @@ class BBSkuItemScript extends BBScript {
         this.data = []
     }
     listenOn(python) {
-        python.stdout.on('data', (data) => {
-            console.log(`Pipe data from script: ${this.constructor.name}...`);
-            console.log(data.toString());
+        python.stdout.pipe(require('JSONStream').parse()).on('data',(data)=>{
+            // console.log(`Pipe data from script: ${this.constructor.name}...`);
+            console.log(`Pipe data into DB on SKU:${data.sku}\n ${JSON5.stringify(data)}`)
+            this.findSkuAndUpdate(data)
         })
     }
+    // listenOn(python) {
+    //     python.stdout.on('data', (data) => {
+    //         
+    //         console.log(JSON5.parse(data.toString()));
+    //     })
+    // }
     getLinkInfo(item_num) {
         return ({
             link: this.link,
@@ -152,16 +159,6 @@ const py_bb_process = () => {
     //3. for each page, for each sku item, findskuAndUpdate.
     bbAllLaptopsNewNumPromise(BBNum).then(() => {
         bbAllLaptopsSkuItemsPromise(BBSkuItems, BBNum.data).then(() => {
-            const sku_items = BBSkuItems.data;
-            console.log(sku_items.sku)
-            // // count = 0;
-            // sku_items.forEach((item) => {
-            //     console.log(item)
-            //     // console.log(`${count}--${item.sku}`)
-            //     // BBSkuItem.findSkuAndUpdate(item);
-            //     count++;
-            // })
-
         }, () => {
             console.log("BBSkuItem Script Failure");
         })

@@ -65,7 +65,7 @@ db.once('open', () => {
 
     })
 
-    // py_bb_process();
+    py_bb_process();
     // py_clock_cycle();           // cycling item list push update tracked price
     changeStream.on('change', (change) => {
         const doc = change.fullDocument;
