@@ -4,7 +4,8 @@ from mypackage.module import WebDriverWait, EC, By
 import re
 import time
 import json
-
+from random import seed
+from random import randint
 
 def get_Chrome_driver_path():
     cwd = os.getcwd()
@@ -130,8 +131,9 @@ def get_sku_items(driver, link, index):
         # click next page until reach last page
         if(i < index-1):
             click_next_page(driver)
-            # sleep 20 sec
-            time.sleep(20)
+            # sleep random 15-20 sec
+            seed(1)
+            time.sleep(randint(10,15))
             # wait until sku item list refreshed
             try:
                 WebDriverWait(driver, 20).until(

@@ -4,9 +4,10 @@ import '../styles/bb.scss';
 import { connect } from 'react-redux';
 import { getBBItems } from '../reducers/actions/itemBBActions';
 import PropTypes from 'prop-types';
-import { Table, Input, Button, Space, Typography, Row } from 'antd';
+import { Table, Input, Button, Space, Typography, Row, Menu, Dropdown } from 'antd';
 import Highlighter from 'react-highlight-words';
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined, DownOutlined, PlusCircleOutlined, ShoppingCartOutlined } from '@ant-design/icons';
+import Moment from 'moment';
 
 const { Title } = Typography;
 
@@ -19,23 +20,26 @@ class BB extends React.Component {
             searchText: '',
             searchedColumn: '',
             loading: false,
-            itemsData:[]
         };
 
     }
 
     componentDidMount() {
         this.props.getBBItems();
-        // this.createStateTableData();
-
-        // this.state.socket.on(`server:changestream_bb`,()=>{
-        //     this.createStateTableData();
-        // })
+        const tableData = this.tableDataPrintable(this.props.bb_item.items)
+        this.setState({ tableData: tableData });
     }
 
-    createStateTableData() {
-        const items = this.props.bb_item.items;
-    }
+    tableDataPrintable = (data) => {
+        //convert UTC to EST
+        const items = Object.values(data)
+        const tableData = items.map(item => {
+            let date = new Date(item.created_date);
+            item.created_date = Moment(date.setHours(date.getHours() - 4)).format("MM-DD-YYYY HH:mm:ss");
+            return item;
+        })
+        return tableData;
+    };
 
     getColumnSearchProps = dataIndex => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -115,9 +119,10 @@ class BB extends React.Component {
         this.setState({ searchText: '' });
     };
 
-
+    handleClick=(e)=>{
+        e.preventDefault();
+    }
     render() {
-        const itemsData = this.props.bb_item.items;
 
         //create columns data based on dataIndex
         const columns = [
@@ -155,10 +160,10 @@ class BB extends React.Component {
             },
             {
                 title: 'Created Date',
-                dataIndex:'created_date',
+                dataIndex: 'created_date',
                 key: 'created_date',
                 width: '10%',
-                sorter: (a, b) => a.qty - b.qty,
+                sorter: (a, b) => new Date(a.created_date) - new Date(b.created_date),
                 sortDirections: ['descend', 'ascend'],
             },
             {
@@ -167,22 +172,53 @@ class BB extends React.Component {
                 width: '10%',
                 render: (text, record) => (
                     <Space size="middle">
-                        <a>Add to Watch list</a>
+                        <Dropdown overlay={menu} placement="bottomCenter">
+                            <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                                More Actions <DownOutlined />
+                            </a>
+                        </Dropdown>
                     </Space>
                 ),
             },
         ];
         const { loading } = this.state;
 
+        const menu = (
+            <Menu>
+                <Menu.Item>
+                    <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
+                        <PlusCircleOutlined />
+                    </a>
+                </Menu.Item>
+                <Menu.Item>
+                    <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
+                        <SearchOutlined />
+                    </a>
+                </Menu.Item>
+                <Menu.Item>
+                    <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
+                        <ShoppingCartOutlined />
+                    </a>
+                </Menu.Item>
+            </Menu>
+        );
+
         return (
             <React.Fragment>
                 <Row gutter={16} style={{ alignItems: 'center' }}>
                     <Title level={3} className="title">Best Buy</Title>
                 </Row>
-                <Button type="primary" onClick={this.start} disabled={loading} loading={loading}>
+                <Button type="primary" onClick={e => this.handleClick(e)} disabled={loading} loading={loading}>
                     Reload
                 </Button>
-                <Table columns={columns} dataSource={itemsData} pagination={{ pageSize: 20 }} scroll={{ y: "calc(100vh - 320px)" }} />
+                <Table columns={columns}
+                    dataSource={this.state.tableData}
+                    pagination={{
+                        defaultPageSize: 20,
+                        showSizeChanger: true,
+                        pageSizeOptions: ['10', '20', '50', '100']
+                    }}
+                    scroll={{ y: "calc(100vh - 320px)" }} />
 
             </React.Fragment>
         )

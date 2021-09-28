@@ -1,5 +1,7 @@
 .item-list {
-        min-height: 350px;
+        overflow: auto;
+        // min-height: 350px;
+        height: 90%;
         .list-item {
                 &:hover{
                         background: rgb(152,152,157,0.1);

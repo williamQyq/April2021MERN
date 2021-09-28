@@ -5,8 +5,11 @@ import PropTypes from 'prop-types';
 import '../styles/priceAlert.scss';
 import {
     LaptopOutlined,
+    SearchOutlined,
+    ShoppingCartOutlined,
+    DownOutlined
 } from '@ant-design/icons';
-import { Typography, Layout, Row, Col, Button, List } from 'antd';
+import { Typography, Layout, Row, Col, Button, List, Menu, Dropdown, Space } from 'antd';
 
 import AddItemModal from "./AddItemModal";
 import ItemDetail from "./ItemDetail";
@@ -26,7 +29,7 @@ class PriceAlert extends React.Component {
     componentDidMount() {
         const socket = this.state.socket;
         this.props.getItems();
-        
+
         socket.on(`server:changestream`, listing => {
             this.setState({ change: listing });
             this.props.getItems();
@@ -56,12 +59,28 @@ class PriceAlert extends React.Component {
         }
         return false
     }
-    getItemUPC = (item)=> {
+    getItemUPC = (item) => {
         return item.upc ? item.upc : ""
     }
 
     render() {
+
         const data = this.props.item.items;
+        const menu = (
+            <Menu>
+                <Menu.Item>
+                    <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
+                        <SearchOutlined />
+                    </a>
+                </Menu.Item>
+                <Menu.Item>
+                    <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
+                        <ShoppingCartOutlined />
+                    </a>
+                </Menu.Item>
+            </Menu>
+        );
+
         return (
 
             <React.Fragment>
@@ -70,24 +89,31 @@ class PriceAlert extends React.Component {
                     <AddItemModal />
                 </Row>
 
-                <List 
-                    className= "item-list"
+                <List
+                    className="item-list"
                     alignItems='center'
                     itemLayout="horizontal"
                     dataSource={data}
                     renderItem={(item) => (
-                        <List.Item className="list-item" actions={[<Button danger type="link" onClick={this.onDeleteClick.bind(this, item._id)}> Delete </Button>]}>
+                        <List.Item className="list-item" actions={[
+                            <Button danger type="link" onClick={this.onDeleteClick.bind(this, item._id)}> Delete </Button>,
+                            <Dropdown overlay={menu} placement="bottomCenter">
+                                <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                                    Actions<DownOutlined />
+                                </a>
+                            </Dropdown>
+                        ]}>
 
                             <Link to='/item-detail' className="list-item-link">
-                                
+
                                 <List.Item.Meta className="list-item-meta"
                                     avatar={<LaptopOutlined twoToneColor="#52c41a" />}
                                     title={<Title level={5}>{this.getItemName(item)}</Title>}
                                     description={<React.Fragment>
-                                    <Text className="list-item-upc">UPC: {this.getItemUPC}</Text>
-                                    <Text>{item.created_date}</Text>
+                                        <Text className="list-item-upc">UPC: {this.getItemUPC}</Text>
+                                        <Text>{item.created_date}</Text>
                                     </React.Fragment>
-                                }
+                                    }
                                 />
 
 
