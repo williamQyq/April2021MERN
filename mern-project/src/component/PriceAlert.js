@@ -9,10 +9,9 @@ import {
     ShoppingCartOutlined,
     DownOutlined
 } from '@ant-design/icons';
-import { Typography, Layout, Row, Col, Button, List, Menu, Dropdown, Space } from 'antd';
+import { Typography, Row, Button, List, Menu, Dropdown} from 'antd';
 
 import AddItemModal from "./AddItemModal";
-import ItemDetail from "./ItemDetail";
 import { Link } from "react-router-dom";
 
 const { Title, Text } = Typography;
@@ -98,7 +97,7 @@ class PriceAlert extends React.Component {
                         <List.Item className="list-item" actions={[
                             <Button danger type="link" onClick={this.onDeleteClick.bind(this, item._id)}> Delete </Button>,
                             <Dropdown overlay={menu} placement="bottomCenter">
-                                <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                                <a href="# " className="ant-dropdown-link" onClick={e => e.preventDefault()}>
                                     Actions<DownOutlined />
                                 </a>
                             </Dropdown>
@@ -118,7 +117,7 @@ class PriceAlert extends React.Component {
 
 
                                 {this.getPriceBeforeChanged(item) > 0 ?
-                                    <Text className="list-item-price-before-changed" delete>${this.getPriceBeforeChanged(item)}</Text> :
+                                    <Text className="list-item-price-before-changed" delete>${this.getPriceBeforeChanged(item)}</Text>:
                                     <Text className="list-item-price-before-changed" delete>${this.getMostRecentPrice(item)}</Text>
                                 }
 

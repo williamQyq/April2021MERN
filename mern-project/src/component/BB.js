@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import { Table, Input, Button, Space, Typography, Row, Menu, Dropdown } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined, DownOutlined, PlusCircleOutlined, ShoppingCartOutlined } from '@ant-design/icons';
-import Moment from 'moment';
 
 const { Title } = Typography;
 
@@ -16,7 +15,7 @@ class BB extends React.Component {
         super(props);
 
         this.state = {
-            socket: this.props.socket,
+            // socket: this.props.socket,
             searchText: '',
             searchedColumn: '',
             loading: false,
@@ -26,20 +25,7 @@ class BB extends React.Component {
 
     componentDidMount() {
         this.props.getBBItems();
-        const tableData = this.tableDataPrintable(this.props.bb_item.items)
-        this.setState({ tableData: tableData });
     }
-
-    tableDataPrintable = (data) => {
-        //convert UTC to EST
-        const items = Object.values(data)
-        const tableData = items.map(item => {
-            let date = new Date(item.created_date);
-            item.created_date = Moment(date.setHours(date.getHours() - 4)).format("MM-DD-YYYY HH:mm:ss");
-            return item;
-        })
-        return tableData;
-    };
 
     getColumnSearchProps = dataIndex => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -119,10 +105,11 @@ class BB extends React.Component {
         this.setState({ searchText: '' });
     };
 
-    handleClick=(e)=>{
+    handleClick = (e) => {
         e.preventDefault();
     }
     render() {
+        const data = this.props.bb_item.items;
 
         //create columns data based on dataIndex
         const columns = [
@@ -173,7 +160,7 @@ class BB extends React.Component {
                 render: (text, record) => (
                     <Space size="middle">
                         <Dropdown overlay={menu} placement="bottomCenter">
-                            <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                            <a href="# " className="ant-dropdown-link" onClick={e => e.preventDefault()}>
                                 More Actions <DownOutlined />
                             </a>
                         </Dropdown>
@@ -186,19 +173,19 @@ class BB extends React.Component {
         const menu = (
             <Menu>
                 <Menu.Item>
-                    <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
+                    <Button className="menu-btn">
                         <PlusCircleOutlined />
-                    </a>
+                    </Button>
                 </Menu.Item>
                 <Menu.Item>
-                    <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
+                    <Button className="menu-btn">
                         <SearchOutlined />
-                    </a>
+                    </Button>
                 </Menu.Item>
                 <Menu.Item>
-                    <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
+                    <Button className="menu-btn">
                         <ShoppingCartOutlined />
-                    </a>
+                    </Button>
                 </Menu.Item>
             </Menu>
         );
@@ -212,7 +199,7 @@ class BB extends React.Component {
                     Reload
                 </Button>
                 <Table columns={columns}
-                    dataSource={this.state.tableData}
+                    dataSource={data}
                     pagination={{
                         defaultPageSize: 20,
                         showSizeChanger: true,

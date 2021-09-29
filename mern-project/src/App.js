@@ -75,11 +75,13 @@ class App extends React.Component {
               })}
             </Header>
             <Content className="site-layout-content">
+              
               <Switch>
                 <Route path='/bestbuy-list'><BB socket={socket}/></Route>
                 <Route path='/price-alert'> <PriceAlert  socket={socket}/> </Route>
                 <Route path='/inbound'> <InBound /> </Route>
                 <Route path='/item-detail'> <ItemDetail/></Route>
+                
               </Switch>
               
             </Content>
