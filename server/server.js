@@ -13,7 +13,7 @@ const server = require("http").createServer(app)
 const io = require("socket.io")(server);
 
 //run python process
-const { py_process, py_clock_cycle,  py_bb_process} = require('./script_packages/py_process');
+const { py_process, py_clock_cycle,  py_bb_process, py_cc_process} = require('./script_packages/py_process');
 
 //Connect to Mongo
 mongoose.connect(dbURI, { 
@@ -25,6 +25,7 @@ mongoose.connect(dbURI, {
     .catch(err => console.log(err));
 
 app.use('/api/bb_items', require('./routes/api/bb_items'));
+app.use('/api/cc_items', require('./routes/api/cc_items'));
 app.use('/api/items', require('./routes/api/items'));
 app.use('/api/users', require('./routes/api/users'));
 
@@ -66,6 +67,7 @@ db.once('open', () => {
     })
 
     // py_bb_process();
+    // py_cc_process();
     // py_clock_cycle();           // cycling item list push update tracked price
     changeStream.on('change', (change) => {
         const doc = change.fullDocument;

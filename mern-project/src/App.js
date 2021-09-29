@@ -26,6 +26,7 @@ import PriceAlert from './component/PriceAlert';
 import InBound from './component/InBound';
 import ItemDetail from './component/ItemDetail';
 import BB from './component/BB';
+import CC from './component/CC';
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -56,6 +57,7 @@ class App extends React.Component {
             <Menu theme="dark" mode="inline">
               <SubMenu key="ALERT" icon={<AlertOutlined />} title="Alert">
                 <Menu.Item key="BestBuy" icon={<ShoppingOutlined />}><Link to='/bestbuy-list'>BestBuy</Link></Menu.Item>
+                <Menu.Item key="CostCo" icon={<ShoppingOutlined/>}><Link to='/costco-list'>CostCo</Link></Menu.Item>
                 <Menu.Item key="PRICE-ALERT" icon={<MonitorOutlined />}><Link to='/price-alert'>Price Alert</Link></Menu.Item>
                 <Menu.Item key="PURCHASE-BOT"icon={<RobotOutlined />}> <Link to='/purchase-bot'>Purchase Bot</Link> </Menu.Item>
               </SubMenu>
@@ -81,7 +83,7 @@ class App extends React.Component {
                 <Route path='/price-alert'> <PriceAlert  socket={socket}/> </Route>
                 <Route path='/inbound'> <InBound /> </Route>
                 <Route path='/item-detail'> <ItemDetail/></Route>
-                
+                <Route path='/costco-list'><CC socket={socket}/></Route>
               </Switch>
               
             </Content>

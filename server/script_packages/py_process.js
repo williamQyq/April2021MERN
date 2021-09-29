@@ -2,6 +2,7 @@ const { spawn } = require('child_process');
 const JSON5 = require('json5')
 const WL_Item = require('../models/WatchListItem');
 const BBItem = require('../models/BBItem');
+const CCItem = require('../models/CCItem');
 const { Product } = require('../models/PriceProduct');
 
 const py_process = (_id, link) => {
@@ -108,7 +109,6 @@ class BBSkuItemScript extends BBScript {
     constructor(model) {
         super(model);
         this.script_path = './script_packages/bbSkuItem.py';
-        this.data = []
     }
     listenOn(python) {
         python.stdout.pipe(require('JSONStream').parse()).on('data',(data)=>{
@@ -117,12 +117,6 @@ class BBSkuItemScript extends BBScript {
             this.findSkuAndUpdate(data)
         })
     }
-    // listenOn(python) {
-    //     python.stdout.on('data', (data) => {
-    //         
-    //         console.log(JSON5.parse(data.toString()));
-    //     })
-    // }
     getLinkInfo(item_num) {
         return ({
             link: this.link,
@@ -193,8 +187,25 @@ const bbAllLaptopsSkuItemsPromise = (BBSkuItems, num_of_pages) => {
     });
     return getBBSkuItemsPromise;
 }
+
+const py_cc_process = () => {
+    let CCNum = new CCNumScript(CCItem);
+    let CCSkuItems = new CCSkuItemScript(CCItem);
+    //1. get bb sku-items num then
+    //2. Each laptops page contains 24 sku items, calculate and init array of links.
+    //3. for each page, for each sku item, findskuAndUpdate.
+    ccAllLaptopsNewNumPromise(CCNum).then(() => {
+        ccAllLaptopsSkuItemsPromise(CCSkuItems, CCNum.data).then(() => {
+        }, () => {
+            console.log("CCSkuItem Script Failure");
+        })
+    }, () => {
+        console.log("CCNum Script Failure.");
+    })
+}
 module.exports = {
     py_process: py_process,
     py_clock_cycle: py_clock_cycle,
     py_bb_process: py_bb_process,
+    py_cc_process: py_cc_process
 }

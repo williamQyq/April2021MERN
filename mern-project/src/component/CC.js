@@ -2,7 +2,7 @@ import React from 'react';
 import 'antd/dist/antd.css';
 import '../styles/bb.scss';
 import { connect } from 'react-redux';
-import { getBBItems } from '../reducers/actions/itemBBActions';
+import { getCCItems } from '../reducers/actions/itemCCActions';
 import PropTypes from 'prop-types';
 import { Table, Input, Button, Space, Typography, Row, Menu, Dropdown } from 'antd';
 import Highlighter from 'react-highlight-words';
@@ -10,7 +10,7 @@ import { SearchOutlined, DownOutlined, PlusCircleOutlined, ShoppingCartOutlined 
 
 const { Title } = Typography;
 
-class BB extends React.Component {
+class CC extends React.Component {
     constructor(props) {
         super(props);
 
@@ -24,7 +24,7 @@ class BB extends React.Component {
     }
 
     componentDidMount() {
-        this.props.getBBItems();
+        this.props.getCCItems();
     }
 
     getColumnSearchProps = dataIndex => ({
@@ -109,7 +109,7 @@ class BB extends React.Component {
         e.preventDefault();
     }
     render() {
-        const data = this.props.bb_item.items;
+        const data = this.props.cc_item.items;
         //create columns data based on dataIndex
         const columns = [
             {
@@ -192,7 +192,7 @@ class BB extends React.Component {
         return (
             <React.Fragment>
                 <Row gutter={16} style={{ alignItems: 'center' }}>
-                    <Title level={3} className="title">Best Buy</Title>
+                    <Title level={3} className="title">CostCo</Title>
                 </Row>
                 <Button type="primary" onClick={e => this.handleClick(e)} disabled={loading} loading={loading}>
                     Reload
@@ -211,14 +211,14 @@ class BB extends React.Component {
     }
 }
 
-BB.prototypes = {
-    getBBItems: PropTypes.func.isRequired,
+CC.prototypes = {
+    getCCItems: PropTypes.func.isRequired,
 
-    bb_item: PropTypes.object.isRequired,
+    cc_item: PropTypes.object.isRequired,
 }
 
 const mapStateToProps = (state) => ({
-    bb_item: state.bb_item
+    cc_item: state.cc_item
 })
 
-export default connect(mapStateToProps, { getBBItems })(BB);
+export default connect(mapStateToProps, { getCCItems })(CC);

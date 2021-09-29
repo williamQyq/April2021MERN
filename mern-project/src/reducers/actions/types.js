@@ -4,4 +4,5 @@ export const DELETE_ITEM = 'DELETE_ITEM';
 export const ITEMS_LOADING = 'ITEMS_LOADING';
 
 export const GET_BB_ITEMS = 'GET_BB_ITEMS';
-export const ITEMS_BB_LOADING = 'ITEMS_BB_LOADING';
+
+export const GET_CC_ITEMS = 'GET_CC_ITEMS';

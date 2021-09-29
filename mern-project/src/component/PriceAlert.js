@@ -22,18 +22,19 @@ class PriceAlert extends React.Component {
 
         this.state = {
             socket: this.props.socket,
-            change: {},
+            change: false,
         }
     }
     componentDidMount() {
         const socket = this.state.socket;
         this.props.getItems();
 
-        socket.on(`server:changestream`, listing => {
-            this.setState({ change: listing });
+        socket.on(`server:changestream`,()=> {
+            this.setState({ change: true });
             this.props.getItems();
-
         });
+
+        this.setState({change: false});
     }
 
     onDeleteClick = (_id) => {
