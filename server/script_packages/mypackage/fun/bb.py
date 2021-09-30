@@ -7,17 +7,8 @@ import json
 from random import seed
 from random import randint
 
-def get_Chrome_driver_path():
-    cwd = os.getcwd()
-    driver_path = '\script_packages\mypackage\chromedriver.exe'
-    # driver_path = '\mypackage\chromedriver.exe'
-    chrome_driver_path = cwd+driver_path
-
-    return chrome_driver_path
 
 # modify mutable list of dictionary link_list
-
-
 def track_instock_info(product, driver):
     driver.get(product["link"])
     product["name"] = get_product_name(driver)
@@ -94,8 +85,6 @@ def get_sku_items_num(driver, sku_item_link):
     return re.sub('[^0-9]', '', item_count)
 
 # get all Laptops New sku items
-
-
 def get_sku_items(driver, link, index):
     driver.get(link)
     # result_list = list()

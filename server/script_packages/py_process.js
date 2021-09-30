@@ -2,18 +2,24 @@
 const WL_Item = require('../models/WatchListItem');
 const BBItem = require('../models/BBItem');
 const CCItem = require('../models/CCItem');
-const {BBScript, BBNumScript, BBSkuItemScript} = require('./Scripts');
+const {
+    BBScript,
+    BBNumScript,
+    BBSkuItemScript,
+    CCNumScript,
+    CCSkuItemScript } = require('./Scripts');
+
 
 const py_process = (_id, link) => {
     //Script Object crawl product price from a link
     let BBProdPrice = new BBScript(WL_Item);
 
-    bbLaptopPricePromise(BBProdPrice,_id,link).then(()=>{
-        BBProdPrice.updateDBPriceById(WL_Item,BBProdPrice.data);
+    bbLaptopPricePromise(BBProdPrice, _id, link).then(() => {
+        BBProdPrice.updateDBPriceById(WL_Item, BBProdPrice.data);
     })
 
 }
-const bbLaptopPricePromise = (BBProdPrice,_id, link) => {
+const bbLaptopPricePromise = (BBProdPrice, _id, link) => {
     //spawn script process to get product price
     const python = BBProdPrice.spawnPriceScript(_id, link);
 
@@ -87,10 +93,10 @@ const py_cc_process = () => {
     //2. Each laptops page contains 24 sku items, calculate and init array of links.
     //3. for each page, for each sku item, findskuAndUpdate.
     ccAllLaptopsNewNumPromise(CCNum).then(() => {
-        ccAllLaptopsSkuItemsPromise(CCSkuItems, CCNum.data).then(() => {
-        }, () => {
-            console.log("CCSkuItem Script Failure");
-        })
+        // ccAllLaptopsSkuItemsPromise(CCSkuItems, CCNum.data).then(() => {
+        // }, () => {
+        //     console.log("CCSkuItem Script Failure");
+        // })
     }, () => {
         console.log("CCNum Script Failure.");
     })

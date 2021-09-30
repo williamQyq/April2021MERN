@@ -2,7 +2,7 @@
 import sys
 import json
 from mypackage.init import init_chrome_driver
-from mypackage.fun import get_sku_items_num
+from mypackage.fun.bb import get_sku_items_num
 def main():
 
     sku_item_link = json.loads(sys.argv[1])

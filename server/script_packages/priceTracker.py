@@ -2,7 +2,7 @@
 import sys
 import json
 from mypackage.init import init_chrome_driver
-from mypackage.fun import track_instock_info
+from mypackage.fun.bb import track_instock_info
 
 def main():
 

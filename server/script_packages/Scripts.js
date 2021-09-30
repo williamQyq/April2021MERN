@@ -1,13 +1,13 @@
 const { spawn } = require('child_process');
 const { Product } = require('../models/PriceProduct');
 const JSON5 = require('json5');
-
+const JSONStream = require('JSONStream');
 
 // parent script 
 class Script {
     constructor(model) {
         this.model = model;
-        
+
     }
     spawnScript(arg) {
         let arg_strfy = JSON.stringify(arg);
@@ -62,10 +62,11 @@ class Script {
     }
 
 }
-class BBScript extends Script{
-    constructor(model){
+class BBScript extends Script {
+    constructor(model) {
         super(model);
         this.script_path = './script_packages/priceTracker.py';
+        this.link = `https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&browsedCategory=pcmcat138500050001&id=pcat17071&iht=n&ks=960&list=y&qp=condition_facet%3DCondition~New%5Eparent_operatingsystem_facet%3DParent%20Operating%20System~Windows&sc=Global&st=categoryid%24pcmcat138500050001&type=page&usc=All%20Categories`;
     }
 }
 
@@ -81,10 +82,9 @@ class BBSkuItemScript extends BBScript {
     constructor(model) {
         super(model);
         this.script_path = './script_packages/bbSkuItem.py';
-        this.link = `https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&browsedCategory=pcmcat138500050001&id=pcat17071&iht=n&ks=960&list=y&qp=condition_facet%3DCondition~New%5Eparent_operatingsystem_facet%3DParent%20Operating%20System~Windows&sc=Global&st=categoryid%24pcmcat138500050001&type=page&usc=All%20Categories`
     }
     listenOn(python) {
-        python.stdout.pipe(require('JSONStream').parse()).on('data',(data)=>{
+        python.stdout.pipe(require('JSONStream').parse()).on('data', (data) => {
             // console.log(`Pipe data from script: ${this.constructor.name}...`);
             console.log(`Pipe data into DB on SKU:${data.sku}\n ${JSON5.stringify(data)}`)
             this.findSkuAndUpdate(data)
@@ -117,8 +117,56 @@ class BBSkuItemScript extends BBScript {
 
 }
 
-module.exports ={
+class CCNumScript extends Script {
+    constructor(model) {
+        super(model);
+        this.script_path = './script_packages/ccLaptopsNum.py';
+        this.link = 'https://www.costco.com/laptops.html';
+    }
+}
+class CCSkuItemScript extends Script {
+    constructor(model) {
+        super(model);
+        this.script_path = './script_packages/ccSkuItem.py';
+    }
+    listenOn(python) {
+        python.stdout.pipe(JSONStream.parse()).on('data', (data) => {
+            // console.log(`Pipe data from script: ${this.constructor.name}...`);
+            console.log(`Pipe data into DB on SKU:${data.sku}\n ${JSON5.stringify(data)}`)
+            this.findSkuAndUpdate(data)
+        })
+    }
+    getLinkInfo(item_num) {
+        return ({
+            link: this.link,
+            link_index: Math.ceil(item_num / 24)
+        })
+    }
+
+    findSkuAndUpdate(item) {
+        let query = { sku: item.sku },
+            update = {
+                name: item.name,
+                link: item.link,
+                price_timestamps: [{
+                    price: item.currentPrice
+                }]
+            },
+            options = { upsert: true, new: true, setDefaultsOnInsert: true, useFindAndModify: false }
+
+        this.model.findOneAndUpdate(query, update, options, (err, doc) => {
+            if (err) return;
+
+            // console.log(`sku-item doc update:${doc}`);
+        })
+    }
+
+}
+
+module.exports = {
     BBScript: BBScript,
     BBNumScript: BBNumScript,
     BBSkuItemScript: BBSkuItemScript,
+    CCNumScript: CCNumScript,
+    CCSkuItemScript: CCSkuItemScript
 }
