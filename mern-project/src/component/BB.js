@@ -6,7 +6,12 @@ import { getBBItems } from '../reducers/actions/itemBBActions';
 import PropTypes from 'prop-types';
 import { Table, Input, Button, Space, Typography, Row, Menu, Dropdown, Divider, Col } from 'antd';
 import Highlighter from 'react-highlight-words';
-import { SearchOutlined, DownOutlined, PlusCircleOutlined, ShoppingCartOutlined } from '@ant-design/icons';
+import {
+    SearchOutlined,
+    DownOutlined,
+    PlusCircleOutlined,
+    ShoppingCartOutlined,
+} from '@ant-design/icons';
 
 const { Title } = Typography;
 

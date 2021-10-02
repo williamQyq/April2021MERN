@@ -32,6 +32,7 @@ const bbLaptopPricePromise = (BBProdPrice, _id, link) => {
     return getLaptopPricePromise;
 }
 
+//set time clock iterate watch list, ***need to be revised latter***
 const py_clock_cycle = async () => {
 
     const items = await Item.find({}).then(items => {
@@ -129,11 +130,50 @@ const ccAllLaptopsSkuItemsPromise = (CCSkuItems, num_of_pages) => {
     return getCCSkuItemsPromise;
 }
 
+const test = () => {
+    let psku = 6447115;
+    let pprice = 1;
 
+    BBItem.aggregate([
+        {
+            $project: {
+                name: 1,
+                sku:1,
+                PreviousPrice:{
+                    $arrayElemAt: [
+                        "$price_timestamps.price",-1
+                    ]
+                },
+                IsCurrentPriceLower: {
+                    $lt: [
+                        pprice,
+                        {
+                            $arrayElemAt: [
+                                "$price_timestamps.price",
+                                -1 // depends on whether you store prices by pushing to the end of history array, or to the beginning of it
+                            ]
+                        }
+                    ]
+                }
+            },
+        },
+        {
+            $match: {
+                sku: 6447115,
+                IsCurrentPriceLower: true
+            }
+        }
+    ])
+        .then(items => {
+            console.log(items);
+        })
+
+}
 
 module.exports = {
     py_process: py_process,
     py_clock_cycle: py_clock_cycle,
     py_bb_process: py_bb_process,
-    py_cc_process: py_cc_process
+    py_cc_process: py_cc_process,
+    test: test,
 }

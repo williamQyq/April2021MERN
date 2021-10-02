@@ -16,7 +16,9 @@ router.get('/', (req, res) => {
         price:"$price_timestamps.price",
         price_timestamps: { $slice: -1 },
      
-    }).then(items => {
+    })
+    .sort({created_date: -1})
+    .then(items => {
         res.json(items)
     });
 });

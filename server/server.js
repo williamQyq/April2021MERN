@@ -13,7 +13,7 @@ const server = require("http").createServer(app)
 const io = require("socket.io")(server);
 
 //run python process
-const { py_process, py_clock_cycle,  py_bb_process, py_cc_process} = require('./script_packages/py_process');
+const { py_process, py_clock_cycle,  py_bb_process, py_cc_process, test} = require('./script_packages/py_process');
 
 //Connect to Mongo
 mongoose.connect(dbURI, { 
@@ -65,7 +65,7 @@ db.once('open', () => {
         }
 
     })
-
+    test();
     // py_bb_process();
     // py_cc_process();
     // py_clock_cycle();           // cycling item list push update tracked price
