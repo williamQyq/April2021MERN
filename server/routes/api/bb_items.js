@@ -8,6 +8,7 @@ router.get('/', (req, res) => {
 
     ItemBB.find({}, {
         key:"$_id",
+        link:"$link",
         name:"$name",
         upc:"$upc",
         qty:"$qty",

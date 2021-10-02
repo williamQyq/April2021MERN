@@ -50,6 +50,7 @@ const py_bb_process = () => {
     //2. Each laptops page contains 24 sku items, calculate and init array of links.
     //3. for each page, for each sku item, findskuAndUpdate.
     bbAllLaptopsNewNumPromise(BBNum).then(() => {
+        console.log(`BB all laptops new condtion: ${BBNum.data}`);
         bbAllLaptopsSkuItemsPromise(BBSkuItems, BBNum.data).then(() => {
         }, () => {
             console.log("BBSkuItem Script Failure");

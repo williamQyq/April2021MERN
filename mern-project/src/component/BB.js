@@ -4,7 +4,7 @@ import '../styles/bb.scss';
 import { connect } from 'react-redux';
 import { getBBItems } from '../reducers/actions/itemBBActions';
 import PropTypes from 'prop-types';
-import { Table, Input, Button, Space, Typography, Row, Menu, Dropdown } from 'antd';
+import { Table, Input, Button, Space, Typography, Row, Menu, Dropdown, Divider, Col } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined, DownOutlined, PlusCircleOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 
@@ -79,17 +79,19 @@ class BB extends React.Component {
                 setTimeout(() => this.searchInput.select(), 100);
             }
         },
-        render: text =>
+        render: (text, record) => (
             this.state.searchedColumn === dataIndex ? (
-                <Highlighter
-                    highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-                    searchWords={[this.state.searchText]}
-                    autoEscape
-                    textToHighlight={text ? text.toString() : ''}
-                />
+                <a target="_blank" rel="noopener noreferrer" href={record.link}>
+                    <Highlighter
+                        highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+                        searchWords={[this.state.searchText]}
+                        autoEscape
+                        textToHighlight={text ? text.toString() : ''}
+                    />
+                </a>
             ) : (
-                text
-            ),
+                <a target="_blank" rel="noopener noreferrer" href={record.link}>{text}</a>
+            ))
     });
 
     handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -120,7 +122,6 @@ class BB extends React.Component {
                 ...this.getColumnSearchProps('name'),
                 sorter: (a, b) => a.name.length - b.name.length,
                 sortDirections: ['descend', 'ascend'],
-
             },
             {
                 title: 'UPC',
@@ -166,6 +167,7 @@ class BB extends React.Component {
                     </Space>
                 ),
             },
+
         ];
         const { loading } = this.state;
 
@@ -192,11 +194,16 @@ class BB extends React.Component {
         return (
             <React.Fragment>
                 <Row gutter={16} style={{ alignItems: 'center' }}>
-                    <Title level={3} className="title">Best Buy</Title>
+                    <Col>
+                        <Title level={3} className="title">Best Buy</Title>
+                    </Col>
+                    <Col>
+                        <Button type="primary" onClick={e => this.handleClick(e)} disabled={loading} loading={loading}>
+                            Set Time Cycle
+                        </Button>
+                    </Col>
                 </Row>
-                <Button type="primary" onClick={e => this.handleClick(e)} disabled={loading} loading={loading}>
-                    Reload
-                </Button>
+                <Divider />
                 <Table columns={columns}
                     dataSource={data}
                     pagination={{
@@ -204,7 +211,7 @@ class BB extends React.Component {
                         showSizeChanger: true,
                         pageSizeOptions: ['10', '20', '50', '100']
                     }}
-                    scroll={{ y: "calc(100vh - 320px)" }} />
+                    scroll={{ y: "calc(100vh - 330px)" }} />
 
             </React.Fragment>
         )
