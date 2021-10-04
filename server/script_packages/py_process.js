@@ -66,6 +66,7 @@ const bbAllLaptopsNewNumPromise = (BBNum) => {
 
     //spawn script to get items number
     const python = BBNum.spawnScript(BBNum.link);
+    console.log(`link===${BBNum.link}`)
 
     // listen for script, get total items number
     BBNum.listenOn(python);
@@ -131,42 +132,15 @@ const ccAllLaptopsSkuItemsPromise = (CCSkuItems, num_of_pages) => {
 }
 
 const test = () => {
-    let psku = 6447115;
-    let pprice = 1;
+    let item_data = {
+        name:"test",
+        link:"test",
+        sku:1,
+        currentPrice:2
+    }
 
-    BBItem.aggregate([
-        {
-            $project: {
-                name: 1,
-                sku:1,
-                PreviousPrice:{
-                    $arrayElemAt: [
-                        "$price_timestamps.price",-1
-                    ]
-                },
-                IsCurrentPriceLower: {
-                    $lt: [
-                        pprice,
-                        {
-                            $arrayElemAt: [
-                                "$price_timestamps.price",
-                                -1 // depends on whether you store prices by pushing to the end of history array, or to the beginning of it
-                            ]
-                        }
-                    ]
-                }
-            },
-        },
-        {
-            $match: {
-                sku: 6447115,
-                IsCurrentPriceLower: true
-            }
-        }
-    ])
-        .then(items => {
-            console.log(items);
-        })
+    const BBSkuScript = new BBSkuItemScript(BBItem); 
+    BBSkuScript.findSkuAndUpdate(item_data);
 
 }
 

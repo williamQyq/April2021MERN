@@ -30,13 +30,13 @@ class Script {
     }
     listenClose(python, resolve) {
         python.on('close', (code) => {
-            console.log(`${this.constructor.name} child process close all stdio with code ${code}`);
+            console.log(`\n${this.constructor.name} child process close all stdio with code ${code}`);
             resolve();
         })
     }
     listenErr(python, reject) {
         python.on('error', () => {
-            console.log(`${this.constructor.name} child process close with ERROR`);
+            console.log(`\n${this.constructor.name} child process close with ERROR`);
             reject();
         })
     }
@@ -86,7 +86,6 @@ class BBSkuItemScript extends BBScript {
     listenOn(python) {
         python.stdout.pipe(require('JSONStream').parse()).on('data', (data) => {
             // console.log(`Pipe data from script: ${this.constructor.name}...`);
-            console.log(`Pipe data into DB on SKU:${data.sku}\n ${JSON5.stringify(data)}`)
             this.findSkuAndUpdate(data)
         })
     }
@@ -97,22 +96,84 @@ class BBSkuItemScript extends BBScript {
         })
     }
 
-    findSkuAndUpdate(item) {
-        let query = { sku: item.sku },
-            update = {
-                name: item.name,
-                link: item.link,
-                price_timestamps: [{
-                    price: item.currentPrice
-                }]
-            },
-            options = { upsert: true, new: true, setDefaultsOnInsert: true, useFindAndModify: false }
+    findSkuAndUpdate(item_data) {
+        //aggregate find item that matched on sku in DB, then update price changed item.
+        this.findPriceChangedItem(item_data).then(price_change_items => {
+            if (price_change_items.length != 0) {    //sku item in DB exists and price changed
+                let pChangeItem = price_change_items.pop();
+                let update = {
+                    $push: {
+                        price_timestamps: {
+                            price: item_data.currentPrice
+                        }
+                    }
+                },
+                    options = { upsert: true, new: true, setDefaultsOnInsert: true, useFindAndModify: false }
 
-        this.model.findOneAndUpdate(query, update, options, (err, doc) => {
-            if (err) return;
-
-            // console.log(`sku-item doc update:${doc}`);
+                this.model.findByIdAndUpdate(pChangeItem._id, update, options).then(pChangeItem => {
+                    console.log(`Update price changed item in DB on SKU:${pChangeItem.sku}\n${JSON5.stringify(pChangeItem)}`)
+                });
+            } else {
+                this.setOnInsert(item_data);
+            }
         })
+
+    }
+    findPriceChangedItem(item) {
+        return this.model.aggregate([
+            {
+                $project: {
+                    link: 1,
+                    name: 1,
+                    sku: 1,
+                    PreviousPrice: {
+                        $arrayElemAt: [
+                            "$price_timestamps.price", -1
+                        ]
+                    },
+                    IsCurrentPriceChanged: {
+                        $ne: [
+                            item.currentPrice,
+                            {
+                                $arrayElemAt: [
+                                    "$price_timestamps.price",
+                                    -1 // depends on prices stored by pushing to the end of history array.
+                                ]
+                            }
+                        ]
+                    }
+                },
+            },
+            {
+                $match: {
+                    sku: item.sku,
+                    IsCurrentPriceChanged: true
+                }
+            }
+        ])
+    }
+    setOnInsert = (item) => {
+        let SET_ON_INSERT_QUERY = { sku: item.sku },
+            update = {
+                $setOnInsert: {
+                    sku: item.sku,
+                    name: item.name,
+                    link: item.link,
+                    price_timestamps: [{
+                        price: item.currentPrice
+                    }]
+                }
+            },
+            options = { upsert: true }
+        this.model.updateOne(SET_ON_INSERT_QUERY, update, options).then((result) => {
+            // console.log(`result:${JSON.stringify(result)}`)
+            if (result.upserted) {
+                console.log(`Insert new item into DB on SKU: ${item.sku}`)
+            } else {
+                console.log(`Item exists, Price no Changed: ${item.sku}`);
+            }
+        });
+
     }
 
 }

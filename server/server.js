@@ -65,8 +65,8 @@ db.once('open', () => {
         }
 
     })
-    test();
-    // py_bb_process();
+    // test();
+    py_bb_process();
     // py_cc_process();
     // py_clock_cycle();           // cycling item list push update tracked price
     changeStream.on('change', (change) => {

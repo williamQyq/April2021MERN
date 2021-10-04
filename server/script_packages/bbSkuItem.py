@@ -18,7 +18,15 @@ def main():
 
     # init chrome driver for selenium
     driver = init_chrome_driver()
+    
     # do something
+    # functionality: stdout list of items, listen by bbSkuItem script process
+    # item = {
+    #     link,
+    #     sku,
+    #     currentPrice,
+    #     name
+    # }
     get_sku_items(driver, link, index)
 
     driver.quit()
