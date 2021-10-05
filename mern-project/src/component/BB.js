@@ -117,6 +117,7 @@ class BB extends React.Component {
     }
     render() {
         const data = this.props.bb_item.items;
+        console.log(`data:${JSON.stringify(data[0])}`);
         //create columns data based on dataIndex
         const columns = [
             {

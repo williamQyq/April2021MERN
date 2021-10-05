@@ -12,15 +12,55 @@ router.get('/', (req, res) => {
         name:"$name",
         upc:"$upc",
         qty:"$qty",
-        created_date:"$created_date",
-        price:"$price_timestamps.price",
-        price_timestamps: { $slice: -1 },
-     
+        createdDate:"$created_date",
+        currentPrice:"$price_timestamps.price",
+        priceTimestamps: { $slice: -1 },
+        IsCurrentPriceLower: {
+            $lt: [
+                "$price",
+                {
+                    $arrayElemAt: [
+                        "$price_timestamps.price", -1
+                    ]
+                }
+            ]
+        }
     })
     .sort({created_date: -1})
     .then(items => {
         res.json(items)
     });
+    // ItemBB.aggregate([
+    //     {
+    //         $project: {
+    //             link: 1,
+    //             name: 1,
+    //             sku: 1,
+    //             PreviousPrice: {
+    //                 $arrayElemAt: [
+    //                     "$price_timestamps.price", -1
+    //                 ]
+    //             },
+    //             IsCurrentPriceChanged: {
+    //                 $ne: [
+    //                     item.currentPrice,
+    //                     {
+    //                         $arrayElemAt: [
+    //                             "$price_timestamps.price",
+    //                             -1 // depends on prices stored by pushing to the end of history array.
+    //                         ]
+    //                     }
+    //                 ]
+    //             }
+    //         },
+    //     },
+    //     {
+    //         $match: {
+    //             sku: item.sku,
+    //             IsCurrentPriceChanged: true
+    //         }
+    //     }
+    // ])
 });
 
 
