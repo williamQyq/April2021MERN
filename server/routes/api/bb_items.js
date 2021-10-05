@@ -5,62 +5,51 @@ const router = express.Router();
 const ItemBB = require('../../models/BBItem');
 // @route GET api/items
 router.get('/', (req, res) => {
-
-    ItemBB.find({}, {
-        key:"$_id",
-        link:"$link",
-        name:"$name",
-        upc:"$upc",
-        qty:"$qty",
-        createdDate:"$created_date",
-        currentPrice:"$price_timestamps.price",
-        priceTimestamps: { $slice: -1 },
-        IsCurrentPriceLower: {
-            $lt: [
-                "$price",
-                {
+    ItemBB.aggregate([
+        {
+            $project: {
+                key:"$_id",
+                link: 1,
+                name: 1,
+                sku: 1,
+                qty: 1,
+                upc: 1,
+                currentPrice: {
                     $arrayElemAt: [
                         "$price_timestamps.price", -1
                     ]
-                }
-            ]
+                },
+                IsCurrentPriceLower: {
+                    $lt: [
+                        {
+                            $arrayElemAt: [
+                                "$price_timestamps.price", -1
+                            ]
+                        },
+                        {
+                            $arrayElemAt: [
+                                "$price_timestamps.price", -2
+                            ]
+                        }
+                    ]
+                },
+                captureDate: {
+                    $arrayElemAt: [
+                        "$price_timestamps.date", -1
+                    ]
+                },
+            }
+        },
+        {
+            $sort:{
+                captureDate:-1
+            }
         }
-    })
-    .sort({created_date: -1})
-    .then(items => {
-        res.json(items)
-    });
-    // ItemBB.aggregate([
-    //     {
-    //         $project: {
-    //             link: 1,
-    //             name: 1,
-    //             sku: 1,
-    //             PreviousPrice: {
-    //                 $arrayElemAt: [
-    //                     "$price_timestamps.price", -1
-    //                 ]
-    //             },
-    //             IsCurrentPriceChanged: {
-    //                 $ne: [
-    //                     item.currentPrice,
-    //                     {
-    //                         $arrayElemAt: [
-    //                             "$price_timestamps.price",
-    //                             -1 // depends on prices stored by pushing to the end of history array.
-    //                         ]
-    //                     }
-    //                 ]
-    //             }
-    //         },
-    //     },
-    //     {
-    //         $match: {
-    //             sku: item.sku,
-    //             IsCurrentPriceChanged: true
-    //         }
-    //     }
-    // ])
+    ])
+        .then(items => {
+            res.json(items)
+        });
+
 });
 
 

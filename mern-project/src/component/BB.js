@@ -117,7 +117,8 @@ class BB extends React.Component {
     }
     render() {
         const data = this.props.bb_item.items;
-        console.log(`data:${JSON.stringify(data[0])}`);
+        // console.log(`loadingstatus=${JSON.stringify(this.props.bb_item.loading)}`)
+        
         //create columns data based on dataIndex
         const columns = [
             {
@@ -147,16 +148,16 @@ class BB extends React.Component {
             },
             {
                 title: 'Current Price',
-                dataIndex: 'price',
-                key: 'price',
+                dataIndex: 'currentPrice',
+                key: 'currentPrice',
                 width: '10%',
             },
             {
-                title: 'Created Date',
-                dataIndex: 'created_date',
-                key: 'created_date',
+                title: 'Capture Date',
+                dataIndex: 'captureDate',
+                key: 'captureDate',
                 width: '10%',
-                sorter: (a, b) => new Date(a.created_date) - new Date(b.created_date),
+                sorter: (a, b) => new Date(a.captureDate) - new Date(b.captureDate),
                 sortDirections: ['descend', 'ascend'],
             },
             {

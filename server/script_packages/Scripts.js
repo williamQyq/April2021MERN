@@ -142,7 +142,7 @@ class BBSkuItemScript extends BBScript {
                             }
                         ]
                     }
-                },
+                }
             },
             {
                 $match: {
