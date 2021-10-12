@@ -32,17 +32,6 @@ const bbLaptopPricePromise = (BBProdPrice, _id, link) => {
     return getLaptopPricePromise;
 }
 
-//set time clock iterate watch list, ***need to be revised latter***
-// const pyClockCycle = async () => {
-
-//     const items = await Item.find({}).then(items => {
-//         items.forEach((item => {
-//             py_process(item._id, item.link);
-//         }))
-//     });
-
-// }
-
 // load bb Condition New all products lists
 const pyProcessBB = () => {
     let BBNum = new BBNumScript(BBItem);
@@ -66,7 +55,6 @@ const bbAllLaptopsNewNumPromise = (BBNum) => {
 
     //spawn script to get items number
     const python = BBNum.spawnScript(BBNum.link);
-    console.log(`link===${BBNum.link}`)
 
     // listen for script, get total items number
     BBNum.listenOn(python);
@@ -92,7 +80,7 @@ const bbAllLaptopsSkuItemsPromise = (BBSkuItems, num_of_pages) => {
 const pyProcessCC = () => {
     let CCNum = new CCNumScript(CCItem);
     let CCSkuItems = new CCSkuItemScript(CCItem);
-    //1. get bb sku-items num then
+    //1. get cc sku-items num then
     //2. Each laptops page contains 24 sku items, calculate and init array of links.
     //3. for each page, for each sku item, findskuAndUpdate.
     ccAllLaptopsNewNumPromise(CCNum).then(() => {
