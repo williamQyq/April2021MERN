@@ -1,5 +1,5 @@
 const { spawn } = require('child_process');
-const { Product } = require('../models/PriceProduct');
+const { Product } = require('../models/PriceProduct.js');
 const JSON5 = require('json5');
 const JSONStream = require('JSONStream');
 

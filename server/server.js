@@ -1,9 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 //DB Config
-const dbURI = require('./config/keys').mongoURI;
-const keys = require('./config/keys');
-const path = require('path');
+const {mongoURL, collections} = require('./config/keys.js');
+
 
 //Bodyparser Middleware
 const app = express();
@@ -13,10 +12,11 @@ const server = require("http").createServer(app)
 const io = require("socket.io")(server);
 
 //run python process
-const { py_process, py_clock_cycle,  py_bb_process, py_cc_process, test} = require('./script_packages/py_process');
+const { pyProcess, pyClockCycle,  pyProcessBB, pyProcessCC, test} = require('./script_packages/py_process.js');
+const {schedulerBB} = require('./script_packages/scripts_scheduler.js');
 
 //Connect to Mongo
-mongoose.connect(dbURI, { 
+mongoose.connect(mongoURL, { 
         useUnifiedTopology: true, 
         useNewUrlParser: true,
         useCreateIndex: true
@@ -38,7 +38,6 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
-// console.log(`dirname=====${path.resolve(__dirname, '../mern-project', 'build', 'index.html')}`)
 const port = process.env.PORT || 5000;
 
 io.on("connection", (socket) => {
@@ -50,8 +49,8 @@ io.on("connection", (socket) => {
 
 const db = mongoose.connection;                                                             //set up mongoose connection
 db.once('open', () => {
-    const bbProductListings = db.collection(keys.Collections.BBItemListings);
-    const productPriceListings = db.collection(keys.Collections.ProductsPriceListings);
+    const bbProductListings = db.collection(collections.itemListingsBB);
+    const productPriceListings = db.collection(collections.productsPriceListings);
     
     const changeStream = productPriceListings.watch();
     const BBChangeStream = bbProductListings.watch();
@@ -66,9 +65,9 @@ db.once('open', () => {
 
     })
     // test();
-    //py_bb_process();
-    // py_cc_process();
-    // py_clock_cycle();           // cycling item list push update tracked price
+    // pyProcessBB();
+    // pyProcessCC();
+    schedulerBB.start();
     changeStream.on('change', (change) => {
         const doc = change.fullDocument;
 
@@ -76,7 +75,7 @@ db.once('open', () => {
     
             //socket.emit
             io.sockets.emit(`server:changestream`, doc._id);
-            py_process(doc._id,doc.link);
+            pyProcess(doc._id,doc.link);
                                                                 
         }
 

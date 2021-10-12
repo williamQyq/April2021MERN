@@ -7,10 +7,10 @@ const {
     BBNumScript,
     BBSkuItemScript,
     CCNumScript,
-    CCSkuItemScript } = require('./Scripts');
+    CCSkuItemScript } = require('./scripts.js');
 
 
-const py_process = (_id, link) => {
+const pyProcess = (_id, link) => {
     //Script Object crawl product price from a link
     let BBProdPrice = new BBScript(WL_Item);
 
@@ -33,18 +33,18 @@ const bbLaptopPricePromise = (BBProdPrice, _id, link) => {
 }
 
 //set time clock iterate watch list, ***need to be revised latter***
-const py_clock_cycle = async () => {
+// const pyClockCycle = async () => {
 
-    const items = await Item.find({}).then(items => {
-        items.forEach((item => {
-            py_process(item._id, item.link);
-        }))
-    });
+//     const items = await Item.find({}).then(items => {
+//         items.forEach((item => {
+//             py_process(item._id, item.link);
+//         }))
+//     });
 
-}
+// }
 
 // load bb Condition New all products lists
-const py_bb_process = () => {
+const pyProcessBB = () => {
     let BBNum = new BBNumScript(BBItem);
     let BBSkuItems = new BBSkuItemScript(BBItem);
     //1. get bb sku-items num then
@@ -89,7 +89,7 @@ const bbAllLaptopsSkuItemsPromise = (BBSkuItems, num_of_pages) => {
     return getBBSkuItemsPromise;
 }
 
-const py_cc_process = () => {
+const pyProcessCC = () => {
     let CCNum = new CCNumScript(CCItem);
     let CCSkuItems = new CCSkuItemScript(CCItem);
     //1. get bb sku-items num then
@@ -145,9 +145,8 @@ const test = () => {
 }
 
 module.exports = {
-    py_process: py_process,
-    py_clock_cycle: py_clock_cycle,
-    py_bb_process: py_bb_process,
-    py_cc_process: py_cc_process,
+    pyProcess: pyProcess,
+    pyProcessBB: pyProcessBB,
+    pyProcessCC: pyProcessCC,
     test: test,
 }
