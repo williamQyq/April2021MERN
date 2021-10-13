@@ -40,13 +40,14 @@ const pyProcessBB = () => {
     //2. Each laptops page contains 24 sku items, calculate and init array of links.
     //3. for each page, for each sku item, findskuAndUpdate.
     bbAllLaptopsNewNumPromise(BBNum).then(() => {
-        console.log(`BB all laptops new condtion: ${BBNum.data}`);
+        console.log(`[BB num of all laptops new condtion]: ${BBNum.data}`);
         bbAllLaptopsSkuItemsPromise(BBSkuItems, BBNum.data).then(() => {
+            console.log("[BBSkuItem Script] update all sku items finished.\n")
         }, () => {
-            console.log("BBSkuItem Script Failure");
+            console.log("[BBSkuItem Script] Failure");
         })
     }, () => {
-        console.log("BBNum Script Failure.");
+        console.log("[BBNum Script] Failure.");
     })
 
 }
@@ -120,15 +121,18 @@ const ccAllLaptopsSkuItemsPromise = (CCSkuItems, num_of_pages) => {
 }
 
 const test = () => {
-    let item_data = {
-        name:"test",
-        link:"test",
-        sku:1,
-        currentPrice:2
-    }
-
-    const BBSkuScript = new BBSkuItemScript(BBItem); 
-    BBSkuScript.findSkuAndUpdate(item_data);
+    // console.log("[Test] starting test.js");
+    // item_link_info = {
+    //     "link": 'https://www.bestbuy.com/site/laptop-computers/all-laptops/pcmcat138500050001.c?id=pcmcat138500050001&qp=parent_operatingsystem_facet%3DParent%20Operating%20System~Windows',
+    //     "link_index": 1
+    // }
+    // item = {
+    //     sku: 6449496,
+    //     currentPrice: 360
+    // }
+    // BBSkuItem = new BBSkuItemScript(BBItem);
+    // python = BBSkuItem.spawnScript(item_link_info);
+    // BBSkuItem.listenOn(python);
 
 }
 

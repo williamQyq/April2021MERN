@@ -7,9 +7,9 @@ export const getBBItems = () => dispatch => {
     axios.get('/api/bb_items').then(res => {
 
         //modify created date time format in res.data
-        const items = Object.values(res.data);         
+        const items = Object.values(res.data);     
         items.map(item => {
-            item.created_date = Moment(item.created_date).format("MM-DD-YYYY HH:mm:ss");
+            item.captureDate = Moment(item.captureDate).format("MM-DD-YYYY HH:mm:ss");
             return item
         })
         dispatch({

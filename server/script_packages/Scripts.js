@@ -11,7 +11,7 @@ class Script {
     }
     spawnScript(arg) {
         let arg_strfy = JSON.stringify(arg);
-        console.log(`Start crawling ${this.constructor.name}...`)
+        console.log(`[Script] Start running ${this.constructor.name}...`)
         return spawn('python', [this.script_path, arg_strfy]);
     }
 
@@ -30,7 +30,7 @@ class Script {
     }
     listenClose(python, resolve) {
         python.on('close', (code) => {
-            console.log(`\n${this.constructor.name} child process close all stdio with code ${code}`);
+            // console.log(`\n${this.constructor.name} child process close all stdio with code ${code}`);
             resolve();
         })
     }
@@ -84,9 +84,10 @@ class BBSkuItemScript extends BBScript {
         this.script_path = './script_packages/bbSkuItem.py';
     }
     listenOn(python) {
-        python.stdout.pipe(require('JSONStream').parse()).on('data', (data) => {
-            // console.log(`Pipe data from script: ${this.constructor.name}...`);
-            this.findSkuAndUpdate(data)
+        python.stdout.pipe(require('JSONStream').parse()).on('data', (item) => {
+            let itemSku = parseInt(item.sku);
+            let itemCurPrice = parseFloat(item.currentPrice).toFixed(2);
+            this.findPriceChangedItemAndUpdate(itemSku, itemCurPrice);
         })
     }
     getLinkInfo(item_num) {
@@ -96,75 +97,65 @@ class BBSkuItemScript extends BBScript {
         })
     }
 
-    findSkuAndUpdate(item_data) {
+    findPriceChangedItemAndUpdate(itemSku, itemCurPrice) {
         //aggregate find item that matched on sku in DB, then update price changed item.
-        this.findPriceChangedItem(item_data).then(price_change_items => {
-            if (price_change_items.length != 0) {    //sku item in DB exists and price changed
-                let pChangeItem = price_change_items.pop();
-                let update = {
-                    $push: {
-                        price_timestamps: {
-                            price: item_data.currentPrice
-                        }
-                    }
-                },
-                    options = { upsert: true, new: true, setDefaultsOnInsert: true, useFindAndModify: false }
-
-                this.model.findByIdAndUpdate(pChangeItem._id, update, options).then(pChangeItem => {
-                    console.log(`Update price changed item in DB on SKU:${pChangeItem.sku}\n${JSON5.stringify(pChangeItem)}`)
-                });
-            } else {
-                this.setOnInsert(item_data);
-            }
-        })
-
-    }
-    findPriceChangedItem(item) {
-        return this.model.aggregate([
+        this.model.aggregate([
             {
                 $project: {
                     link: 1,
                     name: 1,
                     sku: 1,
-                    PreviousPrice: {
-                        $arrayElemAt: [
-                            "$price_timestamps.price", -1
-                        ]
-                    },
-                    IsCurrentPriceChanged: {
+                    previousPrice: { $arrayElemAt: ["$price_timestamps.price", -1] },
+                    isCurrentPriceChanged: {
                         $ne: [
-                            item.currentPrice,
-                            {
-                                $arrayElemAt: [
-                                    "$price_timestamps.price",
-                                    -1 // depends on prices stored by pushing to the end of history array.
-                                ]
-                            }
+                            itemCurPrice,
+                            { $arrayElemAt: ["$price_timestamps.price", -1] } // depends on prices stored by pushing to the end of history array.
                         ]
                     }
                 }
             },
             {
                 $match: {
-                    sku: item.sku,
-                    IsCurrentPriceChanged: true
+                    sku: itemSku,
+                    isCurrentPriceChanged: true
                 }
             }
-        ])
+        ]).then(priceChangeItem => {
+            this.findSkuAndUpdate(priceChangeItem,itemCurPrice);
+        })
     }
-    setOnInsert = (item) => {
-        let SET_ON_INSERT_QUERY = { sku: item.sku },
-            update = {
-                $setOnInsert: {
-                    sku: item.sku,
-                    name: item.name,
-                    link: item.link,
-                    price_timestamps: [{
-                        price: item.currentPrice
-                    }]
+    findSkuAndUpdate(priceChangeItem,itemCurPrice) {
+        let options = { upsert: true, new: true, setDefaultsOnInsert: true, useFindAndModify: false }
+        let update = {
+            $push: {
+                price_timestamps: {
+                    price: itemCurPrice
                 }
-            },
-            options = { upsert: true }
+            }
+        }
+        if(priceChangeItem.length>0){
+            let item = priceChangeItem.pop();
+            this.model.findByIdAndUpdate(item._id,update,options).then(updateItem => {
+                console.log(`Update price changed item in DB on SKU:${updateItem.sku}\n${JSON5.stringify(updateItem)}\n`)
+            })
+        } else{
+            this.setOnInsert(item);
+        }
+    }
+
+    setOnInsert = (item) => {
+        let SET_ON_INSERT_QUERY = { sku: item.sku };
+        let update = {
+            $setOnInsert: {
+                sku: item.sku,
+                name: item.name,
+                link: item.link,
+                price_timestamps: [{
+                    price: item.currentPrice
+                }]
+            }
+        };
+        let options = { upsert: true };
         this.model.updateOne(SET_ON_INSERT_QUERY, update, options).then((result) => {
             // console.log(`result:${JSON.stringify(result)}`)
             if (result.upserted) {

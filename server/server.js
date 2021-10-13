@@ -12,7 +12,7 @@ const server = require("http").createServer(app)
 const io = require("socket.io")(server);
 
 //run python process
-// const { pyProcess, pyClockCycle,  pyProcessBB, pyProcessCC, test} = require('./script_packages/py_process.js');
+const {test} = require('./script_packages/py_process.js');
 const {schedulerBB} = require('./script_packages/scripts_scheduler.js');    //process scripts scheduler
 
 //Connect to Mongo
@@ -64,10 +64,10 @@ db.once('open', () => {
         }
 
     })
-    // test();
+    test();
     // pyProcessBB();
     // pyProcessCC();
-    // schedulerBB.start();
+    schedulerBB.start();
 
     changeStream.on('change', (change) => {
         const doc = change.fullDocument;

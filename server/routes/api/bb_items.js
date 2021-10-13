@@ -19,7 +19,7 @@ router.get('/', (req, res) => {
                         "$price_timestamps.price", -1
                     ]
                 },
-                IsCurrentPriceLower: {
+                isCurrentPriceLower: {
                     $lt: [
                         {
                             $arrayElemAt: [
@@ -54,7 +54,7 @@ router.get('/', (req, res) => {
 
 
 router.post('/push_price/:_id', (req, res) => {
-    Item.findByIdAndUpdate(req.params._id, {
+    ItemBB.findByIdAndUpdate(req.params._id, {
         $push: {
             price_timestamps: {
                 price: req.body.currentPrice

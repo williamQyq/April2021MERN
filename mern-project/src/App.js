@@ -22,11 +22,11 @@ import {
 } from "react-router-dom";
 
 import io from 'socket.io-client';
-import PriceAlert from './component/PriceAlert';
-import InBound from './component/InBound';
-import ItemDetail from './component/ItemDetail';
-import BB from './component/BB';
-import CC from './component/CC';
+import PriceAlert from './component/PriceAlert.js';
+import InBound from './component/InBound.js';
+import ItemDetail from './component/ItemDetail.js';
+import BB from './component/BB.js';
+import CC from './component/CC.js';
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;

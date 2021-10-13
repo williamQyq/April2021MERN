@@ -13,7 +13,7 @@ import {
     ShoppingCartOutlined,
 } from '@ant-design/icons';
 
-const { Title } = Typography;
+const { Title,Text } = Typography;
 
 class BB extends React.Component {
     constructor(props) {
@@ -151,6 +151,11 @@ class BB extends React.Component {
                 dataIndex: 'currentPrice',
                 key: 'currentPrice',
                 width: '10%',
+                render: (text, record) => (
+                    record.isCurrentPriceLower? <Text type="success">{text}</Text>
+                    : <Text type="danger">{text}</Text>
+                )
+
             },
             {
                 title: 'Capture Date',
