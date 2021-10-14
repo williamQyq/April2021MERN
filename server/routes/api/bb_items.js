@@ -1,50 +1,34 @@
 const express = require('express');
 const router = express.Router();
 
-//Item Model
-const ItemBB = require('../../models/BBItem');
+
+const ItemBB = require('../../models/BBItem.js'); //Item Model
+const { getCurPrice,
+    getPrevPrice,
+    getPriceDiff,
+    getPriceCaptureDate,
+    sortOnPriceCaptureDate } = require('../../query/aggregate.js')
+
 // @route GET api/items
 router.get('/', (req, res) => {
     ItemBB.aggregate([
         {
             $project: {
-                key:"$_id",
+                key: "$_id",
                 link: 1,
                 name: 1,
                 sku: 1,
                 qty: 1,
                 upc: 1,
-                currentPrice: {
-                    $arrayElemAt: [
-                        "$price_timestamps.price", -1
-                    ]
-                },
+                currentPrice: getCurPrice,
                 isCurrentPriceLower: {
-                    $lt: [
-                        {
-                            $arrayElemAt: [
-                                "$price_timestamps.price", -1
-                            ]
-                        },
-                        {
-                            $arrayElemAt: [
-                                "$price_timestamps.price", -2
-                            ]
-                        }
-                    ]
+                    $lt: [getCurPrice, getPrevPrice]
                 },
-                captureDate: {
-                    $arrayElemAt: [
-                        "$price_timestamps.date", -1
-                    ]
-                },
+                priceDiff: getPriceDiff,
+                captureDate: getPriceCaptureDate
             }
         },
-        {
-            $sort:{
-                captureDate:-1
-            }
-        }
+        sortOnPriceCaptureDate
     ])
         .then(items => {
             res.json(items)

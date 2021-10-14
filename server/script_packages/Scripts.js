@@ -3,6 +3,8 @@ const { Product } = require('../models/PriceProduct.js');
 const JSON5 = require('json5');
 const JSONStream = require('JSONStream');
 
+const { getCurPrice } = require('../query/aggregate.js');
+
 // parent script 
 class Script {
     constructor(model) {
@@ -97,7 +99,7 @@ class BBSkuItemScript extends BBScript {
         })
     }
 
-    findPriceChangedItemAndUpdate(itemSku, itemCurPrice) {
+    findPriceChangedItemAndUpdate(itemSku, itemCapturePrice) {
         //aggregate find item that matched on sku in DB, then update price changed item.
         this.model.aggregate([
             {
@@ -105,11 +107,11 @@ class BBSkuItemScript extends BBScript {
                     link: 1,
                     name: 1,
                     sku: 1,
-                    previousPrice: { $arrayElemAt: ["$price_timestamps.price", -1] },
+                    previousPrice: getCurPrice,     //tricky, get db current price which becomes prev price.
                     isCurrentPriceChanged: {
                         $ne: [
-                            itemCurPrice,
-                            { $arrayElemAt: ["$price_timestamps.price", -1] } // depends on prices stored by pushing to the end of history array.
+                            itemCapturePrice,
+                            getCurPrice // depends on prices stored by pushing to the end of history array.
                         ]
                     }
                 }

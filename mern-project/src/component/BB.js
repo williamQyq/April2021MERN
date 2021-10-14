@@ -4,7 +4,7 @@ import '../styles/bb.scss';
 import { connect } from 'react-redux';
 import { getBBItems } from '../reducers/actions/itemBBActions';
 import PropTypes from 'prop-types';
-import { Table, Input, Button, Space, Typography, Row, Menu, Dropdown, Divider, Col } from 'antd';
+import { Table, Input, Button, Space, Typography, Row, Menu, Dropdown, Divider, Col, Tooltip } from 'antd';
 import Highlighter from 'react-highlight-words';
 import {
     SearchOutlined,
@@ -13,7 +13,7 @@ import {
     ShoppingCartOutlined,
 } from '@ant-design/icons';
 
-const { Title,Text } = Typography;
+const { Title, Text } = Typography;
 
 class BB extends React.Component {
     constructor(props) {
@@ -118,7 +118,7 @@ class BB extends React.Component {
     render() {
         const data = this.props.bb_item.items;
         // console.log(`loadingstatus=${JSON.stringify(this.props.bb_item.loading)}`)
-        
+
         //create columns data based on dataIndex
         const columns = [
             {
@@ -134,7 +134,7 @@ class BB extends React.Component {
                 title: 'UPC',
                 dataIndex: 'upc',
                 key: 'upc',
-                width: '20%',
+                width: '15%',
                 ...this.getColumnSearchProps('upc'),
             },
             {
@@ -142,20 +142,36 @@ class BB extends React.Component {
                 dataIndex: 'qty',
                 key: 'quantity',
                 width: '10%',
-
                 sorter: (a, b) => a.qty - b.qty,
                 sortDirections: ['descend', 'ascend'],
             },
             {
-                title: 'Current Price',
+                title: 'Price Diff',
+                dataIndex: 'priceDiff',
+                key: 'priceDiff',
+                width: '10%',
+                render: (text, record) => {
+                    text = Math.round(parseFloat(text));
+                    return (
+                        record.isCurrentPriceLower ? 
+                        <Text type="success">$ {text}</Text> : <Text type="danger">$ {text}</Text>
+                    )
+                }
+            },
+            {
+                title: <Tooltip
+                    placement="topLeft"
+                    title='Click to sort on price diff'>
+                    Current Price
+                </Tooltip>,
                 dataIndex: 'currentPrice',
                 key: 'currentPrice',
                 width: '10%',
+                sorter: (a, b) => a.priceDiff - b.priceDiff,
                 render: (text, record) => (
-                    record.isCurrentPriceLower? <Text type="success">{text}</Text>
-                    : <Text type="danger">{text}</Text>
+                    record.isCurrentPriceLower ? <Text type="success">$ {text}</Text>
+                        : <Text type="danger">$ {text}</Text>
                 )
-
             },
             {
                 title: 'Capture Date',
@@ -216,7 +232,9 @@ class BB extends React.Component {
                     </Col>
                 </Row>
                 <Divider />
-                <Table columns={columns}
+                <Table
+                    showSorterTooltip={false}
+                    columns={columns}
                     dataSource={data}
                     pagination={{
                         defaultPageSize: 20,
