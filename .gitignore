@@ -1,5 +1,3 @@
-server/config/keys.js
-server/node_modules/
+*.exe
 node_modules/
-server/python_packages/mypackage/chromedriver.exe
-server/python_packages/mypackage/__pycache__/
+__pycache__/

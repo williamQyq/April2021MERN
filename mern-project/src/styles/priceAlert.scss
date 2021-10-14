@@ -1,17 +1,46 @@
-.price-alert {
-        height: 32px;
-        margin: 16px;
-}
-.add-item{
-
-}
-.list-item{
-
-}
-.list-item-price{
-        margin-left: 5px;
-        margin-right: 35px;
-        // color: rgb(52, 199, 89);
-        color: rgb(36, 138, 61);
-        font-size: large;
+.item-list {
+        overflow: auto;
+        // min-height: 350px;
+        height: 90%;
+        .list-item {
+                &:hover{
+                        background: rgb(152,152,157,0.1);
+                }
+                
+                .list-item-link {
+                        display: inline-flex;
+                        width: 100%;
+                        .ant-list-item-meta-content{
+                                max-width: 60%;
+                                .list-item-upc{
+                                        display:block;
+                                }
+                        }
+                        
+                        .list-item-price-before-changed {
+                                margin-right: 10px;
+                                align-self: center;
+                                color: rgb(142, 142, 147);
+                                font-size: large;
+                        }
+                        .list-item-price-down {
+                                // margin-right: 20px;
+                                align-self: center;
+                                color: rgb(52, 199, 89);
+                                font-size: large;
+                        }
+                        .list-item-price-up {
+                                // margin-right: 20px;
+                                align-self: center;
+                                color: rgb(255, 69, 58);
+                                font-size: large;
+                        }
+                        .list-item-price-oos {
+                                
+                                align-self: center;
+                                color: rgb(142, 142, 147);
+                                font-size: large
+                        }
+                }
+        }
 }

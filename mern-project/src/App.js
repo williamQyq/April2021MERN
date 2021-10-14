@@ -2,93 +2,94 @@ import React from 'react';
 import './styles/app.scss';
 // import './styles/app.less';
 import 'antd/dist/antd.css';
-import { Layout, Menu } from 'antd'; 
+import { Layout, Menu } from 'antd';
 import {
-  UserOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   UploadOutlined,
   AlertOutlined,
   MonitorOutlined,
-  RobotOutlined
+  RobotOutlined,
+  BarcodeOutlined,
+  BankOutlined,
+  ShoppingOutlined
 } from '@ant-design/icons';
-import MainContent from './component/MainContent'
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
 
 import io from 'socket.io-client';
-
-const socket = io.connect();
-
+import PriceAlert from './component/PriceAlert.js';
+import InBound from './component/InBound.js';
+import ItemDetail from './component/ItemDetail.js';
+import BB from './component/BB.js';
+import CC from './component/CC.js';
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
-
+const socket = io.connect();
 class App extends React.Component {
 
-  constructor(props){
+  constructor(props) {
     super(props)
     this.state = {
-      content_key:'PRICE_ALERT',
       collapsed: false,
+      socket:null,
     };
   };
 
-  toggle = () =>{
+  toggle = () => {
     this.setState({
       collapsed: !this.state.collapsed,
     });
   };
 
-  handleContentKey = (key) => {
-    this.setState({content_key: key});
-  };
-  getContentKey = () => {
-    const content_key = this.state.content_key;
-    return content_key;
-  }
-
   render() {
 
     return (
-      <Layout className="main-layout">
-        <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
-          <div className="logo" />
-          <Menu 
-            theme="dark" 
-            mode="inline" 
-            defaultSelectedKeys={["PRICE_ALERT"]} 
-            onClick={(e)=> this.handleContentKey(e.key)}
-            >
-            <SubMenu key = "sub1" icon={<AlertOutlined/>} title="Alert">
-              <Menu.Item key="PRICE_ALERT" icon={<MonitorOutlined/>}>Price Alert</Menu.Item>
-              <Menu.Item key="PURCHASE_BOT" icon={<RobotOutlined/>}>Purchase Bot</Menu.Item>
-            </SubMenu>
-            <Menu.Item key="3" icon={<UserOutlined />}>
-              nav 1
-            </Menu.Item>
-            <Menu.Item key="4" icon={<UploadOutlined />}>
-              nav 3
-            </Menu.Item>
-          </Menu>
-        </Sider>
-        <Layout className="site-layout">
-          <Header className="site-layout-background" style={{ padding: 0 }}>
-            {React.createElement(this.state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-              className: 'trigger',
-              onClick: this.toggle,
-            })}
-          </Header>
-          <Content
-            className="site-layout-background"
-            style={{
-              margin: '24px 16px',
-              padding: 24,
-              minHeight: 280,
-            }}
-          >
-            <MainContent getContentKey={this.getContentKey} socket={socket}/>
-          </Content>
+      <Router>
+        <Layout className="main-layout">
+          <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
+            <div className="logo">RS</div>
+            <Menu theme="dark" mode="inline">
+              <SubMenu key="ALERT" icon={<AlertOutlined />} title="Alert">
+                <Menu.Item key="BestBuy" icon={<ShoppingOutlined />}><Link to='/bestbuy-list'>BestBuy</Link></Menu.Item>
+                <Menu.Item key="CostCo" icon={<ShoppingOutlined/>}><Link to='/costco-list'>CostCo</Link></Menu.Item>
+                <Menu.Item key="PRICE-ALERT" icon={<MonitorOutlined />}><Link to='/price-alert'>Price Alert</Link></Menu.Item>
+                <Menu.Item key="PURCHASE-BOT"icon={<RobotOutlined />}> <Link to='/purchase-bot'>Purchase Bot</Link> </Menu.Item>
+              </SubMenu>
+              <SubMenu key="WAREHOUSE"icon={<BankOutlined />} title="Warehouse">
+                <Menu.Item key="INBOUND"icon={<BarcodeOutlined />}><Link to='/inbound'> <InBound/></Link></Menu.Item>
+                <Menu.Item key="OUTBOUND" icon={<BarcodeOutlined />}>Outbound</Menu.Item>
+              </SubMenu>
+              <Menu.Item key="nav3" icon={<UploadOutlined />}>nav 3</Menu.Item>
+            </Menu>
+          </Sider>
+
+          <Layout className="site-layout">
+            <Header className="site-layout-background" style={{ padding: 0 }}>
+              {React.createElement(this.state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+                className: 'trigger',
+                onClick: this.toggle,
+              })}
+            </Header>
+            <Content className="site-layout-content">
+              
+              <Switch>
+                <Route path='/bestbuy-list'><BB socket={socket}/></Route>
+                <Route path='/price-alert'> <PriceAlert  socket={socket}/> </Route>
+                <Route path='/inbound'> <InBound /> </Route>
+                <Route path='/item-detail'> <ItemDetail/></Route>
+                <Route path='/costco-list'><CC socket={socket}/></Route>
+              </Switch>
+              
+            </Content>
+          </Layout>
         </Layout>
-      </Layout>
+      </Router>
     );
   }
 

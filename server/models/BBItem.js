@@ -1,10 +1,14 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-//Create Schema
-const ItemSchema = new Schema({
+//Create Schema for self tracking list 
+const BBItemSchema = new Schema({
     link:{
         type: String,
+        require:true
+    },
+    sku:{
+        type: Number,
         require:true
     },
     name:{
@@ -13,7 +17,7 @@ const ItemSchema = new Schema({
     },
     price_timestamps:[{
         price:{
-            type: String,
+            type: Number,
         },
         date:{
             type: Date,
@@ -24,6 +28,6 @@ const ItemSchema = new Schema({
         type: Date,
         default: Date.now
     }
-}, {collection: 'product_price_listings'});
+}, {collection: 'bb_item_listings'});
 
-module.exports = Item = mongoose.model('item', ItemSchema);
+module.exports = BBItem = mongoose.model('bb_item', BBItemSchema);

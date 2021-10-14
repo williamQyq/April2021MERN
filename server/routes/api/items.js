@@ -2,8 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 //Item Model
-const Item = require('../../models/Item');
-
+const Item = require('../../models/WatchListItem');
 // @route GET api/items
 router.get('/', (req, res) => {
     Item.find()
@@ -27,6 +26,16 @@ router.delete('/:id', (req, res) => {
     Item.findById(req.params.id)
         .then(item => item.remove().then(()=> res.json({success: true})))
         .catch(err => res.status(404).json({success: false}));
+});
+
+router.post('/push_price/:_id', (req, res) => {
+    Item.findByIdAndUpdate(req.params._id, {
+        $push: {
+            price_timestamps: {
+                price: req.body.currentPrice
+            }
+        }
+    },{ useFindAndModify: false }).then(item =>res.json({success:true}));
 });
 
 

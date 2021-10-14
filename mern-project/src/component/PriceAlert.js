@@ -2,56 +2,132 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { getItems, deleteItem } from '../reducers/actions/itemActions';
 import PropTypes from 'prop-types';
-import { Button, List } from 'antd';
 import '../styles/priceAlert.scss';
 import {
     LaptopOutlined,
+    SearchOutlined,
+    ShoppingCartOutlined,
+    DownOutlined
 } from '@ant-design/icons';
-import AddItemModal from "./AddItemModal"
+import { Typography, Row, Button, List, Menu, Dropdown} from 'antd';
+
+import AddItemModal from "./AddItemModal";
+import { Link } from "react-router-dom";
+
+const { Title, Text } = Typography;
 
 class PriceAlert extends React.Component {
+    constructor(props) {
+        super(props);
 
-    state = {
-        socket: this.props.socket,
-        change: {},
+        this.state = {
+            socket: this.props.socket,
+            change: false,
+        }
     }
-
     componentDidMount() {
         const socket = this.state.socket;
-
         this.props.getItems();
-        socket.on(`server:changestream`, listing => {
-            this.setState({ change: listing });
-            this.props.getItems();
 
+        socket.on(`server:changestream`,()=> {
+            this.setState({ change: true });
+            this.props.getItems();
         });
+
+        this.setState({change: false});
     }
 
     onDeleteClick = (_id) => {
         this.props.deleteItem(_id);
 
     }
+    getItemName = (item) => {
+        return item.name ? item.name : "Loading";
+    }
+
+    getMostRecentPrice = (item) => {
+        return item.price_timestamps.at(-1).price ? item.price_timestamps.at(-1).price : "Loading";
+    }
+
+    getPriceBeforeChanged = (item) => {
+        const price_timestamps = item.price_timestamps;
+        const most_recent_price = this.getMostRecentPrice(item);
+        for (let i = price_timestamps.length - 1; i >= 0; i--) {
+            if (price_timestamps[i].price !== most_recent_price && price_timestamps[i].price !== null) {
+                return price_timestamps[i].price;
+            }
+        }
+        return false
+    }
+    getItemUPC = (item) => {
+        return item.upc ? item.upc : ""
+    }
 
     render() {
+
         const data = this.props.item.items;
+        const menu = (
+            <Menu>
+                <Menu.Item>
+                    <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
+                        <SearchOutlined />
+                    </a>
+                </Menu.Item>
+                <Menu.Item>
+                    <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
+                        <ShoppingCartOutlined />
+                    </a>
+                </Menu.Item>
+            </Menu>
+        );
+
         return (
+
             <React.Fragment>
-                <AddItemModal/>
+                <Row gutter={16}>
+                    <Title className="title">Watch List</Title>
+                    <AddItemModal />
+                </Row>
+
                 <List
+                    className="item-list"
+                    alignItems='center'
                     itemLayout="horizontal"
                     dataSource={data}
                     renderItem={(item) => (
-                        <List.Item>
-                            <List.Item.Meta className="list-item"
-                                avatar={
-                                    // <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-                                    <LaptopOutlined twoToneColor="#52c41a" />
+                        <List.Item className="list-item" actions={[
+                            <Button danger type="link" onClick={this.onDeleteClick.bind(this, item._id)}> Delete </Button>,
+                            <Dropdown overlay={menu} placement="bottomCenter">
+                                <a href="# " className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                                    Actions<DownOutlined />
+                                </a>
+                            </Dropdown>
+                        ]}>
+
+                            <Link to='/item-detail' className="list-item-link">
+
+                                <List.Item.Meta className="list-item-meta"
+                                    avatar={<LaptopOutlined twoToneColor="#52c41a" />}
+                                    title={<Title level={5}>{this.getItemName(item)}</Title>}
+                                    description={<React.Fragment>
+                                        <Text className="list-item-upc">UPC: {this.getItemUPC}</Text>
+                                        <Text>{item.created_date}</Text>
+                                    </React.Fragment>
+                                    }
+                                />
+
+
+                                {this.getPriceBeforeChanged(item) > 0 ?
+                                    <Text className="list-item-price-before-changed" delete>${this.getPriceBeforeChanged(item)}</Text>:
+                                    <Text className="list-item-price-before-changed" delete>${this.getMostRecentPrice(item)}</Text>
                                 }
-                                title={<a href={item.link} target="_blank" rel="noopener noreferrer">{item.name}</a>}
-                                description={item.created_date}
-                            />
-                            <div className="list-item-price">${item.price_timestamps[item.price_timestamps.length-1].price}</div>          
-                            <Button danger type="link" onClick={this.onDeleteClick.bind(this, item._id)}> Delete </Button>
+
+                                {this.getMostRecentPrice(item) !== -1 ?
+                                    <Text className={this.getMostRecentPrice(item) < this.getPriceBeforeChanged(item) ? "list-item-price-down" : "list-item-price-up"}>
+                                        ${this.getMostRecentPrice(item)}</Text> : <Text className="list-item-price-oos">OUT OF STOCK
+                                    </Text>
+                                }
+                            </Link>
                         </List.Item>
                     )}
                 />
