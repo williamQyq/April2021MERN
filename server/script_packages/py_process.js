@@ -122,15 +122,18 @@ const ccAllLaptopsSkuItemsPromise = (CCSkuItems, num_of_pages) => {
 
 const test = () => {
     // console.log("[Test] starting test.js");
-    // item_link_info = {
-    //     "link": 'https://www.bestbuy.com/site/laptop-computers/all-laptops/pcmcat138500050001.c?id=pcmcat138500050001&qp=parent_operatingsystem_facet%3DParent%20Operating%20System~Windows',
-    //     "link_index": 1
-    // }
+    item_link_info = {
+        "link": 'https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&browsedCategory=pcmcat138500050001&id=pcat17071&iht=n&ks=960&list=y&qp=condition_facet%3DCondition~New&sc=Global&st=categoryid%24pcmcat138500050001&type=page&usc=All%20Categories',
+        "link_index": 2
+    }
+
     // item = {
-    //     sku: 6449496,
-    //     currentPrice: 360
+    //     sku:6449496,
+    //     currentPrice: 449.99
     // }
+    // item.currentPrice = Number(item.currentPrice);
     // BBSkuItem = new BBSkuItemScript(BBItem);
+    // BBSkuItem.findPriceChangedItemAndUpdate(item)
     // python = BBSkuItem.spawnScript(item_link_info);
     // BBSkuItem.listenOn(python);
 

@@ -68,7 +68,7 @@ class BBScript extends Script {
     constructor(model) {
         super(model);
         this.script_path = './script_packages/priceTracker.py';
-        this.link = `https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&browsedCategory=pcmcat138500050001&id=pcat17071&iht=n&ks=960&list=y&qp=condition_facet%3DCondition~New%5Eparent_operatingsystem_facet%3DParent%20Operating%20System~Windows&sc=Global&st=categoryid%24pcmcat138500050001&type=page&usc=All%20Categories`;
+        this.link = `https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&browsedCategory=pcmcat138500050001&id=pcat17071&iht=n&ks=960&list=y&qp=condition_facet%3DCondition~New&sc=Global&st=categoryid%24pcmcat138500050001&type=page&usc=All%20Categories`;
     }
 }
 
@@ -86,62 +86,23 @@ class BBSkuItemScript extends BBScript {
         this.script_path = './script_packages/bbSkuItem.py';
     }
     listenOn(python) {
-        python.stdout.pipe(require('JSONStream').parse()).on('data', (item) => {
-            let itemSku = parseInt(item.sku);
-            let itemCurPrice = parseFloat(item.currentPrice).toFixed(2);
-            this.findPriceChangedItemAndUpdate(itemSku, itemCurPrice);
+        python.stdout.pipe(require('JSONStream').parse()).on('data', (data) => {
+            data.sku = parseInt(data.sku);
+            data.currentPrice = Number(data.currentPrice);    //tricky, convert data.currentPrice from string to number, instead of parseFloat toFixed.
+            this.insertAndUpdateItem(data);
         })
     }
-    getLinkInfo(item_num) {
+    getLinkInfo(item_num) {     //return link and calculate the # of pages need to loop.
         return ({
             link: this.link,
             link_index: Math.ceil(item_num / 24)
         })
     }
+    insertAndUpdateItem(itemBB) {
+        let isSkuInsert = this.setOnInsert(itemBB); //true if insert new item; false if item exists.
 
-    findPriceChangedItemAndUpdate(itemSku, itemCapturePrice) {
-        //aggregate find item that matched on sku in DB, then update price changed item.
-        this.model.aggregate([
-            {
-                $project: {
-                    link: 1,
-                    name: 1,
-                    sku: 1,
-                    previousPrice: getCurPrice,     //tricky, get db current price which becomes prev price.
-                    isCurrentPriceChanged: {
-                        $ne: [
-                            itemCapturePrice,
-                            getCurPrice // depends on prices stored by pushing to the end of history array.
-                        ]
-                    }
-                }
-            },
-            {
-                $match: {
-                    sku: itemSku,
-                    isCurrentPriceChanged: true
-                }
-            }
-        ]).then(priceChangeItem => {
-            this.findSkuAndUpdate(priceChangeItem,itemCurPrice);
-        })
-    }
-    findSkuAndUpdate(priceChangeItem,itemCurPrice) {
-        let options = { upsert: true, new: true, setDefaultsOnInsert: true, useFindAndModify: false }
-        let update = {
-            $push: {
-                price_timestamps: {
-                    price: itemCurPrice
-                }
-            }
-        }
-        if(priceChangeItem.length>0){
-            let item = priceChangeItem.pop();
-            this.model.findByIdAndUpdate(item._id,update,options).then(updateItem => {
-                console.log(`Update price changed item in DB on SKU:${updateItem.sku}\n${JSON5.stringify(updateItem)}\n`)
-            })
-        } else{
-            this.setOnInsert(item);
+        if (!isSkuInsert) {
+            this.findPriceChangedItemAndUpdate(itemBB);
         }
     }
 
@@ -158,16 +119,66 @@ class BBSkuItemScript extends BBScript {
             }
         };
         let options = { upsert: true };
-        this.model.updateOne(SET_ON_INSERT_QUERY, update, options).then((result) => {
+
+        this.model.updateOne(SET_ON_INSERT_QUERY, update, options).then(result => {       //insert if sku not exists
             // console.log(`result:${JSON.stringify(result)}`)
             if (result.upserted) {
-                console.log(`Insert new item into DB on SKU: ${item.sku}`)
-            } else {
-                console.log(`Item exists, Price no Changed: ${item.sku}`);
+                console.log(`Inserted new item into DB on SKU: ${item.sku}`)
+                return true;
             }
         });
-
+        return false;
     }
+    findPriceChangedItemAndUpdate(itemBB) {
+        //aggregate find item that matched on sku in DB, then update price changed item.
+        this.model.aggregate([
+            {
+                $project: {
+                    link: 1,
+                    name: 1,
+                    sku: 1,
+                    previousPrice: getCurPrice,     //tricky, get db current price which becomes prev price.
+                    isCurrentPriceChanged: {        //check if capture price equal current price in db.
+                        $ne: [
+                            itemBB.currentPrice,       //lastest price from scrape
+                            getCurPrice             //price in db
+                        ]
+                    }
+                }
+            },
+            {
+                $match: {
+                    sku: itemBB.sku,
+                    isCurrentPriceChanged: true
+                }
+            }
+        ]).then(changedItems => {
+            this.findSkuAndUpdate(changedItems, itemBB);
+        })
+    }
+
+    findSkuAndUpdate(changedItems, itemBB) {
+
+        let itemDB = changedItems.pop(); //aggregate array result; if item price changed, else pop empty arr and get null.
+        let options = { upsert: true, new: true, setDefaultsOnInsert: true, useFindAndModify: false }
+        let update = {
+            $push: {
+                price_timestamps: {
+                    price: itemBB.currentPrice
+                }
+            }
+        }
+
+        if (itemDB != null) {   //if found the price of itemSku changed
+            this.model.findByIdAndUpdate(itemDB._id, update, options).then(item => {
+                console.log(`Update price changed item in DB on SKU:${item.sku}\n${JSON5.stringify(item)}\n`)
+            })
+        } else {
+            console.log(`Item exists, Price not Changed: ${itemBB.sku}`);
+        }
+    }
+
+
 
 }
 
