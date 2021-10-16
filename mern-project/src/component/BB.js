@@ -12,6 +12,7 @@ import {
     PlusCircleOutlined,
     ShoppingCartOutlined,
 } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 
@@ -23,7 +24,7 @@ class BB extends React.Component {
             // socket: this.props.socket,
             searchText: '',
             searchedColumn: '',
-            loading: false,
+            loading: true,
         };
 
     }
@@ -153,8 +154,8 @@ class BB extends React.Component {
                 render: (text, record) => {
                     text = Math.round(parseFloat(text));
                     return (
-                        record.isCurrentPriceLower ? 
-                        <Text type="success">$ {text}</Text> : <Text type="danger">$ {text}</Text>
+                        record.isCurrentPriceLower ?
+                            <Text type="success">$ {text}</Text> : <Text type="danger">$ {text}</Text>
                     )
                 }
             },
@@ -178,8 +179,9 @@ class BB extends React.Component {
                 dataIndex: 'captureDate',
                 key: 'captureDate',
                 width: '10%',
+                defaultSortOrder: 'descend',
                 sorter: (a, b) => new Date(a.captureDate) - new Date(b.captureDate),
-                sortDirections: ['descend', 'ascend'],
+                sortDirections: ['descend', 'ascend', 'descend'],
             },
             {
                 title: 'Action',
@@ -207,9 +209,16 @@ class BB extends React.Component {
                     </Button>
                 </Menu.Item>
                 <Menu.Item>
+
                     <Button className="menu-btn">
-                        <SearchOutlined />
+                        <Link
+                            to="/item-detail"
+                            state={{ test: 'dd' }}
+                        >
+                            <SearchOutlined />
+                        </Link>
                     </Button>
+
                 </Menu.Item>
                 <Menu.Item>
                     <Button className="menu-btn">
