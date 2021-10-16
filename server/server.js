@@ -11,8 +11,9 @@ app.use(express.json());
 const server = require("http").createServer(app)
 const io = require("socket.io")(server);
 
-//run python process
-const {test} = require('./script_packages/py_process.js');
+//unit test for python scripts
+const {test} = require('./unit_test.js');
+//cron schelduler
 const {schedulerBB} = require('./script_packages/scripts_scheduler.js');    //process scripts scheduler
 
 //Connect to Mongo

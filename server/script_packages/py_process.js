@@ -6,8 +6,7 @@ const {
     BBScript,
     BBNumScript,
     BBSkuItemScript,
-    CCNumScript,
-    CCSkuItemScript } = require('./scripts.js');
+} = require('./Scripts.js');
 
 
 const pyProcess = (_id, link) => {
@@ -40,8 +39,8 @@ const pyProcessBB = () => {
     //2. Each laptops page contains 24 sku items, calculate and init array of links.
     //3. for each page, for each sku item, findskuAndUpdate.
     bbAllLaptopsNewNumPromise(BBNum).then(() => {
-        console.log(`[BB num of all laptops new condtion]: ${BBNum.data}`);
-        bbAllLaptopsSkuItemsPromise(BBSkuItems, BBNum.data).then(() => {
+        console.log(`[BB num of all laptops new condtion]: ${BBNum.data.num} - ${BBNum.data.num_per_page}/per page.`);
+        bbAllLaptopsSkuItemsPromise(BBSkuItems, BBNum.data.num, BBNum.data.num_per_page).then(() => {
             console.log("[BBSkuItem Script] update all sku items finished.\n")
         }, () => {
             console.log("[BBSkuItem Script] Failure");
@@ -67,8 +66,8 @@ const bbAllLaptopsNewNumPromise = (BBNum) => {
 }
 
 // get all laptops sku-items promise, resolve when retrieve all skus, names, currentPrices.
-const bbAllLaptopsSkuItemsPromise = (BBSkuItems, num_of_pages) => {
-    const link_info = BBSkuItems.getLinkInfo(num_of_pages);
+const bbAllLaptopsSkuItemsPromise = (BBSkuItems, num, numPerPage) => {
+    const link_info = BBSkuItems.getLinkInfo(num,numPerPage);
     const sku_items_python = BBSkuItems.spawnScript(link_info);
     BBSkuItems.listenOn(sku_items_python);
     const getBBSkuItemsPromise = new Promise((resolve, reject) => {
@@ -78,70 +77,9 @@ const bbAllLaptopsSkuItemsPromise = (BBSkuItems, num_of_pages) => {
     return getBBSkuItemsPromise;
 }
 
-const pyProcessCC = () => {
-    let CCNum = new CCNumScript(CCItem);
-    let CCSkuItems = new CCSkuItemScript(CCItem);
-    //1. get cc sku-items num then
-    //2. Each laptops page contains 24 sku items, calculate and init array of links.
-    //3. for each page, for each sku item, findskuAndUpdate.
-    ccAllLaptopsNewNumPromise(CCNum).then(() => {
-        // ccAllLaptopsSkuItemsPromise(CCSkuItems, CCNum.data).then(() => {
-        // }, () => {
-        //     console.log("CCSkuItem Script Failure");
-        // })
-    }, () => {
-        console.log("CCNum Script Failure.");
-    })
-}
-// get all laptops new condition number promise, resolve when retrieve items number.
-const ccAllLaptopsNewNumPromise = (CCNum) => {
-
-    //spawn script to get items number
-    const python = CCNum.spawnScript(CCNum.link);
-
-    // listen for script, get total items number
-    CCNum.listenOn(python);
-    const getAllLaptopsNumPromise = new Promise((resolve, reject) => {
-        CCNum.listenClose(python, resolve);
-        CCNum.listenErr(python, reject);
-    });
-    return getAllLaptopsNumPromise;
-}
-
-// get all laptops sku-items promise, resolve when retrieve all skus, names, currentPrices.
-const ccAllLaptopsSkuItemsPromise = (CCSkuItems, num_of_pages) => {
-    const link_info = CCSkuItems.getLinkInfo(num_of_pages);
-    const sku_items_python = CCSkuItems.spawnScript(link_info);
-    CCSkuItems.listenOn(sku_items_python);
-    const getCCSkuItemsPromise = new Promise((resolve, reject) => {
-        CCSkuItems.listenClose(sku_items_python, resolve);
-        CCSkuItems.listenErr(sku_items_python, reject);
-    });
-    return getCCSkuItemsPromise;
-}
-
-const test = () => {
-    // console.log("[Test] starting test.js");
-    item_link_info = {
-        "link": 'https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&browsedCategory=pcmcat138500050001&id=pcat17071&iht=n&ks=960&list=y&qp=condition_facet%3DCondition~New&sc=Global&st=categoryid%24pcmcat138500050001&type=page&usc=All%20Categories',
-        "link_index": 2
-    }
-
-    // item = {
-    //     sku:6449496,
-    //     currentPrice: 449.99
-    // }
-    // item.currentPrice = Number(item.currentPrice);
-    // BBSkuItem = new BBSkuItemScript(BBItem);
-    // BBSkuItem.findPriceChangedItemAndUpdate(item)
-    // python = BBSkuItem.spawnScript(item_link_info);
-    // BBSkuItem.listenOn(python);
-
-}
-
 module.exports = {
     pyProcess: pyProcess,
     pyProcessBB: pyProcessBB,
-    pyProcessCC: pyProcessCC,
-    test: test,
+    // pyProcessCC: pyProcessCC,
+
 }

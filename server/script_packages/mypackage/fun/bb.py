@@ -72,17 +72,29 @@ def check_product_instock(driver):
 
 
 def get_sku_items_num(driver, sku_item_link):
+    num_info = dict()
+
     driver.get(sku_item_link)
 
     try:
         item_count = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located(
-                (By.CLASS_NAME, "item-count"))
+                (By.XPATH, "//div[@class='footer top-border wrapper']//span"))
         ).text
-
     except:
         return False
-    return re.sub('[^0-9]', '', item_count)
+    
+    p_total_num = ".* of (\d*) items"
+    p_num_per_page = "\d*-(\d*) of \d*"
+    
+    try:
+        num_info["num_per_page"] = re.search(p_num_per_page, item_count).group(1)
+        num_info["num"] = re.search(p_total_num,item_count).group(1)
+    except:
+        num_info["num_per_page"]=0
+        num_info["num"] = 0
+
+    return num_info
 
 # get all Laptops New sku items
 def get_sku_items(driver, link, index):

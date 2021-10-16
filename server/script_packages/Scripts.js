@@ -38,7 +38,7 @@ class Script {
     }
     listenErr(python, reject) {
         python.on('error', () => {
-            console.log(`\n${this.constructor.name} child process close with ERROR`);
+            console.log(`\n${this.constructor.name} ***child process close with ERROR***`);
             reject();
         })
     }
@@ -87,15 +87,20 @@ class BBSkuItemScript extends BBScript {
     }
     listenOn(python) {
         python.stdout.pipe(require('JSONStream').parse()).on('data', (data) => {
-            data.sku = parseInt(data.sku);
-            data.currentPrice = Number(data.currentPrice);    //tricky, convert data.currentPrice from string to number, instead of parseFloat toFixed.
-            this.insertAndUpdateItem(data);
+            
+            if(!isNaN(data.sku)){   //validate non package sku items
+                data.sku = Number(data.sku);
+                data.currentPrice = Number(data.currentPrice);    //tricky, convert data.currentPrice from string to number, instead of parseFloat toFixed.
+                this.insertAndUpdateItem(data);
+            } else {
+                console.log(`Attention**, this item does not have sku. Skip: ${data.sku}`);
+            }
         })
     }
-    getLinkInfo(item_num) {     //return link and calculate the # of pages need to loop.
+    getLinkInfo(totalNum, numPerPage) {     //return link and calculate the # of pages need to loop.
         return ({
             link: this.link,
-            link_index: Math.ceil(item_num / 24)
+            link_index: Math.ceil(totalNum / numPerPage)
         })
     }
     insertAndUpdateItem(itemBB) {
@@ -182,56 +187,9 @@ class BBSkuItemScript extends BBScript {
 
 }
 
-class CCNumScript extends Script {
-    constructor(model) {
-        super(model);
-        this.script_path = './script_packages/ccLaptopsNum.py';
-        this.link = 'https://www.costco.com/laptops.html';
-    }
-}
-class CCSkuItemScript extends Script {
-    constructor(model) {
-        super(model);
-        this.script_path = './script_packages/ccSkuItem.py';
-    }
-    listenOn(python) {
-        python.stdout.pipe(JSONStream.parse()).on('data', (data) => {
-            // console.log(`Pipe data from script: ${this.constructor.name}...`);
-            console.log(`Pipe data into DB on SKU:${data.sku}\n ${JSON5.stringify(data)}`)
-            this.findSkuAndUpdate(data)
-        })
-    }
-    getLinkInfo(item_num) {
-        return ({
-            link: this.link,
-            link_index: Math.ceil(item_num / 24)
-        })
-    }
-
-    findSkuAndUpdate(item) {
-        let query = { sku: item.sku },
-            update = {
-                name: item.name,
-                link: item.link,
-                price_timestamps: [{
-                    price: item.currentPrice
-                }]
-            },
-            options = { upsert: true, new: true, setDefaultsOnInsert: true, useFindAndModify: false }
-
-        this.model.findOneAndUpdate(query, update, options, (err, doc) => {
-            if (err) return;
-
-            // console.log(`sku-item doc update:${doc}`);
-        })
-    }
-
-}
-
 module.exports = {
     BBScript: BBScript,
     BBNumScript: BBNumScript,
     BBSkuItemScript: BBSkuItemScript,
-    CCNumScript: CCNumScript,
-    CCSkuItemScript: CCSkuItemScript
+   
 }
