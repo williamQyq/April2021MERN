@@ -53,7 +53,7 @@ class App extends React.Component {
       <Router>
         <Layout className="main-layout">
           <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
-            <div className="logo">RS</div>
+            <div className="logo">William's ERP</div>
             <Menu theme="dark" mode="inline">
               <SubMenu key="ALERT" icon={<AlertOutlined />} title="Alert">
                 <Menu.Item key="BestBuy" icon={<ShoppingOutlined />}><Link to='/bestbuy-list'>BestBuy</Link></Menu.Item>
@@ -79,6 +79,7 @@ class App extends React.Component {
             <Content className="site-layout-content">
               
               <Switch>
+                <Route exact path='/' component={BB}/>
                 <Route path='/bestbuy-list'><BB socket={socket}/></Route>
                 <Route path='/price-alert'> <PriceAlert  socket={socket}/> </Route>
                 <Route path='/inbound'> <InBound /> </Route>

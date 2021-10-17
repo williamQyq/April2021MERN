@@ -1,0 +1,21 @@
+.main-grid{
+    width: 100%;
+    height: 100%;
+    padding-top: 12px;
+    .left-panel{
+        padding: 0 6px;
+
+        .price-row{
+            padding-top:16px;
+            .price-row-price{
+                margin-right: 8px;
+            }
+        }
+        
+
+    }
+
+    .right-panel{
+        padding: 0 6px;
+    }
+}

@@ -189,7 +189,7 @@ class BB extends React.Component {
                 width: '10%',
                 render: (text, record) => (
                     <Space size="middle">
-                        <Dropdown overlay={menu} placement="bottomCenter">
+                        <Dropdown overlay={menu(record)} placement="bottomCenter">
                             <a href="# " className="ant-dropdown-link" onClick={e => e.preventDefault()}>
                                 More Actions <DownOutlined />
                             </a>
@@ -201,7 +201,7 @@ class BB extends React.Component {
         ];
         const { loading } = this.state;
 
-        const menu = (
+        const menu = (record) => (
             <Menu>
                 <Menu.Item>
                     <Button className="menu-btn">
@@ -211,10 +211,10 @@ class BB extends React.Component {
                 <Menu.Item>
 
                     <Button className="menu-btn">
-                        <Link
-                            to="/item-detail"
-                            state={{ test: 'dd' }}
-                        >
+                        <Link to={{
+                            pathname: "/item-detail",
+                            state: {item: record }
+                        }}>
                             <SearchOutlined />
                         </Link>
                     </Button>
