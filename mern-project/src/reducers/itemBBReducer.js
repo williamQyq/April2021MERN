@@ -1,4 +1,4 @@
-import {GET_BB_ITEMS,ITEMS_LOADING} from './actions/types';
+import {GET_BB_ITEMS,GET_BB_ITEM_DETAIL,ITEMS_LOADING} from './actions/types';
 
 const initialState = {
     bb_items:[],
@@ -18,6 +18,11 @@ export default function Reducer (state  = initialState, action) {
             return {
                 ...state,
                 loading:true
+            }
+        case GET_BB_ITEM_DETAIL:
+            return {
+                ...state,
+                loading: false
             }
         default:
             return state;

@@ -47,5 +47,10 @@ router.post('/push_price/:_id', (req, res) => {
     }, { useFindAndModify: false }).then(item => res.json({ success: true }));
 });
 
+router.get('/detail/:_id', (req, res) => {
+    ItemBB.findById(req.params._id)
+        .then(item => res.json(item));
+});
+
 
 module.exports = router;

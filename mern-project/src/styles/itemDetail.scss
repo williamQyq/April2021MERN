@@ -1,21 +1,32 @@
+
 .main-grid{
+    min-width: 1400px;
     width: 100%;
     height: 100%;
     padding-top: 12px;
-    .left-panel{
-        padding: 0 6px;
+    overflow-y: auto;
+    
 
-        .price-row{
-            padding-top:16px;
-            .price-row-price{
-                margin-right: 8px;
-            }
+    .price-row{
+        padding-top:16px;
+        .price-row-price{
+            margin-right: 8px;
+        }
+    }
+    .left-panel{
+        min-width: 60%;
+        padding: 0 6px;
+        .chart-row{
+            height: 100%;
+            width: 100%;
+
         }
         
 
     }
 
     .right-panel{
+        width: 100%;
         padding: 0 6px;
     }
 }

@@ -1,3 +1,14 @@
+::-webkit-scrollbar {
+    width: 4px;
+}
+::-webkit-scrollbar-track {
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background-color: rgb(142,142,147);
+    border-radius: 10px;
+}
+
 .main-layout {
     position: fixed;
     width: 100%;

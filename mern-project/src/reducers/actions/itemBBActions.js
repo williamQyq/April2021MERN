@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Moment from 'moment';
-import { GET_BB_ITEMS, ITEMS_LOADING } from './types';
+import { GET_BB_ITEMS, GET_BB_ITEM_DETAIL, ITEMS_LOADING } from './types';
 
 export const getBBItems = () => dispatch => {
     dispatch(setItemsLoading());
@@ -24,4 +24,14 @@ export const setItemsLoading = () => {
     return {
         type: ITEMS_LOADING
     };
+};
+
+export const getItemDetail = (_id) => dispatch => {
+    dispatch(setItemsLoading());
+    axios.get(`/api/bb_items/detail/:_id`).then(res => {
+        dispatch({
+            type: GET_BB_ITEM_DETAIL,
+            payload: res.data
+        })
+    })
 };
