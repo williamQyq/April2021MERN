@@ -22,6 +22,7 @@ export default function Reducer (state  = initialState, action) {
         case GET_BB_ITEM_DETAIL:
             return {
                 ...state,
+                itemDetail: action.payload,
                 loading: false
             }
         default:

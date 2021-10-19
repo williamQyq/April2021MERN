@@ -117,7 +117,7 @@ class BB extends React.Component {
         e.preventDefault();
     }
     render() {
-        const data = this.props.bb_item.items;
+        const data = this.props.itemBB.items;
         // console.log(`loadingstatus=${JSON.stringify(this.props.bb_item.loading)}`)
 
         //create columns data based on dataIndex
@@ -203,12 +203,12 @@ class BB extends React.Component {
 
         const menu = (record) => (
             <Menu>
-                <Menu.Item>
+                <Menu.Item key="AddToWatchList">
                     <Button className="menu-btn">
                         <PlusCircleOutlined />
                     </Button>
                 </Menu.Item>
-                <Menu.Item>
+                <Menu.Item key="GetItemDetail">
 
                     <Button className="menu-btn">
                         <Link to={{
@@ -220,7 +220,7 @@ class BB extends React.Component {
                     </Button>
 
                 </Menu.Item>
-                <Menu.Item>
+                <Menu.Item key="AddToCart">
                     <Button className="menu-btn">
                         <ShoppingCartOutlined />
                     </Button>
@@ -260,11 +260,11 @@ class BB extends React.Component {
 BB.prototypes = {
     getBBItems: PropTypes.func.isRequired,
 
-    bb_item: PropTypes.object.isRequired,
+    itemBB: PropTypes.object.isRequired,
 }
 
 const mapStateToProps = (state) => ({
-    bb_item: state.bb_item
+    itemBB: state.itemBB
 })
 
 export default connect(mapStateToProps, { getBBItems })(BB);

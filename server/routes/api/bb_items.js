@@ -49,7 +49,7 @@ router.post('/push_price/:_id', (req, res) => {
 
 router.get('/detail/:_id', (req, res) => {
     ItemBB.findById(req.params._id)
-        .then(item => res.json(item));
+        .then(itemDetail => res.json(itemDetail));
 });
 
 

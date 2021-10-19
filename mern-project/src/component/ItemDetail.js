@@ -1,8 +1,8 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, withRouter } from 'react-router-dom'; // Link pass state props to leftPanel and sideitemDetail
 import 'antd/dist/antd.css';
 import '../styles/itemDetail.scss';
-import { Layout, Row, Col, Divider, Typography, Spin } from 'antd';
+import { Row, Col, Divider, Typography, Spin } from 'antd';
 import { SyncOutlined } from '@ant-design/icons';
 import { Line } from 'react-chartjs-2';
 import UTILS from '../styles/Util.js';
@@ -11,28 +11,37 @@ import { getItemDetail } from '../reducers/actions/itemBBActions';
 import PropTypes from 'prop-types';
 
 const { Text, Title } = Typography;
-const { Content, Sider } = Layout;
 const antIcon = <SyncOutlined spin />;
 
+class ItemDetail extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            item: this.props.location.state.item
+        };
+    }
 
-const ItemDetail = (props) => {
-    const location = useLocation()
-    const { item } = location.state;
-    console.log(`props:\n${JSON.stringify(props)}`);
-    // props.getItemDetail(item._id);
-    return (
+    componentDidMount() {
+        // console.log(this.state.item._id)
+        // this.props.getItemDetail(this.state.item._id);
+    }
 
-        <Row className="main-grid">
-            <LeftPanel item={item}/>
-            <SideBarControl />
+    render() {
+        const { item } = this.state;
+        return (
+            <Row className="main-grid">
+                {console.log(item)}
+                <LeftPanel item={item} />
+                <SidePanel />
+            </Row>
+        );
+    }
 
-        </Row>
-
-
-    );
 }
+
 const LeftPanel = (props) => {
     const item = props.item;
+
     const getPriceDiffPercentage = () => {
         let percentage = (item.priceDiff / item.currentPrice) * 100;
         return parseFloat(percentage).toFixed(2);
@@ -126,7 +135,7 @@ const PriceHistoryChart = () => {
 }
 
 
-const SideBarControl = () => {
+const SidePanel = () => {
     return (
         <Col flex="1 0 27.7777777778%" className="right-panel">
             <Text>sidebar</Text>
@@ -135,15 +144,18 @@ const SideBarControl = () => {
 }
 
 ItemDetail.prototypes = {
+    location: PropTypes.object.isRequired,
     getItemDetail: PropTypes.func.isRequired,
+    itemDetail: PropTypes.object.isRequired,
 
-    bb_item: PropTypes.object.isRequired,
+    // bb_item: PropTypes.object.isRequired,
 }
 
-const mapStateToProps = (state) => ({
-    bb_item: state.bb_item
-})
 
 
-export default connect(mapStateToProps, {getItemDetail})(ItemDetail);
+//state contains reducers
+const mapStateToProps = (state) => {
+    return ({ itemDetail: state.itemDetail })
+}
 
+export default withRouter(connect(mapStateToProps, { getItemDetail })(ItemDetail));

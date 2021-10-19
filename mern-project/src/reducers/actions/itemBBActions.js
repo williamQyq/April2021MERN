@@ -31,7 +31,7 @@ export const getItemDetail = (_id) => dispatch => {
     axios.get(`/api/bb_items/detail/:_id`).then(res => {
         dispatch({
             type: GET_BB_ITEM_DETAIL,
-            payload: res.data
+            payload: _id
         })
     })
 };
