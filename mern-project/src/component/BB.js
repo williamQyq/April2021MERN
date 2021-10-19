@@ -213,7 +213,7 @@ class BB extends React.Component {
                     <Button className="menu-btn">
                         <Link to={{
                             pathname: "/item-detail",
-                            state: {item: record }
+                            state: {itemId: record._id }
                         }}>
                             <SearchOutlined />
                         </Link>

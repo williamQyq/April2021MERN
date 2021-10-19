@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 
 const ItemBB = require('../../models/BBItem.js'); //Item Model
 const { getCurPrice,
@@ -48,8 +49,29 @@ router.post('/push_price/:_id', (req, res) => {
 });
 
 router.get('/detail/:_id', (req, res) => {
-    ItemBB.findById(req.params._id)
-        .then(itemDetail => res.json(itemDetail));
+    
+    ItemBB.aggregate([
+        {
+            $project: {
+                link: 1,
+                name: 1,
+                sku: 1,
+                qty: 1,
+                upc: 1,
+                price_timestamps: 1,
+                currentPrice: getCurPrice,
+                priceDiff: getPriceDiff,
+            }
+        },
+        {
+            $match: {
+                _id: ObjectId(req.params._id)
+            }
+        }
+    ])
+        .then(items => {
+            res.json(items.pop())
+        });
 });
 
 
