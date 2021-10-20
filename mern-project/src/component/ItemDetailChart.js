@@ -1,6 +1,9 @@
+import React from 'react';
 import UTILS from '../styles/Util.js';
 import { Line } from 'react-chartjs-2';
 import { BorderRightOutlined } from '@ant-design/icons';
+import { Divider } from 'antd';
+import ChartMenu from './ItemDetailChartMenu.js';
 
 const PriceHistoryChart = (props) => {
     const { price_timestamps, priceDiff } = props.item;
@@ -71,9 +74,15 @@ const PriceHistoryChart = (props) => {
     };
 
     return (
-        <Line
-            data={config.data}
-            options={config.options} />
+        <React.Fragment>
+            <Line
+                data={config.data}
+                options={config.options} />
+            <Divider dashed={true} />
+                <ChartMenu/>
+            <Divider />
+        </React.Fragment>
+
     );
 }
 //set price chart labels

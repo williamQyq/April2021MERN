@@ -1,32 +1,37 @@
+.main-grid {
 
-.main-grid{
+    margin:auto;
     min-width: 1400px;
-    width: 100%;
+    width: 66%;
     height: 100%;
     padding-top: 12px;
-    overflow-y: auto;
     
+    
+}
 
-    .price-row{
-        padding-top:16px;
-        .price-row-price{
+.left-panel {
+    min-width: 60%;
+    padding: 0 6px;
+    .price-row {
+        padding-top: 16px;
+        .price-row-price {
             margin-right: 8px;
         }
     }
-    .left-panel{
-        min-width: 60%;
-        padding: 0 6px;
-        .chart-row{
-            
-            width: 900px;
-
+    .chart-row {
+        width: 900px;
+    }
+    .key-stat-row {
+        margin-top: 36px;
+        padding-top: 2px;
+        .key-stat-col {
+            width: 192px;
+            margin-right: 48px;
         }
-        
-
     }
+}
 
-    .right-panel{
-        width: 100%;
-        padding: 0 6px;
-    }
+.right-panel {
+    width: 100%;
+    padding: 0 6px;
 }

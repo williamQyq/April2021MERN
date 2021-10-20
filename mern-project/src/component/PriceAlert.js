@@ -9,7 +9,7 @@ import {
     ShoppingCartOutlined,
     DownOutlined
 } from '@ant-design/icons';
-import { Typography, Row, Button, List, Menu, Dropdown} from 'antd';
+import { Typography, Row, Button, List, Menu, Dropdown, Divider} from 'antd';
 
 import AddItemModal from "./AddItemModal";
 import { Link } from "react-router-dom";
@@ -85,13 +85,12 @@ class PriceAlert extends React.Component {
 
             <React.Fragment>
                 <Row gutter={16}>
-                    <Title className="title">Watch List</Title>
+                    <Title level={3}className="title">Watch List</Title>
                     <AddItemModal />
                 </Row>
-
+                <Divider/>
                 <List
                     className="item-list"
-                    alignItems='center'
                     itemLayout="horizontal"
                     dataSource={data}
                     renderItem={(item) => (

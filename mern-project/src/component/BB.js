@@ -21,7 +21,6 @@ class BB extends React.Component {
         super(props);
 
         this.state = {
-            // socket: this.props.socket,
             searchText: '',
             searchedColumn: '',
             loading: true,
@@ -213,7 +212,7 @@ class BB extends React.Component {
                     <Button className="menu-btn">
                         <Link to={{
                             pathname: "/item-detail",
-                            state: {itemId: record._id }
+                            state: { itemId: record._id }
                         }}>
                             <SearchOutlined />
                         </Link>
@@ -229,10 +228,10 @@ class BB extends React.Component {
         );
 
         return (
-            <React.Fragment>
+            <React.Fragment className="bb">
                 <Row gutter={16} style={{ alignItems: 'center' }}>
                     <Col>
-                        <Title level={3} className="title">Best Buy</Title>
+                        <Title level={4}>Best Buy</Title>
                     </Col>
                     <Col>
                         <Button type="primary" onClick={e => this.handleClick(e)} disabled={loading} loading={loading}>
@@ -246,11 +245,11 @@ class BB extends React.Component {
                     columns={columns}
                     dataSource={data}
                     pagination={{
-                        defaultPageSize: 20,
+                        defaultPageSize: 100,
                         showSizeChanger: true,
                         pageSizeOptions: ['10', '20', '50', '100']
                     }}
-                    scroll={{ y: "calc(100vh - 330px)" }} />
+                    scroll={{ y: "calc(100vh - 335px)" }} />
 
             </React.Fragment>
         )

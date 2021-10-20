@@ -1,13 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Row, Col, Divider, Typography, Spin } from 'antd';
+import { Row, Col, Typography, Spin } from 'antd';
 import PriceHistoryChart from './ItemDetailChart.js';
 import { SyncOutlined } from '@ant-design/icons';
-
+import '../styles/itemDetail.scss';
 import { getItemDetail } from '../reducers/actions/itemBBActions.js';
 import PropTypes from 'prop-types';
-
-const { Text, Title } = Typography;
+import KeyStatistics from './ItemDetailStat.js'
+const { Title } = Typography;
 const antIcon = <SyncOutlined spin />;
 
 class LeftPanel extends React.Component {
@@ -43,14 +43,9 @@ class LeftPanel extends React.Component {
                         <Title level={5} className="price-row-price">${item.currentPrice}</Title>
                         <Spin indicator={antIcon} style={{ fontSize: 0, color: 'black' }} />
                     </Row>
-                    <Row className="price-row-nd"><Title level={5}>${item.priceDiff} ({this.getPriceDiffPercentage(item)}%) Today</Title></Row>
+                    <Row ><Title level={5}>${item.priceDiff} ({this.getPriceDiffPercentage(item)}%) Today</Title></Row>
                     <Row className="chart-row"><PriceHistoryChart item={item} /></Row>
-                    <Divider />
-                    <Row>
-                        <Title level={3}>Key Statistics</Title>
-                        <Divider />
-
-                    </Row>
+                    <KeyStatistics />
                 </Col>
             )
         } else {
