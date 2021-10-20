@@ -2,35 +2,27 @@ import UTILS from '../styles/Util.js';
 import { Line } from 'react-chartjs-2';
 
 const PriceHistoryChart = (props) => {
-    const { priceHistory } = props;
+    const priceTimeStamps = props.item.price_timestamps;
+
+    const labels = setLabels(priceTimeStamps);
+    const datapoints = setDataPoints(priceTimeStamps);
     
-    // console.log(`*** ${JSON.stringify(priceHistory)}`)
-    // const labels = priceHistory.map(ts => {
-    //     return ts.date;
-    // })
-    const DATA_COUNT = 12;
-    const labels = [];
-    for (let i = 0; i < DATA_COUNT; ++i) {
-        labels.push(i.toString());
-    }
-
-    const datapoints = [20, 40, 20, 60, 60, 120, 0, 20, 20, 60, 1, 60, 0, 20, 20, 60, 60, 120];
-
     const data = {
         labels: labels,
         datasets: [
             {
-                label: 'Profit History',
+                label: 'BB Price History',
                 data: datapoints,
-                borderColor: UTILS.COLORS.BLACK,
+                borderColor: UTILS.COLORS_RGB.BLACK,
                 fill: false,
                 tension: 0.4
-            }, {
-                label: 'History',
-                data: datapoints,
-                borderColor: UTILS.COLORS.BLACK,
-                fill: false
             }
+            // , {
+            //     label: 'History',
+            //     data: datapoints,
+            //     borderColor: UTILS.COLORS.BLACK,
+            //     fill: false
+            // }
         ]
     };
     const config = {
@@ -38,7 +30,6 @@ const PriceHistoryChart = (props) => {
         data: data,
         options: {
             responsive: true,
-            // maintainAspectRatio: false,
             plugins: {
                 title: {
                     display: false,
@@ -50,8 +41,7 @@ const PriceHistoryChart = (props) => {
             },
             scales: {
                 x: {
-
-                    display: false,
+                    display: true,
                     title: {
                         display: true
                     }
@@ -62,8 +52,8 @@ const PriceHistoryChart = (props) => {
                         display: true,
                         text: 'Value'
                     },
-                    suggestedMin: -10,
-                    suggestedMax: 200
+                    suggestedMin: 200,
+                    suggestedMax: 1500,
                 }
             }
         },
@@ -74,6 +64,27 @@ const PriceHistoryChart = (props) => {
             data={config.data}
             options={config.options} />
     );
+}
+//set price chart labels
+function setLabels(priceTimeStamps) {
+    let labels = [];
+    const first_ts = priceTimeStamps[0];
+    labels = priceTimeStamps.map(ts => {
+        return ts.date;
+    })
+    labels.unshift(first_ts.date)   //double insert first element of timestamps, make it a line.
+    return labels;
+}
+//set price chart datapoints
+function setDataPoints(priceTimeStamps) {
+    let datapoints = [];
+    const first_ts = priceTimeStamps[0];  
+
+    datapoints = priceTimeStamps.map(ts => {
+        return ts.price;
+    })
+    datapoints.unshift(first_ts.price); //double insert first element of timestamps, make it a line.
+    return datapoints;
 }
 
 export default PriceHistoryChart;

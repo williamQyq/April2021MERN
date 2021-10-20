@@ -28,8 +28,6 @@ class ItemDetail extends React.Component {
 
 }
 
-
-
 const SidePanel = () => {
     return (
         <Col flex="1 0 27.7777777778%" className="right-panel">

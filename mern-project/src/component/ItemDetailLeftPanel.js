@@ -13,46 +13,49 @@ const antIcon = <SyncOutlined spin />;
 class LeftPanel extends React.Component {
     constructor(props) {
         super(props);
-        this.state={
+        this.state = {
             itemId: props.itemId,
             item: props.itemBB.itemDetail
         }
     }
-    
-    componentDidMount(){
-        this.props.getItemDetail(this.state.itemId)
+
+    componentDidMount() {
+        this.props.getItemDetail(this.state.itemId);
     }
 
     getPriceDiffPercentage = (item) => {
         let percentage = 0;
-    
+
         if (item.priceDiff != null) {
             percentage = (item.priceDiff / item.currentPrice) * 100;
         }
-    
+
         return parseFloat(percentage).toFixed(2);
     }
-    
+
     render() {
         const item = this.props.itemBB.itemDetail;
-        return (
-            <Col flex="1 0 66.6666666667%" className="left-panel" >
-                <Row><Title level={4}>{item.name}</Title></Row>
-                <Row className="price-row">
-                    <Title level={5} className="price-row-price">${item.currentPrice}</Title>
-                    <Spin indicator={antIcon} style={{ fontSize: 0, color: 'black' }} />
-
-                </Row>
-                <Row className="price-row-nd"><Title level={5}>${item.priceDiff} ({this.getPriceDiffPercentage(item)}%) Today</Title></Row>
-                <Row className="chart-row"><PriceHistoryChart priceHistory={item.price_timestamps} /></Row>
-                <Divider />
-                <Row>
-                    <Title level={3}>Key Statistics</Title>
+        if (item != null) {
+            return (
+                <Col flex="1 0 66.6666666667%" className="left-panel" >
+                    <Row><Title level={4}>{item.name}</Title></Row>
+                    <Row className="price-row">
+                        <Title level={5} className="price-row-price">${item.currentPrice}</Title>
+                        <Spin indicator={antIcon} style={{ fontSize: 0, color: 'black' }} />
+                    </Row>
+                    <Row className="price-row-nd"><Title level={5}>${item.priceDiff} ({this.getPriceDiffPercentage(item)}%) Today</Title></Row>
+                    <Row className="chart-row"><PriceHistoryChart item={item} /></Row>
                     <Divider />
+                    <Row>
+                        <Title level={3}>Key Statistics</Title>
+                        <Divider />
 
-                </Row>
-            </Col>
-        );
+                    </Row>
+                </Col>
+            )
+        } else {
+            return null;
+        }
     }
 }
 
