@@ -70,7 +70,7 @@ router.get('/detail/:_id', (req, res) => {
         }
     ])
         .then(items => {
-            res.json(items.pop())
+            res.json(items)
         });
 });
 

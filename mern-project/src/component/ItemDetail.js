@@ -4,8 +4,6 @@ import 'antd/dist/antd.css';
 import '../styles/itemDetail.scss';
 import { Row, Col, Typography } from 'antd';
 
-import { connect } from 'react-redux';
-import { getItemDetail } from '../reducers/actions/itemBBActions';
 import PropTypes from 'prop-types';
 import LeftPanel from './ItemDetailLeftPanel.js'
 
@@ -19,17 +17,10 @@ class ItemDetail extends React.Component {
         };
     }
 
-    componentDidMount() {
-        // console.log(`location itemId*** ${this.state.itemId}`);
-        this.props.getItemDetail(this.state.itemId);
-    }
-
     render() {
-        const itemDetail = this.props.itemDetail.itemDetail;
-        console.log(`location***\n${JSON.stringify(this.props.location)}`)
         return (
             <Row className="main-grid">
-                <LeftPanel item={itemDetail} />
+                <LeftPanel itemId={this.state.itemId} />
                 <SidePanel />
             </Row>
         );
@@ -49,15 +40,8 @@ const SidePanel = () => {
 
 ItemDetail.prototypes = {
     location: PropTypes.object.isRequired,
-    getItemDetail: PropTypes.func.isRequired,
-    itemDetail: PropTypes.object.isRequired,
 
     // bb_item: PropTypes.object.isRequired,
 }
 
-//state contains reducers
-const mapStateToProps = (state) => {
-    return ({ itemDetail: state.itemDetail })
-}
-
-export default withRouter(connect(mapStateToProps, { getItemDetail })(ItemDetail));
+export default withRouter(ItemDetail);

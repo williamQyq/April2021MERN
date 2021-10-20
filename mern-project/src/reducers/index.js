@@ -7,6 +7,5 @@ export default combineReducers({
     item: itemReducer,
     itemBB: itemBBReducer,
     itemCC: itemCCReducer,
-    itemDetail: itemBBReducer,
     
 })

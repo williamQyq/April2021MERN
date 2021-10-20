@@ -2,10 +2,10 @@ import UTILS from '../styles/Util.js';
 import { Line } from 'react-chartjs-2';
 
 const PriceHistoryChart = (props) => {
-    // const { priceHistory } = props;
+    const { priceHistory } = props;
     
     // console.log(`*** ${JSON.stringify(priceHistory)}`)
-    // const labels = priceHistory.map((ts) => {
+    // const labels = priceHistory.map(ts => {
     //     return ts.date;
     // })
     const DATA_COUNT = 12;
@@ -14,7 +14,7 @@ const PriceHistoryChart = (props) => {
         labels.push(i.toString());
     }
 
-    const datapoints = [0, 20, 20, 60, 60, 120, 0, 20, 20, 60, 1, 60, 0, 20, 20, 60, 60, 120];
+    const datapoints = [20, 40, 20, 60, 60, 120, 0, 20, 20, 60, 1, 60, 0, 20, 20, 60, 60, 120];
 
     const data = {
         labels: labels,
