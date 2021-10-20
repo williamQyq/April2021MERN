@@ -1,19 +1,21 @@
 import UTILS from '../styles/Util.js';
 import { Line } from 'react-chartjs-2';
+import { BorderRightOutlined } from '@ant-design/icons';
 
 const PriceHistoryChart = (props) => {
-    const priceTimeStamps = props.item.price_timestamps;
+    const { price_timestamps, priceDiff } = props.item;
 
-    const labels = setLabels(priceTimeStamps);
-    const datapoints = setDataPoints(priceTimeStamps);
-    
+    const labels = setLabels(price_timestamps);
+    const datapoints = setDataPoints(price_timestamps);
+    const borderColor = setBorderColor(priceDiff);
+
     const data = {
         labels: labels,
         datasets: [
             {
-                label: 'BB Price History',
+                label: '$',
                 data: datapoints,
-                borderColor: UTILS.COLORS_RGB.BLACK,
+                borderColor: borderColor,
                 fill: false,
                 tension: 0.4
             }
@@ -35,6 +37,9 @@ const PriceHistoryChart = (props) => {
                     display: false,
                     text: 'Chart.js Line Chart - Cubic interpolation mode'
                 },
+                legend: {
+                    display: false
+                }
             },
             interaction: {
                 intersect: false,
@@ -44,6 +49,9 @@ const PriceHistoryChart = (props) => {
                     display: true,
                     title: {
                         display: true
+                    },
+                    grid: {
+                        display: false
                     }
                 },
                 y: {
@@ -54,6 +62,9 @@ const PriceHistoryChart = (props) => {
                     },
                     suggestedMin: 200,
                     suggestedMax: 1500,
+                    grid: {
+                        display: false
+                    }
                 }
             }
         },
@@ -67,6 +78,7 @@ const PriceHistoryChart = (props) => {
 }
 //set price chart labels
 function setLabels(priceTimeStamps) {
+
     let labels = [];
     const first_ts = priceTimeStamps[0];
     labels = priceTimeStamps.map(ts => {
@@ -77,8 +89,9 @@ function setLabels(priceTimeStamps) {
 }
 //set price chart datapoints
 function setDataPoints(priceTimeStamps) {
+
     let datapoints = [];
-    const first_ts = priceTimeStamps[0];  
+    const first_ts = priceTimeStamps[0];
 
     datapoints = priceTimeStamps.map(ts => {
         return ts.price;
@@ -87,4 +100,14 @@ function setDataPoints(priceTimeStamps) {
     return datapoints;
 }
 
+function setBorderColor(priceDiff) {
+    let borderColor = UTILS.COLORS_RGB.BLACK;
+
+    if (priceDiff > 0) {
+        borderColor = UTILS.COLORS_RGB.RED
+    } else if (priceDiff < 0) {
+        borderColor = UTILS.COLORS_RGB.GREEN
+    }
+    return borderColor;
+}
 export default PriceHistoryChart;
