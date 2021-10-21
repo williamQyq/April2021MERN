@@ -6,7 +6,7 @@ import { Row, Col, Typography } from 'antd';
 
 import PropTypes from 'prop-types';
 import LeftPanel from './ItemDetailLeftPanel.js'
-
+import { LeftOutlined } from '@ant-design/icons';
 const { Text } = Typography;
 
 class ItemDetail extends React.Component {
@@ -16,13 +16,20 @@ class ItemDetail extends React.Component {
             itemId: this.props.location.state.itemId
         };
     }
+    goBack = () => {
+        this.props.history.goBack();
+    }
 
     render() {
         return (
-            <Row className="main-grid">
-                <LeftPanel itemId={this.state.itemId} />
-                <SidePanel />
-            </Row>
+            <React.Fragment>
+                <Row className="main-grid">
+                    <LeftOutlined className="go-back-btn" style={{ fontSize: '24px' }} onClick={this.goBack} />
+                    <LeftPanel itemId={this.state.itemId} />
+                    <SidePanel />
+                    
+                </Row>
+            </React.Fragment>
         );
     }
 

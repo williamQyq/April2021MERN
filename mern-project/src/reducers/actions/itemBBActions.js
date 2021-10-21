@@ -1,13 +1,13 @@
 import axios from 'axios';
 import Moment from 'moment';
-import { GET_BB_ITEMS, GET_BB_ITEM_DETAIL, ITEMS_LOADING } from './types';
+import { GET_BB_ITEMS, GET_BB_ITEM_DETAIL, ITEMS_LOADING, SET_TABLE_STATE } from './types';
 
 export const getBBItems = () => dispatch => {
     dispatch(setItemsLoading());
     axios.get('/api/bb_items').then(res => {
 
         //modify created date time format in res.data
-        let items = Object.values(res.data);     
+        let items = Object.values(res.data);
         items = items.map(item => {
             item.captureDate = Moment(item.captureDate).format("MM-DD-YYYY HH:mm:ss");
             return item
@@ -34,10 +34,18 @@ export const getItemDetail = (_id) => dispatch => {
         item.price_timestamps.forEach(ts => {
             ts.date = Moment(ts.date).format("MMM Do YYYY HH:mm a");
         });
-        
+
         dispatch({
             type: GET_BB_ITEM_DETAIL,
             payload: item
         })
     })
 };
+
+export const setTableState = (state) => dispatch => {
+    
+    dispatch({
+        type: SET_TABLE_STATE,
+        payload: state
+    })
+}

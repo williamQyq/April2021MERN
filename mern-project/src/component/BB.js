@@ -2,7 +2,7 @@ import React from 'react';
 import 'antd/dist/antd.css';
 import '../styles/bb.scss';
 import { connect } from 'react-redux';
-import { getBBItems } from '../reducers/actions/itemBBActions';
+import { getBBItems, setTableState } from '../reducers/actions/itemBBActions';
 import PropTypes from 'prop-types';
 import { Table, Input, Button, Space, Typography, Row, Menu, Dropdown, Divider, Col, Tooltip } from 'antd';
 import Highlighter from 'react-highlight-words';
@@ -22,14 +22,34 @@ class BB extends React.Component {
 
         this.state = {
             searchText: '',
+            historySearchedText: '',
             searchedColumn: '',
             loading: true,
+            tableRowHight: 75.31,   //antd table row height
+            tableState: {
+                priceDiff: null,
+                currentPrice: null,
+                captureDate: null,
+            },
         };
 
     }
 
     componentDidMount() {
         this.props.getBBItems();
+        this.handleScrollPosition();
+    }
+
+    handleScrollPosition = () => {
+        const itemDetail = this.props.itemBB.itemDetail;
+        const items = this.props.itemBB.items;
+        let index = 0;
+        if (itemDetail) {
+            index = items.findIndex(item => item.sku == itemDetail.sku);
+            this.setState({ historySearchedText: itemDetail.name })
+        }
+        let v = document.getElementsByClassName("ant-table-body")[0];
+        v.scrollTop = this.state.tableRowHight * (index - 3);
     }
 
     getColumnSearchProps = dataIndex => ({
@@ -95,7 +115,17 @@ class BB extends React.Component {
                     />
                 </a>
             ) : (
-                <a target="_blank" rel="noopener noreferrer" href={record.link}>{text}</a>
+                this.state.historySearchedText == text ?
+                    <a target="_blank" rel="noopener noreferrer" href={record.link}>
+                        <Highlighter
+                            highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+                            searchWords={[this.state.historySearchedText]}
+                            autoEscape
+                            textToHighlight={text ? text.toString() : ''}
+                        />
+                    </a>
+                    :
+                    <a target="_blank" rel="noopener noreferrer" href={record.link}>{text}</a>
             ))
     });
 
@@ -113,10 +143,14 @@ class BB extends React.Component {
     };
 
     handleClick = (e) => {
-        e.preventDefault();
+        console.log(`Click`, e);
+        this.props.setTableState(this.state.sortState);
     }
+
     render() {
         const data = this.props.itemBB.items;
+        const { loading, tableState } = this.state;
+
         // console.log(`loadingstatus=${JSON.stringify(this.props.bb_item.loading)}`)
 
         //create columns data based on dataIndex
@@ -127,8 +161,8 @@ class BB extends React.Component {
                 key: 'name',
                 width: '30%',
                 ...this.getColumnSearchProps('name'),
-                sorter: (a, b) => a.name.length - b.name.length,
-                sortDirections: ['descend', 'ascend'],
+                // sorter: (a, b) => a.name.length - b.name.length,
+                // sortDirections: ['descend', 'ascend'],
             },
             {
                 title: 'UPC',
@@ -143,13 +177,16 @@ class BB extends React.Component {
                 key: 'quantity',
                 width: '10%',
                 sorter: (a, b) => a.qty - b.qty,
-                sortDirections: ['descend', 'ascend'],
             },
             {
                 title: 'Price Diff',
                 dataIndex: 'priceDiff',
                 key: 'priceDiff',
                 width: '10%',
+                defaultSortOrder: tableState.priceDiff,
+                sorter: (a, b) => {
+                    return (a.priceDiff - b.priceDiff)
+                },
                 render: (text, record) => {
                     text = Math.round(parseFloat(text));
                     return (
@@ -167,7 +204,8 @@ class BB extends React.Component {
                 dataIndex: 'currentPrice',
                 key: 'currentPrice',
                 width: '10%',
-                sorter: (a, b) => a.priceDiff - b.priceDiff,
+                defaultSortOrder: tableState.currentPrice,
+                sorter: (a, b) => a.currentPrice - b.currentPrice,
                 render: (text, record) => (
                     record.isCurrentPriceLower ? <Text type="success">$ {text}</Text>
                         : <Text type="danger">$ {text}</Text>
@@ -178,7 +216,7 @@ class BB extends React.Component {
                 dataIndex: 'captureDate',
                 key: 'captureDate',
                 width: '10%',
-                defaultSortOrder: 'descend',
+                defaultSortOrder: tableState.captureDate,
                 sorter: (a, b) => new Date(a.captureDate) - new Date(b.captureDate),
                 sortDirections: ['descend', 'ascend', 'descend'],
             },
@@ -189,7 +227,7 @@ class BB extends React.Component {
                 render: (text, record) => (
                     <Space size="middle">
                         <Dropdown overlay={menu(record)} placement="bottomCenter">
-                            <a href="# " className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                            <a href="# " className="ant-dropdown-link" >
                                 More Actions <DownOutlined />
                             </a>
                         </Dropdown>
@@ -198,7 +236,6 @@ class BB extends React.Component {
             },
 
         ];
-        const { loading } = this.state;
 
         const menu = (record) => (
             <Menu>
@@ -213,7 +250,8 @@ class BB extends React.Component {
                         <Link to={{
                             pathname: "/item-detail",
                             state: { itemId: record._id }
-                        }}>
+                        }}
+                            onClick={e => this.handleClick(e, tableState)}>
                             <SearchOutlined />
                         </Link>
                     </Button>
@@ -228,13 +266,13 @@ class BB extends React.Component {
         );
 
         return (
-            <React.Fragment className="bb">
+            <React.Fragment>
                 <Row gutter={16} style={{ alignItems: 'center' }}>
                     <Col>
                         <Title level={4}>Best Buy</Title>
                     </Col>
                     <Col>
-                        <Button type="primary" onClick={e => this.handleClick(e)} disabled={loading} loading={loading}>
+                        <Button type="primary" disabled={loading} loading={loading}>
                             Set Time Cycle
                         </Button>
                     </Col>
@@ -249,7 +287,9 @@ class BB extends React.Component {
                         showSizeChanger: true,
                         pageSizeOptions: ['10', '20', '50', '100']
                     }}
-                    scroll={{ y: "calc(100vh - 335px)" }} />
+                    scroll={{ y: "calc(100vh - 335px)" }}
+                />
+
 
             </React.Fragment>
         )
@@ -258,7 +298,6 @@ class BB extends React.Component {
 
 BB.prototypes = {
     getBBItems: PropTypes.func.isRequired,
-
     itemBB: PropTypes.object.isRequired,
 }
 
@@ -266,4 +305,4 @@ const mapStateToProps = (state) => ({
     itemBB: state.itemBB
 })
 
-export default connect(mapStateToProps, { getBBItems })(BB);
+export default connect(mapStateToProps, { getBBItems, setTableState })(BB);

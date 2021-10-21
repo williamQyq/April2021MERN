@@ -12,7 +12,7 @@ import {
   RobotOutlined,
   BarcodeOutlined,
   BankOutlined,
-  ShoppingOutlined
+  ShoppingOutlined,
 } from '@ant-design/icons';
 import {
   BrowserRouter as Router,
