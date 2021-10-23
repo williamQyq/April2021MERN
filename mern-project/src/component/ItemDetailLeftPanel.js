@@ -7,6 +7,7 @@ import '../styles/itemDetail.scss';
 import { getItemDetail } from '../reducers/actions/itemBBActions.js';
 import PropTypes from 'prop-types';
 import KeyStatistics from './ItemDetailStat.js'
+
 const { Title } = Typography;
 const antIcon = <SyncOutlined spin />;
 
@@ -20,7 +21,8 @@ class LeftPanel extends React.Component {
     }
 
     componentDidMount() {
-        this.props.getItemDetail(this.state.itemId);
+        const searchedId = this.props.itemBB.tableState.clickedId
+        this.props.getItemDetail(searchedId);
     }
 
     getPriceDiffPercentage = (item) => {

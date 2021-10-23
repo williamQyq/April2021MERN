@@ -9,12 +9,11 @@ import LeftPanel from './ItemDetailLeftPanel.js'
 import { LeftOutlined } from '@ant-design/icons';
 const { Text } = Typography;
 
+
 class ItemDetail extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            itemId: this.props.location.state.itemId
-        };
+
     }
     goBack = () => {
         this.props.history.goBack();
@@ -25,9 +24,9 @@ class ItemDetail extends React.Component {
             <React.Fragment>
                 <Row className="main-grid">
                     <LeftOutlined className="go-back-btn" style={{ fontSize: '24px' }} onClick={this.goBack} />
-                    <LeftPanel itemId={this.state.itemId} />
+                    <LeftPanel />
                     <SidePanel />
-                    
+
                 </Row>
             </React.Fragment>
         );
@@ -44,9 +43,9 @@ const SidePanel = () => {
 }
 
 ItemDetail.prototypes = {
-    location: PropTypes.object.isRequired,
-
-    // bb_item: PropTypes.object.isRequired,
+    // location: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired
 }
 
+//withRouter grant access to Router history, location...
 export default withRouter(ItemDetail);

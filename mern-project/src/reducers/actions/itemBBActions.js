@@ -42,10 +42,14 @@ export const getItemDetail = (_id) => dispatch => {
     })
 };
 
-export const setTableState = (state) => dispatch => {
-    
+export const setTableState = (clickedId) => dispatch => {
+    dispatch(setItemsLoading());
+    let tableState = {
+        clickedId: clickedId
+    }
+
     dispatch({
         type: SET_TABLE_STATE,
-        payload: state
+        payload: tableState
     })
 }

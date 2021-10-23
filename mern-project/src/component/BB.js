@@ -22,15 +22,10 @@ class BB extends React.Component {
 
         this.state = {
             searchText: '',
-            historySearchedText: '',
+            searchedRowId: '',
             searchedColumn: '',
             loading: true,
             tableRowHight: 75.31,   //antd table row height
-            tableState: {
-                priceDiff: null,
-                currentPrice: null,
-                captureDate: null,
-            },
         };
 
     }
@@ -40,13 +35,14 @@ class BB extends React.Component {
         this.handleScrollPosition();
     }
 
+
     handleScrollPosition = () => {
-        const itemDetail = this.props.itemBB.itemDetail;
-        const items = this.props.itemBB.items;
+        const { items, itemDetail } = this.props.itemBB;
+
         let index = 0;
         if (itemDetail) {
-            index = items.findIndex(item => item.sku == itemDetail.sku);
-            this.setState({ historySearchedText: itemDetail.name })
+            index = items.findIndex(item => item.sku === itemDetail.sku);
+            this.setState({ searchedRowId: itemDetail._id })
         }
         let v = document.getElementsByClassName("ant-table-body")[0];
         v.scrollTop = this.state.tableRowHight * (index - 3);
@@ -115,11 +111,11 @@ class BB extends React.Component {
                     />
                 </a>
             ) : (
-                this.state.historySearchedText == text ?
+                this.state.searchedRowId === record._id ?
                     <a target="_blank" rel="noopener noreferrer" href={record.link}>
                         <Highlighter
                             highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-                            searchWords={[this.state.historySearchedText]}
+                            searchWords={[text]}
                             autoEscape
                             textToHighlight={text ? text.toString() : ''}
                         />
@@ -142,14 +138,13 @@ class BB extends React.Component {
         this.setState({ searchText: '' });
     };
 
-    handleClick = (e) => {
-        console.log(`Click`, e);
-        this.props.setTableState(this.state.sortState);
-    }
+    handleClick = (_id) => {
+        this.props.setTableState(_id);
+    };
 
     render() {
         const data = this.props.itemBB.items;
-        const { loading, tableState } = this.state;
+        const { loading } = this.state;
 
         // console.log(`loadingstatus=${JSON.stringify(this.props.bb_item.loading)}`)
 
@@ -183,10 +178,8 @@ class BB extends React.Component {
                 dataIndex: 'priceDiff',
                 key: 'priceDiff',
                 width: '10%',
-                defaultSortOrder: tableState.priceDiff,
-                sorter: (a, b) => {
-                    return (a.priceDiff - b.priceDiff)
-                },
+                // defaultSortOrder: tableState.priceDiff,
+                sorter: (a, b) => a.priceDiff - b.priceDiff,
                 render: (text, record) => {
                     text = Math.round(parseFloat(text));
                     return (
@@ -204,7 +197,7 @@ class BB extends React.Component {
                 dataIndex: 'currentPrice',
                 key: 'currentPrice',
                 width: '10%',
-                defaultSortOrder: tableState.currentPrice,
+                // defaultSortOrder: tableState.currentPrice,
                 sorter: (a, b) => a.currentPrice - b.currentPrice,
                 render: (text, record) => (
                     record.isCurrentPriceLower ? <Text type="success">$ {text}</Text>
@@ -216,7 +209,7 @@ class BB extends React.Component {
                 dataIndex: 'captureDate',
                 key: 'captureDate',
                 width: '10%',
-                defaultSortOrder: tableState.captureDate,
+                // defaultSortOrder: tableState.captureDate,
                 sorter: (a, b) => new Date(a.captureDate) - new Date(b.captureDate),
                 sortDirections: ['descend', 'ascend', 'descend'],
             },
@@ -246,12 +239,13 @@ class BB extends React.Component {
                 </Menu.Item>
                 <Menu.Item key="GetItemDetail">
 
-                    <Button className="menu-btn">
-                        <Link to={{
-                            pathname: "/item-detail",
-                            state: { itemId: record._id }
-                        }}
-                            onClick={e => this.handleClick(e, tableState)}>
+                    <Button className="menu-btn" onClick={() => this.handleClick(record._id)}>
+                        <Link
+                            to={{
+                                pathname: "/item-detail",
+                                // state:{}
+                            }}
+                        >
                             <SearchOutlined />
                         </Link>
                     </Button>
@@ -289,14 +283,13 @@ class BB extends React.Component {
                     }}
                     scroll={{ y: "calc(100vh - 335px)" }}
                 />
-
-
             </React.Fragment>
         )
     }
 }
 
 BB.prototypes = {
+    setTableState: PropTypes.func.isRequired,
     getBBItems: PropTypes.func.isRequired,
     itemBB: PropTypes.object.isRequired,
 }
