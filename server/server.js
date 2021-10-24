@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 //DB Config
-const {mongoURL, collections} = require('./config/keys.js');
+const { mongoURL, collections } = require('./config/keys.js');
 
 
 //Bodyparser Middleware
@@ -12,16 +12,16 @@ const server = require("http").createServer(app)
 const io = require("socket.io")(server);
 
 //unit test for python scripts
-const {test} = require('./unit_test.js');
+const { test } = require('./unit_test.js');
 //cron schelduler
-const {schedulerBB} = require('./script_packages/scripts_scheduler.js');    //process scripts scheduler
-
+const { scrapeBBScheduler } = require('./script_packages/scrapeScheduler.js');    //process scripts scheduler
+const { bbLinkScraper } = require('./script_packages/scraper.js');
 //Connect to Mongo
-mongoose.connect(mongoURL, { 
-        useUnifiedTopology: true, 
-        useNewUrlParser: true,
-        useCreateIndex: true
-    })                //build mongoose connection
+mongoose.connect(mongoURL, {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+    useCreateIndex: true
+})                //build mongoose connection
     .then(() => console.log('MongoDB Connected...'))
     .catch(err => console.log(err));
 
@@ -52,33 +52,33 @@ const db = mongoose.connection;                                                 
 db.once('open', () => {
     const bbProductListings = db.collection(collections.itemListingsBB);
     const productPriceListings = db.collection(collections.productsPriceListings);
-    
+
     const changeStream = productPriceListings.watch();
     const BBChangeStream = bbProductListings.watch();
 
     BBChangeStream.on('change', (change) => {
         const doc = change.fullDocument;
-        
-        if(change.operationType === 'insert' || change.operationType === 'update') {
+
+        if (change.operationType === 'insert' || change.operationType === 'update') {
             io.sockets.emit(`server:changestream_bb`, doc);
-            
+
         }
 
     })
     test();
     // pyProcessBB();
     // pyProcessCC();
-    schedulerBB.start();
+    scrapeBBScheduler.start();
 
     changeStream.on('change', (change) => {
         const doc = change.fullDocument;
 
         if (change.operationType === 'insert') {
-    
+
             //socket.emit
             io.sockets.emit(`server:changestream`, doc._id);
-            pyProcess(doc._id,doc.link);
-                                                                
+            bbLinkScraper(doc._id, doc.link);
+
         }
 
         if (change.operationType === 'delete') {

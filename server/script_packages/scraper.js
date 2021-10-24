@@ -9,11 +9,12 @@ const {
 } = require('./Scripts.js');
 
 
-const pyProcess = (_id, link) => {
+const bbLinkScraper = (_id, link) => {
     //Script Object crawl product price from a link
     let BBProdPrice = new BBScript(WL_Item);
 
     bbLaptopPricePromise(BBProdPrice, _id, link).then(() => {
+        console.log(`bbscraper: ${JSON.stringify(BBProdPrice.data)}`)
         BBProdPrice.updateDBPriceById(WL_Item, BBProdPrice.data);
     })
 
@@ -67,7 +68,7 @@ const bbAllLaptopsNewNumPromise = (BBNum) => {
 
 // get all laptops sku-items promise, resolve when retrieve all skus, names, currentPrices.
 const bbAllLaptopsSkuItemsPromise = (BBSkuItems, num, numPerPage) => {
-    const link_info = BBSkuItems.getLinkInfo(num,numPerPage);
+    const link_info = BBSkuItems.getLinkInfo(num, numPerPage);
     const sku_items_python = BBSkuItems.spawnScript(link_info);
     BBSkuItems.listenOn(sku_items_python);
     const getBBSkuItemsPromise = new Promise((resolve, reject) => {
@@ -78,7 +79,7 @@ const bbAllLaptopsSkuItemsPromise = (BBSkuItems, num, numPerPage) => {
 }
 
 module.exports = {
-    pyProcess: pyProcess,
+    bbLinkScraper: bbLinkScraper,
     pyProcessBB: pyProcessBB,
     // pyProcessCC: pyProcessCC,
 

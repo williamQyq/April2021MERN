@@ -1,9 +1,6 @@
 # April2021MERN
 
-This project aims to solve the problem of tracking distributors inventory price. Gather price history info, alert when profitable price reach.
-Improve the process of receiving from users, tracking price, mapping WMS inventory onto offers
-
-
+Rockystone ERP & analytics systems
 
 Commands and how to build:
 

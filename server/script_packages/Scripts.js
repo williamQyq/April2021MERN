@@ -67,7 +67,7 @@ class Script {
 class BBScript extends Script {
     constructor(model) {
         super(model);
-        this.script_path = './script_packages/priceTracker.py';
+        this.script_path = './script_packages/scrape_bb_item_on_sku.py';
         this.link = `https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&browsedCategory=pcmcat138500050001&id=pcat17071&iht=n&ks=960&list=y&qp=condition_facet%3DCondition~New&sc=Global&st=categoryid%24pcmcat138500050001&type=page&usc=All%20Categories`;
     }
 }
@@ -75,7 +75,7 @@ class BBScript extends Script {
 class BBNumScript extends BBScript {
     constructor(model) {
         super(model);
-        this.script_path = './script_packages/bbLaptopsNum.py';
+        this.script_path = './script_packages/scrape_bb_laptops_num.py';
     }
 
 }
@@ -83,7 +83,7 @@ class BBNumScript extends BBScript {
 class BBSkuItemScript extends BBScript {
     constructor(model) {
         super(model);
-        this.script_path = './script_packages/bbSkuItem.py';
+        this.script_path = './script_packages/scrape_bb_items.py';
     }
     listenOn(python) {
         python.stdout.pipe(require('JSONStream').parse()).on('data', (data) => {
