@@ -14,10 +14,7 @@ const antIcon = <SyncOutlined spin />;
 class LeftPanel extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            itemId: props.itemId,
-            item: props.itemBB.itemDetail
-        }
+
     }
 
     componentDidMount() {
@@ -49,7 +46,7 @@ class LeftPanel extends React.Component {
                     <Row className="chart-row"><PriceHistoryChart item={item} /></Row>
                     <KeyStatistics />
                 </Col>
-            )
+            );
         } else {
             return null;
         }

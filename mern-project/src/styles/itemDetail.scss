@@ -1,15 +1,11 @@
-
 .main-grid {
-
-    margin:auto;
+    margin: auto;
     min-width: 1400px;
     width: 66%;
     height: 100%;
     padding-top: 12px;
-    .go-back-btn{
-        
+    .go-back-btn {
     }
-    
 }
 
 .left-panel {
@@ -37,4 +33,10 @@
 .right-panel {
     width: 100%;
     padding: 0 6px;
+    .ant-form-item {
+        margin-bottom: 8px;
+        .ant-form-item-label {
+            text-align: left;
+        }
+    }
 }

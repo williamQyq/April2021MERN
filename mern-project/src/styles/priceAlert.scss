@@ -1,45 +1,47 @@
 .item-list {
-        overflow: auto;
-        // min-height: 350px;
+        margin: auto;
+        width: 1400px;
         height: 90%;
+        min-width: 1400px;
+        overflow: auto;
         .list-item {
-                &:hover{
-                        background: rgb(152,152,157,0.1);
+                &:hover {
+                        background: rgb(152, 152, 157, 0.1);
                 }
-                
+
                 .list-item-link {
                         display: inline-flex;
                         width: 100%;
-                        .ant-list-item-meta-content{
-                                max-width: 60%;
-                                .list-item-upc{
-                                        display:block;
-                                }
+                        .list-item-meta{
+                                width: 200px;
                         }
-                        
+
+                        .list-item-upc {
+                                display: block;
+                        }
+
                         .list-item-price-before-changed {
                                 margin-right: 10px;
                                 align-self: center;
                                 color: rgb(142, 142, 147);
-                                font-size: large;
+                                font-size: medium;
                         }
                         .list-item-price-down {
                                 // margin-right: 20px;
                                 align-self: center;
                                 color: rgb(52, 199, 89);
-                                font-size: large;
+                                font-size: medium;
                         }
                         .list-item-price-up {
                                 // margin-right: 20px;
                                 align-self: center;
                                 color: rgb(255, 69, 58);
-                                font-size: large;
+                                font-size: medium;
                         }
                         .list-item-price-oos {
-                                
                                 align-self: center;
                                 color: rgb(142, 142, 147);
-                                font-size: large
+                                font-size: medium;
                         }
                 }
         }

@@ -9,7 +9,7 @@ import {
     ShoppingCartOutlined,
     DownOutlined
 } from '@ant-design/icons';
-import { Typography, Row, Button, List, Menu, Dropdown, Divider} from 'antd';
+import { Typography, Row, Button, List, Menu, Dropdown, Divider } from 'antd';
 
 import AddItemModal from "./AddItemModal";
 import { Link } from "react-router-dom";
@@ -29,12 +29,12 @@ class PriceAlert extends React.Component {
         const socket = this.state.socket;
         this.props.getItems();
 
-        socket.on(`server:changestream`,()=> {
+        socket.on(`server:changestream`, () => {
             this.setState({ change: true });
             this.props.getItems();
         });
 
-        this.setState({change: false});
+        this.setState({ change: false });
     }
 
     onDeleteClick = (_id) => {
@@ -85,10 +85,10 @@ class PriceAlert extends React.Component {
 
             <React.Fragment>
                 <Row gutter={16}>
-                    <Title level={3}className="title">Watch List</Title>
+                    <Title level={3} className="title">Watch List</Title>
                     <AddItemModal />
                 </Row>
-                <Divider/>
+                <Divider />
                 <List
                     className="item-list"
                     itemLayout="horizontal"
@@ -105,7 +105,7 @@ class PriceAlert extends React.Component {
 
                             <Link to='/item-detail' className="list-item-link">
 
-                                <List.Item.Meta className="list-item-meta"
+                                <List.Item.Meta
                                     avatar={<LaptopOutlined twoToneColor="#52c41a" />}
                                     title={<Title level={5}>{this.getItemName(item)}</Title>}
                                     description={<React.Fragment>
@@ -117,7 +117,7 @@ class PriceAlert extends React.Component {
 
 
                                 {this.getPriceBeforeChanged(item) > 0 ?
-                                    <Text className="list-item-price-before-changed" delete>${this.getPriceBeforeChanged(item)}</Text>:
+                                    <Text className="list-item-price-before-changed" delete>${this.getPriceBeforeChanged(item)}</Text> :
                                     <Text className="list-item-price-before-changed" delete>${this.getMostRecentPrice(item)}</Text>
                                 }
 
