@@ -35,13 +35,16 @@ class OrderPanel extends React.Component {
             loading: false
         }
     }
-
+    componentDidMount() {
+        console.log(`${JSON.stringify(this.props.item)}`)
+        this.setState({ item: this.props.itemBB.itemDetail });
+    }
     onFinish = (values) => {
         console.log(values);
     }
     render() {
-        const { loading } = this.state;
-        const item = this.props.itemBB.itemDetail
+        const { loading,item } = this.state;
+        // const item = this.props.itemBB.itemDetail
         if (item != null) {
             return (
                 <Col flex="1 0 27.7777777778%" className="right-panel">

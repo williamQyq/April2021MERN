@@ -18,8 +18,8 @@ class LeftPanel extends React.Component {
     }
 
     componentDidMount() {
-        const searchedId = this.props.itemBB.tableState.clickedId
-        this.props.getItemDetail(searchedId);
+        // const searchedId = this.props.itemBB.tableState.clickedId
+        // this.props.getItemDetail(searchedId);
     }
 
     getPriceDiffPercentage = (item) => {
