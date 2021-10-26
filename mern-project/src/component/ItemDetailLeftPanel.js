@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Row, Col, Typography, Spin } from 'antd';
+import { Row, Col, Typography, Spin, Skeleton } from 'antd';
 import PriceHistoryChart from './ItemDetailChart.js';
 import { SyncOutlined } from '@ant-design/icons';
 import '../styles/itemDetail.scss';
@@ -15,11 +15,6 @@ class LeftPanel extends React.Component {
     constructor(props) {
         super(props);
 
-    }
-
-    componentDidMount() {
-        // const searchedId = this.props.itemBB.tableState.clickedId
-        // this.props.getItemDetail(searchedId);
     }
 
     getPriceDiffPercentage = (item) => {
@@ -37,18 +32,22 @@ class LeftPanel extends React.Component {
         if (item != null) {
             return (
                 <Col flex="1 0 66.6666666667%" className="left-panel" >
-                    <Row><Title level={4}>{item.name}</Title></Row>
-                    <Row className="price-row">
-                        <Title level={5} className="price-row-price">${item.currentPrice}</Title>
-                        <Spin indicator={antIcon} style={{ fontSize: 0, color: 'black' }} />
-                    </Row>
-                    <Row ><Title level={5}>${item.priceDiff} ({this.getPriceDiffPercentage(item)}%) Today</Title></Row>
-                    <Row className="chart-row"><PriceHistoryChart item={item} /></Row>
-                    <KeyStatistics />
+                    <Skeleton loading={this.props.loading}>
+                        <Row><Title level={4}>{item.name}</Title></Row>
+                        <Row className="price-row">
+                            <Title level={5} className="price-row-price">${item.currentPrice}</Title>
+                            <Spin indicator={antIcon} style={{ fontSize: 0, color: 'black' }} />
+                        </Row>
+                        <Row ><Title level={5}>${item.priceDiff} ({this.getPriceDiffPercentage(item)}%) Today</Title></Row>
+                        <Row className="chart-row"><PriceHistoryChart item={item} /></Row>
+                        <KeyStatistics />
+                    </Skeleton>
                 </Col>
-            );
+            )
         } else {
-            return null;
+            return (
+                <Col flex="1 0 66.6666666667%" className="left-panel" />
+            );
         }
     }
 }
@@ -63,6 +62,9 @@ LeftPanel.prototypes = {
 }
 
 //state contains reducers
-const mapStateToProps = (state) => ({ itemBB: state.itemBB });
+const mapStateToProps = (state) => ({
+    loading: state.itemBB.loading,
+    itemBB: state.itemBB
+});
 
 export default connect(mapStateToProps, { getItemDetail })(LeftPanel);

@@ -31,35 +31,29 @@ const cardStyle = {
 class OrderPanel extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            loading: false
-        }
+
     }
-    componentDidMount() {
-        console.log(`${JSON.stringify(this.props.item)}`)
-        this.setState({ item: this.props.itemBB.itemDetail });
-    }
+
     onFinish = (values) => {
         console.log(values);
     }
     render() {
-        const { loading,item } = this.state;
-        // const item = this.props.itemBB.itemDetail
-        if (item != null) {
-            return (
-                <Col flex="1 0 27.7777777778%" className="right-panel">
-                    <Card
-                        style={cardStyle}
-                        actions={[
-                            <ShoppingCartOutlined key="shopping" />,
-                            <EditOutlined key="edit" />,
-                            <EllipsisOutlined key="ellipsis" />,
-                        ]}
-                    >
+        return (
+            <Col flex="1 0 27.7777777778%" className="right-panel">
+                {console.log(`render state name: ${JSON.stringify(this.props.name)}`)}
 
-                        <Skeleton loading={loading} >
-                            <Meta title="Place Order" />
-                        </Skeleton>
+                <Card
+                    style={cardStyle}
+                    actions={[
+                        <ShoppingCartOutlined key="shopping" />,
+                        <EditOutlined key="edit" />,
+                        <EllipsisOutlined key="ellipsis" />,
+                    ]}
+                >
+
+                    <Skeleton loading={this.props.loading} >
+                        <Meta title="Place Order" />
+
                         <Divider />
                         <Form
                             {...layout} name="nest-messages" onFinish={this.onFinish} validateMessages={validateMessages}
@@ -69,11 +63,11 @@ class OrderPanel extends React.Component {
                                 label="Product"
 
                             >
-                                <Input defaultValue={item.name} />
+                                <Input defaultValue={this.props.name} />
                             </Form.Item>
 
                             <Form.Item name={['Order', 'website']} label="Website">
-                                <Input defaultValue={item.link} />
+                                <Input defaultValue={this.props.link} />
                             </Form.Item>
 
                             <Form.Item
@@ -109,23 +103,27 @@ class OrderPanel extends React.Component {
                                 <Input.TextArea />
                             </Form.Item>
                         </Form>
-                    </Card>
-                </Col>
-            );
-        } else {
-            return null;
-        }
+                    </Skeleton>
+                </Card>
+            </Col>
+        );
+
     }
 }
 
-OrderPanel.prototypes = {
-    // location: PropTypes.object.isRequired,
-    getItemDetail: PropTypes.func.isRequired,
-    itemBB: PropTypes.object.isRequired,
+OrderPanel.propTypes = {
+    loading: PropTypes.bool.isRequired,
+    name: PropTypes.object.isRequired,
+    link: PropTypes.object.isRequired,
 
-    // bb_item: PropTypes.object.isRequired,
 }
 
-const mapStateToProps = (state) => ({ itemBB: state.itemBB });
+const mapStateToProps = (state, ownProps) => {
+    return ({
+        loading: state.itemBB.loading,
+        name: state.itemBB.itemDetail.name,
+        link: state.itemBB.itemDetail.link
+    })
+};
 
 export default connect(mapStateToProps)(OrderPanel);

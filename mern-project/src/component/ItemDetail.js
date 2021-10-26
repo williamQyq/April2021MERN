@@ -17,12 +17,13 @@ const { Text } = Typography;
 class ItemDetail extends React.Component {
     constructor(props) {
         super(props);
-
+        this.state = {};
     }
 
     componentDidMount() {
-        const searchedId = this.props.itemBB.tableState.clickedId;
-        this.props.getItemDetail(searchedId);
+        const clickedId = this.props.clickedId;
+        this.props.getItemDetail(clickedId);
+
     }
 
     goBack = () => {
@@ -30,13 +31,12 @@ class ItemDetail extends React.Component {
     }
 
     render() {
-        const item = this.props.itemBB.ItemDetail;
         return (
             <React.Fragment>
                 <Row className="main-grid">
                     <LeftOutlined className="go-back-btn" style={{ fontSize: '24px' }} onClick={this.goBack} />
-                    <LeftPanel item = {item}/>
-                    <OrderPanel item = {item}/>
+                    <LeftPanel />
+                    <OrderPanel />
 
                 </Row>
             </React.Fragment>
@@ -52,10 +52,13 @@ ItemDetail.prototypes = {
     history: PropTypes.object.isRequired,
     getItemDetail: PropTypes.func.isRequired,
     itemBB: PropTypes.object.isRequired,
+    clickedId: PropTypes.object.isRequired
 }
 
 const mapStateToProps = (state) => ({
+    clickedId: state.itemBB.tableState.clickedId,
     itemBB: state.itemBB
+
 });
 //withRouter grant access to Router history, location...
-export default withRouter(connect(mapStateToProps,{getItemDetail})(ItemDetail));
+export default withRouter(connect(mapStateToProps, { getItemDetail })(ItemDetail));
