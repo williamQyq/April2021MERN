@@ -12,10 +12,12 @@ const server = require("http").createServer(app)
 const io = require("socket.io")(server);
 
 //unit test for python scripts
-const { test } = require('./unit_test.js');
+// const { test } = require('./unit_test.js');
 //cron schelduler
 const { scrapeBBScheduler } = require('./script_packages/scrapeScheduler.js');    //process scripts scheduler
 const { bbLinkScraper } = require('./script_packages/scraper.js');
+const path = require('path');
+
 //Connect to Mongo
 mongoose.connect(mongoURL, {
     useUnifiedTopology: true,
