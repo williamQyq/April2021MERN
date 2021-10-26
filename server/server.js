@@ -65,10 +65,8 @@ db.once('open', () => {
         }
 
     })
-    test();
-    // pyProcessBB();
-    // pyProcessCC();
-    scrapeBBScheduler.start();
+    // test();
+    // scrapeBBScheduler.start();
 
     changeStream.on('change', (change) => {
         const doc = change.fullDocument;
