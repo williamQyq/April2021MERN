@@ -68,7 +68,7 @@ db.once('open', () => {
 
     })
     // test();
-    // scrapeBBScheduler.start();
+    scrapeBBScheduler.start();
 
     changeStream.on('change', (change) => {
         const doc = change.fullDocument;
