@@ -30,6 +30,8 @@ class ItemDetail extends React.Component {
     }
 
     render() {
+        const itemDetail = this.props.itemDetail;
+        if(itemDetail != null){
             return (
                 <React.Fragment>
                     <Row className="main-grid">
@@ -40,6 +42,9 @@ class ItemDetail extends React.Component {
                     </Row>
                 </React.Fragment>
             );
+        } else {
+            return null;
+        }
     }
 
 }
@@ -56,6 +61,7 @@ ItemDetail.prototypes = {
 
 const mapStateToProps = (state) => ({
     clickedId: state.itemBB.tableState.clickedId,
+    itemDetail: state.itemBB.itemDetail,
     itemBB: state.itemBB
 
 });
