@@ -29,7 +29,6 @@ class LeftPanel extends React.Component {
 
     render() {
         const item = this.props.itemBB.itemDetail;
-        if (item != null) {
             return (
                 <Col flex="1 0 66.6666666667%" className="left-panel" >
                     <Skeleton loading={this.props.loading}>
@@ -44,11 +43,6 @@ class LeftPanel extends React.Component {
                     </Skeleton>
                 </Col>
             )
-        } else {
-            return (
-                <Col flex="1 0 66.6666666667%" className="left-panel" />
-            );
-        }
     }
 }
 

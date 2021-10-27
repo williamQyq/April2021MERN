@@ -23,7 +23,6 @@ class ItemDetail extends React.Component {
     componentDidMount() {
         const clickedId = this.props.clickedId;
         this.props.getItemDetail(clickedId);
-
     }
 
     goBack = () => {
@@ -31,16 +30,20 @@ class ItemDetail extends React.Component {
     }
 
     render() {
-        return (
-            <React.Fragment>
-                <Row className="main-grid">
-                    <LeftOutlined className="go-back-btn" style={{ fontSize: '24px' }} onClick={this.goBack} />
-                    <LeftPanel />
-                    <OrderPanel />
+        if (this.props.itemBB.ItemDetail != null) {
+            return (
+                <React.Fragment>
+                    <Row className="main-grid">
+                        <LeftOutlined className="go-back-btn" style={{ fontSize: '24px' }} onClick={this.goBack} />
+                        <LeftPanel />
+                        <OrderPanel />
 
-                </Row>
-            </React.Fragment>
-        );
+                    </Row>
+                </React.Fragment>
+            );
+        } else {
+            return null;
+        }
     }
 
 }
@@ -52,7 +55,7 @@ ItemDetail.prototypes = {
     history: PropTypes.object.isRequired,
     getItemDetail: PropTypes.func.isRequired,
     itemBB: PropTypes.object.isRequired,
-    clickedId: PropTypes.object.isRequired
+    clickedId: PropTypes.string.isRequired
 }
 
 const mapStateToProps = (state) => ({

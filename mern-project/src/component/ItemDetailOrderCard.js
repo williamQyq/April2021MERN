@@ -113,12 +113,12 @@ class OrderPanel extends React.Component {
 
 OrderPanel.propTypes = {
     loading: PropTypes.bool.isRequired,
-    name: PropTypes.object.isRequired,
-    link: PropTypes.object.isRequired,
+    name: PropTypes.string.isRequired,
+    link: PropTypes.string.isRequired,
 
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
     return ({
         loading: state.itemBB.loading,
         name: state.itemBB.itemDetail.name,
