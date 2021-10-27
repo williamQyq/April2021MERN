@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-
+const auth = require('../../middleware/auth.js');
 //Item Model
 const Item = require('../../models/WatchListItem');
 // @route GET api/items
 router.get('/', (req, res) => {
     Item.find()
-        .sort({created_date: -1})
+        .sort({ created_date: -1 })
         .then(items => res.json(items));
 });
 
@@ -21,21 +21,23 @@ router.post('/', (req, res) => {
     newItem.save().then(item => res.json(item));
 });
 
-// @route delete api/items
+// @route DELETE api/items
 router.delete('/:id', (req, res) => {
     Item.findById(req.params.id)
-        .then(item => item.remove().then(()=> res.json({success: true})))
-        .catch(err => res.status(404).json({success: false}));
+        .then(item => item.remove().then(() => res.json({ success: true })))
+        .catch(err => res.status(404).json({ success: false }));
 });
 
-router.post('/push_price/:_id', (req, res) => {
+// @route POST api/push_price/:_id
+// @desc push price into database on _id
+router.post('/push_price/:_id', auth, (req, res) => {
     Item.findByIdAndUpdate(req.params._id, {
         $push: {
             price_timestamps: {
                 price: req.body.currentPrice
             }
         }
-    },{ useFindAndModify: false }).then(item =>res.json({success:true}));
+    }, { useFindAndModify: false }).then(item => res.json({ success: true }));
 });
 
 

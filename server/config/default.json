@@ -1,0 +1,4 @@
+{
+    "mongoURI": "mongodb+srv://w:q@cluster0.lkscp.mongodb.net/DB?retryWrites=true&w=majority",
+    "jwtSecret": "williamERP_myJwtSecret"
+}

@@ -103,7 +103,7 @@ class PriceAlert extends React.Component {
                             </Dropdown>
                         ]}>
 
-                            <Link to='/item-detail' className="list-item-link">
+                            {/* <Link to='/item-detail' className="list-item-link"> */}
 
                                 <List.Item.Meta
                                     avatar={<LaptopOutlined twoToneColor="#52c41a" />}
@@ -126,7 +126,7 @@ class PriceAlert extends React.Component {
                                         ${this.getMostRecentPrice(item)}</Text> : <Text className="list-item-price-oos">OUT OF STOCK
                                     </Text>
                                 }
-                            </Link>
+                            {/* </Link> */}
                         </List.Item>
                     )}
                 />

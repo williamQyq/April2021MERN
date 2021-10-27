@@ -1,8 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
-//DB Config
-const { mongoURL, collections } = require('./config/keys.js');
-
+const path = require('path');
+const config = require('config');
+const { collections } = require('./config/keys.js'); //DB Config
+// const { test } = require('./unit_test.js'); //unit test for python scripts
+//cron schelduler
+const { scrapeBBScheduler } = require('./script_packages/scrapeScheduler.js');    //process scripts scheduler
+const { bbLinkScraper } = require('./script_packages/scraper.js');
 
 //Bodyparser Middleware
 const app = express();
@@ -11,15 +15,10 @@ app.use(express.json());
 const server = require("http").createServer(app)
 const io = require("socket.io")(server);
 
-//unit test for python scripts
-// const { test } = require('./unit_test.js');
-//cron schelduler
-const { scrapeBBScheduler } = require('./script_packages/scrapeScheduler.js');    //process scripts scheduler
-const { bbLinkScraper } = require('./script_packages/scraper.js');
-const path = require('path');
+const mongoURI = config.get('mongoURI');
 
 //Connect to Mongo
-mongoose.connect(mongoURL, {
+mongoose.connect(mongoURI, {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     useCreateIndex: true
@@ -28,10 +27,10 @@ mongoose.connect(mongoURL, {
     .catch(err => console.log(err));
 
 app.use('/api/bb_items', require('./routes/api/bb_items'));
-app.use('/api/cc_items', require('./routes/api/cc_items'));
+// app.use('/api/cc_items', require('./routes/api/cc_items'));
 app.use('/api/items', require('./routes/api/items'));
 app.use('/api/users', require('./routes/api/users'));
-
+app.use('/api/auth', require('./routes/api/auth'));
 
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, '../mern-project/build')));
@@ -68,7 +67,7 @@ db.once('open', () => {
 
     })
     // test();
-    // scrapeBBScheduler.start();
+    scrapeBBScheduler.start();
 
     changeStream.on('change', (change) => {
         const doc = change.fullDocument;
