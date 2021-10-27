@@ -7,9 +7,11 @@
     "client-install": "cd ./mern-project && npm install",
     "server-install": "npm install && pip install selenium",
     "server": "cd ./server && nodemon server.js",
+    "start": "cd ./server && node server.js",
     "control": "cd ./server && node ./server/backend_control/server.js",
     "client": "cd ./mern-project && npm start",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "prod": "concurrently \"npm run start\" \"npm run client\"",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false cd mern-project && npm install && npm run build"
   },
   "author": "William Q",
