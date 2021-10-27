@@ -30,7 +30,6 @@ class ItemDetail extends React.Component {
     }
 
     render() {
-        if (this.props.itemBB.ItemDetail != null) {
             return (
                 <React.Fragment>
                     <Row className="main-grid">
@@ -41,9 +40,6 @@ class ItemDetail extends React.Component {
                     </Row>
                 </React.Fragment>
             );
-        } else {
-            return null;
-        }
     }
 
 }
