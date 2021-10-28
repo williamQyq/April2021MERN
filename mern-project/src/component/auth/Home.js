@@ -21,8 +21,8 @@ import {
   Link
 } from "react-router-dom";
 import io from 'socket.io-client';
-import store from './store.js';
-import PriceAlert from './component/PriceAlert.js';
+import store from 'store.js';
+import PriceAlert from '../PriceAlert.js';
 import InBound from './component/InBound.js';
 import ItemDetail from './component/ItemDetail.js';
 import BB from './component/BB.js';
@@ -33,7 +33,7 @@ const { Header, Content, Sider } = Layout;
 
 const socket = io.connect()
 
-class App extends React.Component {
+export default class Home extends React.Component {
 
 
   constructor(props) {
@@ -101,5 +101,3 @@ class App extends React.Component {
   }
 
 }
-
-export default (App);

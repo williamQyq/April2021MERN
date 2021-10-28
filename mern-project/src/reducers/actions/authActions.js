@@ -7,7 +7,7 @@ import {
     LOGOUT_SUCCESS,
     REGISTER_FAIL,
     REGISTER_SUCCESS
-} from "./actions/types.js";
+} from "./types.js";
 import { returnErrors } from './errorActions'
 import axios from "axios";
 
@@ -15,6 +15,22 @@ import axios from "axios";
 export const loadUser = () => (dispatch, getState) => {
     dispatch({ type: USER_LOADING });
 
+
+    axios.get('/api/auth/user', tokenConfig(getState))
+        .then(res => dispatch({
+            type: USER_LOADING,
+            payload: res.data
+        }))
+        .catch(err => {
+            dispatch(returnErrors(err.response.data, err.response.status));
+            dispatch({
+                type: AUTH_ERROR
+            });
+        });
+
+}
+
+export const tokenConfig = getState => {
     // Get token from localStorage
     const token = getState().auth.token;
 
@@ -27,16 +43,5 @@ export const loadUser = () => (dispatch, getState) => {
     if (token) {
         config.headers['x-auth-token'] = token;
     }
-
-    axios.get('/api/auth/user', config)
-        .then(res => dispatch({
-            type: USER_LOADING,
-            payload: res.data
-        }))
-        .catch(err => {
-            dispatch({
-                type: AUTH_ERROR
-            });
-        })
-
+    return config;
 }
