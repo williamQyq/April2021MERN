@@ -21,8 +21,8 @@ import {
   Link
 } from "react-router-dom";
 import io from 'socket.io-client';
-import store from './store.js';
-import PriceAlert from './component/PriceAlert.js';
+import store from 'store.js';
+import PriceAlert from 'component/PriceAlert.js';
 import InBound from './component/InBound.js';
 import ItemDetail from './component/ItemDetail.js';
 import BB from './component/BB.js';
