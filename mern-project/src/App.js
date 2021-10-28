@@ -28,78 +28,20 @@ import ItemDetail from './component/ItemDetail.js';
 import BB from './component/BB.js';
 import CC from './component/CC.js';
 import { loadUser } from './reducers/actions/authActions.js';
-const { SubMenu } = Menu;
-const { Header, Content, Sider } = Layout;
-
-const socket = io.connect()
+import Login from 'component/auth/Login';
+import Home from 'component/auth/Home';
 
 class App extends React.Component {
-
-
-  constructor(props) {
-    super(props)
-    this.state = {
-      collapsed: false,
-    };
-  };
-
-  componentDidMount() {
-    store.dispatch(loadUser());
- 
-  }
-
-  toggle = () => {
-    this.setState({
-      collapsed: !this.state.collapsed,
-    });
-  };
-
   render() {
     return (
       <Router>
-        <Layout className="main-layout">
-          <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
-            <div className="logo">William's ERP</div>
-            <Menu theme="dark" mode="inline">
-              <SubMenu key="ALERT" icon={<AlertOutlined />} title="Alert">
-                <Menu.Item key="BestBuy" icon={<ShoppingOutlined />}><Link to='/bestbuy-list'>BestBuy</Link></Menu.Item>
-                <Menu.Item key="CostCo" disabled icon={<ShoppingOutlined />}><Link to='/costco-list'>CostCo</Link></Menu.Item>
-                <Menu.Item key="PRICE-ALERT" icon={<MonitorOutlined />}><Link to='/price-alert'>Price Alert</Link></Menu.Item>
-                <Menu.Item key="PURCHASE-BOT" disabled icon={<RobotOutlined />}> <Link to='/purchase-bot'>Purchase Bot</Link> </Menu.Item>
-              </SubMenu>
-              <SubMenu key="WAREHOUSE" icon={<BankOutlined />} title="Warehouse">
-                <Menu.Item key="INBOUND" icon={<BarcodeOutlined />}><Link to='/inbound'> <InBound /></Link></Menu.Item>
-                <Menu.Item key="OUTBOUND" icon={<BarcodeOutlined />}>Outbound</Menu.Item>
-              </SubMenu>
-              <Menu.Item key="nav3" icon={<UploadOutlined />}>nav 3</Menu.Item>
-            </Menu>
-          </Sider>
-
-          <Layout className="site-layout">
-            <Header className="site-layout-background" style={{ padding: 0 }}>
-              {React.createElement(this.state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-                className: 'trigger',
-                onClick: this.toggle,
-              })}
-            </Header>
-            <Content className="site-layout-content">
-
-              <Switch>
-                <Route exact path='/' component={BB} />
-                <Route path='/bestbuy-list'><BB socket={socket} /></Route>
-                <Route path='/price-alert'> <PriceAlert socket={socket} /> </Route>
-                <Route path='/inbound'> <InBound /> </Route>
-                <Route path='/item-detail'> <ItemDetail /></Route>
-                <Route path='/costco-list'><CC socket={socket} /></Route>
-              </Switch>
-
-            </Content>
-          </Layout>
-        </Layout>
+        <Switch>
+          <Route exact path="/" component={Login} />
+          <Route path="/home" component={Home} />
+        </Switch>
       </Router>
     );
   }
-
 }
 
 export default (App);

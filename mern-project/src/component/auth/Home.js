@@ -1,6 +1,5 @@
 import React from 'react';
-import './styles/app.scss';
-// import './styles/app.less';
+import 'styles/home.scss';
 import 'antd/dist/antd.css';
 import { Layout, Menu } from 'antd';
 import {
@@ -22,19 +21,18 @@ import {
 } from "react-router-dom";
 import io from 'socket.io-client';
 import store from 'store.js';
-import PriceAlert from '../PriceAlert.js';
-import InBound from './component/InBound.js';
-import ItemDetail from './component/ItemDetail.js';
-import BB from './component/BB.js';
-import CC from './component/CC.js';
-import { loadUser } from './reducers/actions/authActions.js';
+import PriceAlert from 'component/PriceAlert.js';
+import InBound from 'component/InBound.js';
+import ItemDetail from 'component/ItemDetail.js';
+import BB from 'component/BB.js';
+import CC from 'component/CC.js';
+import { loadUser } from 'reducers/actions/authActions.js';
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
 const socket = io.connect()
 
 export default class Home extends React.Component {
-
 
   constructor(props) {
     super(props)
@@ -45,7 +43,7 @@ export default class Home extends React.Component {
 
   componentDidMount() {
     store.dispatch(loadUser());
- 
+
   }
 
   toggle = () => {

@@ -1,8 +1,11 @@
 import React from 'react';
 import { Layout } from 'antd';
 import 'antd/dist/antd.css';
+import 'styles/login.scss';
+import { Link } from "react-router-dom";
 
-const { Sider,Header,Content,Footer } = Layout;
+const { Sider, Header, Content, Footer } = Layout;
+
 export default class Login extends React.Component {
     constructor(props) {
         super(props);
@@ -16,10 +19,9 @@ export default class Login extends React.Component {
 
     render() {
         return (
-            <Layout>
+            <Layout className="login-layout">
                 <Sider></Sider>
                 <Layout>
-                    <Header></Header>
                     <Content></Content>
                     <Footer></Footer>
                 </Layout>
