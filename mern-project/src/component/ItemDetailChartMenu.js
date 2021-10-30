@@ -2,7 +2,7 @@ import React from 'react';
 import 'antd/dist/antd.css';
 import { Menu } from 'antd';
 
-import { LineChartOutlined, AreaChartOutlined, MailOutlined, AppstoreOutlined, SettingOutlined } from '@ant-design/icons';
+import { LineChartOutlined, AreaChartOutlined } from '@ant-design/icons';
 
 class ChartMenu extends React.Component {
     constructor(props) {

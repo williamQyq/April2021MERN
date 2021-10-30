@@ -1,7 +1,6 @@
 import React from 'react';
 import UTILS from '../styles/Util.js';
 import { Line } from 'react-chartjs-2';
-import { BorderRightOutlined } from '@ant-design/icons';
 import { Divider } from 'antd';
 import ChartMenu from './ItemDetailChartMenu.js';
 

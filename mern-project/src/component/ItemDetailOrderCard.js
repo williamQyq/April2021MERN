@@ -3,8 +3,8 @@ import 'antd/dist/antd.css';
 import '../styles/itemDetail.scss';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Row, Col, Typography, Card, Skeleton, Divider, Input, Form, InputNumber } from 'antd';
-import { EditOutlined, EllipsisOutlined, LeftOutlined, SettingOutlined, ShoppingCartOutlined } from '@ant-design/icons';
+import { Col, Card, Skeleton, Divider, Input, Form, InputNumber } from 'antd';
+import { EditOutlined, EllipsisOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import Meta from 'antd/lib/card/Meta';
 
 const layout = {

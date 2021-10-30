@@ -12,10 +12,6 @@ const { Title } = Typography;
 const antIcon = <SyncOutlined spin />;
 
 class LeftPanel extends React.Component {
-    constructor(props) {
-        super(props);
-
-    }
 
     getPriceDiffPercentage = (item) => {
         let percentage = 0;

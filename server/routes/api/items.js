@@ -4,7 +4,7 @@ const auth = require('../../middleware/auth.js');
 //Item Model
 const Item = require('../../models/WatchListItem');
 // @route GET api/items
-router.get('/', (req, res) => {
+router.get('/', auth,(req, res) => {
     Item.find()
         .sort({ created_date: -1 })
         .then(items => res.json(items));

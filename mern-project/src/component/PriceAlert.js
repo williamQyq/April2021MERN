@@ -12,7 +12,6 @@ import {
 import { Typography, Row, Button, List, Menu, Dropdown, Divider } from 'antd';
 
 import AddItemModal from "./AddItemModal";
-import { Link } from "react-router-dom";
 
 const { Title, Text } = Typography;
 

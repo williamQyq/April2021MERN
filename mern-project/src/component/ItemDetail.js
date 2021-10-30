@@ -2,17 +2,13 @@ import React from 'react';
 import { withRouter } from 'react-router-dom'; // Link pass state props to leftPanel and sideitemDetail
 import 'antd/dist/antd.css';
 import '../styles/itemDetail.scss';
-import { Row, Col, Typography, Card, Skeleton, Divider, Input, Form, InputNumber } from 'antd';
+import { Row } from 'antd';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import LeftPanel from './ItemDetailLeftPanel.js'
 import OrderPanel from './ItemDetailOrderCard.js';
-import { EditOutlined, EllipsisOutlined, LeftOutlined, SettingOutlined, ShoppingCartOutlined } from '@ant-design/icons';
+import { LeftOutlined } from '@ant-design/icons';
 import { getItemDetail } from '../reducers/actions/itemBBActions.js';
-
-
-const { Text } = Typography;
-
 
 class ItemDetail extends React.Component {
     constructor(props) {
@@ -32,7 +28,7 @@ class ItemDetail extends React.Component {
     render() {
         const itemDetail = this.props.itemDetail;
         console.log(`Detail:\n${JSON.stringify(itemDetail)}`)
-        if(itemDetail != null){
+        if (itemDetail != null) {
             return (
                 <React.Fragment>
                     <Row className="main-grid">
