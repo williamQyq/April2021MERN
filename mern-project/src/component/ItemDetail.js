@@ -27,7 +27,6 @@ class ItemDetail extends React.Component {
 
     render() {
         const itemDetail = this.props.itemDetail;
-        console.log(`Detail:\n${JSON.stringify(itemDetail)}`)
         if (itemDetail != null) {
             return (
                 <React.Fragment>

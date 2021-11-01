@@ -40,8 +40,6 @@ class OrderPanel extends React.Component {
     render() {
         return (
             <Col flex="1 0 27.7777777778%" className="right-panel">
-                {console.log(`render state name: ${JSON.stringify(this.props.name)}`)}
-
                 <Card
                     style={cardStyle}
                     actions={[
@@ -56,20 +54,21 @@ class OrderPanel extends React.Component {
 
                         <Divider />
                         <Form
-                            {...layout} name="nest-messages" onFinish={this.onFinish} validateMessages={validateMessages}
+                            {...layout} name="nest-messages"
+                            onFinish={this.onFinish}
+                            validateMessages={validateMessages}
+                            initialValues={{
+                                product: this.props.name,
+                                website: this.props.link,
+                            }}
                         >
-                            <Form.Item
-                                name={['order', 'product']}
-                                label="Product"
-
-                            >
-                                <Input defaultValue={this.props.name} />
+                            <Form.Item name='product' label="Product">
+                                <Input />
                             </Form.Item>
 
-                            <Form.Item name={['Order', 'website']} label="Website">
-                                <Input defaultValue={this.props.link} />
+                            <Form.Item name='website' label='Website'>
+                                <Input />
                             </Form.Item>
-
                             <Form.Item
                                 name={['order', 'price']}
                                 label="Price"
