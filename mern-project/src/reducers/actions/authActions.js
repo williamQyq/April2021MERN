@@ -39,9 +39,44 @@ export const tokenConfig = getState => {
         headers: {
             "Content-type": "application/json"
         }
-    }
+    };
+
     if (token) {
         config.headers['x-auth-token'] = token;
     }
     return config;
+}
+
+export const login = ({ email, password }) => dispatch => {
+    //Headers
+    const config = {
+        headers: {
+            "Content-type": "application/json"
+        }
+    };
+
+    const body = JSON.stringify({ email, password });
+
+    axios.post('/api/auth', body, config)
+        .then(res =>
+            dispatch({
+                type: LOGIN_SUCCESS,
+                payload: res.data
+            })
+        )
+        .catch(err => {
+            dispatch(
+                returnErrors(err.response.data, err.response.status, 'LOGIN_FAIL')
+            );
+            dispatch({
+                type: LOGIN_FAIL
+            });
+        })
+}
+
+
+export const logout = () => {
+    return {
+        type: LOGOUT_SUCCESS
+    };
 }

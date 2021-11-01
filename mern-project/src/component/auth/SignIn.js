@@ -2,11 +2,13 @@ import React from 'react';
 import { Layout, Image, Form, Input, Button, Typography, message } from 'antd';
 import 'antd/dist/antd.css';
 import 'styles/login.scss';
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 // import mainImage from "styles/assets/imageLogin.jpg";
-import { withRouter } from 'react-router-dom';
-
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { login } from 'reducers/actions/authActions.js';
+import { clearErrors } from 'reducers/actions/errorActions.js';
 
 const { Sider, Content, } = Layout;
 const { Text, Title } = Typography;
@@ -16,18 +18,49 @@ message.config({
 })
 
 class SignIn extends React.Component {
-    constructor(props) {
-        super(props);
 
-        this.state = {
-            email: "",
-            password: ""
+    state = {
+        email: "",
+        password: "",
+        msg: null
+    }
+    static propTypes = {
+        isAuthenticated: PropTypes.bool,
+        error: PropTypes.object.isRequired,
+        login: PropTypes.func.isRequired,
+        clearErrors: PropTypes.func.isRequired
+    }
+    componentDidUpdate(prevProps) {
+        const { error, isAuthenticated } = this.props;
+        if (error !== prevProps.error) {
+            if (error.id === 'LOGIN_FAIL') {
+                this.setState({ msg: error.msg.msg });
+            } else {
+                this.setState({ msg: null });
+            }
         }
+        if (isAuthenticated) {
+            message.success('Sign in success!');
+            this.props.history.push('/home');
+        }
+
     }
 
     onFinish = (values) => {
-        message.success('Sign in success!');
-        this.props.history.push('/home');
+        // const { isAuthenticated } = this.props;
+        // if (isAuthenticated) {
+
+        //     this.props.history.push('/home');
+        // } else {
+        //     message.warn('Sign in failed!');
+        // }
+        const { email, password } = values;
+        const user = {
+            email,
+            password
+        }
+        this.props.login(user);
+
     }
     onFinishFailed = (errorInfo) => {
         message.error("Sign in failed!")
@@ -72,7 +105,7 @@ class SignIn extends React.Component {
                             <Title level={3}>Welcome to RockyStone</Title>
                         </Form.Item>
                         <Form.Item
-                            name="user"
+                            name="email"
                             label="Email or Username"
                             rules={[
                                 {
@@ -111,5 +144,9 @@ class SignIn extends React.Component {
     }
 
 }
+const mapStateToProps = state => ({
+    isAuthenticated: state.auth.isAuthenticated,
+    error: state.error
+})
 
-export default withRouter(SignIn)
+export default withRouter(connect(mapStateToProps, { login, clearErrors })(SignIn));
