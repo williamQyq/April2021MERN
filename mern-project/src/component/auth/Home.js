@@ -54,6 +54,8 @@ export default class Home extends React.Component {
   };
 
   render() {
+    const { match: { path } } = this.props;
+
     return (
       <Router>
         <Layout className="main-layout">
@@ -61,13 +63,23 @@ export default class Home extends React.Component {
             <div className="logo">William's ERP</div>
             <Menu theme="dark" mode="inline">
               <SubMenu key="ALERT" icon={<AlertOutlined />} title="Alert">
-                <Menu.Item key="BestBuy" icon={<ShoppingOutlined />}><Link to='/bestbuy-list'>BestBuy</Link></Menu.Item>
-                <Menu.Item key="CostCo" disabled icon={<ShoppingOutlined />}><Link to='/costco-list'>CostCo</Link></Menu.Item>
-                <Menu.Item key="PRICE-ALERT" icon={<MonitorOutlined />}><Link to='/price-alert'>Price Alert</Link></Menu.Item>
-                <Menu.Item key="PURCHASE-BOT" disabled icon={<RobotOutlined />}> <Link to='/purchase-bot'>Purchase Bot</Link> </Menu.Item>
+                <Menu.Item key="BestBuy" icon={<ShoppingOutlined />}>
+                  <Link to={`${path}/bestbuy-list`}>BestBuy</Link>
+                </Menu.Item>
+                <Menu.Item key="CostCo" disabled icon={<ShoppingOutlined />}>
+                  <Link to={`${path}/costco-list`}>CostCo</Link>
+                </Menu.Item>
+                <Menu.Item key="PRICE-ALERT" icon={<MonitorOutlined />}>
+                  <Link to={`${path}/price-alert`}>Price Alert</Link>
+                </Menu.Item>
+                <Menu.Item key="PURCHASE-BOT" disabled icon={<RobotOutlined />}>
+                  <Link to={`${path}/purchase-bot`}> Purchase Bot</Link>
+                </Menu.Item>
               </SubMenu>
               <SubMenu key="WAREHOUSE" icon={<BankOutlined />} title="Warehouse">
-                <Menu.Item key="INBOUND" icon={<BarcodeOutlined />}><Link to='/inbound'> <InBound /></Link></Menu.Item>
+                <Menu.Item key="INBOUND" icon={<BarcodeOutlined />}>
+                  <Link to={`${path}/inbound`}> <InBound /></Link>
+                </Menu.Item>
                 <Menu.Item key="OUTBOUND" icon={<BarcodeOutlined />}>Outbound</Menu.Item>
               </SubMenu>
               <Menu.Item key="nav3" icon={<UploadOutlined />}>nav 3</Menu.Item>
@@ -84,18 +96,18 @@ export default class Home extends React.Component {
             <Content className="site-layout-content">
 
               <Switch>
-                <Redirect from="/home" to="/bestbuy-list" />
-                <Route path='/bestbuy-list'><BB socket={socket} /></Route>
-                <Route path='/price-alert'> <PriceAlert socket={socket} /> </Route>
-                <Route path='/inbound'> <InBound /> </Route>
-                <Route path='/item-detail'> <ItemDetail /></Route>
-                <Route path='/costco-list'><CC socket={socket} /></Route>
+                {/* <Redirect from="/home" to="/home/bestbuy-list" /> */}
+                <Route exact path={`${path}/costco-list`}><CC socket={socket} /></Route>
+                <Route exact path={`${path}/bestbuy-list`}><BB /></Route>
+                <Route exact path={`${path}/price-alert`}> <PriceAlert socket={socket} /> </Route>
+                <Route exact path={`${path}/inbound`}> <InBound /> </Route>
+                <Route path={`${path}/*/item-detail`}> <ItemDetail /></Route>
               </Switch>
 
             </Content>
           </Layout>
         </Layout>
-      </Router>
+      </Router >
     );
   }
 

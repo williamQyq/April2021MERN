@@ -8,18 +8,19 @@ import {
 } from "react-router-dom";
 import store from 'store.js';
 import { loadUser } from './reducers/actions/authActions.js';
-import Login from 'component/auth/Login';
-import Home from 'component/auth/Home';
+import SignIn from 'component/auth/SignIn.js';
+import Home from 'component/auth/Home.js';
+
 
 class App extends React.Component {
   render() {
     return (
-      <Router>
-        <Switch>
-          <Route exact path="/" component={Login} />
-          <Route path="/home" component={Home} />
-        </Switch>
-      </Router>
+      <Switch>
+        <Route exact path="/" component={SignIn} />
+        <Route path="/home" component={Home} />
+
+        {/* <Route component={ErrorPage}/> */}
+      </Switch>
     );
   }
 }

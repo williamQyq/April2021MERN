@@ -12,7 +12,7 @@ import {
     PlusCircleOutlined,
     ShoppingCartOutlined,
 } from '@ant-design/icons';
-import { Link} from 'react-router-dom';
+import { Link,withRouter } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 
@@ -143,10 +143,9 @@ class BB extends React.Component {
     };
 
     render() {
+        const path = this.props.match.path;
         const data = this.props.itemBB.items;
         const { loading } = this.state;
-
-        // console.log(`loadingstatus=${JSON.stringify(this.props.bb_item.loading)}`)
 
         //create columns data based on dataIndex
         const columns = [
@@ -240,12 +239,7 @@ class BB extends React.Component {
                 <Menu.Item key="GetItemDetail">
 
                     <Button className="menu-btn" onClick={() => this.handleClick(record._id)}>
-                        <Link
-                            to={{
-                                pathname: "/item-detail",
-                                // state:{}
-                            }}
-                        >
+                        <Link to={`${path}/item-detail`}>
                             <SearchOutlined />
                         </Link>
                     </Button>
@@ -256,7 +250,7 @@ class BB extends React.Component {
                         <ShoppingCartOutlined />
                     </Button>
                 </Menu.Item>
-            </Menu>
+            </Menu >
         );
 
         return (
@@ -298,4 +292,4 @@ const mapStateToProps = (state) => ({
     itemBB: state.itemBB
 })
 
-export default connect(mapStateToProps, { getBBItems, setTableState })(BB);
+export default withRouter(connect(mapStateToProps, { getBBItems, setTableState })(BB));

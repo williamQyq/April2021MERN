@@ -5,6 +5,8 @@ import 'styles/login.scss';
 import { Link } from "react-router-dom";
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import mainImage from "styles/assets/imageLogin.jpg";
+import { withRouter } from 'react-router-dom';
+
 
 const { Sider, Content, } = Layout;
 const { Text, Title } = Typography;
@@ -13,7 +15,7 @@ message.config({
     maxCount: 3,
 })
 
-export default class SignIn extends React.Component {
+class SignIn extends React.Component {
     constructor(props) {
         super(props);
 
@@ -25,6 +27,7 @@ export default class SignIn extends React.Component {
 
     onFinish = (values) => {
         message.success('Sign in success!');
+        this.props.history.push('/home');
     }
     onFinishFailed = (errorInfo) => {
         message.error("Sign in failed!")
@@ -107,6 +110,6 @@ export default class SignIn extends React.Component {
         );
     }
 
-
-
 }
+
+export default withRouter(SignIn)
