@@ -67,12 +67,12 @@ class PriceAlert extends React.Component {
         const data = this.props.item.items;
         const menu = (
             <Menu>
-                <Menu.Item>
+                <Menu.Item disabled>
                     <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
                         <SearchOutlined />
                     </a>
                 </Menu.Item>
-                <Menu.Item>
+                <Menu.Item disabled>
                     <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
                         <ShoppingCartOutlined />
                     </a>

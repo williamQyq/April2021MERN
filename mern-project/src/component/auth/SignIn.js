@@ -4,7 +4,7 @@ import 'antd/dist/antd.css';
 import 'styles/login.scss';
 import { Link } from "react-router-dom";
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import mainImage from "styles/assets/imageLogin.jpg";
+// import mainImage from "styles/assets/imageLogin.jpg";
 import { withRouter } from 'react-router-dom';
 
 

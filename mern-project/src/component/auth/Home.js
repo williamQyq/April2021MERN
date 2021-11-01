@@ -18,7 +18,6 @@ import {
   Switch,
   Route,
   Link,
-  Redirect
 } from "react-router-dom";
 import io from 'socket.io-client';
 import store from 'store.js';
@@ -96,7 +95,6 @@ export default class Home extends React.Component {
             <Content className="site-layout-content">
 
               <Switch>
-                {/* <Redirect from="/home" to="/home/bestbuy-list" /> */}
                 <Route exact path={`${path}/costco-list`}><CC socket={socket} /></Route>
                 <Route exact path={`${path}/bestbuy-list`}><BB /></Route>
                 <Route exact path={`${path}/price-alert`}> <PriceAlert socket={socket} /> </Route>

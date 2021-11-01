@@ -232,7 +232,7 @@ class BB extends React.Component {
         const menu = (record) => (
             <Menu>
                 <Menu.Item key="AddToWatchList">
-                    <Button className="menu-btn">
+                    <Button disabled className="menu-btn">
                         <PlusCircleOutlined />
                     </Button>
                 </Menu.Item>
@@ -246,7 +246,7 @@ class BB extends React.Component {
 
                 </Menu.Item>
                 <Menu.Item key="AddToCart">
-                    <Button className="menu-btn">
+                    <Button disabled className="menu-btn">
                         <ShoppingCartOutlined />
                     </Button>
                 </Menu.Item>
@@ -261,7 +261,7 @@ class BB extends React.Component {
                     </Col>
                     <Col>
                         <Button type="primary" disabled={loading} loading={loading}>
-                            Set Time Cycle
+                            Retrieve Now
                         </Button>
                     </Col>
                 </Row>
