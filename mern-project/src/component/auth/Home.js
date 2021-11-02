@@ -22,6 +22,7 @@ import {
 } from "react-router-dom";
 import io from 'socket.io-client';
 import store from 'store.js';
+
 import PriceAlert from 'component/PriceAlert.js';
 import ItemDetail from 'component/ItemDetail.js';
 import InBound from 'component/InBound.js';
@@ -30,6 +31,7 @@ import CC from 'component/CC.js';
 import { loadUser } from 'reducers/actions/authActions.js';
 import { logout } from 'reducers/actions/authActions.js';
 import { connect } from 'react-redux';
+import ProtectedRoutes from 'component/auth/ProtectedRoutes.js';
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -66,7 +68,7 @@ class Home extends React.Component {
   };
 
   render() {
-    const { match: { path } } = this.props;
+    // const { match: { path } } = this.props;
 
     return (
       <Router>
@@ -76,21 +78,21 @@ class Home extends React.Component {
             <Menu theme="dark" mode="inline">
               <SubMenu key="ALERT" icon={<AlertOutlined />} title="Alert">
                 <Menu.Item key="BestBuy" icon={<ShoppingOutlined />}>
-                  <Link to={`${path}/bestbuy-list`}>BestBuy</Link>
+                  <Link to={`/bestbuy-list`}>BestBuy</Link>
                 </Menu.Item>
                 <Menu.Item key="CostCo" disabled icon={<ShoppingOutlined />}>
-                  <Link to={`${path}/costco-list`}>CostCo</Link>
+                  <Link to={`/costco-list`}>CostCo</Link>
                 </Menu.Item>
                 <Menu.Item key="PRICE-ALERT" icon={<MonitorOutlined />}>
-                  <Link to={`${path}/price-alert`}>Price Alert</Link>
+                  <Link to={`/price-alert`}>Price Alert</Link>
                 </Menu.Item>
                 <Menu.Item key="PURCHASE-BOT" disabled icon={<RobotOutlined />}>
-                  <Link to={`${path}/purchase-bot`}> Purchase Bot</Link>
+                  <Link to={`/purchase-bot`}> Purchase Bot</Link>
                 </Menu.Item>
               </SubMenu>
               <SubMenu key="WAREHOUSE" icon={<BankOutlined />} title="Warehouse">
                 <Menu.Item key="INBOUND" icon={<BarcodeOutlined />}>
-                  <Link to={`${path}/inbound`}> <InBound /></Link>
+                  <Link to={`/inbound`}> <InBound /></Link>
                 </Menu.Item>
                 <Menu.Item key="OUTBOUND" icon={<BarcodeOutlined />}>Outbound</Menu.Item>
               </SubMenu>
@@ -110,11 +112,7 @@ class Home extends React.Component {
             <Content className="site-layout-content">
 
               <Switch>
-                <Route exact path={`${path}/costco-list`}><CC socket={socket} /></Route>
-                <Route exact path={`${path}/bestbuy-list`}><BB /></Route>
-                <Route exact path={`${path}/price-alert`}> <PriceAlert socket={socket} /> </Route>
-                <Route exact path={`${path}/inbound`}> <InBound /> </Route>
-                <Route path={`${path}/*/item-detail`}> <ItemDetail /></Route>
+                <ProtectedRoutes/>
               </Switch>
 
             </Content>
