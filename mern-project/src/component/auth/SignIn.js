@@ -35,7 +35,7 @@ class SignIn extends React.Component {
     componentDidMount() {
         const { isAuthenticated } = this.props;
         if (isAuthenticated) {
-            this.props.history.push('/home/bestbuy-list');
+            this.props.history.push('/app/bestbuy-list');
         }
     }
     componentDidUpdate(prevProps) {
@@ -50,7 +50,7 @@ class SignIn extends React.Component {
         }
         if (isAuthenticated) {
             message.success('Sign in success!');
-            this.props.history.push('/home/bestbuy-list');
+            this.props.history.push('/app/bestbuy-list');
         }
 
     }

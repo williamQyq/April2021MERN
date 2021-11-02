@@ -19,6 +19,7 @@ import {
   Switch,
   Route,
   Link,
+  withRouter
 } from "react-router-dom";
 import io from 'socket.io-client';
 import store from 'store.js';
@@ -68,8 +69,7 @@ class Home extends React.Component {
   };
 
   render() {
-    // const { match: { path } } = this.props;
-
+    const { match: { path } } = this.props;
     return (
       <Router>
         <Layout className="main-layout">
@@ -78,21 +78,21 @@ class Home extends React.Component {
             <Menu theme="dark" mode="inline">
               <SubMenu key="ALERT" icon={<AlertOutlined />} title="Alert">
                 <Menu.Item key="BestBuy" icon={<ShoppingOutlined />}>
-                  <Link to={`/bestbuy-list`}>BestBuy</Link>
+                  <Link to={`${path}/bestbuy-list`}>BestBuy</Link>
                 </Menu.Item>
                 <Menu.Item key="CostCo" disabled icon={<ShoppingOutlined />}>
-                  <Link to={`/costco-list`}>CostCo</Link>
+                  <Link to={`${path}/costco-list`}>CostCo</Link>
                 </Menu.Item>
                 <Menu.Item key="PRICE-ALERT" icon={<MonitorOutlined />}>
-                  <Link to={`/price-alert`}>Price Alert</Link>
+                  <Link to={`${path}/price-alert`}>Price Alert</Link>
                 </Menu.Item>
-                <Menu.Item key="PURCHASE-BOT" disabled icon={<RobotOutlined />}>
-                  <Link to={`/purchase-bot`}> Purchase Bot</Link>
+                <Menu.Item key="PURCHASE" disabled icon={<RobotOutlined />}>
+                  <Link to={`${path}/purchase`}> Purchase</Link>
                 </Menu.Item>
               </SubMenu>
               <SubMenu key="WAREHOUSE" icon={<BankOutlined />} title="Warehouse">
                 <Menu.Item key="INBOUND" icon={<BarcodeOutlined />}>
-                  <Link to={`/inbound`}> <InBound /></Link>
+                  <Link to={`${path}/inbound`}> <InBound /></Link>
                 </Menu.Item>
                 <Menu.Item key="OUTBOUND" icon={<BarcodeOutlined />}>Outbound</Menu.Item>
               </SubMenu>
@@ -123,4 +123,4 @@ class Home extends React.Component {
   }
 }
 
-export default connect(null, { logout })(Home);
+export default withRouter(connect(null, { logout })(Home));

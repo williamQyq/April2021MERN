@@ -8,7 +8,6 @@ import {
 import SignIn from 'component/auth/SignIn.js';
 import ErrorPage from 'component/ErrorPage.js';
 import PrivateRoute from 'component/auth/PrivateRoute.js';
-import ProtectedRoutes from 'component/auth/ProtectedRoutes';
 import { loadUser } from 'reducers/actions/authActions.js';
 import { connect } from 'react-redux';
 import Proptypes from 'prop-types';
@@ -31,7 +30,7 @@ class App extends React.Component {
     return (
       <Switch>
         <Route exact path="/" component={SignIn} />
-        <PrivateRoute path="/home" isAuthenticated={this.props.isAuthenticated}>
+        <PrivateRoute path="/app" isAuthenticated={this.props.isAuthenticated} >
           <Home />
         </PrivateRoute>
         <Route component={ErrorPage} />

@@ -2,15 +2,20 @@ import { lazy } from 'react';
 
 const routes = [
   {
-    path: 'home',
-    component: lazy(() => import('component/auth/Home')),
+    path: 'app/bestbuy-list',
+    component: lazy(() => import('component/BB')),
     exact: true
   },
   {
-    path: 'bestbuy-list',
-    component: lazy(() => import('component/BB')),
+    path: 'app/bestbuy-list/item-detail',
+    component: lazy(() => import('component/ItemDetail')),
     exact: true
-  }
+  },
+  // {
+  //   path: 'app/price-alert',
+  //   component: lazy(() => import('component/PriceAlert')),
+  //   exact: true
+  // },
 ];
 
 export default routes;
