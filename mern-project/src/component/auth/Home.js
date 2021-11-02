@@ -12,6 +12,7 @@ import {
   BarcodeOutlined,
   BankOutlined,
   ShoppingOutlined,
+  LogoutOutlined
 } from '@ant-design/icons';
 import {
   BrowserRouter as Router,
@@ -22,17 +23,20 @@ import {
 import io from 'socket.io-client';
 import store from 'store.js';
 import PriceAlert from 'component/PriceAlert.js';
-import InBound from 'component/InBound.js';
 import ItemDetail from 'component/ItemDetail.js';
+import InBound from 'component/InBound.js';
 import BB from 'component/BB.js';
 import CC from 'component/CC.js';
 import { loadUser } from 'reducers/actions/authActions.js';
+import { logout } from 'reducers/actions/authActions.js';
+import { connect } from 'react-redux';
+
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
 const socket = io.connect()
 
-export default class Home extends React.Component {
+class Home extends React.Component {
 
   constructor(props) {
     super(props)
@@ -44,6 +48,15 @@ export default class Home extends React.Component {
   componentDidMount() {
     store.dispatch(loadUser());
 
+  }
+  componentDidUpdate() {
+    const { isAuthenticated } = this.props;
+
+  }
+
+  handleClick = () => {
+    this.props.logout();
+    
   }
 
   toggle = () => {
@@ -59,7 +72,7 @@ export default class Home extends React.Component {
       <Router>
         <Layout className="main-layout">
           <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
-            <div className="logo">William's ERP</div>
+            <div className="logo">RockyStone</div>
             <Menu theme="dark" mode="inline">
               <SubMenu key="ALERT" icon={<AlertOutlined />} title="Alert">
                 <Menu.Item key="BestBuy" icon={<ShoppingOutlined />}>
@@ -91,6 +104,8 @@ export default class Home extends React.Component {
                 className: 'trigger',
                 onClick: this.toggle,
               })}
+              <LogoutOutlined onClick={this.handleClick} />
+
             </Header>
             <Content className="site-layout-content">
 
@@ -108,5 +123,6 @@ export default class Home extends React.Component {
       </Router >
     );
   }
-
 }
+
+export default connect(null, { logout })(Home);

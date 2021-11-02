@@ -10,16 +10,16 @@ import store from 'store.js';
 import { loadUser } from './reducers/actions/authActions.js';
 import SignIn from 'component/auth/SignIn.js';
 import Home from 'component/auth/Home.js';
+import ErrorPage from 'component/ErrorPage.js';
 
 
 class App extends React.Component {
   render() {
     return (
       <Switch>
-        <Route exact path="/" component={SignIn} />
+        <Route exact path="/login" component={SignIn} />
         <Route path="/home" component={Home} />
-
-        {/* <Route component={ErrorPage}/> */}
+        <Route component={ErrorPage} />
       </Switch>
     );
   }

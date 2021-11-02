@@ -26,40 +26,43 @@ class SignIn extends React.Component {
     }
     static propTypes = {
         isAuthenticated: PropTypes.bool,
+        isLoading: PropTypes.bool,
         error: PropTypes.object.isRequired,
         login: PropTypes.func.isRequired,
         clearErrors: PropTypes.func.isRequired
+    }
+
+    componentDidMount() {
+        const { isAuthenticated } = this.props;
+        if (isAuthenticated) {
+            this.props.history.push('/home/bestbuy-list');
+        }
     }
     componentDidUpdate(prevProps) {
         const { error, isAuthenticated } = this.props;
         if (error !== prevProps.error) {
             if (error.id === 'LOGIN_FAIL') {
                 this.setState({ msg: error.msg.msg });
+                message.error(`Sign in failed, ${error.msg.msg}`)
             } else {
                 this.setState({ msg: null });
             }
         }
         if (isAuthenticated) {
             message.success('Sign in success!');
-            this.props.history.push('/home');
+            this.props.history.push('/home/bestbuy-list');
         }
 
     }
 
     onFinish = (values) => {
-        // const { isAuthenticated } = this.props;
-        // if (isAuthenticated) {
-
-        //     this.props.history.push('/home');
-        // } else {
-        //     message.warn('Sign in failed!');
-        // }
         const { email, password } = values;
         const user = {
             email,
             password
         }
         this.props.login(user);
+
 
     }
     onFinishFailed = (errorInfo) => {
@@ -146,6 +149,7 @@ class SignIn extends React.Component {
 }
 const mapStateToProps = state => ({
     isAuthenticated: state.auth.isAuthenticated,
+    isLoading: state.auth.isLoading,
     error: state.error
 })
 

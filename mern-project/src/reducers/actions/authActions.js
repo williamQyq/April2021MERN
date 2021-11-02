@@ -14,8 +14,6 @@ import axios from "axios";
 //Check token & load user
 export const loadUser = () => (dispatch, getState) => {
     dispatch({ type: USER_LOADING });
-
-
     axios.get('/api/auth/user', tokenConfig(getState))
         .then(res => dispatch({
             type: USER_LOADING,
@@ -74,7 +72,7 @@ export const login = ({ email, password }) => dispatch => {
         })
 }
 
-
+// Logout User
 export const logout = () => {
     return {
         type: LOGOUT_SUCCESS
