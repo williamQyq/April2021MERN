@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import 'antd/dist/antd.css';
 import { Modal, Button, Input } from 'antd';
-import {
-    PlusSquareOutlined
-} from '@ant-design/icons';
+import { PlusSquareOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
-import { addItem } from '../reducers/actions/itemActions';
+import { addItem } from 'reducers/actions/itemActions.js';
 
 const AddItemModal = (props) => {
 
@@ -23,10 +21,10 @@ const AddItemModal = (props) => {
     const handleOk = () => {
         //selenium get {name, price}
 
-        const newItem ={
+        const newItem = {
             link: input,
             name: null,
-            price_timestamps:[{
+            price_timestamps: [{
                 price: null
             }]
         }
@@ -42,11 +40,11 @@ const AddItemModal = (props) => {
 
     return (
         <>
-        <Button className="add-item" icon={<PlusSquareOutlined/>} onClick={showModal} type="dashed"/>
-        <Modal title="Add Link" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-            <p>Track BestBuy link</p>
-            <Input placeholder="https://www.bestbuy.com" onChange={getInput}/>
-        </Modal>
+            <Button className="add-item" icon={<PlusSquareOutlined />} onClick={showModal} type="dashed" />
+            <Modal title="Add Link" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+                <p>Track BestBuy link</p>
+                <Input placeholder="https://www.bestbuy.com" onChange={getInput} />
+            </Modal>
         </>
     );
 };
@@ -55,4 +53,4 @@ const mapStateToProps = (state) => ({
     item: state.item
 })
 
-export default connect( mapStateToProps, { addItem })(AddItemModal);
+export default connect(mapStateToProps, { addItem })(AddItemModal);

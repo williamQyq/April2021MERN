@@ -1,6 +1,6 @@
 import React from 'react';
 import 'antd/dist/antd.css';
-import '../styles/itemDetail.scss';
+import 'styles/itemDetail.scss';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Col, Card, Skeleton, Divider, Input, Form, InputNumber } from 'antd';
@@ -12,15 +12,7 @@ const layout = {
         span: 12,
     }
 }
-const validateMessages = {
-    required: '${label} is required!',
-    types: {
-        number: '${label} is not a valid number!',
-    },
-    number: {
-        range: '${label} must be between ${min} and ${max}',
-    },
-};
+
 const cardStyle = {
     width: "300px",
     borderRadius: "4px",
@@ -29,11 +21,7 @@ const cardStyle = {
 }
 
 class OrderPanel extends React.Component {
-    constructor(props) {
-        super(props);
-
-    }
-
+    
     onFinish = (values) => {
         console.log(values);
     }
@@ -43,7 +31,7 @@ class OrderPanel extends React.Component {
                 <Card
                     style={cardStyle}
                     actions={[
-                        <ShoppingCartOutlined key="shopping" />,
+                        <ShoppingCartOutlined key="shopping"/>,
                         <EditOutlined key="edit" />,
                         <EllipsisOutlined key="ellipsis" />,
                     ]}
@@ -56,7 +44,6 @@ class OrderPanel extends React.Component {
                         <Form
                             {...layout} name="nest-messages"
                             onFinish={this.onFinish}
-                            validateMessages={validateMessages}
                             initialValues={{
                                 product: this.props.name,
                                 website: this.props.link,

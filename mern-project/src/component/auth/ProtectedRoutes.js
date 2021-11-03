@@ -2,7 +2,8 @@ import { Suspense } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import routes from 'component/auth/AuthenticatedRoutes.js'; // Route list
 import ErrorPage from 'component/ErrorPage';
-const ProtectedRoutes = (props) => {
+
+const ProtectedRoutes = () => {
     return (
         <Switch>
             <Suspense

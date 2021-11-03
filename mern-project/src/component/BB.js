@@ -2,7 +2,7 @@ import React from 'react';
 import 'antd/dist/antd.css';
 import '../styles/bb.scss';
 import { connect } from 'react-redux';
-import { getBBItems, setTableState } from '../reducers/actions/itemBBActions';
+import { getBBItems, setTableState } from 'reducers/actions/itemBBActions';
 import PropTypes from 'prop-types';
 import { Table, Input, Button, Space, Typography, Row, Menu, Dropdown, Divider, Col, Tooltip } from 'antd';
 import Highlighter from 'react-highlight-words';

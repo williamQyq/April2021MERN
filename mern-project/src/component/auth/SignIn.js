@@ -50,6 +50,7 @@ class SignIn extends React.Component {
         }
         if (isAuthenticated) {
             message.success('Sign in success!');
+            this.props.clearErrors();
             this.props.history.push('/app/bestbuy-list');
         }
 

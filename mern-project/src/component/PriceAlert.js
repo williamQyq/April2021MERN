@@ -1,8 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { getItems, deleteItem } from '../reducers/actions/itemActions';
 import PropTypes from 'prop-types';
-import '../styles/priceAlert.scss';
+import 'styles/priceAlert.scss';
 import {
     LaptopOutlined,
     SearchOutlined,
@@ -10,8 +8,9 @@ import {
     DownOutlined
 } from '@ant-design/icons';
 import { Typography, Row, Button, List, Menu, Dropdown, Divider } from 'antd';
-
-import AddItemModal from "./AddItemModal";
+import { connect } from 'react-redux';
+import { getItems, deleteItem } from 'reducers/actions/itemActions';
+import AddItemModal from "component/AddItemModal.js";
 
 const { Title, Text } = Typography;
 

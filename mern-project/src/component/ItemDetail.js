@@ -1,14 +1,14 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom'; // Link pass state props to leftPanel and sideitemDetail
 import 'antd/dist/antd.css';
-import '../styles/itemDetail.scss';
+import 'styles/itemDetail.scss';
 import { Row } from 'antd';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import LeftPanel from './ItemDetailLeftPanel.js'
-import OrderPanel from './ItemDetailOrderCard.js';
 import { LeftOutlined } from '@ant-design/icons';
-import { getItemDetail } from '../reducers/actions/itemBBActions.js';
+import LeftPanel from 'component/ItemDetailLeftPanel.js'
+import OrderPanel from 'component/ItemDetailOrderCard.js';
+import { getItemDetail } from 'reducers/actions/itemBBActions.js';
 
 class ItemDetail extends React.Component {
     constructor(props) {

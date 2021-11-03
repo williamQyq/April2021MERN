@@ -21,7 +21,6 @@ class App extends React.Component {
     isAuthenticated: Proptypes.bool
   }
 
-
   componentDidMount() {
     store.dispatch(loadUser());
   }

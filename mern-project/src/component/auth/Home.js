@@ -17,20 +17,13 @@ import {
 import {
   BrowserRouter as Router,
   Switch,
-  Route,
   Link,
   withRouter
 } from "react-router-dom";
 import io from 'socket.io-client';
 import store from 'store.js';
-
-import PriceAlert from 'component/PriceAlert.js';
-import ItemDetail from 'component/ItemDetail.js';
 import InBound from 'component/InBound.js';
-import BB from 'component/BB.js';
-import CC from 'component/CC.js';
-import { loadUser } from 'reducers/actions/authActions.js';
-import { logout } from 'reducers/actions/authActions.js';
+import { loadUser, logout } from 'reducers/actions/authActions.js';
 import { connect } from 'react-redux';
 import ProtectedRoutes from 'component/auth/ProtectedRoutes.js';
 
@@ -50,16 +43,10 @@ class Home extends React.Component {
 
   componentDidMount() {
     store.dispatch(loadUser());
-
-  }
-  componentDidUpdate() {
-    const { isAuthenticated } = this.props;
-
   }
 
   handleClick = () => {
     this.props.logout();
-    
   }
 
   toggle = () => {
@@ -100,23 +87,29 @@ class Home extends React.Component {
             </Menu>
           </Sider>
 
+
           <Layout className="site-layout">
+
+            {/* Home Header  */}
             <Header className="site-layout-background" style={{ padding: 0 }}>
               {React.createElement(this.state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
                 className: 'trigger',
                 onClick: this.toggle,
               })}
               <LogoutOutlined onClick={this.handleClick} />
-
             </Header>
+            {/* /Home Header */}
+
+            {/* Home Content */}
             <Content className="site-layout-content">
-
               <Switch>
-                <ProtectedRoutes/>
+                <ProtectedRoutes />
               </Switch>
-
             </Content>
+            {/* /Home Content */}
+
           </Layout>
+
         </Layout>
       </Router >
     );
