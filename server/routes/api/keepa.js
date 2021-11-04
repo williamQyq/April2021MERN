@@ -4,7 +4,8 @@ const auth = require('../../middleware/auth.js');
 //Item Model
 
 // @route GET api/items
-router.get('/',(req, res) => {
+router.get('/', (req, res) => {
+    console.log(`keepa routes : ${JSON.stringify(req.query)}`);
     res.json("keepa");
 });
 

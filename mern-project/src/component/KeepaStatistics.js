@@ -19,8 +19,7 @@ class KeepaStat extends React.Component {
         }
     }
     handleSearch = (value, e) => {
-        console.log(value)
-        this.props.getKeepaStat();
+        this.props.getKeepaStat(value);
     }
 
     //set price chart labels

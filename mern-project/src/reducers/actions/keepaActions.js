@@ -2,9 +2,9 @@ import axios from 'axios';
 import Moment from 'moment';
 import { GET_KEEPA_STAT, KEEPA_LOADING } from './types';
 
-export const getKeepaStat = () => dispatch => {
-    dispatch(setKeepaLoading());
-    axios.get('/api/keepa').then(res =>
+export const getKeepaStat = (searchTerm) => dispatch => {
+    dispatch(setKeepaLoading);
+    axios.get('/api/keepa',{ params:{searchTerm}}).then(res =>
         dispatch({
             type: GET_KEEPA_STAT,
             payload: res.data
