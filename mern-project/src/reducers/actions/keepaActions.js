@@ -1,22 +1,14 @@
 import axios from 'axios';
 import Moment from 'moment';
-import { GET_KEEPA_STAT, KEEPA_LOADING, KEEPA_LOADED } from './types';
+import { GET_KEEPA_STAT, KEEPA_LOADING } from './types';
 
 export const getKeepaStat = () => dispatch => {
     dispatch(setKeepaLoading());
-    axios.get('/api/keepa').then(res => {
-
-        //modify created date time format in res.data
-        let items = Object.values(res.data);
-        items = items.map(item => {
-            item.captureDate = Moment(item.captureDate).format("MM-DD-YYYY HH:mm:ss");
-            return item
-        })
+    axios.get('/api/keepa').then(res =>
         dispatch({
-            type: GET_BB_ITEMS,
-            payload: items
+            type: GET_KEEPA_STAT,
+            payload: res.data
         })
-    }
     )
 };
 

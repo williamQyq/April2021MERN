@@ -2,11 +2,11 @@ import React from 'react';
 import UTILS from 'styles/Util.js';
 import { Line } from 'react-chartjs-2';
 import { Divider, Row, Typography, Input } from 'antd';
-import ChartMenu from 'component/ItemDetailChartMenu.js';
-import { useSelector } from 'react-redux';
 import { SearchOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import ChartMenu from 'component/ItemDetailChartMenu.js';
+import { getKeepaStat } from 'reducers/actions/keepaActions';
 
 const { Title, Text } = Typography;
 const { Search } = Input;
@@ -18,8 +18,9 @@ class KeepaStat extends React.Component {
 
         }
     }
-    handleSearch = () => {
-
+    handleSearch = (value, e) => {
+        console.log(value)
+        this.props.getKeepaStat();
     }
 
     //set price chart labels
@@ -135,8 +136,8 @@ class KeepaStat extends React.Component {
                     size='large'
                     placeholder="Enter Search Content"
                     prefix={<SearchOutlined />}
-                    loading={false}
-                    onPressEnter={this.handleSearch}
+                    loading={this.props.loading}
+                    onSearch={this.handleSearch}
                 />
                 <Line
                     data={config.data}
@@ -151,12 +152,16 @@ class KeepaStat extends React.Component {
 }
 
 KeepaStat.prototypes = {
-    itemDetail: PropTypes.func.isRequired
+    itemDetail: PropTypes.object.isRequired,
+    getKeepaStat: PropTypes.func.isRequired,
+    keepa: PropTypes.object.isRequired,
+    loading: PropTypes.bool.isRequired
 }
 
 const mapStateToProps = (state) => ({
-    itemDetail: state.itemBB.itemDetail
+    itemDetail: state.itemBB.itemDetail,
+    keepa: state.keepa.keepa,
+    loading: state.keepa.loading
 });
 
-
-export default connect(mapStateToProps, null)(KeepaStat);
+export default connect(mapStateToProps, { getKeepaStat })(KeepaStat);

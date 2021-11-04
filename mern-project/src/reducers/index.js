@@ -4,6 +4,7 @@ import itemBBReducer from './itemBBReducer';
 // import itemCCReducer from './itemCCReducer';
 import errorReducer from './errorReducer';
 import authReducer from './authReducer';
+import keepaReducer from './keepaReducer';
 import { LOGOUT_SUCCESS } from './actions/types';
 import storage from 'redux-persist/lib/storage';
 
@@ -22,7 +23,8 @@ const appReducers = combineReducers({
     item: itemReducer,
     itemBB: itemBBReducer,
     error: errorReducer,
-    auth: authReducer
+    auth: authReducer,
+    keepa: keepaReducer
 
 })
 

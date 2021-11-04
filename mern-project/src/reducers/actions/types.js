@@ -25,5 +25,4 @@ export const CLEAR_ERRORS = 'CLEAR_ERRORS';
 
 // KEEPA STATUS
 export const KEEPA_LOADING = 'KEEPA_LOADING';
-export const KEEPA_LOADED = 'KEEPA_LOADED';
 export const GET_KEEPA_STAT = 'GET_KEEPA_STAT';

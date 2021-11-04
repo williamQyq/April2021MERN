@@ -17,12 +17,12 @@ const io = require("socket.io")(server);
 
 const mongoURI = config.get('mongoURI');
 
-//Connect to Mongo
+//Connect to Mongo, build mongoose connection
 mongoose.connect(mongoURI, {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     useCreateIndex: true
-})                //build mongoose connection
+})
     .then(() => console.log('MongoDB Connected...'))
     .catch(err => console.log(err));
 
