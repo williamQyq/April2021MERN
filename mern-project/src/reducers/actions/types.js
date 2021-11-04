@@ -1,14 +1,17 @@
+// SELF LIST STATUS
 export const GET_ITEMS = 'GET_ITEMS';
 export const ADD_ITEM = 'ADD_ITEM';
 export const DELETE_ITEM = 'DELETE_ITEM';
 export const ITEMS_LOADING = 'ITEMS_LOADING';
 
+// BB STATUS
 export const GET_BB_ITEMS = 'GET_BB_ITEMS';
 export const GET_BB_ITEM_DETAIL = 'GET_BB_ITEM_DETAIL';
-
 export const SET_TABLE_STATE = 'SET_TABLE_STATE';
+
 export const GET_CC_ITEMS = 'GET_BB_ITEMS';
 
+// AUTHENTICATE STATUS
 export const USER_LOADING = 'USER_LOADING';
 export const USER_LOADED = 'USER_LOADED';
 export const AUTH_ERROR = 'AUTH_ERROR';
@@ -19,3 +22,8 @@ export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
 export const REGISTER_FAIL = 'REGISTER_FAIL';
 export const GET_ERRORS = 'GET_ERRORS';
 export const CLEAR_ERRORS = 'CLEAR_ERRORS';
+
+// KEEPA STATUS
+export const KEEPA_LOADING = 'KEEPA_LOADING';
+export const KEEPA_LOADED = 'KEEPA_LOADED';
+export const GET_KEEPA_STAT = 'GET_KEEPA_STAT';

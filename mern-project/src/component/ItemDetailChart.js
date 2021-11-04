@@ -1,12 +1,14 @@
 import React from 'react';
 import UTILS from 'styles/Util.js';
 import { Line } from 'react-chartjs-2';
-import { Divider,Row } from 'antd';
+import { Divider, Row } from 'antd';
 import ChartMenu from 'component/ItemDetailChartMenu.js';
+import { useSelector } from 'react-redux';
 
-const PriceHistoryChart = (props) => {
-    const { price_timestamps, priceDiff } = props.item;
-
+const PriceHistoryChart = () => {
+    const { price_timestamps, priceDiff } = useSelector((state) =>
+        state.itemBB.itemDetail
+    );
     const labels = setLabels(price_timestamps);
     const datapoints = setDataPoints(price_timestamps);
     const borderColor = setBorderColor(priceDiff);

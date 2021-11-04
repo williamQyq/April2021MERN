@@ -1,3 +1,11 @@
+.ant-divider-horizontal{
+    display: flex;
+    clear: both;
+    width: 100%;
+    min-width: 100%;
+    margin: 4px;
+}
+
 .main-grid {
     margin: auto;
     min-width: 1400px;
@@ -11,6 +19,7 @@
 .left-panel {
     min-width: 60%;
     padding: 0 6px;
+
     .price-row {
         padding-top: 16px;
         .price-row-price {
@@ -21,12 +30,16 @@
         width: 900px;
     }
     .key-stat-row {
-        margin-top: 36px;
+        margin: 24px 0;
         padding-top: 2px;
         .key-stat-col {
             width: 192px;
             margin-right: 48px;
         }
+    }
+    .keepa-row{
+        margin: 24px 0;
+        padding-top: 2px;
     }
 }
 

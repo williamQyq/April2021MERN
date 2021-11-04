@@ -35,9 +35,9 @@ class LeftPanel extends React.Component {
                             <Spin indicator={antIcon} style={{ fontSize: 0, color: 'black' }} />
                         </Row>
                         <Row ><Title level={5}>${item.priceDiff} ({this.getPriceDiffPercentage(item)}%) Today</Title></Row>
-                        <PriceHistoryChart item={item} />
+                        <PriceHistoryChart />
                         <KeyStatistics />
-                        {/* <KeepaStatistics/> */}
+                        <KeepaStatistics/>
                     </Skeleton>
                 </Col>
             )

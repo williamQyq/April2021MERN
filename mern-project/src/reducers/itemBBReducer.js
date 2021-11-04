@@ -1,4 +1,9 @@
-import { GET_BB_ITEMS, GET_BB_ITEM_DETAIL, ITEMS_LOADING, SET_TABLE_STATE } from './actions/types';
+import { 
+    GET_BB_ITEMS, 
+    GET_BB_ITEM_DETAIL, 
+    ITEMS_LOADING, 
+    SET_TABLE_STATE,
+} from './actions/types';
 
 const initialState = {
     bb_items: [],
