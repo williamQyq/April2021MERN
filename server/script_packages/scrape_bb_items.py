@@ -30,5 +30,6 @@ def main():
     get_sku_items(driver, link, index)
 
     driver.quit()
+    sys.stdout.flush()
     
 main()

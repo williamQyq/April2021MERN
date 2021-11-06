@@ -5,7 +5,7 @@ const auth = require('../../middleware/auth.js');
 
 // @route GET api/items
 router.get('/', (req, res) => {
-    console.log(`keepa routes : ${JSON.stringify(req.query)}`);
+    console.log(`keepa routes : ${JSON.stringify(req.query.searchTerm)}`);
     res.json("keepa");
 });
 

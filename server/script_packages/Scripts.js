@@ -86,7 +86,7 @@ class BBSkuItemScript extends BBScript {
         this.script_path = './script_packages/scrape_bb_items.py';
     }
     listenOn(python) {
-        python.stdout.pipe(require('JSONStream').parse()).on('data', (data) => {
+        python.stdout.pipe(JSONStream.parse()).on('data', (data) => {
             
             if(!isNaN(data.sku)){   //validate non package sku items
                 data.sku = Number(data.sku);

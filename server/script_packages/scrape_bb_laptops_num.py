@@ -14,5 +14,6 @@ def main():
 
     print(json.dumps(num_info))
     driver.quit()
+    sys.stdout.flush()
     
 main()
