@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "client-install": "cd ./mern-project && npm install",
-    "server-install": "npm install && pip install selenium",
+    "server-install": "npm install && pip install -r requirements.txt",
     "server": "cd ./server && nodemon server.js",
     "start": "cd ./server && node server.js",
     "control": "cd ./server && node ./server/backend_control/server.js",

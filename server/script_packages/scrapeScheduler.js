@@ -2,7 +2,7 @@ const cron = require('node-cron');
 const { pyProcessBB } = require('./scraper.js');
 
 //cron scheduler run pyProcessBB get bb prices at 6 pm everyday
-const scrapeBBScheduler = cron.schedule("00 00 09 * * *", () => {
+const scrapeBBScheduler = cron.schedule("00 00 17 * * *", () => {
     randomDelayScraper();
 
 });
@@ -21,7 +21,7 @@ const randomDelayScraper = () => {
 
         pyProcessBB();
 
-    }, getRandomMins(60))
+    }, getRandomMins(30))
 }
 // get random mins less than max
 const getRandomMins = (max) => {

@@ -17,7 +17,6 @@ const io = require("socket.io")(server);
 
 const mongoURI = config.get('mongoURI');
 
-
 //Connect to Mongo, build mongoose connection
 mongoose.connect(mongoURI, {
     useUnifiedTopology: true,

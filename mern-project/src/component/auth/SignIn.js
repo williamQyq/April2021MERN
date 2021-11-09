@@ -135,7 +135,7 @@ class SignIn extends React.Component {
                         <Form.Item>
                             <Button className="sign-in-btn" type="primary" htmlType="submit">Sign In</Button>
                             <Text>Not on RockyStone?</Text>
-                            <Link>Create an account</Link>
+                            <Link to=''>Create an account</Link>
                         </Form.Item>
 
 

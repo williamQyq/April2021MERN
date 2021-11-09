@@ -5,25 +5,17 @@ const JSONStream = require('JSONStream');
 
 const { getCurPrice } = require('../query/aggregate.js');
 
-// parent script 
+// Script class, integrate python scripts into nodejs
 class Script {
-    constructor(model) {
+    constructor(model, arg = undefined) {
         this.model = model;
-
+        this.arg = arg;
     }
     spawnScript(arg) {
         let arg_strfy = JSON.stringify(arg);
         console.log(`[Script] Start running ${this.constructor.name}...`)
         return spawn('python', [this.script_path, arg_strfy]);
     }
-
-    spawnPriceScript(_id, link) {
-        const product = new Product(_id, link);
-        const product_arg = JSON.stringify(product);
-        console.log(`Start crawling product price...: ${product_arg}`)
-        return spawn('python', [this.script_path, product_arg]);
-    }
-
     listenOn(python) {
         python.stdout.on('data', (data) => {
             console.log(`Pipe data from script: ${this.constructor.name}...`);
@@ -33,13 +25,13 @@ class Script {
     listenClose(python, resolve) {
         python.on('close', (code) => {
             // console.log(`\n${this.constructor.name} child process close all stdio with code ${code}`);
-            resolve();
+            resolve(this.data);
         })
     }
     listenErr(python, reject) {
         python.on('error', () => {
             console.log(`\n${this.constructor.name} ***child process close with ERROR***`);
-            reject();
+            reject("error");
         })
     }
 
@@ -64,6 +56,7 @@ class Script {
     }
 
 }
+
 class BBScript extends Script {
     constructor(model) {
         super(model);
@@ -85,10 +78,11 @@ class BBSkuItemScript extends BBScript {
         super(model);
         this.script_path = './script_packages/scrape_bb_items.py';
     }
+
     listenOn(python) {
         python.stdout.pipe(JSONStream.parse()).on('data', (data) => {
-            
-            if(!isNaN(data.sku)){   //validate non package sku items
+
+            if (!isNaN(data.sku)) {   //validate non package sku items
                 data.sku = Number(data.sku);
                 data.currentPrice = Number(data.currentPrice);    //tricky, convert data.currentPrice from string to number, instead of parseFloat toFixed.
                 this.insertAndUpdateItem(data);
@@ -97,17 +91,25 @@ class BBSkuItemScript extends BBScript {
             }
         })
     }
+    listenClose(python, resolve) {
+        python.on('close', (code) => {
+            // console.log(`\n${this.constructor.name} child process close all stdio with code ${code}`);
+            resolve("finished");
+        })
+    }
+
     getLinkInfo(totalNum, numPerPage) {     //return link and calculate the # of pages need to loop.
         return ({
             link: this.link,
             link_index: Math.ceil(totalNum / numPerPage)
         })
     }
-    insertAndUpdateItem(itemBB) {
-        let isSkuInsert = this.setOnInsert(itemBB); //true if insert new item; false if item exists.
+
+    insertAndUpdateItem(item) {
+        let isSkuInsert = this.setOnInsert(item); //true if insert new item; false if item exists.
 
         if (!isSkuInsert) {
-            this.findPriceChangedItemAndUpdate(itemBB);
+            this.findPriceChangedItemAndUpdate(item);
         }
     }
 
@@ -134,7 +136,8 @@ class BBSkuItemScript extends BBScript {
         });
         return false;
     }
-    findPriceChangedItemAndUpdate(itemBB) {
+
+    findPriceChangedItemAndUpdate(item) {
         //aggregate find item that matched on sku in DB, then update price changed item.
         this.model.aggregate([
             {
@@ -145,7 +148,7 @@ class BBSkuItemScript extends BBScript {
                     previousPrice: getCurPrice,     //tricky, get db current price which becomes prev price.
                     isCurrentPriceChanged: {        //check if capture price equal current price in db.
                         $ne: [
-                            itemBB.currentPrice,       //lastest price from scrape
+                            item.currentPrice,       //lastest price from scrape
                             getCurPrice             //price in db
                         ]
                     }
@@ -153,37 +156,45 @@ class BBSkuItemScript extends BBScript {
             },
             {
                 $match: {
-                    sku: itemBB.sku,
+                    sku: item.sku,
                     isCurrentPriceChanged: true
                 }
             }
         ]).then(changedItems => {
-            this.findSkuAndUpdate(changedItems, itemBB);
+            this.findSkuAndUpdate(changedItems, item);
         })
     }
 
-    findSkuAndUpdate(changedItems, itemBB) {
+    findSkuAndUpdate(changedItems, item) {
 
-        let itemDB = changedItems.pop(); //aggregate array result; if item price changed, else pop empty arr and get null.
+        let itemInDatabase = changedItems.pop(); //aggregate array result; if item price changed, else pop empty arr and get null.
         let options = { upsert: true, new: true, setDefaultsOnInsert: true, useFindAndModify: false }
         let update = {
             $push: {
                 price_timestamps: {
-                    price: itemBB.currentPrice
+                    price: item.currentPrice
                 }
             }
         }
 
-        if (itemDB != null) {   //if found the price of itemSku changed
-            this.model.findByIdAndUpdate(itemDB._id, update, options).then(item => {
+        if (itemInDatabase != null) {   //if found match item in database and the price of itemSku is changed
+            this.model.findByIdAndUpdate(itemInDatabase._id, update, options).then(item => {
                 console.log(`Update price changed item in DB on SKU:${item.sku}\n${JSON5.stringify(item)}\n`)
             })
         } else {
-            console.log(`Item exists, Price not Changed: ${itemBB.sku}`);
+            console.log(`Item exists, Price not Changed: ${item.sku}`);
         }
     }
 
+}
 
+class KeepaScript extends Script {
+    constructor(searchTerm) {
+        super(undefined, searchTerm);
+
+        this.searchTerm = searchTerm;
+        this.script_path = './script_packages/keepa_stat.py';
+    }
 
 }
 
@@ -191,5 +202,6 @@ module.exports = {
     BBScript: BBScript,
     BBNumScript: BBNumScript,
     BBSkuItemScript: BBSkuItemScript,
-   
+    KeepaScript: KeepaScript
+
 }
