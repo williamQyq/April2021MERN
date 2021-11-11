@@ -1,4 +1,6 @@
 {
     "mongoURI": "mongodb+srv://w:q@cluster0.lkscp.mongodb.net/DB?retryWrites=true&w=majority",
-    "jwtSecret": "williamERP_myJwtSecret"
+    "jwtSecret": "williamERP_myJwtSecret",
+    "watchListCollection": "product_price_listings",
+    "bestbuyCollection": "bb_item_listings"
 }
