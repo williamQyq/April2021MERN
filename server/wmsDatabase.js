@@ -26,7 +26,7 @@ function getDatabase() {
     return wmsDatabase;
 }
 
-const close = () => {
+function close() {
     wmsDatabase.close();
     console.log(`wms connection closed...`);
 }
