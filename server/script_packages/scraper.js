@@ -37,16 +37,21 @@ const pyProcessBB = () => {
     //1. get bb sku-items num then
     //2. Each laptops page contains 24 sku items, calculate and init array of links.
     //3. for each page, for each sku item, findskuAndUpdate.
-    getNumOfAllNewLaptops().then((pageInfo) => {
+    getNumOfAllNewLaptops().then(pageInfo => {
+
         console.log(`[BB num of all laptops new condtion]: ${pageInfo.num} - ${pageInfo.num_per_page}/per page.`);
-        getAllNewLaptops(pageInfo.num, pageInfo.num_per_page).then(() => {
-            console.log("[BBSkuItem Script] update all sku items finished.\n")
-        }, () => {
-            console.log("[BBSkuItem Script] Failure");
+        getAllNewLaptops(pageInfo.num, pageInfo.num_per_page).then(result => {
+            console.log(result);
         })
-    }, () => {
-        console.log("[BBNum Script] Failure.");
+            .catch(err => {
+                console.error(err);
+                return err;
+            })
     })
+        .catch(err => {
+            console.error(err);
+            return err;
+        })
 
 }
 // get all laptops new condition number promise, resolve when retrieve items number.

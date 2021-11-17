@@ -8,7 +8,7 @@ router.get('/', (req, res) => {
 
     getKeepaStat(req.query.searchTerm).then((stat) => {
         console.log(`keepa routes : ${JSON.stringify(stat)}`);
-        res.json(`${stat}`);
+        res.json(stat);
     })
 
 });

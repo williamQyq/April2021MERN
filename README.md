@@ -30,3 +30,7 @@ Build on Heroku:
 Build on AWS:
 
 *comming soon
+
+Tips:
+To reset and regenerate git tokens, edit project files/.git/config/origin.
+Replace the token part of url with regenerated tokens from github developer setting.

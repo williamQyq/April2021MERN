@@ -29,9 +29,9 @@ class Script {
         })
     }
     listenErr(python, reject) {
-        python.on('error', () => {
-            console.log(`\n${this.constructor.name} ***child process close with ERROR***`);
-            reject("error");
+        python.on('uncaughtException', err => {
+        
+            reject(`\nERROR ${this.constructor.name}: ${err}`);
         })
     }
 
@@ -74,6 +74,7 @@ class BBNumScript extends BBScript {
 }
 
 class BBSkuItemScript extends BBScript {
+    count = 0;
     constructor(model) {
         super(model);
         this.script_path = './script_packages/scrape_bb_items.py';
@@ -81,20 +82,20 @@ class BBSkuItemScript extends BBScript {
 
     listenOn(python) {
         python.stdout.pipe(JSONStream.parse()).on('data', (data) => {
-
             if (!isNaN(data.sku)) {   //validate non package sku items
                 data.sku = Number(data.sku);
                 data.currentPrice = Number(data.currentPrice);    //tricky, convert data.currentPrice from string to number, instead of parseFloat toFixed.
                 this.insertAndUpdateItem(data);
             } else {
-                console.log(`Attention**, this item does not have sku. Skip: ${data.sku}`);
+                console.log(`# ${this.count} Attention**, this item does not have sku. Skip: ${data.sku}`);
+                this.count += 1;
             }
+
         })
     }
     listenClose(python, resolve) {
-        python.on('close', (code) => {
-            // console.log(`\n${this.constructor.name} child process close all stdio with code ${code}`);
-            resolve("finished");
+        python.on('exit', (code) => {
+            resolve(`\n${this.constructor.name} child process close with code: ${code}`);
         })
     }
 
@@ -130,7 +131,8 @@ class BBSkuItemScript extends BBScript {
         this.model.updateOne(SET_ON_INSERT_QUERY, update, options).then(result => {       //insert if sku not exists
             // console.log(`result:${JSON.stringify(result)}`)
             if (result.upserted) {
-                console.log(`Inserted new item into DB on SKU: ${item.sku}`)
+                console.log(`# ${this.count} Inserted new item into DB on SKU: ${item.sku}`)
+                this.count += 1;
                 return true;
             }
         });
@@ -179,10 +181,12 @@ class BBSkuItemScript extends BBScript {
 
         if (itemInDatabase != null) {   //if found match item in database and the price of itemSku is changed
             this.model.findByIdAndUpdate(itemInDatabase._id, update, options).then(item => {
-                console.log(`Update price changed item in DB on SKU:${item.sku}\n${JSON5.stringify(item)}\n`)
+                console.log(`# ${this.count} Update price changed item in DB on SKU:${item.sku}\n${JSON5.stringify(item)}\n`)
+                this.count += 1;
             })
         } else {
-            console.log(`Item exists, Price not Changed: ${item.sku}`);
+            console.log(`# ${this.count} Item exists, Price not Changed: ${item.sku}`);
+            this.count += 1;
         }
     }
 
