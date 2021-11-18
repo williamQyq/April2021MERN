@@ -9,7 +9,7 @@ function connect(config, callback) {
         if (error) {
             console.log("SSH connection error: " + error);
         }
-        let client = new MongoClient('mongodb://localhost:27017/wms', { useUnifiedTopology: true });
+        let client = new MongoClient('mongodb://0.0.0.0:27017/wms', { useUnifiedTopology: true });
 
         (async () => {
             await client.connect();

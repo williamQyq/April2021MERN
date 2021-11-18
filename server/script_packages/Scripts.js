@@ -35,25 +35,25 @@ class Script {
         })
     }
 
-    updateDBPriceById(Model, product) {
-        //update price and name returned from python script, push price_timestamp into price_timestamps
-        Model.findByIdAndUpdate(product.id, {
-            name: product.name,
-            $push: {
-                price_timestamps: {
-                    price: product.currentPrice,
-                }
-            }
-        }, { useFindAndModify: false }, (err, docs) => {
-            if (err) {
-                console.log(`[Error]Update name and price by _id: ${product.id} Failure`)
-            } else {
-                console.log(`Updated _id: ${product.id} Success`)
-            }
-        });
+    // updateDBPriceById(Model, product) {
+    //     //update price and name returned from python script, push price_timestamp into price_timestamps
+    //     Model.findByIdAndUpdate(product.id, {
+    //         name: product.name,
+    //         $push: {
+    //             price_timestamps: {
+    //                 price: product.currentPrice,
+    //             }
+    //         }
+    //     }, { useFindAndModify: false }, (err, docs) => {
+    //         if (err) {
+    //             console.log(`[Error]Update name and price by _id: ${product.id} Failure`)
+    //         } else {
+    //             console.log(`Updated _id: ${product.id} Success`)
+    //         }
+    //     });
 
-        console.log(`Updated price timestamps, name of product in DB...:\n${JSON5.stringify(product)}`)
-    }
+    //     console.log(`Updated price timestamps, name of product in DB...:\n${JSON5.stringify(product)}`)
+    // }
 
 }
 
