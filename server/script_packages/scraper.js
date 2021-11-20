@@ -1,11 +1,12 @@
 
 const WatchListItem = require('../models/WatchListItem');
 const BBItem = require('../models/BBItem');
-const CCItem = require('../models/CCItem');
+const MsItem = require('../models/MsItem');
 const {
     BBScript,
     BBNumScript,
     BBSkuItemScript,
+    MsScript,
 } = require('./scripts.js');
 
 
@@ -54,39 +55,83 @@ const pyProcessBB = () => {
         })
 
 }
-// get all laptops new condition number promise, resolve when retrieve items number.
-const getNumOfAllNewLaptops = () => {
+// // get all laptops new condition number promise, resolve when retrieve items number.
+// const getNumOfAllNewLaptops = () => {
 
-    let bestbuy = new BBNumScript(BBItem);
+//     let bestbuy = new BBNumScript(BBItem);
+
+//     //spawn script to get items number
+//     const python = bestbuy.spawnScript(bestbuy.link);
+
+//     // listen for script, get total items number
+//     bestbuy.listenOn(python);
+//     return new Promise((resolve, reject) => {
+//         bestbuy.listenClose(python, resolve);
+//         bestbuy.listenErr(python, reject);
+//     });
+// }
+
+// // get all laptops sku-items promise, resolve when retrieve all skus, names, currentPrices.
+// const getAllNewLaptops = (num, numPerPage) => {
+
+//     let bestbuy = new BBSkuItemScript(BBItem);
+
+//     const page = bestbuy.getLinkInfo(num, numPerPage);
+//     const python = bestbuy.spawnScript(page);
+//     bestbuy.listenOn(python);
+//     return new Promise((resolve, reject) => {
+//         bestbuy.listenClose(python, resolve);
+//         bestbuy.listenErr(python, reject);
+//     });
+// }
+
+const microsoftScraper = () => {
+    getNumOfAllNewLaptops(MsScript, MsItem).then(pageInfo => {
+        getAllNewLaptops(MsScript, MsItem, pageInfo.pages, pageInfo.numEachPage).then(result => {
+            console.log(result);
+        })
+            .catch(err => {
+                console.error(err);
+                return err;
+            })
+    })
+        .catch(err => {
+            console.error(err);
+            return err;
+        })
+}
+
+// get all laptops new condition number promise, resolve when retrieve items number.
+const getNumOfAllNewLaptops = (StoreScript, StoreItemModel) => {
+
+    let store = new StoreScript(StoreItemModel);
 
     //spawn script to get items number
-    const python = bestbuy.spawnScript(bestbuy.link);
+    const python = store.spawnScript(store.pageNumScriptPath, store.link);
 
     // listen for script, get total items number
-    bestbuy.listenOn(python);
+    store.listenOn(python);
     return new Promise((resolve, reject) => {
-        bestbuy.listenClose(python, resolve);
-        bestbuy.listenErr(python, reject);
+        store.listenClose(python, resolve);
+        store.listenErr(python, reject);
     });
 }
 
 // get all laptops sku-items promise, resolve when retrieve all skus, names, currentPrices.
-const getAllNewLaptops = (num, numPerPage) => {
+const getAllNewLaptops = (StoreScript, StoreItemModel, pages, numEachPage) => {
 
-    let bestbuy = new BBSkuItemScript(BBItem);
+    let store = new StoreScript(StoreItemModel);
 
-    const page = bestbuy.getLinkInfo(num, numPerPage);
-    const python = bestbuy.spawnScript(page);
-    bestbuy.listenOn(python);
+    const pageInfo = store.getLinkInfo(pages, numEachPage);
+    const python = store.spawnScript(store.skuItemScriptPath, pageInfo);
+    store.listenOn(python);
     return new Promise((resolve, reject) => {
-        bestbuy.listenClose(python, resolve);
-        bestbuy.listenErr(python, reject);
+        store.listenClose(python, resolve);
+        store.listenErr(python, reject);
     });
 }
-
 module.exports = {
     bbLinkScraper: bbLinkScraper,
     pyProcessBB: pyProcessBB,
-    // pyProcessCC: pyProcessCC,
-
+    microsoftScraper: microsoftScraper,
 }

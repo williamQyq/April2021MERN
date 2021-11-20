@@ -11,10 +11,10 @@ class Script {
         this.model = model;
         this.arg = arg;
     }
-    spawnScript(arg) {
-        let arg_strfy = JSON.stringify(arg);
+    spawnScript(scriptPath, arg) {
+        arg = JSON.stringify(arg);
         console.log(`[Script] Start running ${this.constructor.name}...`)
-        return spawn('python', [this.script_path, arg_strfy]);
+        return spawn('python', [scriptPath, arg]);
     }
     listenOn(python) {
         python.stdout.on('data', (data) => {
@@ -30,7 +30,7 @@ class Script {
     }
     listenErr(python, reject) {
         python.on('uncaughtException', err => {
-        
+
             reject(`\nERROR ${this.constructor.name}: ${err}`);
         })
     }
@@ -202,10 +202,31 @@ class KeepaScript extends Script {
 
 }
 
+class MsScript extends Script {
+    constructor(model) {
+        super(model);
+        this.link = 'https://www.microsoft.com/en-us/store/b/shop-all-pcs?categories=2+in+1||Laptops||Desktops||PC+Gaming';
+        this.pageNumScriptPath = './script_packages/scrape_ms_laptops_num.py';
+        this.skuItemScriptPath = './script_packages/scrape_ms_items.py';
+    }
+}
+class MsSkuItemScript extends MsScript {
+    constructor(model) {
+        super(model);
+    }
+    listenOn() {
+
+    }
+    listenClose() {
+
+    }
+}
+
 module.exports = {
     BBScript: BBScript,
     BBNumScript: BBNumScript,
     BBSkuItemScript: BBSkuItemScript,
-    KeepaScript: KeepaScript
+    KeepaScript: KeepaScript,
+    MsScript: MsScript
 
 }

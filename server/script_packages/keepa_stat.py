@@ -72,7 +72,8 @@ def get_keepa_statistics():
     asins = ['B09234WZPX']
     products = laptop.get_products(asins)
 
-    laptop.get_offers(products[0])
+
+    # laptop.get_offers(products[0])
     # keepa.plot_product(products[0])
     # print(products[0]['liveOffersOrder'])
 

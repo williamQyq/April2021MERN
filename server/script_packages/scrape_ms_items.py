@@ -2,14 +2,14 @@
 import sys
 import json
 from mypackage.init import init_chrome_driver
-from mypackage.fun.cc import get_sku_items
+from mypackage.fun.ms import get_sku_items
 
 
 def main():
 
     # item_link_info = json.loads(sys.argv[1])
     item_link_info = {
-        "link":'https://www.costco.com/laptops.html',
+        "link":'https://www.microsoft.com/en-us/store/b/shop-all-pcs?categories=2+in+1||Laptops||Desktops||PC+Gaming',
         "link_index": 1
     }
 

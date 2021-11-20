@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 //Create Schema for self tracking list 
-const CCItemSchema = new Schema({
+const MsItemSchema = new Schema({
     link:{
         type: String,
         require:true
@@ -28,6 +28,6 @@ const CCItemSchema = new Schema({
         type: Date,
         default: Date.now
     }
-}, {collection: 'cc_item_listings'});
+}, {collection: 'ms_item_listings'});
 
-module.exports = CCItem = mongoose.model('cc_item', CCItemSchema);
+module.exports = MsItem = mongoose.model('ms_item', MsItemSchema);

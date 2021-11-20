@@ -72,8 +72,7 @@ def check_product_instock(driver):
 
 
 def get_sku_items_num(driver, sku_item_link):
-    num_info = dict()
-
+    num_info = {'num_per_page': 0, 'num': 0}
     driver.get(sku_item_link)
 
     try:
@@ -81,30 +80,27 @@ def get_sku_items_num(driver, sku_item_link):
             EC.presence_of_element_located(
                 (By.XPATH, "//div[@class='footer top-border wrapper']//span"))
         ).text
+
+        p_total_num = ".* of (\d*) items"
+        p_num_per_page = "\d*-(\d*) of \d*"
+        num_info["num_per_page"] = re.search(
+            p_num_per_page, item_count).group(1)
+        num_info["num"] = re.search(
+            p_total_num, item_count).group(1)
     except:
         return False
-    
-    p_total_num = ".* of (\d*) items"
-    p_num_per_page = "\d*-(\d*) of \d*"
-    
-    try:
-        num_info["num_per_page"] = re.search(p_num_per_page, item_count).group(1)
-        num_info["num"] = re.search(p_total_num,item_count).group(1)
-    except:
-        num_info["num_per_page"]=0
-        num_info["num"] = 0
-
-    return num_info
+    finally:
+        return num_info
 
 # get all Laptops New sku items
+
 def get_sku_items(driver, link, index):
     driver.get(link)
-    # result_list = list()
-    count = 0
+    # count = 0
 
     for i in range(index):
         skus_before_changed = list()
-        
+
         # for each page index, get sku items in sku item list
         try:
             sku_items = WebDriverWait(driver, 10).until(
@@ -125,7 +121,7 @@ def get_sku_items(driver, link, index):
                 # result_list.append(item)
                 # print(f'[{i}]-{count} item-sku = {item_sku}')
                 skus_before_changed.append(item_sku)
-                count += 1
+                # count += 1
         except:
             # print(f"[Error--sku-item]: ===Failure unable to get sku items info===\n\n")
             return False
@@ -133,8 +129,8 @@ def get_sku_items(driver, link, index):
         if(i < index-1):
             click_next_page(driver)
             # sleep random 15-20 sec
-            seed(1)
-            time.sleep(randint(10,15))
+            seed()
+            time.sleep(randint(10, 15))
             # wait until sku item list refreshed
             try:
                 WebDriverWait(driver, 20).until(
