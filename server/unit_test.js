@@ -5,12 +5,12 @@ const {
     BBSku,
     BBSkuItemScript
 } = require('./script_packages/Scripts.js');
-const {pyProcessBB} = require('./script_packages/scraper.js');
+const {bestbuyScraper} = require('./script_packages/scraper.js');
 
 const test = () => {
     console.log("[Test] starting test.js");
 
-    pyProcessBB();
+    bestbuyScraper();
     // testBBSkuItem().then(result => {
     //     console.log(`script process result :${result}`)
     // });

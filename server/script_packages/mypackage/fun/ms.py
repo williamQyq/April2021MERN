@@ -36,7 +36,7 @@ def get_sku_items(driver, link, index):
     driver.get(link)
 
     for i in range(index):
-        skus_before_clicked_next = list()
+        cur_item_list = list()
         try:
             sku_items = WebDriverWait(driver, 10).until(
                 EC.presence_of_all_elements_located(
@@ -46,12 +46,50 @@ def get_sku_items(driver, link, index):
                 item = {}
                 data = json.loads(item_element.get_attribute("data-m"))
                 prd_id = data['pid']
-                prdName = data['tags']['prdName'].replace(" ","-").replace('"',"").lower()
-                
-                item['link'] = 'https://www.microsoft.com/en-us/d/'+prdName+'/'+prd_id
-                
-                print(prdName)
-                # item["link"] = 'https://www.microsoft.com/en-us/d/'+item_data.
+                prd_name = data['tags']['prdName']
 
+                item['link'] = 'https://www.microsoft.com/en-us/d/' + \
+                    prd_name.replace(" ", "-").replace('"',"").lower()+'/'+prd_id
+                item['sku'] = prd_id
+                item['currentPrice'] = get_sku_item_price(item_element)
+                item['name'] = prd_name
+
+                print(json.dumps(item))
+                cur_item_list.append(prd_id)
         except:
             return False
+
+        has_next_page = i < index - 1
+        if has_next_page:
+            click_next_page(driver)
+            seed()
+            time.sleep(randint(10, 15))
+            try:
+                WebDriverWait(driver, 20).until(
+                    (lambda x: sku_attribute_changed(driver, cur_item_list))
+                )
+            except:
+                return False
+
+
+def get_sku_item_price(driver):
+    price = None
+    try:
+        price_element = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "span[itemprop='price']")
+            )
+        )
+        price = price_element.get_attribute("content")
+    except:
+        return False
+    finally:
+        return price
+
+
+def click_next_page(driver):
+    return
+
+
+def sku_attribute_changed(driver, skus_before_changed):
+    return

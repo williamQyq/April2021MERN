@@ -21,7 +21,7 @@ def main():
     # do something
     get_sku_items(driver, link, index)
 
-    # driver.quit()
+    driver.quit()
     sys.stdout.flush()
 
     

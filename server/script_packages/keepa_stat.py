@@ -8,21 +8,11 @@ import datetime
 import pandas as pd
 import mypackage.config as config
 
-
-class Laptops:
-    asins = []
-
+class Product:
     def __init__(self, search_term) -> object:
         self.api = keepa.Keepa(config.KEEPA_ACCESS_KEY)
-        self.product_parms = {
-            'categories_include': [
-                config.LAPTOPS_CODE,
-                config.TRADITIONAL_LAPTOPS_CODE,
-                config.TABLET_LAPTOPS_CODE
-            ],
-            'title': search_term,
-            'current_SALES_lte': config.DEFAULT_SALES_RANK_LIMITS
-        }
+        self.product_parms = None
+        self.asins = None
 
     def get_asins(self):
         self.asins = self.api.product_finder(self.product_parms)
@@ -61,6 +51,29 @@ class Laptops:
         for i in range(len(offer_prices)):
             plt.scatter(offer_times[i], offer_prices[i])
         plt.show()
+
+class Laptops (Product):
+    def __init__(self, search_term) -> object:
+        self.product_parms = {
+            'categories_include': [
+                config.LAPTOPS_CODE,
+                config.TRADITIONAL_LAPTOPS_CODE,
+                config.TABLET_LAPTOPS_CODE
+            ],
+            'title': search_term,
+            'current_SALES_lte': config.DEFAULT_SALES_RANK_LIMITS
+        }
+
+class CableClip (Product):
+    def __init__(self, search_term) -> object:
+        self.product_parms = {
+            'categories_include': [
+                config.ELECTRONICS_CODE,
+                config.CABLE_STRAPS,
+            ],
+            'title': search_term,
+            'current_SALES_lte': config.DEFAULT_SALES_RANK_LIMITS
+        }
 
 
 def get_keepa_statistics():
