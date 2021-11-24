@@ -85,7 +85,7 @@ def get_sku_items_num(driver, sku_item_link):
         p_num_per_page = "\d*-(\d*) of \d*"
         num_info["num_per_page"] = re.search(
             p_num_per_page, item_count).group(1)
-        num_info["num"] = re.search(
+        num_info["total_num"] = re.search(
             p_total_num, item_count).group(1)
     except:
         return False
@@ -127,10 +127,12 @@ def get_sku_items(driver, link, index):
             return False
         # click next page until reach last page
         if(i < index-1):
-            click_next_page(driver)
-            # sleep random 15-20 sec
             seed()
             time.sleep(randint(10, 15))
+            
+            click_next_page(driver)
+            # sleep random 15-20 sec
+            
             # wait until sku item list refreshed
             try:
                 WebDriverWait(driver, 20).until(

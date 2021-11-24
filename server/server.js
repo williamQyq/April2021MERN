@@ -4,7 +4,7 @@ const path = require('path');
 const config = require('config');
 const wmsConfig = require('./config/wmsConfig');
 const { test } = require('./unit_test.js'); //unit test for python scripts
-const { scrapeBBScheduler } = require('./script_packages/scrapeScheduler.js');    //scripts scheduler, node-cron
+const { scrapeScheduler } = require('./script_packages/scrapeScheduler.js');    //scripts scheduler, node-cron
 const { bbLinkScraper } = require('./script_packages/scraper.js');
 const wms = require("./wmsDatabase.js");    // @local wms server connection
 
@@ -73,8 +73,8 @@ db.once('open', () => {
         }
 
     })
-    // test();
-    scrapeBBScheduler.start();
+    test();
+    scrapeScheduler.start();
 
     changeStream.on('change', (change) => {
         const doc = change.fullDocument;

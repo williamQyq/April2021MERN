@@ -7,11 +7,11 @@ from mypackage.fun.ms import get_sku_items
 
 def main():
 
-    # item_link_info = json.loads(sys.argv[1])
-    item_link_info = {
-        "link":'https://www.microsoft.com/en-us/store/b/shop-all-pcs?categories=2+in+1||Laptops||Desktops||PC+Gaming',
-        "link_index": 1
-    }
+    item_link_info = json.loads(sys.argv[1])
+    # item_link_info = {
+    #     "link":'https://www.microsoft.com/en-us/store/b/shop-all-pcs?categories=2+in+1%7c%7cLaptops%7c%7cDesktops%7c%7cPC+Gaming&s=store&skipitems=',
+    #     "link_index": 2
+    # }
 
     link = item_link_info["link"]
     index = item_link_info["link_index"]

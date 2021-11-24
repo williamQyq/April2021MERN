@@ -14,17 +14,17 @@ class Product:
         self.product_parms = None
         self.asins = None
 
-    def get_asins(self):
+    def get_asins(self) -> list:
         self.asins = self.api.product_finder(self.product_parms)
         return self.asins
 
-    def get_products(self, asins):
+    def get_products(self, asins) -> list:
         return self.api.query(asins, offers=20)
 
-    def get_sales_rank(self, products):
+    def get_sales_rank(self, products) -> dict:
         return products['data']['df_SALES']
 
-    def get_offers(self, product):
+    def get_offers(self, product) -> None:
         offers = product['offers']
 
         # each offer contains the price history of each offer
@@ -33,10 +33,10 @@ class Product:
 
         # convert these values to numpy arrays
         times, prices = keepa.convert_offer_history(csv)
-
         # for a list of active offers, see
         indices = product['liveOffersOrder']
-
+        print(indices)
+        print(product['offers'])
         # with this you can loop through active offers:
         indices = product['liveOffersOrder']
         offer_times = []
@@ -49,7 +49,7 @@ class Product:
 
         # you can aggregate these using np.hstack or plot at the history individually
         for i in range(len(offer_prices)):
-            plt.scatter(offer_times[i], offer_prices[i])
+            plt.step(offer_times[i], offer_prices[i])
         plt.show()
 
 class Laptops (Product):
@@ -63,6 +63,29 @@ class Laptops (Product):
             'title': search_term,
             'current_SALES_lte': config.DEFAULT_SALES_RANK_LIMITS
         }
+        super().__init__(self)
+
+    # def get_offers(self, products) -> None:
+    #     offers = []
+    #     indices = 0
+    #     for product in products:
+    #         offers.append(product['offers'])
+    #         indices+=product['liveOffersOrder']
+        
+    #     # with this you can loop through active offers:
+    #     offer_times = []
+    #     offer_prices = []
+    #     for index in indices:
+    #         csv = offers[index]['offerCSV']
+    #         # convert these values to numpy arrays
+    #         times, prices = keepa.convert_offer_history(csv)
+    #         offer_times.append(times)
+    #         offer_prices.append(prices)
+
+    #     # # you can aggregate these using np.hstack or plot at the history individually
+    #     # for i in range(len(offer_prices)):
+    #     #     plt.step(offer_times[i], offer_prices[i])
+    #     # plt.show()
 
 class CableClip (Product):
     def __init__(self, search_term) -> object:
@@ -79,14 +102,13 @@ class CableClip (Product):
 def get_keepa_statistics():
     # search_term = json.loads(sys.argv[1])
     search_term = "HP ENVY Ryzen 5 5500U"
-
     laptop = Laptops(search_term)
     # asins = laptop.get_asins()
-    asins = ['B09234WZPX']
+    asins = ['B08966H6XJ']
     products = laptop.get_products(asins)
+    laptop.get_offers(products[0])
 
 
-    # laptop.get_offers(products[0])
     # keepa.plot_product(products[0])
     # print(products[0]['liveOffersOrder'])
 

@@ -7,9 +7,10 @@ const { getCurPrice } = require('../query/aggregate.js');
 
 // Script class, integrate python scripts into nodejs
 class Script {
-    constructor(model, arg = undefined) {
+    constructor(model, search = undefined) {
         this.model = model;
-        this.arg = arg;
+        this.search = search;
+
     }
     spawnScript(scriptPath, arg) {
         arg = JSON.stringify(arg);
@@ -34,65 +35,6 @@ class Script {
             reject(`\nERROR ${this.constructor.name}: ${err}`);
         })
     }
-
-    // updateDBPriceById(Model, product) {
-    //     //update price and name returned from python script, push price_timestamp into price_timestamps
-    //     Model.findByIdAndUpdate(product.id, {
-    //         name: product.name,
-    //         $push: {
-    //             price_timestamps: {
-    //                 price: product.currentPrice,
-    //             }
-    //         }
-    //     }, { useFindAndModify: false }, (err, docs) => {
-    //         if (err) {
-    //             console.log(`[Error]Update name and price by _id: ${product.id} Failure`)
-    //         } else {
-    //             console.log(`Updated _id: ${product.id} Success`)
-    //         }
-    //     });
-
-    //     console.log(`Updated price timestamps, name of product in DB...:\n${JSON5.stringify(product)}`)
-    // }
-
-}
-
-class BBScript extends Script {
-    constructor(model) {
-        super(model);
-        this.link = `https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&browsedCategory=pcmcat138500050001&id=pcat17071&iht=n&ks=960&list=y&qp=condition_facet%3DCondition~New&sc=Global&st=categoryid%24pcmcat138500050001&type=page&usc=All%20Categories`;
-        this.linkSearchScriptPath = './script_packages/scrape_bb_item_on_sku.py';
-        this.pageNumScriptPath = './script_packages/scrape_bb_laptops_num.py';
-        this.skuItemScriptPath = './script_packages/scrape_bb_items.py';
-    }
-}
-
-class BBSkuItemScript extends BBScript {
-    count = 0;
-    constructor(model) {
-        super(model);
-        this.script_path = './script_packages/scrape_bb_items.py';
-    }
-
-    listenOn(python) {
-        python.stdout.pipe(JSONStream.parse()).on('data', (data) => {
-            if (!isNaN(data.sku)) {   //validate non package sku items
-                data.sku = Number(data.sku);
-                data.currentPrice = Number(data.currentPrice);    //tricky, convert data.currentPrice from string to number, instead of parseFloat toFixed.
-                this.insertAndUpdateItem(data);
-            } else {
-                console.log(`# ${this.count} Attention**, this item does not have sku. Skip: ${data.sku}`);
-                this.count += 1;
-            }
-
-        })
-    }
-    listenClose(python, resolve) {
-        python.on('exit', (code) => {
-            resolve(`\n${this.constructor.name} child process close with code: ${code}`);
-        })
-    }
-
     getLinkInfo(totalNum, numPerPage) {     //return link and calculate the # of pages need to loop.
         return ({
             link: this.link,
@@ -108,7 +50,7 @@ class BBSkuItemScript extends BBScript {
         }
     }
 
-    setOnInsert = (item) => {
+    setOnInsert(item) {
         let SET_ON_INSERT_QUERY = { sku: item.sku };
         let update = {
             $setOnInsert: {
@@ -186,6 +128,43 @@ class BBSkuItemScript extends BBScript {
 
 }
 
+class BBScript extends Script {
+    constructor(model) {
+        super(model);
+        this.link = `https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&browsedCategory=pcmcat138500050001&id=pcat17071&iht=n&ks=960&list=y&qp=condition_facet%3DCondition~New&sc=Global&st=categoryid%24pcmcat138500050001&type=page&usc=All%20Categories`;
+        this.linkSearchScriptPath = './script_packages/scrape_bb_item_on_sku.py';
+        this.pageNumScriptPath = './script_packages/scrape_bb_laptops_num.py';
+        this.skuItemScriptPath = './script_packages/scrape_bb_items.py';
+    }
+}
+
+class BBSkuItemScript extends BBScript {
+    constructor(model) {
+        super(model);
+        this.count = 0;
+    }
+
+    listenOn(python) {
+        python.stdout.pipe(JSONStream.parse()).on('data', (data) => {
+            if (!isNaN(data.sku)) {   //validate non package sku items
+                data.sku = Number(data.sku);
+                data.currentPrice = Number(data.currentPrice);    //tricky, convert data.currentPrice from string to number, instead of parseFloat toFixed.
+                this.insertAndUpdateItem(data);
+            } else {
+                console.log(`# ${this.count} Attention**, this item does not have number sku. Skip: ${data.sku}`);
+                this.count += 1;
+            }
+
+        })
+    }
+    listenClose(python, resolve) {
+        python.on('exit', (code) => {
+            resolve(`\n${this.constructor.name} child process close with code: ${code}`);
+        })
+    }
+
+}
+
 class KeepaScript extends Script {
     constructor(searchTerm) {
         super(undefined, searchTerm);
@@ -199,7 +178,7 @@ class KeepaScript extends Script {
 class MsScript extends Script {
     constructor(model) {
         super(model);
-        this.link = 'https://www.microsoft.com/en-us/store/b/shop-all-pcs?categories=2+in+1||Laptops||Desktops||PC+Gaming';
+        this.link = 'https://www.microsoft.com/en-us/store/b/shop-all-pcs?categories=2+in+1||Laptops||Desktops||PC+Gaming&s=store&skipitems=';
         this.pageNumScriptPath = './script_packages/scrape_ms_laptops_num.py';
         this.skuItemScriptPath = './script_packages/scrape_ms_items.py';
     }
@@ -207,19 +186,37 @@ class MsScript extends Script {
 class MsSkuItemScript extends MsScript {
     constructor(model) {
         super(model);
+        this.count = 0;
     }
-    listenOn() {
+    listenOn(python) {
+        python.stdout.pipe(JSONStream.parse()).on('data', (data) => {
+            console.log(`${data.sku}\n ${isNaN(data.sku)}`)
 
-    }
-    listenClose() {
+            if (data.sku) {   //validate non package sku items
+                data.sku = Number(data.sku);
+                data.currentPrice = Number(data.currentPrice);    //tricky, convert data.currentPrice from string to number, instead of parseFloat toFixed.
+                this.insertAndUpdateItem(data);
+            } else {
+                console.log(`# ${this.count} Attention**, this item does not have sku. Skip: ${data.sku}`);
+                this.count += 1;
+            }
 
+        })
     }
+    listenClose(python, resolve) {
+        python.on('exit', (code) => {
+            resolve(`\n${this.constructor.name} child process close with code: ${code}`);
+        })
+    }
+
+
 }
 
 module.exports = {
     BBScript: BBScript,
     BBSkuItemScript: BBSkuItemScript,
     KeepaScript: KeepaScript,
-    MsScript: MsScript
+    MsScript: MsScript,
+    MsSkuItemScript: MsSkuItemScript
 
 }

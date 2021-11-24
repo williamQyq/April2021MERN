@@ -32,44 +32,64 @@ def get_sku_items_num(driver, sku_item_link):
 # get all Laptops New sku items
 
 
-def get_sku_items(driver, link, index):
-    driver.get(link)
+def get_sku_items(driver, link, pages_num):
+    skip_items = 0
+    driver.get(link+str(skip_items))
 
-    for i in range(index):
-        cur_item_list = list()
+    close_dialog(driver)
+    # get items for each page
+    for i in range(pages_num):
         try:
             sku_items = WebDriverWait(driver, 10).until(
                 EC.presence_of_all_elements_located(
                     (By.XPATH, "//div[@class='m-channel-placement-item f-wide f-full-bleed-image']/a"))
             )
-            for item_element in sku_items:
-                item = {}
-                data = json.loads(item_element.get_attribute("data-m"))
-                prd_id = data['pid']
-                prd_name = data['tags']['prdName']
-
-                item['link'] = 'https://www.microsoft.com/en-us/d/' + \
-                    prd_name.replace(" ", "-").replace('"',"").lower()+'/'+prd_id
-                item['sku'] = prd_id
-                item['currentPrice'] = get_sku_item_price(item_element)
-                item['name'] = prd_name
-
-                print(json.dumps(item))
-                cur_item_list.append(prd_id)
+            cur_item_list = get_cur_page_items(sku_items)
         except:
             return False
 
-        has_next_page = i < index - 1
+        # if has next page, click next and wait until page refresh
+        has_next_page = i < pages_num - 1
         if has_next_page:
-            click_next_page(driver)
             seed()
             time.sleep(randint(10, 15))
-            try:
-                WebDriverWait(driver, 20).until(
-                    (lambda x: sku_attribute_changed(driver, cur_item_list))
-                )
-            except:
+            navigate_next_page(driver, link, i)
+            if not succeed_wait_until_page_refresh(driver, cur_item_list):
                 return False
+
+
+def close_dialog(driver):
+    try:
+        dialog_close_btn = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable(
+                (By.XPATH,
+                 "//div[@class='sfw-dialog']/div[@class='c-glyph glyph-cancel']")
+            )
+        )
+        dialog_close_btn.click()
+    except:
+        return
+
+
+def get_cur_page_items(sku_items):
+    cur_item_list = []
+
+    for item_element in sku_items:
+        item = {}
+        data = json.loads(item_element.get_attribute("data-m"))
+        prd_id = data['pid']
+        prd_name = data['tags']['prdName']
+
+        item['link'] = 'https://www.microsoft.com/en-us/d/' + \
+            prd_name.replace(" ", "-").replace('"', "").lower()+'/'+prd_id
+        item['sku'] = prd_id
+        item['currentPrice'] = get_sku_item_price(item_element)
+        item['name'] = prd_name
+
+        print(json.dumps(item))
+        cur_item_list.append(prd_id)
+
+    return cur_item_list
 
 
 def get_sku_item_price(driver):
@@ -87,9 +107,43 @@ def get_sku_item_price(driver):
         return price
 
 
-def click_next_page(driver):
-    return
+def navigate_next_page(driver, link, index):
+    editURL = link +str((index+1)*20)
+    try:
+        driver.get(editURL)
+    except:
+        return False
+
+
+def succeed_wait_until_page_refresh(driver, cur_item_list):
+    try:
+        WebDriverWait(driver, 20).until(
+            (lambda x: sku_attribute_changed(driver, cur_item_list))
+        )
+        return True
+    except:
+        return False
 
 
 def sku_attribute_changed(driver, skus_before_changed):
-    return
+    try:
+        sku_items = WebDriverWait(driver, 20).until(
+            EC.presence_of_all_elements_located(
+                (By.XPATH,
+                 "//div[@class='m-channel-placement-item f-wide f-full-bleed-image']/a")
+            )
+        )
+        count = 0
+        for item_element in sku_items:
+            data = json.loads(item_element.get_attribute("data-m"))
+            item_sku = data['pid']
+
+            # print(f'item_sku: {item_sku} ==? {skus_before_changed[count]} item_sku before')
+            # check if list elements being refreshed
+            if(item_sku == skus_before_changed[count] or item_sku == None):
+                # print(f'sku_item not refreshed')
+                return False
+            count += 1
+        return sku_items
+    except:
+        return False
