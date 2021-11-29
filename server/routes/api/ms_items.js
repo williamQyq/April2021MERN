@@ -4,8 +4,7 @@ const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 
 const ItemBB = require('../../models/BBItem.js'); //Item Model
-const {
-    getCurPrice,
+const { getCurPrice,
     getPrevPrice,
     getPriceDiff,
     getPriceCaptureDate,
@@ -50,7 +49,7 @@ router.post('/push_price/:_id', (req, res) => {
 });
 
 router.get('/detail/:_id', (req, res) => {
-
+    
     ItemBB.aggregate([
         {
             $project: {

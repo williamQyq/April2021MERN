@@ -10,19 +10,19 @@ def main():
     item_link_info = json.loads(sys.argv[1])
     # item_link_info = {
     #     "link":'https://www.microsoft.com/en-us/store/b/shop-all-pcs?categories=2+in+1%7c%7cLaptops%7c%7cDesktops%7c%7cPC+Gaming&s=store&skipitems=',
-    #     "link_index": 2
+    #     "pages": 3
     # }
 
     link = item_link_info["link"]
-    index = item_link_info["link_index"]
+    pages_num = item_link_info["pages"]
 
     # init chrome driver for selenium
     driver = init_chrome_driver()
     # do something
-    get_sku_items(driver, link, index)
+    get_sku_items(driver, link, pages_num)
 
     driver.quit()
     sys.stdout.flush()
 
-    
+
 main()

@@ -4,6 +4,7 @@ const JSON5 = require('json5');
 const JSONStream = require('JSONStream');
 
 const { getCurPrice } = require('../query/aggregate.js');
+const { type } = require('os');
 
 // Script class, integrate python scripts into nodejs
 class Script {
@@ -38,7 +39,7 @@ class Script {
     getLinkInfo(totalNum, numPerPage) {     //return link and calculate the # of pages need to loop.
         return ({
             link: this.link,
-            link_index: Math.ceil(totalNum / numPerPage)
+            pages: Math.ceil(totalNum / numPerPage)
         })
     }
 
@@ -147,7 +148,6 @@ class BBSkuItemScript extends BBScript {
     listenOn(python) {
         python.stdout.pipe(JSONStream.parse()).on('data', (data) => {
             if (!isNaN(data.sku)) {   //validate non package sku items
-                data.sku = Number(data.sku);
                 data.currentPrice = Number(data.currentPrice);    //tricky, convert data.currentPrice from string to number, instead of parseFloat toFixed.
                 this.insertAndUpdateItem(data);
             } else {
@@ -190,10 +190,7 @@ class MsSkuItemScript extends MsScript {
     }
     listenOn(python) {
         python.stdout.pipe(JSONStream.parse()).on('data', (data) => {
-            console.log(`${data.sku}\n ${isNaN(data.sku)}`)
-
-            if (data.sku) {   //validate non package sku items
-                data.sku = Number(data.sku);
+            if (isNaN(data.sku)) {
                 data.currentPrice = Number(data.currentPrice);    //tricky, convert data.currentPrice from string to number, instead of parseFloat toFixed.
                 this.insertAndUpdateItem(data);
             } else {

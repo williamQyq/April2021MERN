@@ -73,7 +73,7 @@ db.once('open', () => {
         }
 
     })
-    test();
+    // test();
     scrapeScheduler.start();
 
     changeStream.on('change', (change) => {

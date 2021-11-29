@@ -11,6 +11,17 @@ const routes = [
     component: lazy(() => import('component/ItemDetail')),
     exact: true
   },
+  {
+    path: 'app/microsoft-list',
+    component: lazy(()=> import('component/MS')),
+    exact:true
+  },
+  {
+    path: 'app/microsoft-list/item-detail',
+    component: lazy(() => import('component/ItemDetail')),
+    exact: true
+  },
+
   // {
   //   path: 'app/price-alert',
   //   component: lazy(() => import('component/PriceAlert')),

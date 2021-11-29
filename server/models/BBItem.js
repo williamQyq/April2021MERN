@@ -8,7 +8,7 @@ const BBItemSchema = new Schema({
         require:true
     },
     sku:{
-        type: Number,
+        type: String,
         require:true
     },
     name:{

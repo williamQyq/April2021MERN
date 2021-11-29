@@ -54,8 +54,7 @@ def get_sku_items(driver, link, pages_num):
             seed()
             time.sleep(randint(10, 15))
             navigate_next_page(driver, link, i)
-            if not succeed_wait_until_page_refresh(driver, cur_item_list):
-                return False
+            wait_until_page_refresh(driver, cur_item_list)
 
 
 def close_dialog(driver):
@@ -86,6 +85,7 @@ def get_cur_page_items(sku_items):
         item['currentPrice'] = get_sku_item_price(item_element)
         item['name'] = prd_name
 
+        # print out item, caught by process listen data.
         print(json.dumps(item))
         cur_item_list.append(prd_id)
 
@@ -100,7 +100,8 @@ def get_sku_item_price(driver):
                 (By.CSS_SELECTOR, "span[itemprop='price']")
             )
         )
-        price = price_element.get_attribute("content")
+        price = price_element.get_attribute(
+            "content").strip().lstrip("$").replace(',', '')
     except:
         return False
     finally:
@@ -108,14 +109,14 @@ def get_sku_item_price(driver):
 
 
 def navigate_next_page(driver, link, index):
-    editURL = link +str((index+1)*20)
+    editURL = link + str((index+1)*20)
     try:
         driver.get(editURL)
     except:
         return False
 
 
-def succeed_wait_until_page_refresh(driver, cur_item_list):
+def wait_until_page_refresh(driver, cur_item_list):
     try:
         WebDriverWait(driver, 20).until(
             (lambda x: sku_attribute_changed(driver, cur_item_list))
@@ -133,17 +134,16 @@ def sku_attribute_changed(driver, skus_before_changed):
                  "//div[@class='m-channel-placement-item f-wide f-full-bleed-image']/a")
             )
         )
-        count = 0
+        index = 0
         for item_element in sku_items:
             data = json.loads(item_element.get_attribute("data-m"))
             item_sku = data['pid']
 
-            # print(f'item_sku: {item_sku} ==? {skus_before_changed[count]} item_sku before')
             # check if list elements being refreshed
-            if(item_sku == skus_before_changed[count] or item_sku == None):
+            if(item_sku == skus_before_changed[index] or item_sku == None):
                 # print(f'sku_item not refreshed')
                 return False
-            count += 1
+            index += 1
         return sku_items
     except:
         return False

@@ -12,7 +12,8 @@ import {
   BarcodeOutlined,
   BankOutlined,
   ShoppingOutlined,
-  LogoutOutlined
+  LogoutOutlined,
+  ShopOutlined
 } from '@ant-design/icons';
 import {
   BrowserRouter as Router,
@@ -69,6 +70,9 @@ class Home extends React.Component {
                 </Menu.Item>
                 <Menu.Item key="CostCo" disabled icon={<ShoppingOutlined />}>
                   <Link to={`${path}/costco-list`}>CostCo</Link>
+                </Menu.Item>
+                <Menu.Item key="Microsoft" icon={<ShopOutlined/>}>
+                  <Link to={`${path}/microsoft-list`}>Microsoft</Link>
                 </Menu.Item>
                 <Menu.Item key="PRICE-ALERT" icon={<MonitorOutlined />}>
                   <Link to={`${path}/price-alert`}>Price Alert</Link>

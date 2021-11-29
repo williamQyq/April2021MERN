@@ -37,8 +37,8 @@ const getBestBuyLaptopPrice = (product, _id, link) => {
 const bestbuyScraper = () => {
 
     getNumOfAllNewLaptops(BBScript).then(pageInfo => {
-        console.log(`[BB num of all laptops new condtion]: ${pageInfo.total_num} - ${pageInfo.num_per_page}/per page.`);
 
+        console.log(`[BB num of all laptops new condtion]: ${pageInfo.total_num} - ${pageInfo.num_per_page}/per page.`);
         getAllNewLaptops(BBSkuItemScript, BBItem, pageInfo.total_num, pageInfo.num_per_page).then(result => {
             console.log(result);
         })
@@ -51,24 +51,22 @@ const bestbuyScraper = () => {
             console.error(err);
             return err;
         })
-
 }
 
 const microsoftScraper = () => {
     getNumOfAllNewLaptops(MsScript).then(pageInfo => {
-        console.log(`[MS num of all laptops new condtion]: ${pageInfo.num} - ${pageInfo.num_per_page}/per page.`);
-        getAllNewLaptops(MsSkuItemScript, MsItem, pageInfo.pages, pageInfo.numEachPage).then(result => {
+        
+        console.log(`[MS num of all laptops new condtion]: ${pageInfo.total_num} - ${pageInfo.num_per_page}/per page.`);
+        getAllNewLaptops(MsSkuItemScript, MsItem, pageInfo.total_num, pageInfo.num_per_page).then(result => {
             console.log(result);
-        })
-            .catch(err => {
-                console.error(err);
-                return err;
-            })
-    })
-        .catch(err => {
+        }).catch(err => {
             console.error(err);
             return err;
         })
+    }).catch(err => {
+        console.error(err);
+        return err;
+    })
 }
 
 // get all laptops new condition number promise, resolve when retrieve items number.
@@ -88,11 +86,11 @@ const getNumOfAllNewLaptops = (StoreScript) => {
 }
 
 // get all laptops sku-items promise, resolve when retrieve all skus, names, currentPrices.
-const getAllNewLaptops = (StoreScript, StoreItemModel, pages, numEachPage) => {
+const getAllNewLaptops = (StoreScript, StoreItemModel, totalNum, numEachPage) => {
 
     let store = new StoreScript(StoreItemModel);
 
-    const pageInfo = store.getLinkInfo(pages, numEachPage);
+    const pageInfo = store.getLinkInfo(totalNum, numEachPage);
     const python = store.spawnScript(store.skuItemScriptPath, pageInfo);
     store.listenOn(python);
     return new Promise((resolve, reject) => {

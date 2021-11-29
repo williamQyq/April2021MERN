@@ -1,8 +1,8 @@
 const cron = require('node-cron');
-const { bestbuyScraper } = require('./scraper.js');
+const { bestbuyScraper, microsoftScraper } = require('./scraper.js');
 
 //cron scheduler run pyProcessBB get bb prices at 6 pm everyday
-const scrapeScheduler = cron.schedule("00 45 9 * * *", () => {
+const scrapeScheduler = cron.schedule("00 58 09 * * *", () => {
     randomDelayScraper();
 
 });
@@ -20,9 +20,10 @@ const randomDelayScraper = () => {
         console.log(`Delay timer finished.`)
 
         // scrappers: bestbuy,microsoft
+        // microsoftScraper();
         bestbuyScraper();
 
-    }, getRandomMins(10))
+    }, getRandomMins(2))
 }
 // get random mins less than max
 const getRandomMins = (max) => {
