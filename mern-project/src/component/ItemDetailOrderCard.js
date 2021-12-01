@@ -106,9 +106,9 @@ OrderPanel.propTypes = {
 
 const mapStateToProps = (state) => {
     return ({
-        loading: state.itemBB.loading,
-        name: state.itemBB.itemDetail.name,
-        link: state.itemBB.itemDetail.link
+        loading: state.item.loading,
+        name: state.item.itemDetail.name,
+        link: state.item.itemDetail.link
     })
 };
 

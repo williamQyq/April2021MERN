@@ -2,7 +2,9 @@ import React from 'react';
 import 'antd/dist/antd.css';
 import '../styles/bb.scss';
 import { connect } from 'react-redux';
-import { getBBItems, setTableState } from 'reducers/actions/itemBBActions';
+import { getBBItems } from 'reducers/actions/itemBBActions';
+import { setTableState } from 'reducers/actions/itemActions';
+import { BESTBUY } from 'reducers/actions/types';
 import PropTypes from 'prop-types';
 import { Table, Input, Button, Space, Typography, Row, Menu, Dropdown, Divider, Col, Tooltip } from 'antd';
 import Highlighter from 'react-highlight-words';
@@ -12,7 +14,7 @@ import {
     PlusCircleOutlined,
     ShoppingCartOutlined,
 } from '@ant-design/icons';
-import { Link,withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 
@@ -37,7 +39,7 @@ class BB extends React.Component {
 
 
     handleScrollPosition = () => {
-        const { items, itemDetail } = this.props.itemBB;
+        const { items, itemDetail } = this.props.bestbuy;
 
         let index = 0;
         if (itemDetail) {
@@ -138,13 +140,13 @@ class BB extends React.Component {
         this.setState({ searchText: '' });
     };
 
-    handleClick = (_id) => {
-        this.props.setTableState(_id);
+    handleClick = (store, _id) => {
+        this.props.setTableState(store, _id);
     };
 
     render() {
         const path = this.props.match.path;
-        const data = this.props.itemBB.items;
+        const data = this.props.items;
         const { loading } = this.state;
 
         //create columns data based on dataIndex
@@ -238,7 +240,7 @@ class BB extends React.Component {
                 </Menu.Item>
                 <Menu.Item key="GetItemDetail">
 
-                    <Button className="menu-btn" onClick={() => this.handleClick(record._id)}>
+                    <Button className="menu-btn" onClick={() => this.handleClick(BESTBUY, record._id)}>
                         <Link to={`${path}/item-detail`}>
                             <SearchOutlined />
                         </Link>
@@ -285,11 +287,12 @@ class BB extends React.Component {
 BB.prototypes = {
     setTableState: PropTypes.func.isRequired,
     getBBItems: PropTypes.func.isRequired,
-    itemBB: PropTypes.object.isRequired,
+    items: PropTypes.array.isRequired,
 }
 
 const mapStateToProps = (state) => ({
-    itemBB: state.itemBB
+    bestbuy: state.bestbuy,
+    items: state.bestbuy.items
 })
 
 export default withRouter(connect(mapStateToProps, { getBBItems, setTableState })(BB));

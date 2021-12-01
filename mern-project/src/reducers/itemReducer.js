@@ -1,20 +1,28 @@
-import {GET_ITEMS, ADD_ITEM, DELETE_ITEM, ITEMS_LOADING} from './actions/types';
+import {
+    GET_ITEMS,
+    ADD_ITEM,
+    DELETE_ITEM,
+    ITEMS_LOADING,
+    SET_TABLE_STATE,
+    GET_MS_ITEM_DETAIL,
+    GET_BB_ITEM_DETAIL
+} from './actions/types';
 
 const initialState = {
-    items:[],
+    items: [],
     loading: false
 }
 
-export default function Reducer (state  = initialState, action) {
-    switch(action.type) {
-        case GET_ITEMS: 
+export default function Reducer(state = initialState, action) {
+    switch (action.type) {
+        case GET_ITEMS:
             return {
                 ...state,
                 items: action.payload,
                 loading: false
             };
         case DELETE_ITEM:
-            return{
+            return {
                 ...state,
                 items: state.items.filter(item => item._id !== action.payload)
             };
@@ -26,8 +34,26 @@ export default function Reducer (state  = initialState, action) {
         case ITEMS_LOADING:
             return {
                 ...state,
-                loading:true
-            }
+                loading: true
+            };
+        case SET_TABLE_STATE:
+            return {
+                ...state,
+                tableState: action.payload,
+                loading: false
+            };
+        case GET_MS_ITEM_DETAIL:
+            return {
+                ...state,
+                itemDetail: action.payload,
+                loading: false
+            };
+        case GET_BB_ITEM_DETAIL:
+            return {
+                ...state,
+                itemDetail: action.payload,
+                loading: false
+            };
         default:
             return state;
     }

@@ -33,6 +33,7 @@ wms.connect(wmsConfig, () => { });
 
 //@routes; direct axios request from client
 app.use('/api/bb_items', require('./routes/api/bb_items'));
+app.use('/api/ms_items', require('./routes/api/ms_items'));
 // app.use('/api/cc_items', require('./routes/api/cc_items'));
 app.use('/api/items', require('./routes/api/items'));
 app.use('/api/users', require('./routes/api/users'));

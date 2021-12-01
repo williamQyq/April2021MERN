@@ -138,9 +138,9 @@ def get_cur_page_items(sku_items):
 def get_sku_item_price(driver):
     price = None
     try:
-        dollar_price = WebDriverWait(driver, 10).until(
+        dollar_price = WebDriverWait(driver, 15).until(
             EC.presence_of_element_located(
-                (By.XPATH, ".//div[contains(@class,'priceView-customer-price')]/span[1]")
+                (By.XPATH, ".//div[@class='priceView-hero-price priceView-customer-price']/span")
             )
         ).text
         price = dollar_price.strip().lstrip("$").replace(',', '')

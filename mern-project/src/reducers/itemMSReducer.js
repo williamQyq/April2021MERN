@@ -1,5 +1,5 @@
 import {
-    GET_BB_ITEMS,
+    GET_MS_ITEMS,
     ITEMS_LOADING,
 } from './actions/types';
 
@@ -10,18 +10,17 @@ const initialState = {
 
 export default function Reducer(state = initialState, action) {
     switch (action.type) {
-        case GET_BB_ITEMS:
+        case GET_MS_ITEMS:
             return {
                 ...state,
                 items: action.payload,
                 loading: false
             };
-
         case ITEMS_LOADING:
             return {
                 ...state,
                 loading: true
-            }
+            };
         default:
             return state;
     }

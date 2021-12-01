@@ -3,16 +3,18 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 
-const ItemBB = require('../../models/BBItem.js'); //Item Model
-const { getCurPrice,
+const ItemMS = require('../../models/MSItem.js'); //Item Model
+const {
+    getCurPrice,
     getPrevPrice,
     getPriceDiff,
     getPriceCaptureDate,
-    sortOnPriceCaptureDate } = require('../../query/aggregate.js')
+    sortOnPriceCaptureDate
+} = require('../../query/aggregate.js')
 
 // @route GET api/items
 router.get('/', (req, res) => {
-    ItemBB.aggregate([
+    ItemMS.aggregate([
         {
             $project: {
                 key: "$_id",
@@ -38,19 +40,19 @@ router.get('/', (req, res) => {
 });
 
 
-router.post('/push_price/:_id', (req, res) => {
-    ItemBB.findByIdAndUpdate(req.params._id, {
-        $push: {
-            price_timestamps: {
-                price: req.body.currentPrice
-            }
-        }
-    }, { useFindAndModify: false }).then(item => res.json({ success: true }));
-});
+// router.post('/push_price/:_id', (req, res) => {
+//     ItemMS.findByIdAndUpdate(req.params._id, {
+//         $push: {
+//             price_timestamps: {
+//                 price: req.body.currentPrice
+//             }
+//         }
+//     }, { useFindAndModify: false }).then(item => res.json({ success: true }));
+// });
 
 router.get('/detail/:_id', (req, res) => {
-    
-    ItemBB.aggregate([
+
+    ItemMS.aggregate([
         {
             $project: {
                 link: 1,

@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { LeftOutlined } from '@ant-design/icons';
 import LeftPanel from 'component/ItemDetailLeftPanel.js'
 import OrderPanel from 'component/ItemDetailOrderCard.js';
-import { getItemDetail } from 'reducers/actions/itemBBActions.js';
+import { getItemDetail } from 'reducers/actions/itemActions.js';
 
 class ItemDetail extends React.Component {
     constructor(props) {
@@ -18,7 +18,8 @@ class ItemDetail extends React.Component {
 
     componentDidMount() {
         const clickedId = this.props.clickedId;
-        this.props.getItemDetail(clickedId);
+        const store = this.props.store;
+        this.props.getItemDetail(store, clickedId);
     }
 
     goBack = () => {
@@ -51,15 +52,15 @@ ItemDetail.prototypes = {
     // location: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
     getItemDetail: PropTypes.func.isRequired,
-    itemBB: PropTypes.object.isRequired,
-    clickedId: PropTypes.string.isRequired
+    clickedId: PropTypes.string.isRequired,
+    store: PropTypes.string.isRequired,
+    itemDetail: PropTypes.object.isRequired
 }
 
 const mapStateToProps = (state) => ({
-    clickedId: state.itemBB.tableState.clickedId,
-    itemDetail: state.itemBB.itemDetail,
-    itemBB: state.itemBB
-
+    clickedId: state.item.tableState.clickedId,
+    store: state.item.tableState.store,
+    itemDetail: state.item.itemDetail
 });
 //withRouter grant access to Router history, location...
 export default withRouter(connect(mapStateToProps, { getItemDetail })(ItemDetail));
