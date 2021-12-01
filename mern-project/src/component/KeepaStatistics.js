@@ -158,7 +158,7 @@ KeepaStat.prototypes = {
 }
 
 const mapStateToProps = (state) => ({
-    itemDetail: state.itemBB.itemDetail,
+    itemDetail: state.item.itemDetail,
     keepa: state.keepa.keepa,
     loading: state.keepa.loading
 });

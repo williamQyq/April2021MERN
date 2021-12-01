@@ -2,7 +2,7 @@ const cron = require('node-cron');
 const { bestbuyScraper, microsoftScraper } = require('./scraper.js');
 
 //cron scheduler run pyProcessBB get bb prices at 6 pm everyday
-const scrapeScheduler = cron.schedule("00 04 11 * * *", () => {
+const scrapeScheduler = cron.schedule("00 20 13 * * *", () => {
     randomDelayScraper();
 
 });
@@ -21,7 +21,7 @@ const randomDelayScraper = () => {
 
         // scrappers: bestbuy,microsoft
         microsoftScraper();
-        // bestbuyScraper();
+        bestbuyScraper();
 
     }, getRandomMins(2))
 }

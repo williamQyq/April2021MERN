@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 
 const PriceHistoryChart = () => {
     const { price_timestamps, priceDiff } = useSelector((state) =>
-        state.itemBB.itemDetail
+        state.item.itemDetail
     );
     const labels = setLabels(price_timestamps);
     const datapoints = setDataPoints(price_timestamps);

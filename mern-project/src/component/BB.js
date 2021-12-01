@@ -15,6 +15,7 @@ import {
     ShoppingCartOutlined,
 } from '@ant-design/icons';
 import { Link, withRouter } from 'react-router-dom';
+import { locateSearchedItem, scrollToTableRow } from 'utilities/tableUtilities';
 
 const { Title, Text } = Typography;
 
@@ -27,7 +28,6 @@ class BB extends React.Component {
             searchedRowId: '',
             searchedColumn: '',
             loading: true,
-            tableRowHight: 75.31,   //antd table row height
         };
 
     }
@@ -37,17 +37,12 @@ class BB extends React.Component {
         this.handleScrollPosition();
     }
 
-
     handleScrollPosition = () => {
-        const { items, itemDetail } = this.props.bestbuy;
-
-        let index = 0;
-        if (itemDetail) {
-            index = items.findIndex(item => item.sku === itemDetail.sku);
-            this.setState({ searchedRowId: itemDetail._id })
-        }
-        let v = document.getElementsByClassName("ant-table-body")[0];
-        v.scrollTop = this.state.tableRowHight * (index - 3);
+        const items = this.props.items;
+        const searchId = this.props.itemDetail._id;
+        let searchedItem = locateSearchedItem(items, searchId)
+        this.setState({ searchedRowId: searchedItem._id })
+        scrollToTableRow(document, searchedItem.index)
     }
 
     getColumnSearchProps = dataIndex => ({
@@ -288,11 +283,12 @@ BB.prototypes = {
     setTableState: PropTypes.func.isRequired,
     getBBItems: PropTypes.func.isRequired,
     items: PropTypes.array.isRequired,
+    itemDetail: PropTypes.object.isRequired
 }
 
 const mapStateToProps = (state) => ({
-    bestbuy: state.bestbuy,
-    items: state.bestbuy.items
+    items: state.bestbuy.items,
+    itemDetail: state.item.itemDetail
 })
 
 export default withRouter(connect(mapStateToProps, { getBBItems, setTableState })(BB));
