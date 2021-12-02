@@ -3,21 +3,19 @@ const { MongoClient } = require('mongodb');
 
 //when modules/instance being required in nodejs, it will only load once.
 let wmsDatabase;
-
-function connect(config, callback) {
+function connect(config, port, callback) {
     tunnel(config, (error, server) => {
         if (error) {
             console.log("SSH connection error: " + error);
         }
-        let client = new MongoClient('mongodb://0.0.0.0:27017/wms', { useUnifiedTopology: true });
-
-        (async () => {
-            await client.connect();
+        // let client = new MongoClient('mongodb://127.0.0.1:27017/wms', { useUnifiedTopology: true });
+        MongoClient.connect(`mongodb://127.0.0.1:${port}/wms`, { useUnifiedTopology: true }).then(client => {
             console.log(`WMS Database Connected...`);
-            wmsDatabase = client.db("wms");
+            wmsDatabase = client.db('wms');
             callback();
-
-        })();
+        }).catch(err => {
+            console.error(`WMS Connection failed: ${err}`)
+        });
 
     });
 }

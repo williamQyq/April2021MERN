@@ -11,11 +11,15 @@ const wms = require("./wmsDatabase.js");    // @local wms server connection
 //@Bodyparser Middleware
 const app = express();
 app.use(express.json());
+const wmsService = express();
+wmsService.use(express.json());
+wmsService.use('/api/wms', require('./routes/api/wms'));
+
 
 const server = require("http").createServer(app)
 const io = require("socket.io")(server);
 const port = process.env.PORT || 5000;
-
+const wmsPort = process.env.PORT || 4000;
 //@Mongoose connection; Connect to Mongo.
 const mongoURI = config.get('mongoURI');
 
@@ -27,8 +31,11 @@ mongoose.connect(mongoURI, {
     .then(() => console.log('Atlas MongoDB Connected...'))
     .catch(err => console.log(err));
 
+wmsService.listen(wmsPort, () => {
+    console.log(`WMS service stated on port 4000`)
+})
 // @WMS connection; Connect to WMS Database via tunnel-ssh
-wms.connect(wmsConfig, () => { });
+wms.connect(wmsConfig, wmsPort, () => { });
 
 
 //@routes; direct axios request from client
@@ -39,7 +46,7 @@ app.use('/api/items', require('./routes/api/items'));
 app.use('/api/users', require('./routes/api/users'));
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/keepa', require('./routes/api/keepa'));
-app.use('/api/wms', require('./routes/api/wms'));
+// app.use('/api/wms', require('./routes/api/wms'));
 
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, '../mern-project/build')));
