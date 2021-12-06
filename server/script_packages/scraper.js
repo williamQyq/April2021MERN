@@ -32,41 +32,32 @@ const getBestBuyLaptopPrice = (product, _id, link) => {
     });
 }
 
-// load bestbuy all new products lists
+//Load bestbuy all new products lists
 //Get bestbuy page numbers; then for each page and sku item, findSkuAndUpdate
-const bestbuyScraper = () => {
-
-    getNumOfAllNewLaptops(BBScript).then(pageInfo => {
-
+const bestbuyScraper = async () => {
+    let finalResult;
+    await getNumOfAllNewLaptops(BBScript).then(pageInfo => {
         console.log(`[BB num of all laptops new condtion]: ${pageInfo.total_num} - ${pageInfo.num_per_page}/per page.`);
-        getAllNewLaptops(BBSkuItemScript, BBItem, pageInfo.total_num, pageInfo.num_per_page).then(result => {
-            console.log(result);
-        })
-            .catch(err => {
-                console.error(err);
-                return err;
+        getAllNewLaptops(BBSkuItemScript, BBItem, pageInfo.total_num, pageInfo.num_per_page)
+            .then(result => {
+                finalResult = result;
             })
     })
-        .catch(err => {
-            console.error(err);
-            return err;
-        })
+    return finalResult;
 }
 
-const microsoftScraper = () => {
-    getNumOfAllNewLaptops(MsScript).then(pageInfo => {
-        
+//Load microsoft all new products lists
+//Get microsoft page numbers; then for each page and sku item, findSkuAndUpdate
+const microsoftScraper = async () => {
+    let finalResult;
+    await getNumOfAllNewLaptops(MsScript).then(pageInfo => {
         console.log(`[MS num of all laptops new condtion]: ${pageInfo.total_num} - ${pageInfo.num_per_page}/per page.`);
-        getAllNewLaptops(MsSkuItemScript, MsItem, pageInfo.total_num, pageInfo.num_per_page).then(result => {
-            console.log(result);
-        }).catch(err => {
-            console.error(err);
-            return err;
-        })
-    }).catch(err => {
-        console.error(err);
-        return err;
+        getAllNewLaptops(MsSkuItemScript, MsItem, pageInfo.total_num, pageInfo.num_per_page)
+            .then(result => {
+                finalResult = result;
+            })
     })
+    return finalResult;
 }
 
 // get all laptops new condition number promise, resolve when retrieve items number.

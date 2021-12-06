@@ -8,6 +8,10 @@ const { scrapeScheduler } = require('./script_packages/scrapeScheduler.js');    
 const { bbLinkScraper } = require('./script_packages/scraper.js');
 const wms = require("./wmsDatabase.js");    // @local wms server connection
 
+// const amzSP = require('./amazonSP');
+// amzSP();
+
+
 //@Bodyparser Middleware
 const app = express();
 app.use(express.json());

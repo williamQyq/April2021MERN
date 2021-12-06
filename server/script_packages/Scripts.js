@@ -11,6 +11,7 @@ class Script {
     constructor(model, search = undefined) {
         this.model = model;
         this.search = search;
+        this.storeName = "";
 
     }
     spawnScript(scriptPath, arg) {
@@ -43,7 +44,7 @@ class Script {
         })
     }
 
-    insertAndUpdateItem(item) {
+    insertOrUpdateItem(item) {
         let isSkuInsert = this.setOnInsert(item); //true if insert new item; false if item exists.
 
         if (!isSkuInsert) {
@@ -68,7 +69,7 @@ class Script {
         this.model.updateOne(SET_ON_INSERT_QUERY, update, options).then(result => {       //insert if sku not exists
             // console.log(`result:${JSON.stringify(result)}`)
             if (result.upserted) {
-                console.log(`# ${this.count} Inserted new item into DB on SKU: ${item.sku}`)
+                console.log(`# ${this.count} ${this.storeName} Inserted new item into DB on SKU: ${item.sku}`)
                 this.count += 1;
                 return true;
             }
@@ -118,11 +119,12 @@ class Script {
 
         if (itemInDatabase != null) {   //if found match item in database and the price of itemSku is changed
             this.model.findByIdAndUpdate(itemInDatabase._id, update, options).then(item => {
-                console.log(`# ${this.count} Update price changed item in DB on SKU:${item.sku}\n${JSON5.stringify(item)}\n`)
+                console.log(`# ${this.count} ${this.storeName} Update price changed item in DB on SKU:${item.sku}\n`)
+                // console.log(`${JSON5.stringify(item)}\n`)
                 this.count += 1;
             })
         } else {
-            console.log(`# ${this.count} Item exists, Price not Changed: ${item.sku}`);
+            console.log(`# ${this.count} ${this.storeName} Item exists, Price not Changed: ${item.sku}`);
             this.count += 1;
         }
     }
@@ -132,6 +134,7 @@ class Script {
 class BBScript extends Script {
     constructor(model) {
         super(model);
+        this.storeName = "Bestbuy";
         this.link = `https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&browsedCategory=pcmcat138500050001&id=pcat17071&iht=n&ks=960&list=y&qp=condition_facet%3DCondition~New&sc=Global&st=categoryid%24pcmcat138500050001&type=page&usc=All%20Categories`;
         this.linkSearchScriptPath = './script_packages/scrape_bb_item_on_sku.py';
         this.pageNumScriptPath = './script_packages/scrape_bb_laptops_num.py';
@@ -149,9 +152,9 @@ class BBSkuItemScript extends BBScript {
         python.stdout.pipe(JSONStream.parse()).on('data', (data) => {
             if (!isNaN(data.sku)) {   //validate non package sku items
                 data.currentPrice = Number(data.currentPrice);    //tricky, convert data.currentPrice from string to number, instead of parseFloat toFixed.
-                this.insertAndUpdateItem(data);
+                this.insertOrUpdateItem(data);
             } else {
-                console.log(`# ${this.count} Attention**, this item does not have number sku. Skip: ${data.sku}`);
+                console.log(`# ${this.count} ${this.storeName} Attention**, this item does not have number sku. Skip: ${data.sku}`);
                 this.count += 1;
             }
 
@@ -178,6 +181,7 @@ class KeepaScript extends Script {
 class MsScript extends Script {
     constructor(model) {
         super(model);
+        this.storeName = "Microsoft";
         this.link = 'https://www.microsoft.com/en-us/store/b/shop-all-pcs?categories=2+in+1||Laptops||Desktops||PC+Gaming&s=store&skipitems=';
         this.pageNumScriptPath = './script_packages/scrape_ms_laptops_num.py';
         this.skuItemScriptPath = './script_packages/scrape_ms_items.py';
@@ -192,9 +196,9 @@ class MsSkuItemScript extends MsScript {
         python.stdout.pipe(JSONStream.parse()).on('data', (data) => {
             if (isNaN(data.sku)) {
                 data.currentPrice = Number(data.currentPrice);    //tricky, convert data.currentPrice from string to number, instead of parseFloat toFixed.
-                this.insertAndUpdateItem(data);
+                this.insertOrUpdateItem(data);
             } else {
-                console.log(`# ${this.count} Attention**, this item does not have sku. Skip: ${data.sku}`);
+                console.log(`# ${this.count} ${this.storeName} Attention**, this item does not have sku. Skip: ${data.sku}`);
                 this.count += 1;
             }
 
