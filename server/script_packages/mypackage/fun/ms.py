@@ -1,10 +1,9 @@
 import os
 from mypackage.module import WebDriverWait, EC, By
+from random import seed, randint
 import re
 import time
 import json
-from random import seed
-from random import randint
 
 
 def get_sku_items_num(driver, sku_item_link):
@@ -15,7 +14,8 @@ def get_sku_items_num(driver, sku_item_link):
     try:
         totalProductsOutput = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "p[class='c-paragraph-3']"))
+                (By.CSS_SELECTOR, "p[class='c-paragraph-3']")
+            )
         ).text
 
         pattern_total_num = 'Showing.*of\s(\d*).*'

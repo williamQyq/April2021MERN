@@ -129,25 +129,33 @@ def get_cur_page_items(sku_items):
         item["currentPrice"] = get_sku_item_price(item_element)
         item["name"] = get_sku_item_name(item_element)
 
-        print(json.dumps(item)) #output item to stdout, listened by process.on data
+        # output item to stdout, listened by process.on data
+        print(json.dumps(item))
         items_sku.append(sku)
 
     return items_sku
 
-
+# get item price, if failed try again and wait til 20s.
 def get_sku_item_price(driver):
     price = None
     try:
         dollar_price = WebDriverWait(driver, 15).until(
             EC.presence_of_element_located(
-                (By.XPATH, ".//div[@class='priceView-hero-price priceView-customer-price']/span")
+                (By.XPATH,
+                 ".//div[@class='priceView-hero-price priceView-customer-price']/span")
             )
         ).text
         price = dollar_price.strip().lstrip("$").replace(',', '')
     except:
-        return False
-    finally:
-        return price
+        dollar_price = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located(
+                (By.XPATH,
+                 ".//div[@class='priceView-hero-price priceView-customer-price']/span")
+            )
+        ).text
+        price = dollar_price.strip().lstrip("$").replace(',', '')
+
+    return price
 
 
 def get_sku_item_name(driver):

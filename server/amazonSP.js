@@ -27,5 +27,4 @@ const amazonSellingPartner = async () => {
 
 }
 
-module.exports =
-    amazonSellingPartner
+module.exports = amazonSellingPartner;
