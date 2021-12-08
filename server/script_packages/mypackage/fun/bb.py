@@ -1,5 +1,4 @@
 import os
-from selenium.webdriver.support.expected_conditions import element_located_selection_state_to_be
 from mypackage.module import WebDriverWait, EC, By
 import re
 import time
@@ -136,8 +135,18 @@ def get_cur_page_items(sku_items):
     return items_sku
 
 # get item price, if failed try again and wait til 20s.
+
+
 def get_sku_item_price(driver):
     price = None
+    price = parse_price(driver)
+    if not price:
+        price = parse_price(driver)
+
+    return price
+
+
+def parse_price(driver) -> str:
     try:
         dollar_price = WebDriverWait(driver, 15).until(
             EC.presence_of_element_located(
@@ -146,16 +155,9 @@ def get_sku_item_price(driver):
             )
         ).text
         price = dollar_price.strip().lstrip("$").replace(',', '')
+        return price
     except:
-        dollar_price = WebDriverWait(driver, 20).until(
-            EC.presence_of_element_located(
-                (By.XPATH,
-                 ".//div[@class='priceView-hero-price priceView-customer-price']/span")
-            )
-        ).text
-        price = dollar_price.strip().lstrip("$").replace(',', '')
-
-    return price
+        return False
 
 
 def get_sku_item_name(driver):

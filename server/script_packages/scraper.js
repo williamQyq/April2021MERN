@@ -34,8 +34,8 @@ const getBestBuyLaptopPrice = (product, _id, link) => {
 
 //Load bestbuy all new products lists Promise
 //Get bestbuy page numbers; then for each page and sku item, findSkuAndUpdate
-const bestbuyScraper = () => {
-    getNumOfAllNewLaptops(BBScript)
+const bestbuyScraper = async () => {
+    return getNumOfAllNewLaptops(BBScript)
         .then(pageInfo => {
             console.log(`[BB num of all laptops new condtion]: ${pageInfo.total_num} - ${pageInfo.num_per_page}/per page.`);
             return getAllNewLaptops(BBSkuItemScript, BBItem, pageInfo.total_num, pageInfo.num_per_page)
@@ -44,8 +44,8 @@ const bestbuyScraper = () => {
 
 //Load microsoft all new products lists Promise
 //Get microsoft page numbers; then for each page and sku item, findSkuAndUpdate
-const microsoftScraper = () => {
-    getNumOfAllNewLaptops(MsScript)
+const microsoftScraper = async () => {
+    return getNumOfAllNewLaptops(MsScript)
         .then(pageInfo => {
             console.log(`[MS num of all laptops new condtion]: ${pageInfo.total_num} - ${pageInfo.num_per_page}/per page.`);
             return getAllNewLaptops(MsSkuItemScript, MsItem, pageInfo.total_num, pageInfo.num_per_page)

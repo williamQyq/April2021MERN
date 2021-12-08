@@ -7,9 +7,7 @@ const { test } = require('./unit_test.js'); //unit test for python scripts
 const { scrapeScheduler } = require('./script_packages/scrapeScheduler.js');    //scripts scheduler, node-cron
 const { bbLinkScraper } = require('./script_packages/scraper.js');
 const wms = require("./wmsDatabase.js");    // @local wms server connection
-
-// const amzSP = require('./amazonSP');
-// amzSP();
+const amzSP = require('./amazonSP');
 
 
 //@Bodyparser Middleware
@@ -24,6 +22,7 @@ const server = require("http").createServer(app)
 const io = require("socket.io")(server);
 const port = process.env.PORT || 5000;
 const wmsPort = process.env.PORT || 4000;
+
 //@Mongoose connection; Connect to Mongo.
 const mongoURI = config.get('mongoURI');
 
@@ -35,11 +34,16 @@ mongoose.connect(mongoURI, {
     .then(() => console.log('Atlas MongoDB Connected...'))
     .catch(err => console.log(err));
 
+// @WMS connection; Connect to WMS Database via tunnel-ssh
 wmsService.listen(wmsPort, () => {
     console.log(`WMS service stated on port 4000`)
 })
-// @WMS connection; Connect to WMS Database via tunnel-ssh
 wms.connect(wmsConfig, wmsPort, () => { });
+
+// @server connection
+server.listen(port, () => {
+    console.log(`Server started on port ${port}`);
+});
 
 
 //@routes; direct axios request from client
@@ -111,7 +115,5 @@ db.once('open', () => {
 
 });
 
-// @server connection
-server.listen(port, () => {
-    console.log(`Server started on port ${port}`);
-});
+amzSP();
+

@@ -1,29 +1,39 @@
 const config = require('config');
 
 const amazonSellingPartner = async () => {
-    const credentials = config.get('amazonCredentials');
+    const CREDENTIALS = config.get('amazonCredentials');
+    const IAM = config.get('amazonIAMRole');
     const SellingPartnerAPI = require('amazon-sp-api');
 
     let sellingPartner = new SellingPartnerAPI({
         region: "na",
-        refresh_token: "",
-        credentials: credentials
+        credentials: CREDENTIALS,
+        refresh_token: IAM.REFRESH_TOKEN
+
     });
 
     try {
-        let manageInventoryData = await sellingPartner.callAPI({
-            operation: 'getInventorySummaries',
+        let items = await sellingPartner.callAPI({
+            operation: 'getPricing',
+            endpoint: 'productPricing',
             query: {
-                details: true,
-                granularityType: 'Marketplace',
-                marketplaceIds: 'ATVPDKIKX0DER'
-            }
+                MarketplaceId: 'ATVPDKIKX0DER',
+                Asins: ['B09F2VMZ6M'],
+                ItemType: 'Asin'
+            },
+
+
         });
+        items.forEach(item => {
+            console.log(JSON.stringify(item))
+            console.log(`identifier:${JSON.stringify(item.Product.Identifiers)}`)
+            console.log(`Offers:${JSON.stringify(item.Product.Offers)}`)
+        })
+
     } catch (e) {
-        console.error("err amz")
+        console.error(`AWS SP API ERROR:\n${e}`)
     }
 
-    console.log(manageInventoryData)
 
 }
 
