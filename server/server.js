@@ -72,10 +72,11 @@ io.on("connection", (socket) => {
     })
 })
 
-const db = mongoose.connection;                                                             //set up mongoose connection
+const db = mongoose.connection;  //set up mongoose connection
+const collection = config.get("collection");
 db.once('open', () => {
-    const bbProductListings = db.collection(config.bestbuyCollection);
-    const productPriceListings = db.collection(config.watchListCollection);
+    const bbProductListings = db.collection(collection.bestbuy);
+    const productPriceListings = db.collection(collection.watchList);
 
     const changeStream = productPriceListings.watch();
     const BBChangeStream = bbProductListings.watch();
@@ -115,5 +116,5 @@ db.once('open', () => {
 
 });
 
-amzSP();
+// amzSP();
 

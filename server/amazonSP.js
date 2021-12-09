@@ -26,8 +26,6 @@ const amazonSellingPartner = async () => {
         });
         items.forEach(item => {
             console.log(JSON.stringify(item))
-            console.log(`identifier:${JSON.stringify(item.Product.Identifiers)}`)
-            console.log(`Offers:${JSON.stringify(item.Product.Offers)}`)
         })
 
     } catch (e) {

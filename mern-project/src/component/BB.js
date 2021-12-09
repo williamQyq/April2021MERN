@@ -39,10 +39,12 @@ class BB extends React.Component {
 
     handleScrollPosition = () => {
         const items = this.props.items;
-        const searchId = this.props.itemDetail._id;
-        let searchedItem = locateSearchedItem(items, searchId)
-        this.setState({ searchedRowId: searchedItem._id })
-        scrollToTableRow(document, searchedItem.index)
+        if (this.props.itemDetail) {
+            const searchId = this.props.itemDetail._id;
+            let searchedItem = locateSearchedItem(items, searchId)
+            this.setState({ searchedRowId: searchedItem._id })
+            scrollToTableRow(document, searchedItem.index)
+        }
     }
 
     getColumnSearchProps = dataIndex => ({

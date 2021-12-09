@@ -26,7 +26,7 @@ class Script {
         })
     }
     listenClose(python, resolve) {
-        python.on('close', (code) => {
+        python.on('exit', (code) => {
             // console.log(`\n${this.constructor.name} child process close all stdio with code ${code}`);
             resolve(this.data);
         })
