@@ -1,45 +1,9 @@
 import React from 'react';
 import 'antd/dist/antd.css';
-import { Table, Switch, Radio, Form, Space } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
+import { Table, Switch, Radio, Form, Space, InputNumber, Input } from 'antd';
 import OperationNestedTable from 'component/OperationProductListNestedTable';
+import { EditableCell, mergedColumns } from 'component/OperationEditableEle';
 
-const columns = [
-    {
-        title: 'Upc',
-        dataIndex: 'upc',
-    },
-    {
-        title: 'Name',
-        dataIndex: 'name',
-    },
-    {
-        title: 'WMS Quantity',
-        dataIndex: 'wmsQuantity'
-    },
-    {
-        title: 'Unit Cost',
-        dataIndex: 'unitCost'
-    },
-    {
-        title: 'Settlement Rate Universal',
-        dataIndex: 'settleRateUniv'
-    },
-    {
-        title: 'Action',
-        key: 'action',
-        sorter: true,
-        render: () => (
-            <Space size="middle">
-                <a>Publish</a>
-                <a>Edit Settlement Rate</a>
-                <a className="ant-dropdown-link">
-                    More actions <DownOutlined />
-                </a>
-            </Space>
-        ),
-    },
-];
 
 const data = [];
 for (let i = 1; i <= 100; i++) {
@@ -59,7 +23,7 @@ const showHeader = true;
 const footer = () => 'Here is footer';
 const pagination = { position: 'bottom' };
 
-export default class Demo extends React.Component {
+export default class OperationProductList extends React.Component {
     state = {
         bordered: false,
         loading: false,
@@ -75,7 +39,24 @@ export default class Demo extends React.Component {
         tableLayout: undefined,
         top: 'none',
         bottom: 'bottomRight',
+        editingKey: '',
+        data: data
     };
+
+    isEditing = (record) => record.key === this.state.editingKey
+
+    edit = (record) => {
+        console.log("edit")
+        this.setState({
+            editingKey: record.key
+        })
+
+    }
+    cancel = () => {
+        this.setState({
+            editingKey: ""
+        })
+    }
 
     handleToggle = prop => enable => {
         this.setState({ [prop]: enable });
@@ -127,6 +108,12 @@ export default class Demo extends React.Component {
 
     render() {
         const { xScroll, yScroll, ...state } = this.state;
+        const editableAction = {
+            isEditing: this.isEditing,
+            edit: this.edit,
+            cancel: this.cancel,
+            editingKey: this.state.editingKey
+        }
 
         const scroll = {};
         if (yScroll) {
@@ -136,11 +123,11 @@ export default class Demo extends React.Component {
             scroll.x = '100vw';
         }
 
-        const tableColumns = columns.map(item => ({ ...item, ellipsis: state.ellipsis }));
-        if (xScroll === 'fixed') {
-            tableColumns[0].fixed = true;
-            tableColumns[tableColumns.length - 1].fixed = 'right';
-        }
+        // const tableColumns = columns.map(item => ({ ...item, ellipsis: state.ellipsis }));
+        // if (xScroll === 'fixed') {
+        //     tableColumns[0].fixed = true;
+        //     tableColumns[tableColumns.length - 1].fixed = 'right';
+        // }
 
         return (
             <>
@@ -228,9 +215,14 @@ export default class Demo extends React.Component {
                 </Form>
                 <Table
                     {...this.state}
+                    components={{
+                        body: {
+                            cell: EditableCell,
+                        }
+                    }}
                     pagination={{ position: [this.state.top, this.state.bottom] }}
-                    columns={tableColumns}
-                    dataSource={state.hasData ? data : null}
+                    columns={mergedColumns(editableAction)}
+                    dataSource={state.hasData ? this.state.data : null}
                     scroll={scroll}
                 />
             </>
