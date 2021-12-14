@@ -6,7 +6,7 @@ import { EditableCell, mergedColumns } from 'component/OperationEditableEle';
 
 
 const data = [];
-for (let i = 1; i <= 100; i++) {
+for (let i = 1; i <= 1000; i++) {
     data.push({
         key: i,
         upc: 1921681010,
@@ -17,36 +17,46 @@ for (let i = 1; i <= 100; i++) {
     });
 }
 
-const expandable = { expandedRowRender: OperationNestedTable };
+const expandable = {
+    expandRowByClick: true,
+    expandedRowRender: record => <OperationNestedTable />
+};
 const title = () => 'Here is title';
 const showHeader = true;
 const footer = () => 'Here is footer';
 const pagination = { position: 'bottom' };
 
-export default class OperationProductList extends React.Component {
-    state = {
-        bordered: false,
-        loading: false,
-        pagination,
-        size: 'default',
-        expandable,
-        title: undefined,
-        showHeader,
-        footer,
-        rowSelection: {},
-        scroll: undefined,
-        hasData: true,
-        tableLayout: undefined,
-        top: 'none',
-        bottom: 'bottomRight',
-        editingKey: '',
-        data: data
-    };
+class OperationProductList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            bordered: false,
+            loading: false,
+            pagination,
+            size: 'default',
+            expandable,
+            title: undefined,
+            showHeader,
+            footer,
+            rowSelection: {},
+            scroll: undefined,
+            hasData: true,
+            tableLayout: undefined,
+            top: 'none',
+            bottom: 'bottomRight',
+            editingKey: '',
+            data: data,
+        };
+    }
+
+    formRef = React.createRef();
 
     isEditing = (record) => record.key === this.state.editingKey
 
     edit = (record) => {
-        console.log("edit")
+        this.formRef.current.setFieldsValue({
+            ...record
+        })
         this.setState({
             editingKey: record.key
         })
@@ -56,6 +66,27 @@ export default class OperationProductList extends React.Component {
         this.setState({
             editingKey: ""
         })
+    }
+
+    save = async (key) => {
+        try {
+            const row = await this.formRef.current.validateFields();
+            const newData = [...this.state.data];
+            const index = newData.findIndex((item) => key === item.key);
+
+            if (index > -1) {
+                const item = newData[index];
+                newData.splice(index, 1, { ...item, ...row });
+                this.setState({ data: newData });
+                this.setState({ editingKey: "" });
+            } else {
+                newData.push(row);
+                this.setState({ newData });
+                this.setState({ editingKey: "" });
+            }
+        } catch (err) {
+            console.log("Validate Failed:", err);
+        }
     }
 
     handleToggle = prop => enable => {
@@ -112,8 +143,10 @@ export default class OperationProductList extends React.Component {
             isEditing: this.isEditing,
             edit: this.edit,
             cancel: this.cancel,
+            save: this.save,
             editingKey: this.state.editingKey
         }
+        const columns = mergedColumns(editableAction)
 
         const scroll = {};
         if (yScroll) {
@@ -122,13 +155,6 @@ export default class OperationProductList extends React.Component {
         if (xScroll) {
             scroll.x = '100vw';
         }
-
-        // const tableColumns = columns.map(item => ({ ...item, ellipsis: state.ellipsis }));
-        // if (xScroll === 'fixed') {
-        //     tableColumns[0].fixed = true;
-        //     tableColumns[tableColumns.length - 1].fixed = 'right';
-        // }
-
         return (
             <>
                 <Form
@@ -213,19 +239,23 @@ export default class OperationProductList extends React.Component {
                         </Radio.Group>
                     </Form.Item>
                 </Form>
-                <Table
-                    {...this.state}
-                    components={{
-                        body: {
-                            cell: EditableCell,
-                        }
-                    }}
-                    pagination={{ position: [this.state.top, this.state.bottom] }}
-                    columns={mergedColumns(editableAction)}
-                    dataSource={state.hasData ? this.state.data : null}
-                    scroll={scroll}
-                />
+                <Form ref={this.formRef} component={false}>
+                    <Table
+                        {...this.state}
+                        components={{
+                            body: {
+                                cell: EditableCell,
+                            }
+                        }}
+                        pagination={{ position: [this.state.top, this.state.bottom] }}
+                        columns={columns}
+                        dataSource={state.hasData ? this.state.data : null}
+                        scroll={scroll}
+                    />
+                </Form>
             </>
         );
     }
 }
+
+export default OperationProductList
