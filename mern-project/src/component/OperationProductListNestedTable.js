@@ -11,7 +11,7 @@ for (let i = 0; i < 5; i++) {
         sku: '196068763954-16051200H00P-AFBA-4PB5-480',
         fulfillmentChannel: 'MERCHANT',
         amzRegularPrice: 807.99,
-        profitSettlementRate: 0.15,
+        settlementRate: 0.15,
         settlementPrice: 900,
         status: 'complete'
     })

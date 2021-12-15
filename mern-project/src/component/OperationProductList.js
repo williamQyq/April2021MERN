@@ -1,12 +1,15 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import 'antd/dist/antd.css';
-import { Table, Switch, Radio, Form, Space, InputNumber, Input } from 'antd';
+import { Table, Switch, Radio, Form } from 'antd';
 import OperationNestedTable from 'component/OperationProductListNestedTable';
 import { EditableCell, mergedColumns } from 'component/OperationEditableEle';
+import { getProductPricing } from 'reducers/actions/amazonActions';
 
 
 const data = [];
-for (let i = 1; i <= 1000; i++) {
+for (let i = 1; i < 2; i++) {
     data.push({
         key: i,
         upc: 1921681010,
@@ -50,6 +53,15 @@ class OperationProductList extends React.Component {
     }
 
     formRef = React.createRef();
+
+    componentDidMount() {
+        const asins = [
+            'B09JBFJN9M',
+            'B09JBFF4Q6',
+            'B09JBDTRS1'
+        ];
+        this.props.getProductPricing(asins)
+    }
 
     isEditing = (record) => record.key === this.state.editingKey
 
@@ -258,4 +270,14 @@ class OperationProductList extends React.Component {
     }
 }
 
-export default OperationProductList
+OperationProductList.prototypes = {
+    getUpcAsinMapping: PropTypes.func.isRequired,
+    getProductPricing: PropTypes.func.isRequired,
+    amazon: PropTypes.array.isRequired,
+
+}
+const mapStateToProps = (state) => ({
+    amazon: state.amazon.res
+})
+
+export default connect(mapStateToProps, { getProductPricing })(OperationProductList);
