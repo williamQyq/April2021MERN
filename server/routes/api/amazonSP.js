@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../../middleware/auth.js');
 const config = require('config');
+const { ProdPricing } = require('../../models/Amz.js');
 
 const amazonSellingPartner = async () => {
     const CREDENTIALS = config.get('amazonCredentials');
@@ -19,8 +20,8 @@ const amazonSellingPartner = async () => {
 }
 
 //@route GET api/amazonSP/productPricing
-router.post('/productPricing', async (req, res) => {
-    console.log(`req.body:${JSON.stringify(req.body)}`)
+router.post('/prod_pricing', async (req, res) => {
+    const { asins } = req.body
 
     const amzSP = await amazonSellingPartner();
     try {
@@ -29,7 +30,7 @@ router.post('/productPricing', async (req, res) => {
             endpoint: 'productPricing',
             query: {
                 MarketplaceId: 'ATVPDKIKX0DER',
-                Asins: req.body.asins,
+                Asins: asins,
                 ItemType: 'Asin'
             },
         });
@@ -43,21 +44,41 @@ router.post('/productPricing', async (req, res) => {
     }
 });
 
-router.post('/upcAsinMapping', (req, res) => {
-    const newItem = new ProdPricing({
-        upc: '194721625779',
-        identifiers: [
-            {
-                asin: 'B08B1QY2HY'
-            },
-            {
-                asin: 'B08B8JQRZY'
-            },
+router.get('/', (req, res) => {
 
-        ]
+    ProdPricing.find()
+        .then(products => res.json(products));
+});
+
+router.post('/', (req, res) => {
+    const { prodLst } = req.body;
+
+    // const newProd = new ProdPricing({
+    //     upc: '194721625779',
+    //     identifiers: [
+    //         {
+    //             asin: 'B08B1QY2HY'
+    //         },
+    //         {
+    //             asin: 'B08B8JQRZY'
+    //         },
+
+    //     ]
+    // })
+
+    prodLst.forEach(prod => {
+        pord.asins.forEach(asin => {
+            let query = { 'upc': prod.upc, 'identifiers.asin': asin };
+            let update = { 'identifiers.asin': asin }
+            let options = { upsert: true, new: true, setDefaultsOnInsert: true }
+
+            ProdPricing.findOneAndUpdate(query, update, options).then(item => {
+                console.log(`Upc:${item.upc}\nInserted Asin:${asin}`)
+                res.json("update ")
+            })
+        })
     })
-    newItem.save().then(item => res.json(item))
-})
 
+});
 
 module.exports = router;

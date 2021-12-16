@@ -1,10 +1,11 @@
 import {
     GET_AMZ_PROD_PRICING,
+    GET_UPC_ASIN_MAPPING,
     AMAZON_RES_LOADING,
 } from './actions/types';
 
 const initialState = {
-    res: [],
+    sellingPartner: [],
     loading: false
 }
 
@@ -13,9 +14,17 @@ export default function Reducer(state = initialState, action) {
         case GET_AMZ_PROD_PRICING:
             return {
                 ...state,
-                res: action.payload,
+                sellingPartner: action.payload,
                 loading: false
             };
+        case GET_UPC_ASIN_MAPPING:
+            return {
+                ...state,
+                sellingPartner: action.payload,
+                loading: false
+            }
+
+
         case AMAZON_RES_LOADING:
             return {
                 ...state,

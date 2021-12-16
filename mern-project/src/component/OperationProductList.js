@@ -5,20 +5,10 @@ import 'antd/dist/antd.css';
 import { Table, Switch, Radio, Form } from 'antd';
 import OperationNestedTable from 'component/OperationProductListNestedTable';
 import { EditableCell, mergedColumns } from 'component/OperationEditableEle';
-import { getProductPricing } from 'reducers/actions/amazonActions';
+import { getProductPricing, getUpcAsinMapping } from 'reducers/actions/amazonActions';
+import { setDataPoints } from 'utilities/chartUtilities';
 
 
-const data = [];
-for (let i = 1; i < 2; i++) {
-    data.push({
-        key: i,
-        upc: 1921681010,
-        name: `HP DELL ASUS...`,
-        wmsQuantity: `${i}`,
-        unitCost: `${i * 100}`,
-        settleRateUniv: 0.15
-    });
-}
 
 const expandable = {
     expandRowByClick: true,
@@ -34,7 +24,6 @@ class OperationProductList extends React.Component {
         super(props);
         this.state = {
             bordered: false,
-            loading: false,
             pagination,
             size: 'default',
             expandable,
@@ -48,21 +37,32 @@ class OperationProductList extends React.Component {
             top: 'none',
             bottom: 'bottomRight',
             editingKey: '',
-            data: data,
         };
     }
 
     formRef = React.createRef();
 
     componentDidMount() {
-        const asins = [
-            'B09JBFJN9M',
-            'B09JBFF4Q6',
-            'B09JBDTRS1'
-        ];
-        this.props.getProductPricing(asins)
+        //set table data here? or in render()
+        
+        this.props.getUpcAsinMapping()
+        // this.props.getProductPricing()
     }
 
+    getTableData = (sp) => {
+        const data = [];
+        for (let i = 0; i < sp.length; i++) {
+            data.push({
+                key: i,
+                upc: 1921681010,
+                name: `HP DELL ASUS...`,
+                wmsQuantity: `${i}`,
+                unitCost: `${i * 100}`,
+                settleRateUniv: 0.15
+            });
+        }
+        return data;
+    }
     isEditing = (record) => record.key === this.state.editingKey
 
     edit = (record) => {
@@ -151,6 +151,7 @@ class OperationProductList extends React.Component {
 
     render() {
         const { xScroll, yScroll, ...state } = this.state;
+        const { loading, sellingPartner } = this.props;
         const editableAction = {
             isEditing: this.isEditing,
             edit: this.edit,
@@ -167,6 +168,7 @@ class OperationProductList extends React.Component {
         if (xScroll) {
             scroll.x = '100vw';
         }
+
         return (
             <>
                 <Form
@@ -176,9 +178,6 @@ class OperationProductList extends React.Component {
                 >
                     <Form.Item label="Bordered">
                         <Switch checked={state.bordered} onChange={this.handleToggle('bordered')} />
-                    </Form.Item>
-                    <Form.Item label="loading">
-                        <Switch checked={state.loading} onChange={this.handleToggle('loading')} />
                     </Form.Item>
                     <Form.Item label="Title">
                         <Switch checked={!!state.title} onChange={this.handleTitleChange} />
@@ -254,6 +253,7 @@ class OperationProductList extends React.Component {
                 <Form ref={this.formRef} component={false}>
                     <Table
                         {...this.state}
+                        loading={loading}
                         components={{
                             body: {
                                 cell: EditableCell,
@@ -261,7 +261,7 @@ class OperationProductList extends React.Component {
                         }}
                         pagination={{ position: [this.state.top, this.state.bottom] }}
                         columns={columns}
-                        dataSource={state.hasData ? this.state.data : null}
+                        dataSource={state.hasData ? this.getTableData(sellingPartner) : null}
                         scroll={scroll}
                     />
                 </Form>
@@ -273,11 +273,13 @@ class OperationProductList extends React.Component {
 OperationProductList.prototypes = {
     getUpcAsinMapping: PropTypes.func.isRequired,
     getProductPricing: PropTypes.func.isRequired,
-    amazon: PropTypes.array.isRequired,
+    sellingPartner: PropTypes.array.isRequired,
+    loading: PropTypes.bool.isRequired,
 
 }
 const mapStateToProps = (state) => ({
-    amazon: state.amazon.res
+    sellingPartner: state.amazon.sellingPartner,
+    loading: state.amazon.loading
 })
 
-export default connect(mapStateToProps, { getProductPricing })(OperationProductList);
+export default connect(mapStateToProps, { getProductPricing, getUpcAsinMapping })(OperationProductList);

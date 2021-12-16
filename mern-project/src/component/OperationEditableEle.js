@@ -28,6 +28,7 @@ export const EditableCell = ({
                             message: `Please Input ${title}!`,
                         },
                     ]}
+                    onClick={(e) => { e.stopPropagation() }}
                 >
                     {inputNode}
                 </Form.Item>
@@ -238,7 +239,7 @@ const Action = ({ action, record }) => {
                 Edit
             </Link>
             <Dropdown overlay={menu}>
-                <Link>
+                <Link onClick={(e) => { e.stopPropagation(); }}>
                     More <DownOutlined />
                 </Link>
             </Dropdown>
