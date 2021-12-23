@@ -1,6 +1,5 @@
 import {
     GET_AMZ_PROD_PRICING,
-    GET_UPC_ASIN_MAPPING,
     AMAZON_RES_LOADING,
 } from './actions/types';
 
@@ -17,13 +16,6 @@ export default function Reducer(state = initialState, action) {
                 sellingPartner: action.payload,
                 loading: false
             };
-        case GET_UPC_ASIN_MAPPING:
-            return {
-                ...state,
-                sellingPartner: action.payload,
-                loading: false
-            }
-
 
         case AMAZON_RES_LOADING:
             return {

@@ -3,21 +3,8 @@ const router = express.Router();
 const auth = require('../../middleware/auth.js');
 const config = require('config');
 const { ProdPricing } = require('../../models/Amz.js');
+const { amazonSellingPartner } = require('../../amazonSP/RateLimiter.js');
 
-const amazonSellingPartner = async () => {
-    const CREDENTIALS = config.get('amazonCredentials');
-    const IAM = config.get('amazonIAMRole');
-    const SellingPartnerAPI = require('amazon-sp-api');
-
-    let sellingPartner = new SellingPartnerAPI({
-        region: "na",
-        credentials: CREDENTIALS,
-        refresh_token: IAM.REFRESH_TOKEN
-
-    });
-
-    return sellingPartner;
-}
 
 //@route GET api/amazonSP/productPricing
 router.post('/prod_pricing', async (req, res) => {
@@ -34,9 +21,9 @@ router.post('/prod_pricing', async (req, res) => {
                 ItemType: 'Asin'
             },
         });
-        items.forEach(item => {
-            console.log(`${JSON.stringify(item)}\n`)
-        });
+        // items.forEach(item => {
+        //     console.log(`${JSON.stringify(item)}\n`)
+        // });
         res.json(items)
 
     } catch (e) {
@@ -52,19 +39,6 @@ router.get('/', (req, res) => {
 
 router.post('/', (req, res) => {
     const { prodLst } = req.body;
-
-    // const newProd = new ProdPricing({
-    //     upc: '194721625779',
-    //     identifiers: [
-    //         {
-    //             asin: 'B08B1QY2HY'
-    //         },
-    //         {
-    //             asin: 'B08B8JQRZY'
-    //         },
-
-    //     ]
-    // })
 
     prodLst.forEach(prod => {
         pord.asins.forEach(asin => {

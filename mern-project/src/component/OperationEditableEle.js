@@ -203,12 +203,8 @@ const menu = (
 
 const Action = ({ action, record }) => {
     const editable = action.isEditing(record);
-    const saveChange = () => {
-        action.save(record.key)
-    }
     return editable ? (
         <Space size="middle">
-            <Popconfirm title="Sync to Amz?" onConfirm={saveChange}>
                 <Link
                     onClick={(e) => {
                         e.stopPropagation();
@@ -217,7 +213,6 @@ const Action = ({ action, record }) => {
                 >
                     Save
                 </Link>
-            </Popconfirm>
             <Link
                 onClick={(e) => {
                     e.stopPropagation();

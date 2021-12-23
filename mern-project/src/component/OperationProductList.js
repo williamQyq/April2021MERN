@@ -5,10 +5,7 @@ import 'antd/dist/antd.css';
 import { Table, Switch, Radio, Form } from 'antd';
 import OperationNestedTable from 'component/OperationProductListNestedTable';
 import { EditableCell, mergedColumns } from 'component/OperationEditableEle';
-import { getProductPricing, getUpcAsinMapping } from 'reducers/actions/amazonActions';
-import { setDataPoints } from 'utilities/chartUtilities';
-
-
+import { getProductPricing } from 'reducers/actions/amazonActions';
 
 const expandable = {
     expandRowByClick: true,
@@ -44,25 +41,23 @@ class OperationProductList extends React.Component {
 
     componentDidMount() {
         //set table data here? or in render()
-        
-        this.props.getUpcAsinMapping()
         // this.props.getProductPricing()
     }
 
-    getTableData = (sp) => {
-        const data = [];
-        for (let i = 0; i < sp.length; i++) {
-            data.push({
-                key: i,
-                upc: 1921681010,
-                name: `HP DELL ASUS...`,
-                wmsQuantity: `${i}`,
-                unitCost: `${i * 100}`,
-                settleRateUniv: 0.15
-            });
-        }
-        return data;
-    }
+    // getTableData = (sp,wms) => {
+    //     const data = [];
+    //     sp.forEach(prod => {
+    //         data.push({
+    //             key: prod.key,
+    //             upc: prod.upc,
+    //             name: prod.name,
+    //             // wmsQuantity: ,
+    //             unitCost: `100`,
+    //             settleRateUniv: 0.15
+    //         });
+    //     })
+    //     return data;
+    // }
     isEditing = (record) => record.key === this.state.editingKey
 
     edit = (record) => {
@@ -261,7 +256,7 @@ class OperationProductList extends React.Component {
                         }}
                         pagination={{ position: [this.state.top, this.state.bottom] }}
                         columns={columns}
-                        dataSource={state.hasData ? this.getTableData(sellingPartner) : null}
+                        dataSource={state.hasData ? null : null}
                         scroll={scroll}
                     />
                 </Form>
@@ -282,4 +277,4 @@ const mapStateToProps = (state) => ({
     loading: state.amazon.loading
 })
 
-export default connect(mapStateToProps, { getProductPricing, getUpcAsinMapping })(OperationProductList);
+export default connect(mapStateToProps, { getProductPricing })(OperationProductList);

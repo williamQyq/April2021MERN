@@ -3,13 +3,16 @@ const router = express.Router();
 const auth = require('../../middleware/auth.js');
 const wms = require('../../wmsDatabase.js');
 //@route GET api/wms
-router.get('/', (req, res) => {
+router.post('/', async (req, res) => {
+    const reqProducts = req.body;
     const collection = wms.getDatabase().collection('sellerInv')
-    collection.find({ '_id.UPC': "195697644344", '_id.org': "M" })
-        .toArray()
-        .then(docs => {
-            res.json(docs);
-        })
+
+    const getData = async () => Promise.all(reqProducts.map(prod =>
+        collection.find({ '_id.UPC': prod.upc, '_id.org': "M" }).toArray()
+    ))
+    getData().then(data => {
+        res.json(data)
+    })
 });
 
 module.exports = router;
