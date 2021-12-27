@@ -20,13 +20,12 @@ const amazonSellingPartner = async () => {
 
 class LeakyBucket {
     static capacity = 100;
-    static ratePerSec = 10;
-    static asinsLimit = 20;
-    #taskCount = 0;
+    #performance = 0;
+    #ratePerSec = 10;
+    #asinsLimit = 20;
 
     constructor() {
         this.queue = [];
-        this.reqCount = 0;
     }
 
     //start
@@ -39,10 +38,9 @@ class LeakyBucket {
     }
 
     addProdPricingTasks(asins) {
-        let chuncks = this.#sliceAsinsOnLimit(asins, LeakyBucket.asinsLimit);
-
+        let chuncks = this.#sliceAsinsOnLimit(asins, this.#asinsLimit);
         chuncks.map(asinsChunck => {
-            let task = this.#createTask(asinsChunck)
+            let task = this.#createTask(asinsChunck)    //task promise created, return immediately
             this.#enqueue(task);
         })
     }
@@ -69,14 +67,28 @@ class LeakyBucket {
         }
     }
 
-    doTaskQueue() {
-        const promisesArray = this.queue.map((task, index) => {
-            
-            return task
-        })
-        Promise.all(promisesArray).then(result => {
-            console.log(JSON5.stringify(result, null, 4));
-        })
+    async doTaskQueue() {
+
+        const promisesArray = this.queue.map(async (task, index) => {
+
+            const duration = await this.#measurePromise(task);
+            this.#performance += duration;
+
+            console.log(`Task:${index}; current Performance: ${this.#performance}; duration: ${duration}`)
+
+            if ((index + 1) % this.#ratePerSec == 0 && this.#performance < 1000) {
+                await this.#delay(1000);
+                console.log(`delay 1 sec`)
+                this.#performance = 0;
+            }
+
+            return this.#dequeue();
+        });
+
+        return Promise.all(promisesArray).then(result => (result)
+            // this.#clearTaskResolveCount();
+            // console.log(JSON5.stringify(result, null, 4));
+        )
     }
     getProdAsins(prod) {
         return prod.identifiers.map(identifier => (identifier.asin))
@@ -86,12 +98,6 @@ class LeakyBucket {
         return this.queue.length > 0 ? false : true;
     }
 
-    #measurePromise(promisefun) {
-        let onPromiseDone = () => performance.now() - start;
-
-        let start = performance.now();
-        return promisefun().then(onPromiseDone, onPromiseDone);
-    }
     /*
      *  @private
      *  @create task for a chunck of asins
@@ -127,10 +133,14 @@ class LeakyBucket {
         return this.queue.shift();
     }
 
-    #increaseTaskCount(amount) {
-        this.#taskCount += amount;
+    #delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
-
+    #measurePromise(prom) {
+        let onPromiseDone = () => performance.now() - start;
+        let start = performance.now();
+        return prom.then(onPromiseDone, onPromiseDone);
+    }
 }
 
 module.exports = {

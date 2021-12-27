@@ -12,37 +12,7 @@ const AmzProdPricingSchema = new Schema({
             type: String,
             require: true
         },
-        offers: [{
-            sellerSKU: {
-                type: String,
-            },
-            buyingPrice: {
-                listingPrice: {
-                    currencyCode: {
-                        type: String,
-                        default: "USD"
-                    },
-                    amount: {
-                        type: Number
-                    }
-                }
-            },
-            regularPrice: {
-                currencyCode: {
-                    type: String,
-                    default: "USD"
-                },
-                amount: {
-                    type: Number
-                }
-            },
-            fulfillment: {
-                type: String
-            },
-            itemCondition: {
-                type: String
-            }
-        }]
+        offers: []
 
     }],
     modifyBy: {

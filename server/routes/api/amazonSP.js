@@ -38,19 +38,19 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    const { prodLst } = req.body;
-
+    const prodLst = req.body;
     prodLst.forEach(prod => {
-        pord.asins.forEach(asin => {
-            let query = { 'upc': prod.upc, 'identifiers.asin': asin };
-            let update = { 'identifiers.asin': asin }
-            let options = { upsert: true, new: true, setDefaultsOnInsert: true }
-
-            ProdPricing.findOneAndUpdate(query, update, options).then(item => {
-                console.log(`Upc:${item.upc}\nInserted Asin:${asin}`)
-                res.json("update ")
-            })
+        const newProd = new ProdPricing({
+            upc: prod.upc,
+            identifiers: []
         })
+        prod.asins.forEach(asin => {
+            const identifier = {
+                asin: asin,
+            }
+            newProd.identifiers.push(identifier)
+        })
+        newProd.save().then(result => res.json(result));
     })
 
 });

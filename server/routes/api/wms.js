@@ -7,6 +7,7 @@ router.post('/', async (req, res) => {
     const reqProducts = req.body;
     const collection = wms.getDatabase().collection('sellerInv')
 
+    
     const getData = async () => Promise.all(reqProducts.map(prod =>
         collection.find({ '_id.UPC': prod.upc, '_id.org': "M" }).toArray()
     ))
