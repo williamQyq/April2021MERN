@@ -6,6 +6,7 @@ const wmsConfig = require('./config/wmsConfig');
 
 //when modules/instance being required in nodejs, it will only load once.
 let wmsDatabase;
+
 function connect(config, port, callback) {
     tunnel(config, (error, server) => {
         if (error) {
@@ -13,7 +14,6 @@ function connect(config, port, callback) {
         }
         // let client = new MongoClient('mongodb://127.0.0.1:27017/wms', { useUnifiedTopology: true });
         MongoClient.connect(`mongodb://127.0.0.1:${port}/wms`, { useUnifiedTopology: true }).then(client => {
-            console.log(`WMS Database Connected...`);
             wmsDatabase = client.db('wms');
             callback();
         }).catch(err => {
@@ -39,10 +39,12 @@ function wmsService() {
 
     // @WMS connection; Connect to WMS Database via tunnel-ssh
     wmsService.listen(wmsPort, () => {
-        console.log(`WMS service stated on port 4000`)
+        console.log(`WMS service started on port 4000`)
     })
-    
-    connect(wmsConfig, wmsPort, () => { });
+
+    connect(wmsConfig, wmsPort, () => {
+        console.log(`WMS Database Connected...`);
+    });
 }
 
 module.exports = { connect, getDatabase, close, wmsService };

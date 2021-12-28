@@ -2,55 +2,45 @@ const cron = require('node-cron');
 const { ProdPricing } = require('../models/Amz')
 const { SpBucket } = require('./RateLimiter.js')
 
-//cron scheduler update Amazon sku
-// const amazonScheduler = cron.schedule("00 19 10 * * *", () => {
+// cron scheduler update Amazon sku
+// const amazonScheduler = cron.schedule("* 10 * * * *", () => {
 //     productPricingCheck();
-
-
 // });
 
-
-const amazonScheduler = async () => {
-    // productPricingUpdate();
+const amazonScheduler = () => {
+    productPricingUpdate();
 
 };
-
-
-
 
 const productPricingUpdate = () => {
     const bucket = new SpBucket();
 
     //get prods asins in database 
-    findAllProds().then(prods => {
-        prods.forEach((prod, index) => {
-            let asins = bucket.getProdAsins(prod);
+    ProdPricing.find().then(prods => {
+        prods.forEach(prod => {
+            const asins = bucket.getProdAsins(prod);
             bucket.addProdPricingTasks(asins);
-            bucket.doTaskQueue().then(res => {
-                saveOffers(res);
-            })
+            bucket.doTaskQueue()
+                .then(amzRes => {
+                    saveOffers(amzRes, prod.upc);
+                }).catch(e => {
+                    console.log(`undefined task****\n ${e}`)
+                });
             // bucket.throttle();
         })
     })
 }
 
-
-const delay = ms => new Promise(res => setTimeout(res, ms));
-
-const findAllProds = () => {
-    return ProdPricing.find()
-}
-
-const saveOffers = (res) => {
+const saveOffers = (res, upc) => {
     res.forEach(amzProdRes => {
         amzProdRes.forEach(amzAsinRes => {
-            console.log(`asin::`, JSON.stringify(amzAsinRes.Product.Offers, null, 4))
-            const filter = { "identifiers.asin": amzAsinRes.asinASIN }
+            // console.log(`amzAsinRes========\n`, JSON.stringify(amzAsinRes.ASIN, null, 4))
+            const filter = { "upc": upc, "identifiers.asin": amzAsinRes.ASIN }
             const update = { $set: { "identifiers.$.offers": amzAsinRes.Product.Offers } }
             const option = { useFindAndModify: false }
             ProdPricing.findOneAndUpdate(filter, update, option)
-                .then(res => console.log(`succes`, res))
-                .catch(err=>console.log())
+                .then(res => console.log(`[Amazon SP] UPC:${res.upc} updated #${res.identifiers.length} asins succeed.`))
+                .catch(err => console.log(`[ERR]: amz save offers err.\n${err}`))
         })
     })
     // const query = findAsinOffer(res.)

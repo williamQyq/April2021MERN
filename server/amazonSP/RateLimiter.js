@@ -67,29 +67,32 @@ class LeakyBucket {
         }
     }
 
-    async doTaskQueue() {
-
+    doTaskQueue() {
+        console.log(`queue length`, this.queue.length)
         const promisesArray = this.queue.map(async (task, index) => {
+            await this.delayIfReachedLimit(index)
+            let duration = await this.#measurePromise(task);
+            console.log(`task queue current`, this.queue.length)
 
-            const duration = await this.#measurePromise(task);
             this.#performance += duration;
 
             console.log(`Task:${index}; current Performance: ${this.#performance}; duration: ${duration}`)
-
-            if ((index + 1) % this.#ratePerSec == 0 && this.#performance < 1000) {
-                await this.#delay(1000);
-                console.log(`delay 1 sec`)
-                this.#performance = 0;
-            }
-
             return this.#dequeue();
-        });
+        })
 
-        return Promise.all(promisesArray).then(result => (result)
-            // this.#clearTaskResolveCount();
-            // console.log(JSON5.stringify(result, null, 4));
-        )
+        return Promise.all(promisesArray)
     }
+
+    async delayIfReachedLimit(index) {
+        if ((index + 1) % this.#ratePerSec == 0) {
+            this.#performance < 1000 ? async () => {
+                console.log(`Req Rate Limit Reached, delay 1 sec`)
+                await this.#delay(1000);
+            } : () => { }
+            this.#performance = 0;
+        }
+    }
+
     getProdAsins(prod) {
         return prod.identifiers.map(identifier => (identifier.asin))
     }
@@ -139,7 +142,7 @@ class LeakyBucket {
     #measurePromise(prom) {
         let onPromiseDone = () => performance.now() - start;
         let start = performance.now();
-        return prom.then(onPromiseDone, onPromiseDone);
+        return prom.then(onPromiseDone);
     }
 }
 

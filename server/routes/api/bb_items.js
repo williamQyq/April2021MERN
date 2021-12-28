@@ -9,7 +9,8 @@ const {
     getPrevPrice,
     getPriceDiff,
     getPriceCaptureDate,
-    sortOnPriceCaptureDate } = require('../../query/aggregate.js')
+    sortOnPriceCaptureDate
+} = require('../../query/aggregate.js')
 
 // @route GET api/items
 router.get('/', (req, res) => {

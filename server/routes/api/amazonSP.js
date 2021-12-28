@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../../middleware/auth.js');
-const config = require('config');
 const { ProdPricing } = require('../../models/Amz.js');
 const { amazonSellingPartner } = require('../../amazonSP/RateLimiter.js');
 
 
 //@route GET api/amazonSP/productPricing
+// desc: Deprecated!
 router.post('/prod_pricing', async (req, res) => {
     const { asins } = req.body
 
@@ -31,12 +31,15 @@ router.post('/prod_pricing', async (req, res) => {
     }
 });
 
+// @route GET api/amazonSP
+// desc: get all amazon seller central sync product pricing offers 
 router.get('/', (req, res) => {
-
     ProdPricing.find()
         .then(products => res.json(products));
 });
 
+// @route POST api/amazonSP
+// desc: save upc asin mapping Schema for ProductPricing API
 router.post('/', (req, res) => {
     const prodLst = req.body;
     prodLst.forEach(prod => {

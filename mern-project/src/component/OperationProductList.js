@@ -3,9 +3,9 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import 'antd/dist/antd.css';
 import { Table, Switch, Radio, Form } from 'antd';
-import OperationNestedTable from 'component/OperationProductListNestedTable';
-import { EditableCell, mergedColumns } from 'component/OperationEditableEle';
-import { getProductPricing } from 'reducers/actions/amazonActions';
+import OperationNestedTable from 'component/OperationProductListNestedTable.js';
+import { EditableCell, mergedColumns } from 'component/OperationEditableEle.js';
+import { getProductPricing } from 'reducers/actions/amazonActions.js';
 
 const expandable = {
     expandRowByClick: true,
@@ -41,7 +41,7 @@ class OperationProductList extends React.Component {
 
     componentDidMount() {
         //set table data here? or in render()
-        // this.props.getProductPricing()
+        this.props.getProductPricing()
     }
 
     // getTableData = (sp,wms) => {
@@ -256,7 +256,7 @@ class OperationProductList extends React.Component {
                         }}
                         pagination={{ position: [this.state.top, this.state.bottom] }}
                         columns={columns}
-                        dataSource={state.hasData ? null : null}
+                        dataSource={state.hasData ? sellingPartner : null}
                         scroll={scroll}
                     />
                 </Form>
@@ -266,7 +266,6 @@ class OperationProductList extends React.Component {
 }
 
 OperationProductList.prototypes = {
-    getUpcAsinMapping: PropTypes.func.isRequired,
     getProductPricing: PropTypes.func.isRequired,
     sellingPartner: PropTypes.array.isRequired,
     loading: PropTypes.bool.isRequired,
