@@ -18,33 +18,32 @@ const productPricingUpdate = () => {
     //get prods asins in database 
     ProdPricing.find().then(prods => {
         prods.forEach(prod => {
-            const asins = bucket.getProdAsins(prod);
-            bucket.addProdPricingTasks(asins);
-            bucket.doTaskQueue()
-                .then(amzRes => {
-                    saveOffers(amzRes, prod.upc);
-                }).catch(e => {
-                    console.log(`undefined task****\n ${e}`)
-                });
-            // bucket.throttle();
+            const upcAsinMapping = bucket.getProdAsins(prod);
+            bucket.addProdPricingTask(upcAsinMapping);
         })
+
+        bucket.doTaskQueue()
+            .then(amzRes => {
+                saveOffers(amzRes);
+            }).catch(e => {
+                console.log(`undefined task****\n ${e}`)
+            });
+        // bucket.throttle();
     })
 }
 
-const saveOffers = (res, upc) => {
-    res.forEach(amzProdRes => {
-        amzProdRes.forEach(amzAsinRes => {
+const saveOffers = (res) => {
+    res.forEach(prodPricRes => {
+        prodPricRes.prom.forEach(asinPricRes => {
             // console.log(`amzAsinRes========\n`, JSON.stringify(amzAsinRes.ASIN, null, 4))
-            const filter = { "upc": upc, "identifiers.asin": amzAsinRes.ASIN }
-            const update = { $set: { "identifiers.$.offers": amzAsinRes.Product.Offers } }
+            const filter = { "upc": prodPricRes.upc, "identifiers.asin": asinPricRes.ASIN }
+            const update = { $set: { "identifiers.$.offers": asinPricRes.Product.Offers } }
             const option = { useFindAndModify: false }
             ProdPricing.findOneAndUpdate(filter, update, option)
-                .then(res => console.log(`[Amazon SP] UPC:${res.upc} updated #${res.identifiers.length} asins succeed.`))
+                .then(res => console.log(`[Amazon SP] UPC:${res.upc} updated #[${asinPricRes.ASIN}]# asin succeed.`))
                 .catch(err => console.log(`[ERR]: amz save offers err.\n${err}`))
         })
     })
-    // const query = findAsinOffer(res.)
-
 }
 
 

@@ -37,15 +37,15 @@ class LeakyBucket {
         })
     }
 
-    addProdPricingTasks(asins) {
-        let chuncks = this.#sliceAsinsOnLimit(asins, this.#asinsLimit);
-        chuncks.map(asinsChunck => {
-            let task = this.#createTask(asinsChunck)    //task promise created, return immediately
+    addProdPricingTask(mapping) {
+        let chuncks = this.#sliceAsinsOnLimit(mapping.asins, this.#asinsLimit); //each chunck contains an limited number of asins
+        chuncks.forEach(asinsChunck => {
+            let task = this.#createTask(mapping.upc, asinsChunck)    //task promise created, return immediately
             this.#enqueue(task);
         })
     }
 
-    async doProdPricingTask(resolve, reject, asins) {
+    async doProdPricingTask(resolve, reject, upc, asins) {
         const SP = await amazonSellingPartner();
 
         try {
@@ -59,7 +59,7 @@ class LeakyBucket {
                 },
             })
 
-            resolve(res);
+            resolve({ upc, prom: res });
 
         } catch (e) {
             console.error(`AWS SP API ERROR:\n${e}`)
@@ -68,12 +68,11 @@ class LeakyBucket {
     }
 
     doTaskQueue() {
-        console.log(`queue length`, this.queue.length)
+
         const promisesArray = this.queue.map(async (task, index) => {
             await this.delayIfReachedLimit(index)
-            let duration = await this.#measurePromise(task);
-            console.log(`task queue current`, this.queue.length)
 
+            let duration = await this.#measurePromise(task);
             this.#performance += duration;
 
             console.log(`Task:${index}; current Performance: ${this.#performance}; duration: ${duration}`)
@@ -94,7 +93,9 @@ class LeakyBucket {
     }
 
     getProdAsins(prod) {
-        return prod.identifiers.map(identifier => (identifier.asin))
+        let asins = prod.identifiers.map(identifier => (identifier.asin))
+        let upc = prod.upc;
+        return { upc, asins }
     }
 
     isTaskQueueEmpty() {
@@ -105,9 +106,9 @@ class LeakyBucket {
      *  @private
      *  @create task for a chunck of asins
      */
-    #createTask(asins) {
+    #createTask(upc, asins) {
         return new Promise((resolve, reject) => {
-            this.doProdPricingTask(resolve, reject, asins);
+            this.doProdPricingTask(resolve, reject, upc, asins);
         })
     }
     /*
