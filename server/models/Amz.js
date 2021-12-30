@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const identifierSchema = new Schema({
+const IdentifierSchema = new Schema({
     asin: {
         type: String,
         require: true
@@ -15,7 +15,7 @@ const AmzProdPricingSchema = new Schema({
         type: String,
         require: true
     },
-    identifiers: [identifierSchema],
+    identifiers: [IdentifierSchema],
     modifyBy: {
         role: {
             type: String
@@ -29,5 +29,6 @@ const AmzProdPricingSchema = new Schema({
 
 
 module.exports = {
-    ProdPricing: mongoose.model('amzProdPricing', AmzProdPricingSchema)
+    ProdPricing: mongoose.model('amzProdPricing', AmzProdPricingSchema),
+    Identifier: mongoose.model('amzIdentifier', IdentifierSchema)
 }
