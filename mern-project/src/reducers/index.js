@@ -6,6 +6,8 @@ import itemMSReducer from './itemMSReducer';
 import errorReducer from './errorReducer';
 import authReducer from './authReducer';
 import keepaReducer from './keepaReducer';
+import amazonReducer from './amazonReducer';
+
 import storage from 'redux-persist/lib/storage';
 
 import { LOGOUT_SUCCESS } from './actions/types';
@@ -26,7 +28,8 @@ const appReducers = combineReducers({
     microsoft: itemMSReducer,
     error: errorReducer,
     auth: authReducer,
-    keepa: keepaReducer
+    keepa: keepaReducer,
+    amazon: amazonReducer,
 
 })
 
