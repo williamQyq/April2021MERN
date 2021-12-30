@@ -44,7 +44,7 @@ export const addItem = item => dispatch => {
     )
 };
 
-export const setItemsLoading = () => {
+const setItemsLoading = () => {
     return {
         type: ITEMS_LOADING
     };

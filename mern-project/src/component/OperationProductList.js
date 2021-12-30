@@ -1,81 +1,100 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import 'antd/dist/antd.css';
-import { Table, Switch, Radio, Form, Space } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
-import OperationNestedTable from 'component/OperationProductListNestedTable';
+import { Table, Switch, Radio, Form } from 'antd';
+import OperationNestedTable from 'component/OperationProductListNestedTable.js';
+import { EditableCell, mergedColumns } from 'component/OperationEditableEle.js';
+import { getProductPricing } from 'reducers/actions/amazonActions.js';
 
-const columns = [
-    {
-        title: 'Upc',
-        dataIndex: 'upc',
-    },
-    {
-        title: 'Name',
-        dataIndex: 'name',
-    },
-    {
-        title: 'WMS Quantity',
-        dataIndex: 'wmsQuantity'
-    },
-    {
-        title: 'Unit Cost',
-        dataIndex: 'unitCost'
-    },
-    {
-        title: 'Settlement Rate Universal',
-        dataIndex: 'settleRateUniv'
-    },
-    {
-        title: 'Action',
-        key: 'action',
-        sorter: true,
-        render: () => (
-            <Space size="middle">
-                <a>Publish</a>
-                <a>Edit Settlement Rate</a>
-                <a className="ant-dropdown-link">
-                    More actions <DownOutlined />
-                </a>
-            </Space>
-        ),
-    },
-];
-
-const data = [];
-for (let i = 1; i <= 100; i++) {
-    data.push({
-        key: i,
-        upc: 1921681010,
-        name: `HP DELL ASUS...`,
-        wmsQuantity: `${i}`,
-        unitCost: `${i * 100}`,
-        settleRateUniv: 0.15
-    });
-}
-
-const expandable = { expandedRowRender: OperationNestedTable };
+const expandable = {
+    expandRowByClick: true,
+    expandedRowRender: record => <OperationNestedTable />
+};
 const title = () => 'Here is title';
 const showHeader = true;
 const footer = () => 'Here is footer';
 const pagination = { position: 'bottom' };
 
-export default class Demo extends React.Component {
-    state = {
-        bordered: false,
-        loading: false,
-        pagination,
-        size: 'default',
-        expandable,
-        title: undefined,
-        showHeader,
-        footer,
-        rowSelection: {},
-        scroll: undefined,
-        hasData: true,
-        tableLayout: undefined,
-        top: 'none',
-        bottom: 'bottomRight',
-    };
+class OperationProductList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            bordered: false,
+            pagination,
+            size: 'default',
+            expandable,
+            title: undefined,
+            showHeader,
+            footer,
+            rowSelection: {},
+            scroll: undefined,
+            hasData: true,
+            tableLayout: undefined,
+            top: 'none',
+            bottom: 'bottomRight',
+            editingKey: '',
+        };
+    }
+
+    formRef = React.createRef();
+
+    componentDidMount() {
+        //set table data here? or in render()
+        this.props.getProductPricing()
+    }
+
+    // getTableData = (sp,wms) => {
+    //     const data = [];
+    //     sp.forEach(prod => {
+    //         data.push({
+    //             key: prod.key,
+    //             upc: prod.upc,
+    //             name: prod.name,
+    //             // wmsQuantity: ,
+    //             unitCost: `100`,
+    //             settleRateUniv: 0.15
+    //         });
+    //     })
+    //     return data;
+    // }
+    isEditing = (record) => record.key === this.state.editingKey
+
+    edit = (record) => {
+        this.formRef.current.setFieldsValue({
+            ...record
+        })
+        this.setState({
+            editingKey: record.key
+        })
+
+    }
+    cancel = () => {
+        this.setState({
+            editingKey: ""
+        })
+    }
+
+    save = async (key) => {
+        try {
+            const row = await this.formRef.current.validateFields();
+            const newData = [...this.state.data];
+            const index = newData.findIndex((item) => key === item.key);
+
+            if (index > -1) {
+                const item = newData[index];
+                newData.splice(index, 1, { ...item, ...row });
+                this.setState({ data: newData });
+                this.setState({ editingKey: "" });
+            } else {
+                newData.push(row);
+                this.setState({ newData });
+                this.setState({ editingKey: "" });
+            }
+        } catch (err) {
+            console.log("Validate Failed:", err);
+        }
+    }
 
     handleToggle = prop => enable => {
         this.setState({ [prop]: enable });
@@ -127,6 +146,15 @@ export default class Demo extends React.Component {
 
     render() {
         const { xScroll, yScroll, ...state } = this.state;
+        const { loading, sellingPartner } = this.props;
+        const editableAction = {
+            isEditing: this.isEditing,
+            edit: this.edit,
+            cancel: this.cancel,
+            save: this.save,
+            editingKey: this.state.editingKey
+        }
+        const columns = mergedColumns(editableAction)
 
         const scroll = {};
         if (yScroll) {
@@ -134,12 +162,6 @@ export default class Demo extends React.Component {
         }
         if (xScroll) {
             scroll.x = '100vw';
-        }
-
-        const tableColumns = columns.map(item => ({ ...item, ellipsis: state.ellipsis }));
-        if (xScroll === 'fixed') {
-            tableColumns[0].fixed = true;
-            tableColumns[tableColumns.length - 1].fixed = 'right';
         }
 
         return (
@@ -151,9 +173,6 @@ export default class Demo extends React.Component {
                 >
                     <Form.Item label="Bordered">
                         <Switch checked={state.bordered} onChange={this.handleToggle('bordered')} />
-                    </Form.Item>
-                    <Form.Item label="loading">
-                        <Switch checked={state.loading} onChange={this.handleToggle('loading')} />
                     </Form.Item>
                     <Form.Item label="Title">
                         <Switch checked={!!state.title} onChange={this.handleTitleChange} />
@@ -226,14 +245,35 @@ export default class Demo extends React.Component {
                         </Radio.Group>
                     </Form.Item>
                 </Form>
-                <Table
-                    {...this.state}
-                    pagination={{ position: [this.state.top, this.state.bottom] }}
-                    columns={tableColumns}
-                    dataSource={state.hasData ? data : null}
-                    scroll={scroll}
-                />
+                <Form ref={this.formRef} component={false}>
+                    <Table
+                        {...this.state}
+                        loading={loading}
+                        components={{
+                            body: {
+                                cell: EditableCell,
+                            }
+                        }}
+                        pagination={{ position: [this.state.top, this.state.bottom] }}
+                        columns={columns}
+                        dataSource={state.hasData ? sellingPartner : null}
+                        scroll={scroll}
+                    />
+                </Form>
             </>
         );
     }
 }
+
+OperationProductList.prototypes = {
+    getProductPricing: PropTypes.func.isRequired,
+    sellingPartner: PropTypes.array.isRequired,
+    loading: PropTypes.bool.isRequired,
+
+}
+const mapStateToProps = (state) => ({
+    sellingPartner: state.amazon.sellingPartner,
+    loading: state.amazon.loading
+})
+
+export default connect(mapStateToProps, { getProductPricing })(OperationProductList);
