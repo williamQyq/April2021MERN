@@ -76,7 +76,7 @@ const upsertNewAsin = async (product) => {
             let newIdentifier = new Identifier({
                 asin: asin,
             })
-            let result = await ProdPricing.updateOne(
+            await ProdPricing.updateOne(
                 { "upc": upc }, { $push: { "identifiers": newIdentifier } })
         }
     }

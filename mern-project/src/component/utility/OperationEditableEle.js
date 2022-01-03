@@ -162,8 +162,8 @@ export const nestedTableColumns = (action) => {
             key: 'state',
             render: () =>
                 <span>
-                    <Badge status="success" />
-                    Finished
+                    <Badge status="processing" />
+                    Processing
                 </span>
 
         },
@@ -205,14 +205,14 @@ const Action = ({ action, record }) => {
     const editable = action.isEditing(record);
     return editable ? (
         <Space size="middle">
-                <Link
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        action.save(record.key)
-                    }}
-                >
-                    Save
-                </Link>
+            <Link
+                onClick={(e) => {
+                    e.stopPropagation();
+                    action.save(record.key)
+                }}
+            >
+                Save
+            </Link>
             <Link
                 onClick={(e) => {
                     e.stopPropagation();
@@ -223,7 +223,12 @@ const Action = ({ action, record }) => {
             </Link>
         </Space>) : (
         <Space size="middle">
-            <Link>Publish</Link>
+            <Link
+                onClick={(e) => {
+                    e.stopPropagation();
+                    action.publish(record)
+                }}
+            >Publish</Link>
             <Link
                 disabled={action.editingKey !== ""}
                 onClick={(e) => {

@@ -15,7 +15,7 @@ import {
     ShoppingCartOutlined,
 } from '@ant-design/icons';
 import { Link, withRouter } from 'react-router-dom';
-import { locateSearchedItem, scrollToTableRow } from 'utilities/tableUtilities';
+import { locateSearchedItem, scrollToTableRow } from 'component/utility/StoreTableUtilities';
 
 const { Title, Text } = Typography;
 
@@ -34,16 +34,14 @@ class BB extends React.Component {
 
     componentDidMount() {
         this.props.getBBItems();
-        this.handleScrollPosition();
+        this.handleScrollPosition(this.props.items, this.props.itemDetail);
     }
 
-    handleScrollPosition = () => {
-        const items = this.props.items;
-        if (this.props.itemDetail) {
-            const searchId = this.props.itemDetail._id;
-            let searchedItem = locateSearchedItem(items, searchId)
-            this.setState({ searchedRowId: searchedItem._id })
-            scrollToTableRow(document, searchedItem.index)
+    handleScrollPosition = (items, searchedItem) => {
+        if (searchedItem) {
+            let item = locateSearchedItem(items, searchedItem._id)
+            this.setState({ searchedRowId: item._id })
+            scrollToTableRow(document, item.index)
         }
     }
 

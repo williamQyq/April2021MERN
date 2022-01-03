@@ -3,7 +3,7 @@ import 'antd/dist/antd.css';
 import '../styles/bb.scss';
 import { connect } from 'react-redux';
 import { getMSItems } from 'reducers/actions/itemMSActions';
-import { setTableState } from 'reducers/actions/itemActions';
+import { setTableState } from 'reducers/actions/itemActions';   //save user's table settings
 import { MICROSOFT } from 'reducers/actions/types';
 import PropTypes from 'prop-types';
 import { Table, Input, Button, Space, Typography, Row, Menu, Dropdown, Divider, Col, Tooltip } from 'antd';
@@ -15,7 +15,7 @@ import {
     ShoppingCartOutlined,
 } from '@ant-design/icons';
 import { Link, withRouter } from 'react-router-dom';
-import { scrollToTableRow, locateSearchedItem } from 'utilities/tableUtilities';
+import { scrollToTableRow, locateSearchedItem } from 'component/utility/StoreTableUtilities';
 
 const { Title, Text } = Typography;
 
@@ -34,17 +34,15 @@ class MS extends React.Component {
 
     componentDidMount() {
         this.props.getMSItems();
-        this.handleScrollPosition();
+        this.handleScrollPosition(this.props.items, this.props.itemDetail);
     }
 
 
-    handleScrollPosition = () => {
-        const items = this.props.items;
-        if (this.props.itemDetail) {
-            const searchId = this.props.itemDetail._id;
-            let searchedItem = locateSearchedItem(items, searchId);
-            this.setState({ searchedRowId: searchedItem._id });
-            scrollToTableRow(document, searchedItem.index);
+    handleScrollPosition = (items, searchedItem) => {
+        if (searchedItem) {
+            let item = locateSearchedItem(items, searchedItem._id);
+            this.setState({ searchedRowId: item._id });
+            scrollToTableRow(document, item.index);
         }
     }
 

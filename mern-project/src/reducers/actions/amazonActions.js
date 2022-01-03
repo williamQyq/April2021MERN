@@ -22,12 +22,15 @@ export const getProductPricing = () => dispatch => {
 }
 
 export const getWmsProdQty = async (prods) => {
-    const prodQty = prods.map(prod => {
-        prod.wmsQuantity = axios.get('/api/wms', { upc: prod.upc }).then(res => res.data)
+    return Promise.all(prods.map(async (prod) => {
+        await axios.get('/api/wms', { params: { upc: prod.upc } })
+            .then(res => {
+                console.log(`res.data:`,res.data)
+                prod.wmsQuantity = res.data.qty
+            })
         return prod;
-    })
-
-    return prodQty;
+    }
+    ))
 }
 
 // get Product Pricing from Amazon SP

@@ -1,31 +1,44 @@
 import React from 'react';
 import 'antd/dist/antd.css';
 import { Table, Form } from 'antd';
-import { EditableCell, nestedTableColumns } from 'component/OperationEditableEle';
-
-const data = [];
-for (let i = 0; i < 5; i++) {
-    data.push({
-        key: i,
-        asin: 'B09G2QZP71',
-        sku: '196068763954-16051200H00P-AFBA-4PB5-480',
-        fulfillmentChannel: 'MERCHANT',
-        amzRegularPrice: 807.99,
-        settlementRate: 0.15,
-        settlementPrice: 900,
-        status: 'complete'
-    })
-}
-
+import { EditableCell, nestedTableColumns } from 'component/utility/OperationEditableEle';
 
 export default class NestedTable extends React.Component {
-
-    state = {
-        data: data,
-        editingKey: "",
-    };
+    constructor(props) {
+        super(props)
+        this.state = {
+            editingKey: "",
+            record: props.record,
+        }
+    }
 
     formRef = React.createRef();
+
+    getAmzRecord = (record) => {
+        const data = [];
+        record.identifiers.forEach(identifier => {
+
+            if (identifier.offers == null) {
+                data.push({
+                    key: identifier._id,
+                    asin: identifier.asin,
+                })
+
+            } else {
+                identifier.offers.forEach(offer => {
+                    data.push({
+                        key: identifier._id,
+                        asin: identifier.asin,
+                        sku: offer.SellerSKU,
+                        fulfillmentChannel: offer.FulfillmentChannel,
+                        amzRegularPrice: offer.RegularPrice.Amount,
+                    })
+                })
+            }
+        })
+
+        return data
+    }
 
     isEditing = (record) => {
         return record.key === this.state.editingKey;
@@ -76,7 +89,7 @@ export default class NestedTable extends React.Component {
             editingKey: this.state.editingKey
         }
         const columns = nestedTableColumns(action);  //pass handler to create nested Table columns
-
+        const { record } = this.props
         return (
             <Form ref={this.formRef} component={false} >
                 <Table
@@ -86,7 +99,7 @@ export default class NestedTable extends React.Component {
                         }
                     }}
                     columns={columns}
-                    dataSource={this.state.data}
+                    dataSource={this.getAmzRecord(record)}
                     pagination={false}
                 />
             </Form>
@@ -94,3 +107,4 @@ export default class NestedTable extends React.Component {
     }
 
 };
+
