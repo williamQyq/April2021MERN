@@ -55,31 +55,39 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 
-io.on("connection", (socket) => {
-    console.log(`A user Connected: ${socket.id}`)
-    socket.on(`disconnect`, () => {
-        console.log(`USER DISCONNECTED`);
-    })
-})
+// io.on("connection", (socket) => {
+//     console.log(`A user Connected: ${socket.id}`)
+//     socket.on(`disconnect`, () => {
+//         console.log(`USER DISCONNECTED`);
+//     })
+// })
 
 const db = mongoose.connection;  //set up mongoose connection
 const collection = config.get("collection");
 db.once('open', () => {
-    const bbProductListings = db.collection(collection.bestbuy);
-    const productPriceListings = db.collection(collection.watchList);
-    const amzProductPricing = db.collection("AmzProdPricing");
+    const bestbuyStore = db.collection(collection.bestbuy);
+    // const productPriceListings = db.collection(collection.watchList);
+    const amzProdPricing = db.collection(collection.amzProdPricing);
 
-    const changeStream = productPriceListings.watch();
-    const BBChangeStream = bbProductListings.watch();
+    // const changeStream = productPriceListings.watch();
+    const bbChangeStream = bestbuyStore.watch();
+    const amzProdPricStream = amzProdPricing.watch();
 
-    BBChangeStream.on('change', (change) => {
+    bbChangeStream.on('change', (change) => {
         const doc = change.fullDocument;
 
         if (change.operationType === 'insert' || change.operationType === 'update') {
             io.sockets.emit(`server:changestream_bb`, doc);
 
         }
+    })
 
+    amzProdPricStream.on('change', (change) => {
+        // const doc = change.fullDocument;
+        // console.log(`change fulldocument:=====`, JSON.stringify(change.fullDocument, null, 4))
+        if (change.operationType === 'insert' || change.operationType === 'update' || change.operationType === 'delete') {
+            io.sockets.emit(`amzProdPric changed`,'change')
+        }
     })
     // test();
     scrapeScheduler.start();
@@ -87,26 +95,27 @@ db.once('open', () => {
     // amazonScheduler.start();
     amazonScheduler();
 
-    changeStream.on('change', (change) => {
-        const doc = change.fullDocument;
 
-        if (change.operationType === 'insert') {
+    // changeStream.on('change', (change) => {
+    //     const doc = change.fullDocument;
 
-            //socket.emit
-            io.sockets.emit(`server:changestream`, doc._id);
-            bbLinkScraper(doc._id, doc.link);
+    //     if (change.operationType === 'insert') {
 
-        }
+    //         //socket.emit
+    //         io.sockets.emit(`server:changestream`, doc._id);
+    //         bbLinkScraper(doc._id, doc.link);
 
-        if (change.operationType === 'delete') {
-            //socket.emit
-            io.sockets.emit(`server:changestream`, doc);
-        }
-        if (change.operationType === 'update') {
-            //socket.emit
-            io.sockets.emit(`server:changestream`, doc);
-        }
-    })
+    //     }
+
+    //     if (change.operationType === 'delete') {
+    //         //socket.emit
+    //         io.sockets.emit(`server:changestream`, doc);
+    //     }
+    //     if (change.operationType === 'update') {
+    //         //socket.emit
+    //         io.sockets.emit(`server:changestream`, doc);
+    //     }
+    // })
 
 });
 

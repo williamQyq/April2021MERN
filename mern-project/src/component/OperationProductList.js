@@ -6,6 +6,9 @@ import { Table, Switch, Radio, Form } from 'antd';
 import OperationNestedTable from 'component/OperationProductListNestedTable.js';
 import { EditableCell, mergedColumns } from 'component/utility/OperationEditableEle.js';
 import { getProductPricing } from 'reducers/actions/amazonActions.js';
+import io from 'socket.io-client';
+
+const socket = io.connect();
 
 const expandable = {
     expandRowByClick: true,
@@ -41,19 +44,10 @@ class OperationProductList extends React.Component {
     formRef = React.createRef();
 
     componentDidMount() {
-        const { sellingPartner } = this.props
-
         this.props.getProductPricing()
-        this.setTableData(sellingPartner);
-
-    }
-
-    setTableData = (sp) => {
-        const data = sp.map(record => {
-            record.key = record._id
-            return record;
+        socket.on(`amzProdPric changed`, () => {
+            this.props.getProductPricing();
         })
-        this.setState({ data })
     }
 
     isEditing = (record) => record.key === this.state.editingKey
@@ -155,7 +149,7 @@ class OperationProductList extends React.Component {
 
     render() {
         const { xScroll, yScroll, ...state } = this.state;
-        const { loading } = this.props;
+        const { loading, sellingPartner } = this.props;
         const editableAction = {
             isEditing: this.isEditing,
             edit: this.edit,
@@ -279,7 +273,7 @@ class OperationProductList extends React.Component {
                         }}
                         pagination={{ position: [this.state.top, this.state.bottom] }}
                         columns={columns}
-                        dataSource={state.hasData ? state.data : null}
+                        dataSource={state.hasData ? sellingPartner : null}
                         scroll={scroll}
                     />
                 </Form>

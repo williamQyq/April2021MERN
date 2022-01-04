@@ -64,7 +64,7 @@ class Home extends React.Component {
       <Router>
         <Layout className="main-layout">
           <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
-            <div className="logo">RockyStone</div>
+            {/* <div className="logo">RockyStone</div> */}
             <Menu theme="dark" mode="inline">
               <SubMenu key="ALERT" icon={<AlertOutlined />} title="Alert">
                 <Menu.Item key="BestBuy" icon={<ShoppingOutlined />}>
