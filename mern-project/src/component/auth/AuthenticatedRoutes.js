@@ -8,7 +8,7 @@ const routes = [
   },
   {
     path: 'app/bestbuy-list/item-detail',
-    component: lazy(() => import('component/ItemDetail')),
+    component: lazy(() => import('component/ItemDetail/ItemDetail')),
     exact: true
   },
   {
@@ -18,7 +18,7 @@ const routes = [
   },
   {
     path: 'app/microsoft-list/item-detail',
-    component: lazy(() => import('component/ItemDetail')),
+    component: lazy(() => import('component/ItemDetail/ItemDetail')),
     exact: true
   },
   {

@@ -1,6 +1,6 @@
 import React from 'react';
-import 'antd/dist/antd.css';
-import '../styles/bb.scss';
+// import 'antd/dist/antd.css';
+// import '../styles/bb.scss';
 import { connect } from 'react-redux';
 import { getBBItems } from 'reducers/actions/itemBBActions';
 import { setTableState } from 'reducers/actions/itemActions';

@@ -1,9 +1,8 @@
 import axios from 'axios';
-import Moment from 'moment';
 import {
     GET_AMZ_PROD_PRICING,
     AMAZON_RES_LOADING,
-    GET_ERRORS,
+    // GET_ERRORS,
 } from './types';
 
 // GET Upc Asins Mapping Record from db, then get asin pricing info via SP API,

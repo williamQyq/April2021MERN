@@ -5,8 +5,8 @@ import {
     LOGIN_FAIL,
     LOGIN_SUCCESS,
     LOGOUT_SUCCESS,
-    REGISTER_FAIL,
-    REGISTER_SUCCESS
+    // REGISTER_FAIL,
+    // REGISTER_SUCCESS
 } from "./types.js";
 import { returnErrors } from './errorActions'
 import axios from "axios";

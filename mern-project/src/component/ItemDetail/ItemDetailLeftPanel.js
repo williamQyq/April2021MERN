@@ -5,8 +5,8 @@ import { SyncOutlined } from '@ant-design/icons';
 import 'styles/itemDetail.scss';
 import PropTypes from 'prop-types';
 import { getItemDetail } from 'reducers/actions/itemActions.js';
-import KeyStatistics from 'component/ItemDetailStat.js';
-import PriceHistoryChart from 'component/ItemDetailChart.js';
+import KeyStatistics from 'component/ItemDetail/ItemDetailStat.js';
+import PriceHistoryChart from 'component/ItemDetail/ItemDetailChart.js';
 import KeepaStatistics from 'component/KeepaStatistics.js';
 
 const { Title } = Typography;

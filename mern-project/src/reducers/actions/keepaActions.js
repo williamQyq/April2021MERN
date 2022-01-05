@@ -1,5 +1,4 @@
 import axios from 'axios';
-import Moment from 'moment';
 import { GET_KEEPA_STAT, KEEPA_LOADING } from './types';
 
 export const getKeepaStat = (searchTerm) => dispatch => {

@@ -1,4 +1,4 @@
-import { InputNumber, Input, Form, Space, Typography, Badge, Dropdown, Menu, Popconfirm } from "antd";
+import { InputNumber, Input, Form, Space, Typography, Badge, Dropdown, Menu } from "antd";
 import { DownOutlined } from '@ant-design/icons';
 const { Link } = Typography;
 
