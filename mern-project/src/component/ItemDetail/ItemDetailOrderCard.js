@@ -1,6 +1,6 @@
 import React from 'react';
 import 'antd/dist/antd.css';
-import 'styles/itemDetail.scss';
+import 'component/ItemDetail/ItemDetail.scss';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Col, Card, Skeleton, Divider, Input, Form, InputNumber } from 'antd';

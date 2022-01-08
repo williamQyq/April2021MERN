@@ -34,16 +34,7 @@ router.post('/prod_pricing', async (req, res) => {
 // @route GET api/amazonSP
 // desc: get all amazon seller central sync product pricing offers 
 router.get('/', (req, res) => {
-    ProdPricing.aggregate([
-        {
-            $project: {
-                key: "$_id",
-                modifyBy: 1,
-                upc: 1,
-                identifiers: 1
-            }
-        }
-    ]).then(products => res.json(products))
+    ProdPricing.find().then(products => res.json(products));
 });
 
 // @route POST api/amazonSP

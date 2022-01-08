@@ -10,7 +10,7 @@ const { SpBucket } = require('./RateLimiter.js')
 // });
 
 const amazonScheduler = () => {
-    // productPricingUpdate();
+    // checkProductPricing();
 
 };
 

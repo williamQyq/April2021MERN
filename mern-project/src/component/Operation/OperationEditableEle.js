@@ -2,7 +2,9 @@ import { InputNumber, Input, Form, Space, Typography, Badge, Dropdown, Menu } fr
 import { DownOutlined } from '@ant-design/icons';
 const { Link } = Typography;
 
-
+/*
+ *  @usage: Nested child table elements
+ */
 export const EditableCell = ({
     editing,
     dataIndex,
@@ -13,15 +15,12 @@ export const EditableCell = ({
     children,
     ...restProps
 }) => {
-    const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
+    const inputNode = inputType === 'number' ? <InputNumber min={0} /> : <Input />;
     return (
         <td {...restProps}>
             {editing ? (
                 <Form.Item
                     name={dataIndex}
-                    style={{
-                        margin: 0,
-                    }}
                     rules={[
                         {
                             required: true,
@@ -39,8 +38,11 @@ export const EditableCell = ({
     );
 };
 
-// Columns of parent table
-export const mergedColumns = (action) => {
+/*  
+ * @usage: Main Table
+ * @desc: Columns of parent table
+ */
+export const mergedColumns = (actions) => {
     const columns = [
         {
             title: 'Upc',
@@ -81,7 +83,7 @@ export const mergedColumns = (action) => {
         {
             title: 'Action',
             key: 'action',
-            render: (_, record) => <Action action={action} record={record} />
+            render: (_, record) => <Action actions={actions} record={record} />
         },
     ];
 
@@ -97,16 +99,18 @@ export const mergedColumns = (action) => {
                 inputType: col.dataIndex === "settleRateUniv" ? "number" : "text",
                 dataIndex: col.dataIndex,
                 title: col.title,
-                editing: action.isEditing(record)
+                editing: actions.isEditing(record)
             })
         }
     });
 
 }
 
-// Columns of nested Table
-// @parameter: action handler
-export const nestedTableColumns = (action) => {
+/*
+ * @usage: Columns of nested Table
+ * @parameter: action handler
+ */
+export const nestedTableColumns = (actions) => {
 
     const columns = [
         {
@@ -171,7 +175,7 @@ export const nestedTableColumns = (action) => {
             title: 'Operation',
             dataIndex: 'operation',
             key: 'operation',
-            render: (_, record) => <Action action={action} record={record} />
+            render: (_, record) => <Action actions={actions} record={record} />
         }
     ];
 
@@ -187,13 +191,15 @@ export const nestedTableColumns = (action) => {
                 inputType: col.dataIndex === "settlementRate" ? "number" : "text",
                 dataIndex: col.dataIndex,
                 title: col.title,
-                editing: action.isEditing(record)
+                editing: actions.isEditing(record)
             })
         }
     });
 }
 
-// menu of nested table operation cell
+/* 
+ * @usage: main table and nested child tables action  
+ */
 const menu = (
     <Menu>
         <Menu.Item>Action 1</Menu.Item>
@@ -201,14 +207,14 @@ const menu = (
     </Menu>
 )
 
-const Action = ({ action, record }) => {
-    const editable = action.isEditing(record);
+const Action = ({ actions, record }) => {
+    const editable = actions.isEditing(record);
     return editable ? (
         <Space size="middle">
             <Link
                 onClick={(e) => {
                     e.stopPropagation();
-                    action.save(record.key)
+                    actions.save(record.key)
                 }}
             >
                 Save
@@ -216,7 +222,7 @@ const Action = ({ action, record }) => {
             <Link
                 onClick={(e) => {
                     e.stopPropagation();
-                    action.cancel();
+                    actions.cancel();
                 }}
             >
                 Cancel
@@ -226,14 +232,14 @@ const Action = ({ action, record }) => {
             <Link
                 onClick={(e) => {
                     e.stopPropagation();
-                    action.publish(record)
+                    actions.publish(record)
                 }}
             >Publish</Link>
             <Link
-                disabled={action.editingKey !== ""}
+                disabled={actions.editingKey !== ""}
                 onClick={(e) => {
                     e.stopPropagation();
-                    action.edit(record)
+                    actions.edit(record)
                 }}
             >
                 Edit

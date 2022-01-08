@@ -138,9 +138,9 @@ class KeepaStat extends React.Component {
                     loading={this.props.loading}
                     onSearch={this.handleSearch}
                 />
-                <Line
+                {/* <Line
                     data={config.data}
-                    options={config.options} />
+                    options={config.options} /> */}
                 <Divider dashed={true} />
                 <ChartMenu />
                 <Divider />

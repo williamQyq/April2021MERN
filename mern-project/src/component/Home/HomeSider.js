@@ -1,5 +1,4 @@
 import React from "react";
-import InBound from 'component/InBound.js';
 import { Link, useLocation } from "react-router-dom";
 import {
     UploadOutlined,
@@ -21,6 +20,11 @@ const HomeSider = (props) => {
     const { path, collapsed } = props;
     let selectedKeys = [];
     const location = useLocation();
+
+    const splitPath = (path) => {
+        return path.split('/').pop()
+    }
+
     let menuItemKey = splitPath(location.pathname);
     selectedKeys.push(menuItemKey);
 
@@ -44,7 +48,7 @@ const HomeSider = (props) => {
                     <Menu.Item key="microsoft-list" icon={<ShopOutlined />}>
                         <Link to={`${path}/microsoft-list`}>Microsoft</Link>
                     </Menu.Item>
-                    <Menu.Item key="price-alert" icon={<MonitorOutlined />}>
+                    <Menu.Item key="price-alert" disabled icon={<MonitorOutlined />}>
                         <Link to={`${path}/price-alert`}>Price Alert</Link>
                     </Menu.Item>
                     <Menu.Item key="purchase" disabled icon={<RobotOutlined />}>
@@ -58,18 +62,14 @@ const HomeSider = (props) => {
                 </SubMenu>
                 <SubMenu key="WAREHOUSE" icon={<BankOutlined />} title="Warehouse">
                     <Menu.Item key="inbound" icon={<BarcodeOutlined />}>
-                        <Link to={`${path}/inbound`}> <InBound /></Link>
+                        <Link to={`${path}/inbound`}>Inbound</Link>
                     </Menu.Item>
-                    <Menu.Item key="outbound" icon={<BarcodeOutlined />}>Outbound</Menu.Item>
+                    <Menu.Item key="outbound" disabled icon={<BarcodeOutlined />}>Outbound</Menu.Item>
                 </SubMenu>
-                <Menu.Item key="nav3" icon={<UploadOutlined />}>nav 3</Menu.Item>
+                <Menu.Item key="nav3" disabled icon={<UploadOutlined />}>nav 3</Menu.Item>
             </Menu>
         </Sider>
     )
-}
-
-const splitPath = (path) => {
-    return path.split('/').pop()
 }
 
 export default HomeSider;

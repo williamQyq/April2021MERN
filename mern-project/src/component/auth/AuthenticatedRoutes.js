@@ -3,7 +3,7 @@ import { lazy } from 'react';
 const routes = [
   {
     path: 'app/bestbuy-list',
-    component: lazy(() => import('component/StoreBB')),
+    component: lazy(() => import('component/SourceStore/StoreBB')),
     exact: true
   },
   {
@@ -13,7 +13,7 @@ const routes = [
   },
   {
     path: 'app/microsoft-list',
-    component: lazy(() => import('component/StoreMS')),
+    component: lazy(() => import('component/SourceStore/StoreMS')),
     exact: true
   },
   {
@@ -23,7 +23,12 @@ const routes = [
   },
   {
     path: 'app/operation-products-list',
-    component: lazy(() => import('component/OperationProductList')),
+    component: lazy(() => import('component/Operation/OperationProductList')),
+    exact: true
+  },
+  {
+    path: 'app/Inbound',
+    component: lazy(() => import('component/InBound')),
     exact: true
   }
 

@@ -7,7 +7,7 @@ const { scrapeScheduler } = require('./script_packages/scrapeScheduler.js');    
 const { amazonScheduler } = require('./amazonSP/amazonSchedule.js');
 const { bbLinkScraper } = require('./script_packages/scraper.js');
 const wms = require("./wmsDatabase.js");    // @local wms server connection
-
+const { Server } = require("socket.io")
 // @CREATE WMS CONNECTION
 wms.wmsService();
 
@@ -16,7 +16,7 @@ const app = express();
 app.use(express.json());
 
 const server = require("http").createServer(app)
-const io = require("socket.io")(server);
+const io = new Server(server);
 const port = process.env.PORT || 5000;
 
 //@Mongoose connection; Connect to Mongo.
@@ -55,12 +55,12 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 
-// io.on("connection", (socket) => {
-//     console.log(`A user Connected: ${socket.id}`)
-//     socket.on(`disconnect`, () => {
-//         console.log(`USER DISCONNECTED`);
-//     })
-// })
+io.on("connection", (socket) => {
+    console.log(`A user Connected: ${socket.id}`)
+    socket.on(`disconnect`, () => {
+        console.log(`USER DISCONNECTED`);
+    })
+})
 
 const db = mongoose.connection;  //set up mongoose connection
 const collection = config.get("collection");
@@ -86,7 +86,7 @@ db.once('open', () => {
         // const doc = change.fullDocument;
         // console.log(`change fulldocument:=====`, JSON.stringify(change.fullDocument, null, 4))
         if (change.operationType === 'insert' || change.operationType === 'update' || change.operationType === 'delete') {
-            io.sockets.emit(`amzProdPric changed`,'change')
+            io.sockets.emit(`amzProdPric changed`, 'change')
         }
     })
     // test();

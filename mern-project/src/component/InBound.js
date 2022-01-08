@@ -8,7 +8,15 @@ export default class InBound extends React.Component {
 
     render() {
         return (
-            <div>Inbound</div>
+            <>
+                <BrowserView>
+                    <div>Inbound</div>
+                </BrowserView>
+                <MobileView>
+                    <div>Mobile Inbound</div>
+
+                </MobileView>
+            </>
         );
     }
 }

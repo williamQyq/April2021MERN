@@ -3,7 +3,7 @@ import { Line } from 'react-chartjs-2';
 import { Divider, Row } from 'antd';
 import ChartMenu from 'component/ItemDetail/ItemDetailChartMenu.js';
 import { useSelector } from 'react-redux';
-import { setChartConfig, setChartData, setColorOnPriceUpOrDrop, setDataPoints, setLabels } from 'component/utility/ChartUtilities';
+import { setChartConfig, setChartData, setColorOnPriceUpOrDrop, setDataPoints, setLabels } from 'component/ItemDetail/ChartUtilities';
 
 const PriceHistoryChart = () => {
     const { price_timestamps, priceDiff } = useSelector((state) =>
