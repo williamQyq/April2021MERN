@@ -49,8 +49,6 @@ LeftPanel.prototypes = {
     // location: PropTypes.object.isRequired,
     getItemDetail: PropTypes.func.isRequired,
     itemBB: PropTypes.object.isRequired,
-
-    // bb_item: PropTypes.object.isRequired,
 }
 
 //state contains reducers

@@ -2,12 +2,15 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import 'antd/dist/antd.css';
-import { Table, Form } from 'antd';
+import { Table, Form, Typography } from 'antd';
 import { defaultSettings, Settings, title, footer } from 'component/Operation/Settings.js';
 import OperationNestedTable from 'component/Operation/OperationProductListNestedTable.js';
 import { EditableCell, mergedColumns } from 'component/Operation/OperationEditableEle.js';
 import { getProductPricing } from 'reducers/actions/amazonActions.js';
+import OperationMenu from 'component/Operation/OperationMenu';
+
 import io from 'socket.io-client';
+const { Title } = Typography;
 
 const socket = io('localhost:3000', {
     'reconnection': true,
@@ -159,7 +162,8 @@ class OperationProductList extends React.Component {
 
         return (
             <>
-                
+                <Title level={4}>Picing Table</Title>
+                <OperationMenu />
                 <Settings handler={this.handler} {...this.state} />
                 <Form ref={this.formRef} component={false}>
                     <Table
