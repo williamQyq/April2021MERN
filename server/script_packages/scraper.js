@@ -35,50 +35,48 @@ const getBestBuyLaptopPrice = (product, _id, link) => {
 //Load bestbuy all new products lists Promise
 //Get bestbuy page numbers; then for each page and sku item, findSkuAndUpdate
 const bestbuyScraper = async () => {
-    return getNumOfAllNewLaptops(BBScript)
-        .then(pageInfo => {
-            console.log(`[BB num of all laptops new condtion]: ${pageInfo.total_num} - ${pageInfo.num_per_page}/per page.`);
-            return getAllNewLaptops(BBSkuItemScript, BBItem, pageInfo.total_num, pageInfo.num_per_page)
-        })
+    return getNumOfAllNewLaptops(BBScript).then(pageInfo => {
+        console.log(`[BB num of all laptops new condtion]: ${pageInfo.total_num} - ${pageInfo.num_per_page}/per page.`);
+        getAndSaveAllNewLaptops(BBSkuItemScript, BBItem, pageInfo.total_num, pageInfo.num_per_page).then(res => res)
+    })
 }
 
 //Load microsoft all new products lists Promise
 //Get microsoft page numbers; then for each page and sku item, findSkuAndUpdate
 const microsoftScraper = async () => {
-    return getNumOfAllNewLaptops(MsScript)
-        .then(pageInfo => {
-            console.log(`[MS num of all laptops new condtion]: ${pageInfo.total_num} - ${pageInfo.num_per_page}/per page.`);
-            return getAllNewLaptops(MsSkuItemScript, MsItem, pageInfo.total_num, pageInfo.num_per_page)
-        })
+    return getNumOfAllNewLaptops(MsScript).then(pageInfo => {
+        console.log(`[MS num of all laptops new condtion]: ${pageInfo.total_num} - ${pageInfo.num_per_page}/per page.`);
+        getAndSaveAllNewLaptops(MsSkuItemScript, MsItem, pageInfo.total_num, pageInfo.num_per_page).then(res => res)
+    })
 }
 
 // get all laptops new condition number promise, resolve when retrieve items number.
 const getNumOfAllNewLaptops = (StoreScript) => {
 
-    let store = new StoreScript();
+    let Store = new StoreScript();
 
     //spawn script to get items number
-    const python = store.spawnScript(store.pageNumScriptPath, store.link);
+    const python = Store.spawnScript(Store.pageNumScriptPath, Store.link);
 
     // listen for script, get total items number
-    store.listenOn(python);
+    Store.listenOn(python);
     return new Promise((resolve, reject) => {
-        store.listenClose(python, resolve);
-        store.listenErr(python, reject);
+        Store.listenClose(python, resolve);
+        Store.listenErr(python, reject);
     });
 }
 
 // get all laptops sku-items promise, resolve when retrieve all skus, names, currentPrices.
-const getAllNewLaptops = (StoreScript, StoreItemModel, totalNum, numEachPage) => {
+const getAndSaveAllNewLaptops = (StoreScript, StoreItemModel, totalNum, numEachPage) => {
 
-    let store = new StoreScript(StoreItemModel);
+    let Store = new StoreScript(StoreItemModel);
 
-    const pageInfo = store.getLinkInfo(totalNum, numEachPage);
-    const python = store.spawnScript(store.skuItemScriptPath, pageInfo);
-    store.listenOn(python);
+    const pageInfo = Store.getLinkInfo(totalNum, numEachPage);
+    const python = Store.spawnScript(Store.skuItemScriptPath, pageInfo);
+    Store.listenOn(python);
     return new Promise((resolve, reject) => {
-        store.listenClose(python, resolve);
-        store.listenErr(python, reject);
+        Store.listenClose(python, resolve);
+        Store.listenErr(python, reject);
     });
 }
 

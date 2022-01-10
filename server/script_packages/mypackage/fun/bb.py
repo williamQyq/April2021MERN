@@ -11,13 +11,15 @@ from random import randint
 
 def track_instock_info(product, driver):
     driver.get(product["link"])
-    product["name"] = get_product_name(driver)
+
+    name = get_product_name(driver)
+    currentPrice = -1
 
     isInstock = check_product_instock(driver)
     if isInstock:
-        product["currentPrice"] = get_product_price(driver)
-    else:
-        product["currentPrice"] = -1
+        currentPrice = get_product_price(driver)
+
+    return name, currentPrice
 
 
 def get_product_name(driver):
@@ -73,7 +75,6 @@ def check_product_instock(driver):
 
 def get_sku_items_num(driver, sku_item_link):
 
-    result = {'num_per_page': 0, 'total_num': 0}
     driver.get(sku_item_link)
 
     try:
@@ -84,14 +85,14 @@ def get_sku_items_num(driver, sku_item_link):
 
         pattern_total_num = ".* of (\d*) items"
         pattern_num_per_page = "\d*-(\d*) of \d*"
-        result["num_per_page"] = re.search(
+        num_per_page = re.search(
             pattern_num_per_page, item_count).group(1)
-        result["total_num"] = re.search(
+        total_num = re.search(
             pattern_total_num, item_count).group(1)
     except:
         return False
     finally:
-        return result
+        return num_per_page, total_num
 
 # get all Laptops New sku items
 
