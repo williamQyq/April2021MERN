@@ -188,7 +188,7 @@ class CC extends React.Component {
         );
 
         return (
-            <React.Fragment>
+            <>
                 <Row gutter={16} style={{ alignItems: 'center' }}>
                     <Title level={3} className="title">CostCo</Title>
                 </Row>
@@ -204,7 +204,7 @@ class CC extends React.Component {
                     }}
                     scroll={{ y: "calc(100vh - 320px)" }} />
 
-            </React.Fragment>
+            </>
         )
     }
 }

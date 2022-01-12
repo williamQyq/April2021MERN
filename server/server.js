@@ -54,7 +54,6 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
-
 io.on("connection", (socket) => {
     console.log(`A user Connected: ${socket.id}`)
     socket.on(`disconnect`, () => {
@@ -77,7 +76,7 @@ db.once('open', () => {
         const doc = change.fullDocument;
 
         if (change.operationType === 'insert' || change.operationType === 'update') {
-            io.sockets.emit(`server:changestream_bb`, doc);
+            io.sockets.emit(`server:changestream_bb`,null);
 
         }
     })
@@ -86,7 +85,7 @@ db.once('open', () => {
         // const doc = change.fullDocument;
         // console.log(`change fulldocument:=====`, JSON.stringify(change.fullDocument, null, 4))
         if (change.operationType === 'insert' || change.operationType === 'update' || change.operationType === 'delete') {
-            io.sockets.emit(`amzProdPric changed`, 'change')
+            io.sockets.emit(`amzProdPric changed`, null)
         }
     })
     // test();

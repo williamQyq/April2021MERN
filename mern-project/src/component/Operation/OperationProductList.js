@@ -162,9 +162,9 @@ class OperationProductList extends React.Component {
 
         return (
             <>
-                <Title level={4}>Picing Table</Title>
-                <OperationMenu />
-                <Settings handler={this.handler} {...this.state} />
+                <Title level={4}>Pricing Table</Title>
+                <OperationMenu handler={this.handler}{...this.state} />
+
                 <Form ref={this.formRef} component={false}>
                     <Table
                         {...this.state}

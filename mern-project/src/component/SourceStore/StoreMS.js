@@ -5,7 +5,7 @@ import { getMSItems } from 'reducers/actions/itemMSActions';
 import { setTableState } from 'reducers/actions/itemActions';   //save user's table settings
 import { MICROSOFT } from 'reducers/actions/types';
 import PropTypes from 'prop-types';
-import { Table, Input, Button, Space, Typography, Row, Menu, Dropdown, Divider, Col, Tooltip } from 'antd';
+import { Table, Input, Button, Space, Typography, Row, Menu, Dropdown, Divider, Col, Tooltip, Upload } from 'antd';
 import Highlighter from 'react-highlight-words';
 import {
     SearchOutlined,
@@ -251,7 +251,7 @@ class MS extends React.Component {
         );
 
         return (
-            <React.Fragment>
+            <>
                 <Row gutter={16} style={{ alignItems: 'center' }}>
                     <Col>
                         <Title level={4}>Microsoft Store</Title>
@@ -274,7 +274,7 @@ class MS extends React.Component {
                     }}
                     scroll={{ y: "calc(100vh - 335px)" }}
                 />
-            </React.Fragment>
+            </>
         )
     }
 }

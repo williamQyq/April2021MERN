@@ -30,7 +30,7 @@ const routes = [
     path: 'app/Inbound',
     component: lazy(() => import('component/InBound')),
     exact: true
-  }
+  },
 
   // {
   //   path: 'app/price-alert',

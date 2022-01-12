@@ -253,7 +253,7 @@ class BB extends React.Component {
         scroll.y = 600;
 
         return (
-            <React.Fragment>
+            <>
                 <Row gutter={16} style={{ alignItems: 'center' }}>
                     <Col>
                         <Title level={4}>Best Buy</Title>
@@ -276,7 +276,7 @@ class BB extends React.Component {
                     }}
                     scroll={scroll}
                 />
-            </React.Fragment>
+            </>
         )
     }
 }

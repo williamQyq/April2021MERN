@@ -1,35 +1,46 @@
 import React from 'react';
 import 'antd/dist/antd.css';
+import { useState } from 'react';
 import { Menu } from 'antd';
-
 import { LineChartOutlined, AreaChartOutlined } from '@ant-design/icons';
+import { Settings } from 'component/Operation/Settings'
+import Upload from './AsinMappingUpload';
 
-export default class OperationMenu extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            current: "Price History",
-        }
-    }
+const OperationMenu = (props) => {
+    const [selectedMenuKey, setSelectedMenuKey] = useState("settings");
+    const { handler, state } = props;
 
-
-    handleClick = e => {
-        console.log('click ', e);
-        this.setState({ current: e.key });
+    const handleClick = e => {
+        // console.log('click ', e);
+        setSelectedMenuKey(e.key);
     };
 
-    render() {
-        const { current } = this.state;
-        return (
-            <Menu onClick={this.handleClick} selectedKeys={[current]} mode="horizontal">
-                <Menu.Item key="setting" icon={<LineChartOutlined />}>
+    const renderSwitch = (key) => {
+        switch (key) {
+            case 'settings':
+                return <Settings handler={handler} {...state} />
+            case 'upload':
+                return <Upload />
+            default:
+                break;
+        }
+    }
+    return (
+        <>
+            <Menu onClick={e => handleClick(e)} selectedKeys={[selectedMenuKey]} mode="horizontal">
+                <Menu.Item key="settings" icon={<LineChartOutlined />}>
                     Settings
                 </Menu.Item>
                 <Menu.Item key="upload" icon={<AreaChartOutlined />}>
                     Upload
                 </Menu.Item>
-            </Menu>
-        );
-    }
+            </Menu >
+            {
+                renderSwitch(selectedMenuKey)
+            }
+        </>
+    );
 
 }
+
+export default OperationMenu;

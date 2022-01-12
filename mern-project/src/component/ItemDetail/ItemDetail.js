@@ -30,14 +30,14 @@ class ItemDetail extends React.Component {
         const itemDetail = this.props.itemDetail;
         if (itemDetail != null) {
             return (
-                <React.Fragment>
+                <>
                     <Row className="main-grid">
                         <LeftOutlined className="go-back-btn" style={{ fontSize: '24px' }} onClick={this.goBack} />
                         <LeftPanel />
                         <OrderPanel />
 
                     </Row>
-                </React.Fragment>
+                </>
             );
         } else {
             return null;

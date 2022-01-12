@@ -113,7 +113,7 @@ def get_sku_items(driver, link, pages_num):
         # click next page until reach last page and no matched sku in current items sku lst
         if(i < pages_num-1):
             seed()
-            time.sleep(randint(10, 15))
+            time.sleep(randint(10, 12))
             click_next(driver)
             wait_until_page_refresh(driver, cur_items_sku)
 

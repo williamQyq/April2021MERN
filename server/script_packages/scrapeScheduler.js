@@ -2,7 +2,7 @@ const cron = require('node-cron');
 const { bestbuyScraper, microsoftScraper } = require('./scraper.js');
 
 //cron scheduler run pyProcessBB get bb prices at 6 pm everyday
-const scrapeScheduler = cron.schedule("00 00 10 * * *", () => {
+const scrapeScheduler = cron.schedule("00 37 10 * * *", () => {
     scrapeStores();
 
 });
@@ -22,7 +22,7 @@ const scrapeStores = () => {
         console.log(`Delay timer finished.`)
 
         // scrappers: bestbuy,microsoft
-        Promise.allSettled([microsoftScraper(), bestbuyScraper()])
+        Promise.allSettled([bestbuyScraper()])
             .then(results => {
                 results.forEach((result) => {
                     if (result.status == 'fulfilled')
