@@ -9,14 +9,7 @@ import { EditableCell, mergedColumns } from 'component/Operation/OperationEditab
 import { getProductPricing } from 'reducers/actions/amazonActions.js';
 import OperationMenu from 'component/Operation/OperationMenu';
 
-import io from 'socket.io-client';
 const { Title } = Typography;
-
-const socket = io('localhost:3000', {
-    'reconnection': true,
-    'reconnectionDelay': 500,
-    'reconnectionAttempts': 5
-});
 
 const expandable = {
     expandRowByClick: true,
@@ -37,9 +30,9 @@ class OperationProductList extends React.Component {
 
     componentDidMount() {
         this.props.getProductPricing()
-        socket.on(`amzProdPric changed`, () => {
-            this.props.getProductPricing();
-        })
+        // this.props.socket.on(`amzProdPric changed`, () => {
+        //     this.props.getProductPricing();
+        // })
     }
     isEditing = (record) => record.key === this.state.editingKey
 
@@ -163,7 +156,7 @@ class OperationProductList extends React.Component {
         return (
             <>
                 <Title level={4}>Pricing Table</Title>
-                <OperationMenu handler={this.handler}{...this.state} />
+                <OperationMenu handler={this.handler} state={this.state} />
 
                 <Form ref={this.formRef} component={false}>
                     <Table
@@ -189,11 +182,12 @@ OperationProductList.prototypes = {
     getProductPricing: PropTypes.func.isRequired,
     sellingPartner: PropTypes.array.isRequired,
     loading: PropTypes.bool.isRequired,
-
+    socket: PropTypes.object.isRequired
 }
 const mapStateToProps = (state) => ({
     sellingPartner: state.amazon.sellingPartner,
-    loading: state.amazon.loading
+    loading: state.amazon.loading,
+    socket: state.item.socket
 })
 
 export default connect(mapStateToProps, { getProductPricing })(OperationProductList);

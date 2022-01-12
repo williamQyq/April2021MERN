@@ -18,7 +18,7 @@ const OperationMenu = (props) => {
     const renderSwitch = (key) => {
         switch (key) {
             case 'settings':
-                return <Settings handler={handler} {...state} />
+                return <Settings {...props} />
             case 'upload':
                 return <Upload />
             default:
