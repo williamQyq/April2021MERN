@@ -1,8 +1,6 @@
-import os
 from mypackage.module import WebDriverWait, EC, By
 import re
 import time
-import json
 from random import seed
 from random import randint
 
@@ -91,36 +89,41 @@ def get_sku_items_num(driver, sku_item_link):
             pattern_total_num, item_count).group(1)
     except:
         return False
-    finally:
-        return num_per_page, total_num
+
+    return num_per_page, total_num
 
 # get all Laptops New sku items
 
 
-def get_sku_items(driver, link, pages_num):
-    driver.get(link)
+def get_sku_items(driver, link, pages):
 
-    for i in range(pages_num):
+    for i in range(pages):
         try:
             sku_items = WebDriverWait(driver, 10).until(
                 EC.presence_of_all_elements_located(
                     (By.XPATH, "//li[@class='sku-item']"))
             )
-            cur_items_sku = get_cur_page_items(sku_items)
-        except:
+            for searched_item in get_page_items(sku_items):
+                searched_items = []
+                searched_items.append(searched_item)
+                yield searched_item
+        except Exception as e:
             return False
 
         # click next page until reach last page and no matched sku in current items sku lst
-        if(i < pages_num-1):
-            seed()
-            time.sleep(randint(10, 12))
+        seed()
+        randomSec = randint(7, 10)
+        time.sleep(randomSec)
+
+        has_next_page = i < pages - 1 
+        if(has_next_page):
             click_next(driver)
-            wait_until_page_refresh(driver, cur_items_sku)
+            wait_until_page_refresh(driver, searched_items)
 
 
-def get_cur_page_items(sku_items):
-    items_sku = []
+def get_page_items(sku_items):
     for item_element in sku_items:
+
         item = {}
         sku = item_element.get_attribute("data-sku-id")
         item["link"] = 'https://www.bestbuy.com/site/' + \
@@ -128,41 +131,31 @@ def get_cur_page_items(sku_items):
         item["sku"] = sku
         item["currentPrice"] = get_sku_item_price(item_element)
         item["name"] = get_sku_item_name(item_element)
-
-        # output item to stdout, listened by process.on data
-        print(json.dumps(item))
-        items_sku.append(sku)
-
-    return items_sku
+        yield item
 
 # get item price, if failed try again and wait til 20s.
 
 
-def get_sku_item_price(driver):
-    price = None
-    price = parse_price(driver)
-    if not price:
-        price = parse_price(driver)
-
-    return price
-
-
-def parse_price(driver) -> str:
+def get_sku_item_price(element):
     try:
-        dollar_price = WebDriverWait(driver, 15).until(
+        dollar_price = WebDriverWait(element, 15).until(
             EC.presence_of_element_located(
                 (By.XPATH,
                  ".//div[@class='priceView-hero-price priceView-customer-price']/span")
             )
         ).text
-        price = dollar_price.strip().lstrip("$").replace(',', '')
-        return price
+        price = parse_price(dollar_price)
     except:
         return False
 
+    return price
+
+
+def parse_price(dollar_price) -> str:
+    return dollar_price.strip().lstrip("$").replace(',', '')
+
 
 def get_sku_item_name(driver):
-    sku_header = None
     try:
         sku_header = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located(
@@ -171,8 +164,8 @@ def get_sku_item_name(driver):
         ).text
     except:
         return False
-    finally:
-        return validate_sku_item_name(sku_header)
+
+    return validate_sku_item_name(sku_header)
 
 
 def validate_sku_item_name(header):
@@ -187,38 +180,34 @@ def validate_sku_item_name(header):
 def click_next(driver):
     try:
         element = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.CLASS_NAME, "sku-list-page-next")))
-        element.click()
-    except:
-        return False
-
-
-def wait_until_page_refresh(driver, cur_items_sku):
-    try:
-        WebDriverWait(driver, 20).until(
-            (lambda x: sku_attribute_changed(driver, cur_items_sku))
-        )
+            EC.element_to_be_clickable((By.CLASS_NAME, "sku-list-page-next"))).click()
         return True
     except:
         return False
 
 
-def sku_attribute_changed(driver, cur_page_skus):
+def wait_until_page_refresh(driver, searched_items):
     try:
-        sku_items = WebDriverWait(driver, 20).until(
+        WebDriverWait(driver, 20).until(
+            (lambda x: wait_new_items_loaded(driver, searched_items))
+        )
+    except Exception as e:
+        return
+
+
+def wait_new_items_loaded(driver, searched_items):
+    try:
+        new_items = WebDriverWait(driver, 20).until(
             EC.presence_of_all_elements_located(
                 (By.XPATH, "//li[@class='sku-item']")
             )
         )
-
         index = 0
-        for item_element in sku_items:
-            item_sku = item_element.get_attribute("data-sku-id")
-            # check if list elements being refreshed
-            if(item_sku == cur_page_skus[index] or item_sku == None):
-                # print(f'sku_item not refreshed')
-                return False
+        for item_element in new_items:
+            new_item_sku = item_element.get_attribute("data-sku-id")
+            if(new_item_sku == searched_items[index]["sku"] or new_item_sku == None):
+                raise Exception('page elements not updated')
             index += 1
-        return sku_items
+        return new_items
     except:
         return False

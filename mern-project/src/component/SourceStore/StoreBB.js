@@ -35,6 +35,9 @@ class BB extends React.Component {
         this.props.getBBItems();
         this.handleScrollPosition(this.props.items, this.props.itemDetail);
     }
+    // componentWillUnmount(){
+    //     this.props.cleanStore();
+    // }
 
     handleScrollPosition = (items, searchedItem) => {
         if (searchedItem) {
