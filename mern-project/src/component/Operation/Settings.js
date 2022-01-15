@@ -1,9 +1,13 @@
 import { Form, Radio, Switch } from 'antd';
-
+import OperationNestedTable from 'component/Operation/OperationProductListNestedTable.js';
 
 export const title = () => 'Here is title';
 export const footer = () => 'Here is footer';
-const pagination = { position: 'bottom' };
+
+export const expandable = {
+    expandRowByClick: true,
+    expandedRowRender: record => <OperationNestedTable record={record} />
+};
 
 export const defaultSettings = {
     bordered: false,
@@ -14,11 +18,11 @@ export const defaultSettings = {
     size: 'default',
     top: 'none',
     bottom: 'bottomRight',
-    rowKey:"_id",
+    rowKey: "_id",
     tableLayout: undefined,
-    pagination,
     title,
     footer,
+    expandable,
 }
 
 export const Settings = ({
@@ -37,6 +41,7 @@ export const Settings = ({
     top,
     bottom,
 }) => {
+
     return (
         <Form
             layout="inline"

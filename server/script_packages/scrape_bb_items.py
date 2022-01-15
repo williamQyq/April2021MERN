@@ -24,8 +24,9 @@ def main():
     for item in get_sku_items(driver, link, pages):
         # output item to stdout, listened by process.on data
         print(json.dumps(item))
+        sys.stdout.flush()
 
     driver.quit()
-    sys.stdout.flush()
-    
+
+
 main()

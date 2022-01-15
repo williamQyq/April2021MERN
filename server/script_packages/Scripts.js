@@ -1,4 +1,4 @@
-const { spawn } = require('child_process');
+const spawn = require('child_process').execFile;
 const JSON5 = require('json5');
 const JSONStream = require('JSONStream');
 const { getCurPrice } = require('../query/aggregate.js');

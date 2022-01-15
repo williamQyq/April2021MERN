@@ -8,8 +8,6 @@ import Upload from './AsinMappingUpload';
 
 const OperationMenu = (props) => {
     const [selectedMenuKey, setSelectedMenuKey] = useState("settings");
-    const { handler, state } = props;
-
     const handleClick = e => {
         // console.log('click ', e);
         setSelectedMenuKey(e.key);

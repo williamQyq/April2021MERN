@@ -16,11 +16,11 @@ import store from 'store.js';
 import Home from 'component/Home/Home.js';
 import io from 'socket.io-client';
 
-const socket = io('localhost:3000', {
-  'reconnection': true,
-  'reconnectionDelay': 500,
-  'reconnectionAttempts': 5
-});
+// const socket = io('localhost:3000', {
+//   'reconnection': true,
+//   'reconnectionDelay': 500,
+//   'reconnectionAttempts': 5
+// });
 
 
 class App extends React.Component {

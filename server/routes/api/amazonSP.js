@@ -40,6 +40,7 @@ router.get('/', (req, res) => {
 // @route POST api/amazonSP
 // desc: save upc asin mapping Schema for ProductPricing API
 router.post('/upload/mapping/asins', (req, res) => {
+    // console.log(`req.body=========${req.body}`)
     const prodLst = req.body;
     processNewUpcAsins(prodLst).then(result => res.json(result))
 })

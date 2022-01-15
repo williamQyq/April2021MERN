@@ -71,9 +71,7 @@ def check_product_instock(driver):
     return True
 
 
-def get_sku_items_num(driver, sku_item_link):
-
-    driver.get(sku_item_link)
+def get_sku_items_num(driver):
 
     try:
         item_count = WebDriverWait(driver, 10).until(
@@ -98,24 +96,26 @@ def get_sku_items_num(driver, sku_item_link):
 def get_sku_items(driver, link, pages):
 
     for i in range(pages):
+        sku_items = None
+        searched_items = []
         try:
             sku_items = WebDriverWait(driver, 10).until(
                 EC.presence_of_all_elements_located(
                     (By.XPATH, "//li[@class='sku-item']"))
             )
             for searched_item in get_page_items(sku_items):
-                searched_items = []
                 searched_items.append(searched_item)
                 yield searched_item
         except Exception as e:
             return False
 
-        # click next page until reach last page and no matched sku in current items sku lst
+        # sleep for a few seconds
         seed()
         randomSec = randint(7, 10)
         time.sleep(randomSec)
 
-        has_next_page = i < pages - 1 
+        # click next page until reach last page and no matched sku in current items sku lst
+        has_next_page = i < pages - 1
         if(has_next_page):
             click_next(driver)
             wait_until_page_refresh(driver, searched_items)

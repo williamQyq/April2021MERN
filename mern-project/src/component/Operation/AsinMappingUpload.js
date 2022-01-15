@@ -7,7 +7,6 @@ const { Dragger } = Upload;
 const props = {
     name: 'file',
     multiple: true,
-    action: null,
     onChange(info) {
         const { status } = info.file;
         if (status !== 'uploading') {
@@ -19,6 +18,14 @@ const props = {
             message.error(`${info.file.name} file upload failed.`);
         }
     },
+    customRequest: async ({ file, onSuccess, onError }) => {
+        const text = await file.text();
+        console.log(`file====${JSON.stringify(text, null, 4)}`)
+        setTimeout(() => {
+            onSuccess("ok")
+            onError("yes")
+        }, 2000)
+    },
     onDrop(e) {
         console.log('Dropped files', e.dataTransfer.files);
     },
@@ -27,16 +34,18 @@ const props = {
 const FileUpload = () => {
 
     return (
-        <Dragger {...props}>
-            <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-            </p>
-            <p className="ant-upload-text">Click or drag file to this area to upload</p>
-            <p className="ant-upload-hint">
-                Support for a single or bulk upload. Strictly prohibit from uploading company data or other
-                band files
-            </p>
-        </Dragger>
+        <div style={{ height: '150px' }}>
+            <Dragger {...props}>
+                <p className="ant-upload-drag-icon">
+                    <InboxOutlined />
+                </p>
+                <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                <p className="ant-upload-hint">
+                    Support for a single or bulk upload. Strictly prohibit from uploading company data or other
+                    band files
+                </p>
+            </Dragger>
+        </div>
     )
 }
 

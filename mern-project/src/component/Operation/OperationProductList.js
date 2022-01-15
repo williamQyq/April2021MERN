@@ -3,18 +3,14 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import 'antd/dist/antd.css';
 import { Table, Form, Typography } from 'antd';
-import { defaultSettings, Settings, title, footer } from 'component/Operation/Settings.js';
-import OperationNestedTable from 'component/Operation/OperationProductListNestedTable.js';
+import { defaultSettings, title, footer } from 'component/Operation/Settings.js';
 import { EditableCell, mergedColumns } from 'component/Operation/OperationEditableEle.js';
 import { getProductPricing } from 'reducers/actions/amazonActions.js';
 import OperationMenu from 'component/Operation/OperationMenu';
+import { ExpandAltOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
 
-const expandable = {
-    expandRowByClick: true,
-    expandedRowRender: record => <OperationNestedTable record={record} />
-};
 
 class OperationProductList extends React.Component {
     constructor(props) {
@@ -22,7 +18,6 @@ class OperationProductList extends React.Component {
         this.state = {
             ...defaultSettings,
             editingKey: '',
-            expandable
         };
     }
 
@@ -34,14 +29,14 @@ class OperationProductList extends React.Component {
         //     this.props.getProductPricing();
         // })
     }
-    isEditing = (record) => record.key === this.state.editingKey
+    isEditing = (record) => record._id === this.state.editingKey
 
     edit = (record) => {
         this.formRef.current.setFieldsValue({
             ...record
         })
         this.setState({
-            editingKey: record.key
+            editingKey: record._id
         })
     }
     cancel = () => {
@@ -140,7 +135,7 @@ class OperationProductList extends React.Component {
     }
 
     render() {
-        const { xScroll, yScroll, ...state } = this.state;
+        const { xScroll, yScroll, top, bottom, ...state } = this.state;
         const { loading, sellingPartner } = this.props;
 
         const actions = {
@@ -156,7 +151,7 @@ class OperationProductList extends React.Component {
         return (
             <>
                 <Title level={4}>Pricing Table</Title>
-                <OperationMenu handler={this.handler} state={this.state} />
+                <OperationMenu handler={this.handler} {...this.state} />
 
                 <Form ref={this.formRef} component={false}>
                     <Table
@@ -167,7 +162,7 @@ class OperationProductList extends React.Component {
                                 cell: EditableCell,
                             }
                         }}
-                        pagination={state.pagination}
+                        pagination={{ position: [top, bottom] }}
                         columns={columns}
                         dataSource={state.hasData ? sellingPartner : null}
                         scroll={state.scroll}
@@ -182,12 +177,12 @@ OperationProductList.prototypes = {
     getProductPricing: PropTypes.func.isRequired,
     sellingPartner: PropTypes.array.isRequired,
     loading: PropTypes.bool.isRequired,
-    socket: PropTypes.object.isRequired
+    // socket: PropTypes.object.isRequired
 }
 const mapStateToProps = (state) => ({
     sellingPartner: state.amazon.sellingPartner,
     loading: state.amazon.loading,
-    socket: state.item.socket
+    // socket: state.item.socket
 })
 
 export default connect(mapStateToProps, { getProductPricing })(OperationProductList);
