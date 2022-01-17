@@ -2,6 +2,7 @@ import axios from 'axios';
 import {
     GET_AMZ_PROD_PRICING,
     AMAZON_RES_LOADING,
+    UPLOAD_ASINS_MAPPING,
     // GET_ERRORS,
 } from './types';
 
@@ -26,6 +27,17 @@ export const getWmsProdQty = prods => {
             .then(res => { prod.wmsQuantity = res.data })
         return prod;
     }))
+}
+
+export const uploadAsinsMapping = (file) => async dispatch => {
+    dispatch(setAmazonResLoading());
+    return axios.post('/api/amazonSP/upload/asins-mapping', file).then(result => {
+        dispatch({
+            type: UPLOAD_ASINS_MAPPING,
+            payload: result
+        })
+        return result;
+    })
 }
 
 const setAmazonResLoading = () => {
