@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Papa from "papaparse";
 import {
     GET_AMZ_PROD_PRICING,
     AMAZON_RES_LOADING,
@@ -29,14 +30,23 @@ export const getWmsProdQty = prods => {
     }))
 }
 
-export const uploadAsinsMapping = (file) => async dispatch => {
-    dispatch(setAmazonResLoading());
-    return axios.post('/api/amazonSP/upload/asins-mapping', file).then(result => {
-        dispatch({
-            type: UPLOAD_ASINS_MAPPING,
-            payload: result
+export const uploadAsinsMapping = (file) => dispatch => {
+    // dispatch(setAmazonResLoading());
+    return new Promise((resolve, reject) => {
+        Papa.parse(file, {
+            complete: (results) => {
+                const fileJSON = results.data;
+                axios.post('/api/amazonSP/upload/asins-mapping', { fileJSON })
+                    .then(res => {
+                        resolve('success')
+                    }).catch(e => {
+                        reject(e)
+                    })
+            },
+            error: err => {
+                reject(err)
+            }
         })
-        return result;
     })
 }
 

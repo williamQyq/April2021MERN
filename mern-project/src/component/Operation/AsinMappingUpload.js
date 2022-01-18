@@ -4,7 +4,6 @@ import { Upload, message } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import { uploadAsinsMapping } from 'reducers/actions/amazonActions';
 import { connect } from 'react-redux';
-
 const { Dragger } = Upload;
 
 
@@ -13,7 +12,7 @@ const FileUpload = (props) => {
     const draggerProps = {
         name: 'file',
         multiple: true,
-        action: null,
+        accept: ".txt, .csv",
         onChange(info) {
             const { status } = info.file;
             if (status !== 'uploading') {
@@ -25,21 +24,20 @@ const FileUpload = (props) => {
                 message.error(`${info.file.name} file upload failed.`);
             }
         },
-        customRequest: async ({ file, onSuccess, onError }) => {
-            const text = await file.text();
-            props.uploadAsinsMapping(text)
+        customRequest: ({ file, onSuccess, onError }) => {
+            props.uploadAsinsMapping(file)
                 .then(res => {
-                    if (res.data == 'success') {
-                        onSuccess()
-                    } else {
-                        onError()
-                    }
+                    res === 'success' ? onSuccess("OK") : onError("Err")
+                }).catch(e => {
+                    onError("Err")
                 })
         },
         onDrop(e) {
             console.log('Dropped files', e.dataTransfer.files);
         },
-        beforeUpload(file) {
+        beforeUpload(file, fileList) {
+            fileList = []
+            // if file not csv, return false
         }
     };
 

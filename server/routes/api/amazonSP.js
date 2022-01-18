@@ -4,7 +4,6 @@ const auth = require('../../middleware/auth.js');
 const { ProdPricing, Identifier } = require('../../models/Amz.js');
 const { amazonSellingPartner } = require('../../amazonSP/RateLimiter.js');
 
-
 //@route GET api/amazonSP/productPricing
 // desc: Deprecated!
 router.post('/prod_pricing', async (req, res) => {
@@ -40,22 +39,25 @@ router.get('/', (req, res) => {
 // @route POST api/amazonSP
 // desc: save upc asin mapping Schema for ProductPricing API
 router.post('/upload/asins-mapping', (req, res) => {
-    const { file } = req.body
-    console.log(`req.body=========\n${JSON.stringify(file)}`)
-    res.json('success')
-    // const prodLst = req.body;
-    // processNewUpcAsins(prodLst).then(result => res.json(result))
+    const { files } = req.body
+    files.shift();
+    console.log(`files:======${JSON.stringify(files)}`)
+    processNewUpcAsins(files).then(result => res.json(result))
 })
 
-const processNewUpcAsins = (prods) => {
-    return Promise.all(prods.map(prod =>
-        ProdPricing.findOne({ "upc": prod.upc }).then(prodPreExist =>
-            prodPreExist ? upsertNewAsin(prod) : insertNewProd(prod)
-        )
-    ))
+const processNewUpcAsins = (files) => {
+    return Promise.all(
+        files.map(file => {
+            let upc = file[0];
+            let asin = file[1];
+            return ProdPricing.findOne({ 'upc': upc }).then(isExist =>
+                isExist ? upsertNewAsin(prod) : insertNewProd(prod)
+            )
+        })
+    )
 }
 
-const insertNewProd = async (prod) => {
+const insertNewProd = prod => {
 
     let newProd = new ProdPricing({
         upc: prod.upc,

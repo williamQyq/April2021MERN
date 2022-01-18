@@ -202,8 +202,8 @@ export const nestedTableColumns = (actions) => {
  */
 const menu = (
     <Menu>
-        <Menu.Item>Action 1</Menu.Item>
-        <Menu.Item>Action 2</Menu.Item>
+        <Menu.Item key='action1'>Action 1</Menu.Item>
+        <Menu.Item key='action2'>Action 2</Menu.Item>
     </Menu>
 )
 
