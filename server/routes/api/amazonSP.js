@@ -39,20 +39,21 @@ router.get('/', (req, res) => {
 // @route POST api/amazonSP
 // desc: save upc asin mapping Schema for ProductPricing API
 router.post('/upload/asins-mapping', (req, res) => {
-    const { files } = req.body
-    files.shift();
-    console.log(`files:======${JSON.stringify(files)}`)
-    processNewUpcAsins(files).then(result => res.json(result))
+    const { uploadFile } = req.body
+    uploadFile.shift();
+    console.log(`received file:======${JSON.stringify(uploadFile)}`)
+    processMappingFile(uploadFile).then(result => {
+        console.log(`process finished: ${result}`)
+        res.json(result)
+    })
 })
 
-const processNewUpcAsins = (files) => {
+const processMappingFile = (file) => {
     return Promise.all(
-        files.map(file => {
-            let upc = file[0];
-            let asin = file[1];
-            return ProdPricing.findOne({ 'upc': upc }).then(isExist =>
-                isExist ? upsertNewAsin(prod) : insertNewProd(prod)
-            )
+        file.map(row => {
+            let upc = row[0];
+            let asin = row[1];
+            return upsertNewAsin({ upc, asin })
         })
     )
 }
@@ -72,19 +73,22 @@ const insertNewProd = prod => {
     return newProd.save();
 }
 //upsert new asin into identifiers if not exist
-const upsertNewAsin = async (product) => {
-    let { asins, upc } = product;
-    for (const asin of asins) {
-        let isAsinMappingExist = await ProdPricing.findOne({ "upc": upc, "identifiers.asin": asin })
-        if (!isAsinMappingExist) {
-            let newIdentifier = new Identifier({
-                asin: asin,
-            })
-            await ProdPricing.updateOne(
-                { "upc": upc }, { $push: { "identifiers": newIdentifier } })
-        }
-    }
-    return { msg: "upsert new asins finished" }
+const upsertNewAsin = ({ upc, asin }) => {
+    let newIdentifier = new Identifier({
+        asin: asin,
+    })
+    let newProd = new ProdPricing({
+        _id: false,
+        upc: upc,
+        identifiers: [newIdentifier]
+    })
+    return ProdPricing.updateOne(
+        { 'upc': upc, 'identifiers.asin': asin },
+        { newProd },
+        { upsert: true }
+    ).then(doc => {
+        console.log(`doc======\n${JSON.stringify(doc, null, 4)}`)
+    })
 }
 
 module.exports = router;

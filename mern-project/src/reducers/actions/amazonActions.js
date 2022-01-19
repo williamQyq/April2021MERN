@@ -35,8 +35,8 @@ export const uploadAsinsMapping = (file) => dispatch => {
     return new Promise((resolve, reject) => {
         Papa.parse(file, {
             complete: (results) => {
-                const fileJSON = results.data;
-                axios.post('/api/amazonSP/upload/asins-mapping', { fileJSON })
+                const uploadFile = results.data;
+                axios.post('/api/amazonSP/upload/asins-mapping', { uploadFile })
                     .then(res => {
                         resolve('success')
                     }).catch(e => {
