@@ -45,4 +45,4 @@ function wmsService() {
     });
 }
 
-module.exports = { connect, getDatabase, close, wmsService };
+module.exports = { connect, getDatabase, close, wmsService, wmsConfig };

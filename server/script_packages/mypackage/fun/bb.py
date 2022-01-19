@@ -1,3 +1,4 @@
+import webbrowser
 from mypackage.module import WebDriverWait, EC, By
 import re
 import time
@@ -94,19 +95,23 @@ def get_sku_items_num(driver):
 
 
 def get_sku_items(driver, link, pages):
-
     for i in range(pages):
+        driver.delete_all_cookies()
+
         sku_items = None
         searched_items = []
         try:
             sku_items = WebDriverWait(driver, 10).until(
                 EC.presence_of_all_elements_located(
-                    (By.XPATH, "//li[@class='sku-item']"))
+                    (By.XPATH, "//li[@class='sku-item']")
+                )
             )
+
             for searched_item in get_page_items(sku_items):
                 searched_items.append(searched_item)
                 yield searched_item
         except Exception as e:
+            print(e)
             return False
 
         # sleep for a few seconds
