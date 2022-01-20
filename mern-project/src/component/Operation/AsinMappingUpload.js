@@ -2,7 +2,7 @@ import 'antd/dist/antd.css';
 import 'component/Operation/operation.scss';
 import { Upload, message } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
-import { uploadAsinsMapping } from 'reducers/actions/amazonActions';
+import { uploadAsinsMapping } from 'reducers/actions/operationActions';
 import { connect } from 'react-redux';
 const { Dragger } = Upload;
 
@@ -29,7 +29,7 @@ const FileUpload = (props) => {
                 .then(res => {
                     res === 'success' ? onSuccess("OK") : onError("Err")
                 }).catch(e => {
-                    onError("Err")
+                    onError("Upload File Error")
                 })
         },
         onDrop(e) {

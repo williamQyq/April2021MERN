@@ -31,20 +31,22 @@ router.post('/prod_pricing', async (req, res) => {
 });
 
 // @route GET api/amazonSP
-// desc: get all amazon seller central sync product pricing offers 
+// @desc: get all amazon seller central sync product pricing offers 
 router.get('/', (req, res) => {
     ProdPricing.find().then(products => res.json(products));
 });
 
 // @route POST api/amazonSP
-// desc: save upc asin mapping Schema for ProductPricing API
+// @desc: save upc asin mapping Schema for ProductPricing API
 router.post('/upload/asins-mapping', (req, res) => {
     const { uploadFile } = req.body
     uploadFile.shift();
     console.log(`received file:======${JSON.stringify(uploadFile)}`)
-    processMappingFile(uploadFile).then(result => {
-        console.log(`process finished: ${result}`)
-        res.json(result)
+    processMappingFile(uploadFile).then(() => {
+        res.json('success')
+    }).catch(e => {
+        console.log(`error:`, e)
+        res.json('err')
     })
 })
 
@@ -57,38 +59,21 @@ const processMappingFile = (file) => {
         })
     )
 }
-
-const insertNewProd = prod => {
-
-    let newProd = new ProdPricing({
-        upc: prod.upc,
-        identifiers: []
-    })
-    prod.asins.forEach(asin => {
-        let identifier = new Identifier({
-            asin: asin,
-        })
-        newProd.identifiers.push(identifier)
-    })
-    return newProd.save();
-}
 //upsert new asin into identifiers if not exist
 const upsertNewAsin = ({ upc, asin }) => {
     let newIdentifier = new Identifier({
         asin: asin,
     })
     let newProd = new ProdPricing({
-        _id: false,
         upc: upc,
-        identifiers: [newIdentifier]
+        identifiers: []
     })
-    return ProdPricing.updateOne(
-        { 'upc': upc, 'identifiers.asin': asin },
-        { newProd },
-        { upsert: true }
-    ).then(doc => {
-        console.log(`doc======\n${JSON.stringify(doc, null, 4)}`)
-    })
+    newProd.identifiers.push(newIdentifier)
+
+    const query = { 'upc': upc }
+    const update = { $push: { identifiers: newIdentifier }, $setOnInsert: { newProd } }
+    const option = { upsert: true, new: true, useFindAndModify: false };
+    return ProdPricing.findOneAndUpdate(query, update, option)
 }
 
 module.exports = router;

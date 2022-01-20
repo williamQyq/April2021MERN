@@ -5,9 +5,6 @@ import time
 from random import seed
 from random import randint
 
-# modify mutable list of dictionary link_list
-
-
 def track_instock_info(product, driver):
     driver.get(product["link"])
 
@@ -94,37 +91,33 @@ def get_sku_items_num(driver):
 # get all Laptops New sku items
 
 
-def get_sku_items(driver, link, pages):
-    for i in range(pages):
-        driver.delete_all_cookies()
-
-        sku_items = None
-        searched_items = []
-        try:
-            sku_items = WebDriverWait(driver, 10).until(
-                EC.presence_of_all_elements_located(
-                    (By.XPATH, "//li[@class='sku-item']")
-                )
+def get_sku_items(driver):
+    # driver.manage().delete_all_cookies()
+    sku_items = None
+    searched_items = []
+    try:
+        sku_items = WebDriverWait(driver, 10).until(
+            EC.presence_of_all_elements_located(
+                (By.XPATH, "//li[@class='sku-item']")
             )
+        )
 
-            for searched_item in get_page_items(sku_items):
-                searched_items.append(searched_item)
-                yield searched_item
-        except Exception as e:
-            print(e)
-            return False
+        for searched_item in get_page_items(sku_items):
+            searched_items.append(searched_item)
+            yield searched_item
+    except Exception as e:
+        return False
 
-        # sleep for a few seconds
-        seed()
-        randomSec = randint(7, 10)
-        time.sleep(randomSec)
+    # click next page until reach last page and no matched sku in current items sku lst
+    # has_next_page = i < pages - 1
+    # if(has_next_page):
+    #     click_next(driver)
+    #     wait_until_page_refresh(driver, searched_items)
 
-        # click next page until reach last page and no matched sku in current items sku lst
-        has_next_page = i < pages - 1
-        if(has_next_page):
-            click_next(driver)
-            wait_until_page_refresh(driver, searched_items)
-
+def sleep_random_sec(min, max):
+    seed()
+    randomSec = randint(7, 10)
+    time.sleep(randomSec)
 
 def get_page_items(sku_items):
     for item_element in sku_items:

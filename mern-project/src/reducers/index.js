@@ -6,7 +6,7 @@ import itemMSReducer from './itemMSReducer';
 import errorReducer from './errorReducer';
 import authReducer from './authReducer';
 import keepaReducer from './keepaReducer';
-import amazonReducer from './amazonReducer';
+import operationReducer from './operationReducer';
 
 import storage from 'redux-persist/lib/storage';
 
@@ -29,7 +29,7 @@ const appReducers = combineReducers({
     error: errorReducer,
     auth: authReducer,
     keepa: keepaReducer,
-    amazon: amazonReducer,
+    amazon: operationReducer,
 
 })
 

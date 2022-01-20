@@ -11,7 +11,7 @@ import {
 // then get upc quantity info from wms. Finally, dispatch product pricing data.
 export const getProductPricing = () => dispatch => {
     dispatch(setAmazonResLoading());
-    axios.get('/api/amazonSP').then(res => {
+    axios.get('/api/operation').then(res => {
         getWmsProdQty(res.data).then(result => {
             dispatch({
                 type: GET_AMZ_PROD_PRICING,
@@ -36,12 +36,8 @@ export const uploadAsinsMapping = (file) => dispatch => {
         Papa.parse(file, {
             complete: (results) => {
                 const uploadFile = results.data;
-                axios.post('/api/amazonSP/upload/asins-mapping', { uploadFile })
-                    .then(res => {
-                        resolve('success')
-                    }).catch(e => {
-                        reject(e)
-                    })
+                axios.post('/api/operation/upload/asins-mapping', { uploadFile })
+                    .then(res => resolve(res))
             },
             error: err => {
                 reject(err)

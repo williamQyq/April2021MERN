@@ -10,7 +10,7 @@ export const expandable = {
 };
 
 export const defaultSettings = {
-    bordered: false,
+    bordered: true,
     showHeader: true,
     hasData: true,
     scroll: {},

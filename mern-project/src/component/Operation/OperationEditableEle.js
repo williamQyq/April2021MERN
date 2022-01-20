@@ -166,8 +166,8 @@ export const nestedTableColumns = (actions) => {
             key: 'state',
             render: () =>
                 <span>
-                    <Badge status="processing" />
-                    Processing
+                    <Badge status="success" />
+                    Finished
                 </span>
 
         },

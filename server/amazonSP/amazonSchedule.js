@@ -49,4 +49,7 @@ const saveOffers = (res) => {
 }
 
 
-module.exports = { amazonScheduler: amazonScheduler }
+module.exports = {
+    amazonScheduler: amazonScheduler,
+    checkProductPricing: checkProductPricing
+}

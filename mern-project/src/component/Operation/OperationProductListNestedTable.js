@@ -101,6 +101,7 @@ export default class NestedTable extends React.Component {
                     columns={columns}
                     dataSource={this.getAmzRecord(record)}
                     pagination={false}
+                    rowKey={'asin'}
                 />
             </Form>
         )
