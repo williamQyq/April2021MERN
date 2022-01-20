@@ -32,7 +32,7 @@ class ItemDetail extends React.Component {
             return (
                 <>
                     <Row className="main-grid">
-                        <LeftOutlined className="go-back-btn" style={{ fontSize: '24px' }} onClick={this.goBack} />
+                        {/* <LeftOutlined className="go-back-btn" style={{ fontSize: '24px' }} onClick={this.goBack} /> */}
                         <LeftPanel />
                         <OrderPanel />
 
