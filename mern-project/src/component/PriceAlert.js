@@ -10,7 +10,7 @@ import {
 import { Typography, Row, Button, List, Menu, Dropdown, Divider } from 'antd';
 import { connect } from 'react-redux';
 import { getItems, deleteItem } from 'reducers/actions/itemActions';
-import AddItemModal from "component/AddItemModal.js";
+import AddItemModal from "component/utility/AddItemModal.js";
 
 const { Title, Text } = Typography;
 
@@ -19,20 +19,17 @@ class PriceAlert extends React.Component {
         super(props);
 
         this.state = {
-            socket: this.props.socket,
-            change: false,
+            // socket: this.props.socket,
         }
     }
     componentDidMount() {
-        const socket = this.state.socket;
+        // const socket = this.state.socket;
         this.props.getItems();
 
-        socket.on(`server:changestream`, () => {
-            this.setState({ change: true });
-            this.props.getItems();
-        });
+        // socket.on(`server:changestream`, () => {
+        //     this.props.getItems();
+        // });
 
-        this.setState({ change: false });
     }
 
     onDeleteClick = (_id) => {
@@ -80,8 +77,7 @@ class PriceAlert extends React.Component {
         );
 
         return (
-
-            <React.Fragment>
+            <>
                 <Row gutter={16}>
                     <Title level={3} className="title">Watch List</Title>
                     <AddItemModal />
@@ -103,32 +99,33 @@ class PriceAlert extends React.Component {
 
                             {/* <Link to='/item-detail' className="list-item-link"> */}
 
-                                <List.Item.Meta
-                                    avatar={<LaptopOutlined twoToneColor="#52c41a" />}
-                                    title={<Title level={5}>{this.getItemName(item)}</Title>}
-                                    description={<React.Fragment>
+                            <List.Item.Meta
+                                avatar={<LaptopOutlined twoToneColor="#52c41a" />}
+                                title={<Title level={5}>{this.getItemName(item)}</Title>}
+                                description={
+                                    <>
                                         <Text className="list-item-upc">UPC: {this.getItemUPC}</Text>
                                         <Text>{item.created_date}</Text>
-                                    </React.Fragment>
-                                    }
-                                />
-
-
-                                {this.getPriceBeforeChanged(item) > 0 ?
-                                    <Text className="list-item-price-before-changed" delete>${this.getPriceBeforeChanged(item)}</Text> :
-                                    <Text className="list-item-price-before-changed" delete>${this.getMostRecentPrice(item)}</Text>
+                                    </>
                                 }
+                            />
 
-                                {this.getMostRecentPrice(item) !== -1 ?
-                                    <Text className={this.getMostRecentPrice(item) < this.getPriceBeforeChanged(item) ? "list-item-price-down" : "list-item-price-up"}>
-                                        ${this.getMostRecentPrice(item)}</Text> : <Text className="list-item-price-oos">OUT OF STOCK
-                                    </Text>
-                                }
+
+                            {this.getPriceBeforeChanged(item) > 0 ?
+                                <Text className="list-item-price-before-changed" delete>${this.getPriceBeforeChanged(item)}</Text> :
+                                <Text className="list-item-price-before-changed" delete>${this.getMostRecentPrice(item)}</Text>
+                            }
+
+                            {this.getMostRecentPrice(item) !== -1 ?
+                                <Text className={this.getMostRecentPrice(item) < this.getPriceBeforeChanged(item) ? "list-item-price-down" : "list-item-price-up"}>
+                                    ${this.getMostRecentPrice(item)}</Text> : <Text className="list-item-price-oos">OUT OF STOCK
+                                </Text>
+                            }
                             {/* </Link> */}
                         </List.Item>
                     )}
                 />
-            </React.Fragment>
+            </>
         );
     }
 }

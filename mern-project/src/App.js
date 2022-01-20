@@ -5,7 +5,7 @@ import {
   Switch,
   Route,
 } from "react-router-dom";
-import SignIn from 'component/auth/SignIn.js';
+import SignIn from 'component/SignIn.js';
 import ErrorPage from 'component/ErrorPage.js';
 import PrivateRoute from 'component/auth/PrivateRoute.js';
 import { loadUser } from 'reducers/actions/authActions.js';
@@ -13,7 +13,15 @@ import { connect } from 'react-redux';
 import Proptypes from 'prop-types';
 
 import store from 'store.js';
-import Home from 'component/auth/Home';
+import Home from 'component/Home/Home.js';
+import io from 'socket.io-client';
+
+// const socket = io('localhost:3000', {
+//   'reconnection': true,
+//   'reconnectionDelay': 500,
+//   'reconnectionAttempts': 5
+// });
+
 
 class App extends React.Component {
 
@@ -23,6 +31,8 @@ class App extends React.Component {
 
   componentDidMount() {
     store.dispatch(loadUser());
+    // store.dispatch(loadSocket());
+
   }
 
   render() {

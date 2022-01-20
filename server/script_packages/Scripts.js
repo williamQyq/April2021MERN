@@ -1,10 +1,7 @@
-const { spawn } = require('child_process');
-const { Product } = require('../models/PriceProduct.js');
+const spawn = require('child_process').execFile;
 const JSON5 = require('json5');
 const JSONStream = require('JSONStream');
-
 const { getCurPrice } = require('../query/aggregate.js');
-const { type } = require('os');
 
 // Script class, integrate python scripts into nodejs
 class Script {

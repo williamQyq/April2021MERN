@@ -1,12 +1,11 @@
 import React from 'react';
-import 'antd/dist/antd.css';
-import '../styles/bb.scss';
+import 'component/SourceStore/Store.scss';
 import { connect } from 'react-redux';
-import { getBBItems } from 'reducers/actions/itemBBActions';
-import { setTableState } from 'reducers/actions/itemActions';
-import { BESTBUY } from 'reducers/actions/types';
+import { getMSItems } from 'reducers/actions/itemMSActions';
+import { setTableState } from 'reducers/actions/itemActions';   //save user's table settings
+import { MICROSOFT } from 'reducers/actions/types';
 import PropTypes from 'prop-types';
-import { Table, Input, Button, Space, Typography, Row, Menu, Dropdown, Divider, Col, Tooltip } from 'antd';
+import { Table, Input, Button, Space, Typography, Row, Menu, Dropdown, Divider, Col, Tooltip, Upload } from 'antd';
 import Highlighter from 'react-highlight-words';
 import {
     SearchOutlined,
@@ -15,11 +14,11 @@ import {
     ShoppingCartOutlined,
 } from '@ant-design/icons';
 import { Link, withRouter } from 'react-router-dom';
-import { locateSearchedItem, scrollToTableRow } from 'utilities/tableUtilities';
+import { scrollToTableRow, locateSearchedItem } from 'component/SourceStore/StoreTableUtilities';
 
 const { Title, Text } = Typography;
 
-class BB extends React.Component {
+class MS extends React.Component {
     constructor(props) {
         super(props);
 
@@ -33,17 +32,16 @@ class BB extends React.Component {
     }
 
     componentDidMount() {
-        this.props.getBBItems();
-        this.handleScrollPosition();
+        this.props.getMSItems();
+        this.handleScrollPosition(this.props.items, this.props.itemDetail);
     }
 
-    handleScrollPosition = () => {
-        const items = this.props.items;
-        if (this.props.itemDetail) {
-            const searchId = this.props.itemDetail._id;
-            let searchedItem = locateSearchedItem(items, searchId)
-            this.setState({ searchedRowId: searchedItem._id })
-            scrollToTableRow(document, searchedItem.index)
+
+    handleScrollPosition = (items, searchedItem) => {
+        if (searchedItem) {
+            let item = locateSearchedItem(items, searchedItem._id);
+            this.setState({ searchedRowId: item._id });
+            scrollToTableRow(document, item.index);
         }
     }
 
@@ -237,7 +235,7 @@ class BB extends React.Component {
                 </Menu.Item>
                 <Menu.Item key="GetItemDetail">
 
-                    <Button className="menu-btn" onClick={() => this.handleClick(BESTBUY, record._id)}>
+                    <Button className="menu-btn" onClick={() => this.handleClick(MICROSOFT, record._id)}>
                         <Link to={`${path}/item-detail`}>
                             <SearchOutlined />
                         </Link>
@@ -253,10 +251,10 @@ class BB extends React.Component {
         );
 
         return (
-            <React.Fragment>
+            <>
                 <Row gutter={16} style={{ alignItems: 'center' }}>
                     <Col>
-                        <Title level={4}>Best Buy</Title>
+                        <Title level={4}>Microsoft Store</Title>
                     </Col>
                     <Col>
                         <Button type="primary" disabled={loading} loading={loading}>
@@ -276,21 +274,21 @@ class BB extends React.Component {
                     }}
                     scroll={{ y: "calc(100vh - 335px)" }}
                 />
-            </React.Fragment>
+            </>
         )
     }
 }
 
-BB.prototypes = {
+MS.prototypes = {
     setTableState: PropTypes.func.isRequired,
-    getBBItems: PropTypes.func.isRequired,
+    getMSItems: PropTypes.func.isRequired,
     items: PropTypes.array.isRequired,
     itemDetail: PropTypes.object.isRequired
 }
 
 const mapStateToProps = (state) => ({
-    items: state.bestbuy.items,
+    items: state.microsoft.items,
     itemDetail: state.item.itemDetail
 })
 
-export default withRouter(connect(mapStateToProps, { getBBItems, setTableState })(BB));
+export default withRouter(connect(mapStateToProps, { getMSItems, setTableState })(MS));

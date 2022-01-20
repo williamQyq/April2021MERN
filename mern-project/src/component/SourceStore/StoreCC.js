@@ -1,8 +1,6 @@
 import React from 'react';
-import 'antd/dist/antd.css';
-import '../styles/bb.scss';
 import { connect } from 'react-redux';
-import { getCCItems } from '../reducers/actions/itemCCActions';
+import { getCCItems } from '../../reducers/actions/itemCCActions';
 import PropTypes from 'prop-types';
 import { Table, Input, Button, Space, Typography, Row, Menu, Dropdown } from 'antd';
 import Highlighter from 'react-highlight-words';
@@ -190,7 +188,7 @@ class CC extends React.Component {
         );
 
         return (
-            <React.Fragment>
+            <>
                 <Row gutter={16} style={{ alignItems: 'center' }}>
                     <Title level={3} className="title">CostCo</Title>
                 </Row>
@@ -206,7 +204,7 @@ class CC extends React.Component {
                     }}
                     scroll={{ y: "calc(100vh - 320px)" }} />
 
-            </React.Fragment>
+            </>
         )
     }
 }

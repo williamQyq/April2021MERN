@@ -1,13 +1,13 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom'; // Link pass state props to leftPanel and sideitemDetail
 import 'antd/dist/antd.css';
-import 'styles/itemDetail.scss';
+import 'component/ItemDetail/ItemDetail.scss';
 import { Row } from 'antd';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { LeftOutlined } from '@ant-design/icons';
-import LeftPanel from 'component/ItemDetailLeftPanel.js'
-import OrderPanel from 'component/ItemDetailOrderCard.js';
+import LeftPanel from 'component/ItemDetail/ItemDetailLeftPanel.js'
+import OrderPanel from 'component/ItemDetail/ItemDetailOrderCard.js';
 import { getItemDetail } from 'reducers/actions/itemActions.js';
 
 class ItemDetail extends React.Component {
@@ -30,14 +30,14 @@ class ItemDetail extends React.Component {
         const itemDetail = this.props.itemDetail;
         if (itemDetail != null) {
             return (
-                <React.Fragment>
+                <>
                     <Row className="main-grid">
-                        <LeftOutlined className="go-back-btn" style={{ fontSize: '24px' }} onClick={this.goBack} />
+                        {/* <LeftOutlined className="go-back-btn" style={{ fontSize: '24px' }} onClick={this.goBack} /> */}
                         <LeftPanel />
                         <OrderPanel />
 
                     </Row>
-                </React.Fragment>
+                </>
             );
         } else {
             return null;

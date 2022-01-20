@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Image, Form, Input, Button, Typography, message } from 'antd';
+import { Layout, Form, Input, Button, Typography, message } from 'antd';
 import 'antd/dist/antd.css';
 import 'styles/login.scss';
 import { Link, withRouter } from "react-router-dom";

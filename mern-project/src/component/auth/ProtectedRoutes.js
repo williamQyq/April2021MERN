@@ -5,23 +5,21 @@ import ErrorPage from 'component/ErrorPage';
 
 const ProtectedRoutes = () => {
     return (
-        <Switch>
-            <Suspense
-                fallback={<ErrorPage />}
-            >
-                {routes.map(({ component: Component, path, exact }) => (
-                    <Route
-                        path={`/${path}`}
-                        key={path}
-                        exact={exact}
-                    >
-                        <Component />
-                    </Route>
-                )
-                )}
-            </Suspense>
-        </Switch>
+        <Suspense
+            fallback={<ErrorPage />}
+        >
+            {routes.map(({ component: Component, path, exact }) => (
+                <Route
+                    path={`/${path}`}
+                    key={path}
+                    exact={exact}
+                >
+                    <Component />
+                </Route>
+            )
+            )}
+        </Suspense>
+
     );
 }
-
-export default ProtectedRoutes;
+export default ProtectedRoutes

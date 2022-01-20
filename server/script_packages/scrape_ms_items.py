@@ -21,8 +21,7 @@ def main():
     # do something
     get_sku_items(driver, link, pages_num)
 
-    driver.quit()
     sys.stdout.flush()
-
+    driver.quit()
 
 main()

@@ -3,16 +3,18 @@ const { ProdPricing } = require('../models/Amz')
 const { SpBucket } = require('./RateLimiter.js')
 
 // cron scheduler update Amazon sku
-// const amazonScheduler = cron.schedule("* 10 * * * *", () => {
-//     productPricingCheck();
+// const amazonScheduler = cron.schedule("* 5 * * * *", () => {
+//     checkProductPricing();
+
+
 // });
 
 const amazonScheduler = () => {
-    // productPricingUpdate();
+    // checkProductPricing();
 
 };
 
-const productPricingUpdate = () => {
+const checkProductPricing = () => {
     const bucket = new SpBucket();
 
     //get prods asins in database 
@@ -47,4 +49,7 @@ const saveOffers = (res) => {
 }
 
 
-module.exports = { amazonScheduler: amazonScheduler }
+module.exports = {
+    amazonScheduler: amazonScheduler,
+    checkProductPricing: checkProductPricing
+}

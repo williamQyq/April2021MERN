@@ -4,7 +4,7 @@ import { getBBItems } from './itemBBActions';
 import { getMSItems } from './itemMSActions';
 
 import {
-    GET_ITEMS,
+    // GET_ITEMS,
     ADD_ITEM,
     DELETE_ITEM,
     ITEMS_LOADING,

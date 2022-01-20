@@ -1,4 +1,4 @@
-import 'styles/itemDetail.scss';
+import 'component/ItemDetail/ItemDetail.scss';
 import { Row, Col, Divider, Typography } from 'antd';
 import React from 'react';
 const { Title, Text } = Typography;
@@ -6,7 +6,7 @@ const { Title, Text } = Typography;
 
 const KeyStat = () => {
     return (
-        <React.Fragment>
+        <>
             <Row className="key-stat-row">
                 <Title level={4}>Key Statistics</Title>
                 <Divider />
@@ -43,8 +43,7 @@ const KeyStat = () => {
                     <Row><Text>-</Text></Row>
                 </Col>
             </Row>
-        </React.Fragment>
-
+        </>
     );
 }
 

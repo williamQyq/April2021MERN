@@ -7,7 +7,7 @@ const { scrapeScheduler } = require('./script_packages/scrapeScheduler.js');    
 const { amazonScheduler } = require('./amazonSP/amazonSchedule.js');
 const { bbLinkScraper } = require('./script_packages/scraper.js');
 const wms = require("./wmsDatabase.js");    // @local wms server connection
-
+const { Server } = require("socket.io")
 // @CREATE WMS CONNECTION
 wms.wmsService();
 
@@ -16,7 +16,7 @@ const app = express();
 app.use(express.json());
 
 const server = require("http").createServer(app)
-const io = require("socket.io")(server);
+const io = new Server(server);
 const port = process.env.PORT || 5000;
 
 //@Mongoose connection; Connect to Mongo.
@@ -45,7 +45,7 @@ app.use('/api/users', require('./routes/api/users'));
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/keepa', require('./routes/api/keepa'));
 app.use('/api/wms', require('./routes/api/wms'));
-app.use('/api/amazonSP', require('./routes/api/amazonSP'));
+app.use('/api/operation', require('./routes/api/operation'));
 
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, '../mern-project/build')));
@@ -53,7 +53,6 @@ if (process.env.NODE_ENV === 'production') {
         res.sendFile(path.resolve(__dirname, '../mern-project', 'build', 'index.html'));
     });
 }
-
 
 io.on("connection", (socket) => {
     console.log(`A user Connected: ${socket.id}`)
@@ -65,21 +64,29 @@ io.on("connection", (socket) => {
 const db = mongoose.connection;  //set up mongoose connection
 const collection = config.get("collection");
 db.once('open', () => {
-    const bbProductListings = db.collection(collection.bestbuy);
-    const productPriceListings = db.collection(collection.watchList);
-    const amzProductPricing = db.collection("AmzProdPricing");
+    const bestbuyStore = db.collection(collection.bestbuy);
+    // const productPriceListings = db.collection(collection.watchList);
+    const amzProdPricing = db.collection(collection.amzProdPricing);
 
-    const changeStream = productPriceListings.watch();
-    const BBChangeStream = bbProductListings.watch();
+    // const changeStream = productPriceListings.watch();
+    const bbChangeStream = bestbuyStore.watch();
+    const amzProdPricStream = amzProdPricing.watch();
 
-    BBChangeStream.on('change', (change) => {
+    bbChangeStream.on('change', (change) => {
         const doc = change.fullDocument;
 
         if (change.operationType === 'insert' || change.operationType === 'update') {
-            io.sockets.emit(`server:changestream_bb`, doc);
+            io.sockets.emit(`server:changestream_bb`,null);
 
         }
+    })
 
+    amzProdPricStream.on('change', (change) => {
+        // const doc = change.fullDocument;
+        // console.log(`change fulldocument:=====`, JSON.stringify(change.fullDocument, null, 4))
+        if (change.operationType === 'insert' || change.operationType === 'update' || change.operationType === 'delete') {
+            io.sockets.emit(`amzProdPric changed`, null)
+        }
     })
     // test();
     scrapeScheduler.start();
@@ -87,26 +94,27 @@ db.once('open', () => {
     // amazonScheduler.start();
     amazonScheduler();
 
-    changeStream.on('change', (change) => {
-        const doc = change.fullDocument;
 
-        if (change.operationType === 'insert') {
+    // changeStream.on('change', (change) => {
+    //     const doc = change.fullDocument;
 
-            //socket.emit
-            io.sockets.emit(`server:changestream`, doc._id);
-            bbLinkScraper(doc._id, doc.link);
+    //     if (change.operationType === 'insert') {
 
-        }
+    //         //socket.emit
+    //         io.sockets.emit(`server:changestream`, doc._id);
+    //         bbLinkScraper(doc._id, doc.link);
 
-        if (change.operationType === 'delete') {
-            //socket.emit
-            io.sockets.emit(`server:changestream`, doc);
-        }
-        if (change.operationType === 'update') {
-            //socket.emit
-            io.sockets.emit(`server:changestream`, doc);
-        }
-    })
+    //     }
+
+    //     if (change.operationType === 'delete') {
+    //         //socket.emit
+    //         io.sockets.emit(`server:changestream`, doc);
+    //     }
+    //     if (change.operationType === 'update') {
+    //         //socket.emit
+    //         io.sockets.emit(`server:changestream`, doc);
+    //     }
+    // })
 
 });
 

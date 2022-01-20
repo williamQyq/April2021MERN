@@ -5,10 +5,10 @@ import { Divider, Row, Typography, Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import ChartMenu from 'component/ItemDetailChartMenu.js';
+import ChartMenu from 'component/ItemDetail/ItemDetailChartMenu.js';
 import { getKeepaStat } from 'reducers/actions/keepaActions';
 
-const { Title, Text } = Typography;
+const { Title} = Typography;
 const { Search } = Input;
 
 class KeepaStat extends React.Component {
@@ -138,9 +138,9 @@ class KeepaStat extends React.Component {
                     loading={this.props.loading}
                     onSearch={this.handleSearch}
                 />
-                <Line
+                {/* <Line
                     data={config.data}
-                    options={config.options} />
+                    options={config.options} /> */}
                 <Divider dashed={true} />
                 <ChartMenu />
                 <Divider />
