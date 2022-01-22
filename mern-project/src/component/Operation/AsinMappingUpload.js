@@ -27,7 +27,7 @@ const FileUpload = (props) => {
         customRequest: ({ file, onSuccess, onError }) => {
             props.uploadAsinsMapping(file)
                 .then(res => {
-                    res === 'success' ? onSuccess("OK") : onError("Err")
+                    res.data === 'success' ? onSuccess("OK") : onError("Err")
                 }).catch(e => {
                     onError("Upload File Error")
                 })
