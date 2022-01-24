@@ -28,6 +28,6 @@ const BBItemSchema = new Schema({
         type: Date,
         default: Date.now
     }
-}, { collection: 'bb_item_listings' });
+}, { collection: 'bbStoreListings' });
 
-module.exports = mongoose.models.BBItem || mongoose.model('bb_item', BBItemSchema);
+module.exports = mongoose.models.BBItem || mongoose.model('BBItem', BBItemSchema);

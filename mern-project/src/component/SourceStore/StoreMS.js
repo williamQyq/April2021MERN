@@ -5,18 +5,10 @@ import { getMSItems } from 'reducers/actions/itemMSActions';
 import { setTableState } from 'reducers/actions/itemActions';   //save user's table settings
 import { MICROSOFT } from 'reducers/actions/types';
 import PropTypes from 'prop-types';
-import { Table, Input, Button, Space, Typography, Row, Menu, Dropdown, Divider, Col, Tooltip, Upload } from 'antd';
+import { Table, Input, Button, Space, Divider } from 'antd';
 import Highlighter from 'react-highlight-words';
-import {
-    SearchOutlined,
-    DownOutlined,
-    PlusCircleOutlined,
-    ShoppingCartOutlined,
-} from '@ant-design/icons';
-import { Link, withRouter } from 'react-router-dom';
+import { SearchOutlined } from '@ant-design/icons';
 import { scrollToTableRow, locateSearchedItem, tableColumns, StoreHeader } from 'component/SourceStore/StoreTableUtilities';
-
-const { Title, Text } = Typography;
 
 class MS extends React.Component {
     constructor(props) {

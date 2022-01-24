@@ -34,6 +34,6 @@ const MSItemSchema = new Schema({
         type: Date,
         default: Date.now
     }
-}, { collection: 'ms_item_listings' });
+}, { collection: 'msStoreListings' });
 
 module.exports = mongoose.models.MSItem || mongoose.model('MSItem', MSItemSchema);

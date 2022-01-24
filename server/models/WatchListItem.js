@@ -24,6 +24,6 @@ const ItemSchema = new Schema({
         type: Date,
         default: Date.now
     }
-}, {collection: 'product_price_listings'});
+}, {collection: 'products'});
 
 module.exports = Item = mongoose.model('item', ItemSchema);

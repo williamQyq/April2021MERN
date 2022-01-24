@@ -6,7 +6,6 @@ import {
     PlusCircleOutlined,
 } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
-import { BESTBUY } from "reducers/actions/types";
 
 const { Text, Title } = Typography;
 
