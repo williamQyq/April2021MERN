@@ -130,7 +130,10 @@ const ActionMenu = (record, handleActionClick, storeName) => {
             </Menu.Item>
             <Menu.Item key="GetItemDetail">
 
-                <Button className="menu-btn" onClick={() => handleActionClick(storeName, record._id)}>
+                <Button className="menu-btn" onClick={() => {
+                    console.log(`clicked record ============:\n${JSON.stringify(record,null,4)}`)
+                    handleActionClick(storeName, record._id)
+                }}>
                     <Link to={`${path}/item-detail`}>
                         <SearchOutlined />
                     </Link>
