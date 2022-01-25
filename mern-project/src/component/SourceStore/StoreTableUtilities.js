@@ -4,8 +4,10 @@ import {
     ShoppingCartOutlined,
     DownOutlined,
     PlusCircleOutlined,
+    WindowsOutlined,
 } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
+import { connect } from "react-redux";
 
 const { Text, Title } = Typography;
 
@@ -121,6 +123,10 @@ export const tableColumns = (getColumnSearchProps, handleActionClick, storeName)
 const ActionMenu = (record, handleActionClick, storeName) => {
     const location = useLocation()
     const path = location.pathname;
+
+    const getOnlineSpecification = () => {
+        console.log(`record from spec${JSON.stringify(record,null,4)}`)
+    }
     return (
         <Menu>
             <Menu.Item key="AddToWatchList">
@@ -131,11 +137,12 @@ const ActionMenu = (record, handleActionClick, storeName) => {
             <Menu.Item key="GetItemDetail">
 
                 <Button className="menu-btn" onClick={() => {
-                    console.log(`clicked record ============:\n${JSON.stringify(record,null,4)}`)
+                    console.log(`clicked record ============:\n${JSON.stringify(record, null, 4)}`)
                     handleActionClick(storeName, record._id)
                 }}>
                     <Link to={`${path}/item-detail`}>
                         <SearchOutlined />
+                        Detail
                     </Link>
                 </Button>
 
@@ -143,6 +150,13 @@ const ActionMenu = (record, handleActionClick, storeName) => {
             <Menu.Item key="AddToCart">
                 <Button disabled className="menu-btn">
                     <ShoppingCartOutlined />
+                    Cart
+                </Button>
+            </Menu.Item>
+            <Menu.Item key="GetOnlineSpec">
+                <Button className="menu-btn" onClick={getOnlineSpecification}>
+                    <WindowsOutlined />
+                    Spec
                 </Button>
             </Menu.Item>
         </Menu >
@@ -161,3 +175,9 @@ export const StoreHeader = ({ storeName, isLoading }) => (
         </Col>
     </Row>
 );
+
+const mapStateToProps = (state) => {
+
+}
+
+connect(mapStateToProps, {})(ActionMenu)

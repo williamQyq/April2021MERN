@@ -216,15 +216,9 @@ def wait_new_items_loaded(driver, searched_items):
 
 def get_product_specification(driver):
     spec = {}
-    try:
-        spec_btn = WebDriverWait(driver, 20).until(
-            EC.presence_of_element_located(
-                (By.XPATH,
-                 '//button[@data-track="Specifications: Accordion Open"]')
-            )
-        ).click()
-    except:
-        return
+    value = []
+    key = []
+    open_specification_wrapper(driver)
 
     try:
         row_values = WebDriverWait(driver, 20).until(
@@ -236,19 +230,30 @@ def get_product_specification(driver):
         row_titles = WebDriverWait(driver, 20).until(
             EC.presence_of_all_elements_located(
                 (By.XPATH,
-                 '//div[@class="row-title"]')
+                 '//div[@class="title-container col-xs-6 v-fw-medium"]/div')
             )
         )
-        index = 0
-        for row_title in row_titles:
-            print(row_title.text)
-            # key = row_title.text
-            # value = row_values[index].text
-            # spec[key] = value
+        for row_value in row_values:
+            value.append(row_value.text)
 
+        for row_title in row_titles:
+            key.append(row_title.text)
+
+        spec = dict(zip(key, value))
+       
     except Exception as e:
         return
 
-    # spec['upc'] = upc
-
     return spec
+
+
+def open_specification_wrapper(driver):
+    try:
+        spec_btn = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located(
+                (By.XPATH,
+                 '//button[@data-track="Specifications: Accordion Open"]')
+            )
+        ).click()
+    except:
+        return
