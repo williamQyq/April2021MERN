@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import ChartMenu from 'component/ItemDetail/ItemDetailChartMenu.js';
 import { getKeepaStat } from 'reducers/actions/keepaActions';
 
-const { Title} = Typography;
+const { Title } = Typography;
 const { Search } = Input;
 
 class KeepaStat extends React.Component {
@@ -128,7 +128,7 @@ class KeepaStat extends React.Component {
 
 
         return (
-            <Row className="keepa-row" >
+            <>
                 <Title level={4}> Keepa Search </Title>
                 <Divider />
                 <Search
@@ -144,7 +144,7 @@ class KeepaStat extends React.Component {
                 <Divider dashed={true} />
                 <ChartMenu />
                 <Divider />
-            </Row>
+            </>
         );
     }
 

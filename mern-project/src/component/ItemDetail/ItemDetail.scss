@@ -1,4 +1,4 @@
-.ant-divider-horizontal{
+.ant-divider-horizontal {
     display: flex;
     clear: both;
     width: 100%;
@@ -26,18 +26,23 @@
             margin-right: 8px;
         }
     }
-    .chart-row {
+    .chart {
         width: 900px;
     }
-    .key-stat-row {
-        margin: 24px 0;
-        padding-top: 2px;
-        .key-stat-col {
-            width: 192px;
-            margin-right: 48px;
-        }
+
+    .card {
+        margin-top: 16px;
+        margin-bottom: 16px;
+        padding: 16px 18px;
+        border-radius: 15px;
+        box-shadow: 5px 8px 24px 5px rgba(208, 216, 243, 0.8);
     }
-    .keepa-row{
+
+    .key-stat-col {
+        width: 192px;
+        margin-right: 48px;
+    }
+    .keepa-row {
         margin: 24px 0;
         padding-top: 2px;
     }

@@ -2,7 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router-dom'; // Link pass state props to leftPanel and sideitemDetail
 import 'antd/dist/antd.css';
 import 'component/ItemDetail/ItemDetail.scss';
-import { Row } from 'antd';
+import { Col, Row } from 'antd';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { LeftOutlined } from '@ant-design/icons';
@@ -33,9 +33,12 @@ class ItemDetail extends React.Component {
                 <>
                     <Row className="main-grid">
                         {/* <LeftOutlined className="go-back-btn" style={{ fontSize: '24px' }} onClick={this.goBack} /> */}
-                        <LeftPanel />
-                        <OrderPanel />
-
+                        <Col flex="1 0 66.6666666667%" className="left-panel" >
+                            <LeftPanel />
+                        </Col>
+                        <Col flex="1 0 27.7777777778%" className="right-panel">
+                            <OrderPanel />
+                        </Col>
                     </Row>
                 </>
             );
