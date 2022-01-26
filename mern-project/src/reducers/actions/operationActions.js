@@ -4,7 +4,6 @@ import {
     GET_AMZ_PROD_PRICING,
     RES_LOADING,
     UPLOAD_ASINS_MAPPING,
-    GET_ITEM_SPEC,
     // GET_ERRORS,
 } from './types';
 
@@ -46,12 +45,6 @@ export const uploadAsinsMapping = (file) => dispatch => {
         })
     })
 }
-
-export const getItemSpec = (record) => dispatch => {
-    dispatch(setResLoading);
-    
-}
-
 
 const setResLoading = () => {
     return {

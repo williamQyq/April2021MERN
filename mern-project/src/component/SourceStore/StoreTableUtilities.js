@@ -7,7 +7,8 @@ import {
     WindowsOutlined,
 } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
+import { getItemSpec } from "reducers/actions/itemBBActions";
 
 const { Text, Title } = Typography;
 
@@ -106,7 +107,15 @@ export const tableColumns = (getColumnSearchProps, handleActionClick, storeName)
                 width: '10%',
                 render: (text, record) => (
                     <Space size="middle">
-                        <Dropdown overlay={ActionMenu(record, handleActionClick, storeName)} placement="bottomCenter">
+                        <Dropdown
+                            trigger={["click"]}
+                            overlay={
+                                <ActionMenu
+                                    record={record}
+                                    handleActionClick={handleActionClick}
+                                    storeName={storeName}
+                                />}
+                            placement="bottomCenter">
                             <a href="# " className="ant-dropdown-link" >
                                 More Actions <DownOutlined />
                             </a>
@@ -120,12 +129,15 @@ export const tableColumns = (getColumnSearchProps, handleActionClick, storeName)
 
 }
 
-const ActionMenu = (record, handleActionClick, storeName) => {
-    const location = useLocation()
+const ActionMenu = (props) => {
+    const { record, handleActionClick, storeName } = props
+    const location = useLocation();
+    const dispatch = useDispatch()
     const path = location.pathname;
 
     const getOnlineSpecification = () => {
-        console.log(`record from spec${JSON.stringify(record,null,4)}`)
+        getItemSpec(record, dispatch);
+        console.log(`record from spec${JSON.stringify(record, null, 4)}`)
     }
     return (
         <Menu>
@@ -175,9 +187,3 @@ export const StoreHeader = ({ storeName, isLoading }) => (
         </Col>
     </Row>
 );
-
-const mapStateToProps = (state) => {
-
-}
-
-connect(mapStateToProps, {})(ActionMenu)
