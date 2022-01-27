@@ -6,7 +6,7 @@ const { test } = require('./unit_test.js'); //unit test for python scripts
 const { scrapeScheduler } = require('./script_packages/scrapeScheduler.js');    //scripts scheduler, node-cron
 const { amazonScheduler } = require('./amazonSP/amazonSchedule.js');
 const { bbLinkScraper } = require('./script_packages/scraper.js');
-const wms = require("./wmsDatabase.js");    // @local wms server connection
+const wms = require("./wms/wmsDatabase.js");    // @local wms server connection
 const { Server } = require("socket.io")
 // @CREATE WMS CONNECTION
 wms.wmsService();

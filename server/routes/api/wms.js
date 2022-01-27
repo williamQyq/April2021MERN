@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../../middleware/auth.js');
-const wms = require('../../wmsDatabase.js');
+const wms = require('../../wms/wmsDatabase.js');
 //@route GET api/wms
 router.get('/quantity', (req, res) => {
     const { upc } = req.query;
