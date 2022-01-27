@@ -7,7 +7,6 @@ import { defaultSettings, title, footer } from 'component/Operation/Settings.js'
 import { EditableCell, mergedColumns } from 'component/Operation/OperationEditableEle.js';
 import { getProductPricing } from 'reducers/actions/operationActions.js';
 import OperationMenu from 'component/Operation/OperationMenu';
-import { ExpandAltOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
 

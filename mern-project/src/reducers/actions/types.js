@@ -3,9 +3,11 @@ export const GET_ITEMS = 'GET_ITEMS';
 export const ADD_ITEM = 'ADD_ITEM';
 export const DELETE_ITEM = 'DELETE_ITEM';
 export const ITEMS_LOADING = 'ITEMS_LOADING';
+// *deprecate soon*
 export const SET_TABLE_STATE = 'SET_TABLE_STATE';
+export const SET_TABLE_SETTINGS = 'SET_TABLE_SETTINGS';
 
-// STORES
+// @STORES*
 export const MICROSOFT = 'MICROSOFT';
 export const BESTBUY = 'BESTBUY';
 export const COSTCO = 'COSTCO';
@@ -21,7 +23,7 @@ export const GET_CC_ITEMS = 'GET_BB_ITEMS';
 export const GET_MS_ITEMS = 'GET_MS_ITEMS';
 export const GET_MS_ITEM_DETAIL = 'GET_MS_ITEM_DETAIL';
 
-// AUTHENTICATE STATUS
+// @AUTHENTICATE STATUS
 export const USER_LOADING = 'USER_LOADING';
 export const USER_LOADED = 'USER_LOADED';
 export const AUTH_ERROR = 'AUTH_ERROR';
@@ -37,9 +39,14 @@ export const CLEAR_ERRORS = 'CLEAR_ERRORS';
 export const KEEPA_LOADING = 'KEEPA_LOADING';
 export const GET_KEEPA_STAT = 'GET_KEEPA_STAT';
 
-// @OPERATION: AMAZON STATUS
-export const AMAZON_RES_LOADING = 'AMAZON_RES_LOADING';
-export const AMAZON_RES_LOADED = 'AMAZON_RES_LOADED';
-export const GET_UPC_ASIN_MAPPING = 'GET_UPC_ASIN_MAPPING';
+// @OPERATION: AMAZON
+export const RES_LOADING = 'RES_LOADING';
+export const RES_LOADED = 'RES_LOADED';
 export const GET_AMZ_PROD_PRICING = 'GET_AMZ_PROD_PRICING';
+
+// @OPERATION: UPLOAD
 export const UPLOAD_ASINS_MAPPING = 'UPLOAD_MAPPING';
+export const GET_UPC_ASIN_MAPPING = 'GET_UPC_ASIN_MAPPING';
+export const GET_ITEM_SPEC = 'GET_ITEM_SPEC';
+
+

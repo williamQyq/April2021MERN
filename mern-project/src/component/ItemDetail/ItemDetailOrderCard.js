@@ -16,82 +16,79 @@ const layout = {
 const cardStyle = {
     width: "300px",
     borderRadius: "4px",
-    boxShadow: "5px 8px 24px 5px rgba(208, 216, 243, 0.6)"
+    boxShadow: "5px 8px 24px 5px rgba(208, 216, 243, 0.8)"
 
 }
 
 class OrderPanel extends React.Component {
-    
+
     onFinish = (values) => {
         console.log(values);
     }
     render() {
         return (
-            <Col flex="1 0 27.7777777778%" className="right-panel">
-                <Card
-                    style={cardStyle}
-                    actions={[
-                        <ShoppingCartOutlined key="shopping"/>,
-                        <EditOutlined key="edit" />,
-                        <EllipsisOutlined key="ellipsis" />,
-                    ]}
-                >
+            <Card
+                style={cardStyle}
+                actions={[
+                    <ShoppingCartOutlined key="shopping" />,
+                    <EditOutlined key="edit" />,
+                    <EllipsisOutlined key="ellipsis" />,
+                ]}
+            >
+                <Skeleton loading={this.props.loading} >
+                    <Meta title="Place Order" />
 
-                    <Skeleton loading={this.props.loading} >
-                        <Meta title="Place Order" />
+                    <Divider />
+                    <Form
+                        {...layout} name="nest-messages"
+                        onFinish={this.onFinish}
+                        initialValues={{
+                            product: this.props.name,
+                            website: this.props.link,
+                        }}
+                    >
+                        <Form.Item name='product' label="Product">
+                            <Input />
+                        </Form.Item>
 
-                        <Divider />
-                        <Form
-                            {...layout} name="nest-messages"
-                            onFinish={this.onFinish}
-                            initialValues={{
-                                product: this.props.name,
-                                website: this.props.link,
-                            }}
+                        <Form.Item name='website' label='Website'>
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            name={['order', 'price']}
+                            label="Price"
+                            rules={[
+                                {
+                                    required: true,
+                                    type: 'number',
+                                    min: 0,
+                                    max: 9999,
+                                },
+                            ]}
                         >
-                            <Form.Item name='product' label="Product">
-                                <Input />
-                            </Form.Item>
+                            <InputNumber />
+                        </Form.Item>
+                        <Form.Item
+                            name={['order', 'amount']}
+                            label="Amount"
+                            rules={[
+                                {
+                                    required: true,
+                                    type: 'number',
+                                    min: 0,
+                                    max: 9999,
+                                },
+                            ]}
+                        >
+                            <InputNumber />
+                        </Form.Item>
 
-                            <Form.Item name='website' label='Website'>
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                                name={['order', 'price']}
-                                label="Price"
-                                rules={[
-                                    {
-                                        required: true,
-                                        type: 'number',
-                                        min: 0,
-                                        max: 9999,
-                                    },
-                                ]}
-                            >
-                                <InputNumber />
-                            </Form.Item>
-                            <Form.Item
-                                name={['order', 'amount']}
-                                label="Amount"
-                                rules={[
-                                    {
-                                        required: true,
-                                        type: 'number',
-                                        min: 0,
-                                        max: 9999,
-                                    },
-                                ]}
-                            >
-                                <InputNumber />
-                            </Form.Item>
-
-                            <Form.Item name={['Order', 'introduction']} label="Introduction">
-                                <Input.TextArea />
-                            </Form.Item>
-                        </Form>
-                    </Skeleton>
-                </Card>
-            </Col>
+                        <Form.Item name={['Order', 'introduction']} label="Introduction">
+                            <Input.TextArea />
+                        </Form.Item>
+                    </Form>
+                </Skeleton>
+            </Card>
         );
 
     }

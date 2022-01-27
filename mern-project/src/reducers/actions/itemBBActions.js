@@ -1,6 +1,12 @@
 import axios from 'axios';
 import Moment from 'moment';
-import { GET_BB_ITEMS, GET_BB_ITEM_DETAIL, ITEMS_LOADING, SET_TABLE_STATE } from './types';
+import {
+    GET_BB_ITEMS,
+    GET_BB_ITEM_DETAIL,
+    ITEMS_LOADING,
+    GET_ITEM_SPEC,
+    SET_TABLE_STATE
+} from './types';
 
 export const getBBItems = () => dispatch => {
     dispatch(setItemsLoading());
@@ -42,14 +48,30 @@ export const getBBItemDetail = (_id) => dispatch => {
     })
 };
 
-export const setTableState = (clickedId) => dispatch => {
+export const setTableSettings = (dispatch, store, clickedId) => {
     dispatch(setItemsLoading());
-    let tableState = {
-        clickedId: clickedId
-    }
 
     dispatch({
         type: SET_TABLE_STATE,
-        payload: tableState
+        payload: {
+            store,
+            clickedId
+        }
+    })
+}
+
+export const getItemSpec = async (record, storeName, dispatch) => {
+    dispatch(setItemsLoading);
+    return axios.get('/api/bb_items/item-spec', {
+        params: {
+            link: record.link,
+            store: storeName
+        }
+    }).then(res => {
+        dispatch({
+            type: GET_ITEM_SPEC,
+            payload: res.data
+        })
+        return res.data
     })
 }

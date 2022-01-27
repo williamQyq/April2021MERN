@@ -132,7 +132,7 @@ class BBScript extends Script {
     constructor(model) {
         super(model);
         this.storeName = "Bestbuy";
-        this.link = `https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&browsedCategory=pcmcat138500050001&id=pcat17071&iht=n&ks=960&list=y&qp=condition_facet%3DCondition~New&sc=Global&st=categoryid%24pcmcat138500050001&type=page&usc=All%20Categories`;
+        this.link = `https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&browsedCategory=pcmcat138500050001&cp=1&id=pcat17071&iht=n&ks=960&list=y&qp=condition_facet%3DCondition~New&sc=Global&st=categoryid%24pcmcat138500050001&type=page&usc=All%20Categories`;
         this.linkSearchScriptPath = './script_packages/scrape_bb_item_on_sku.py';
         this.pageNumScriptPath = './script_packages/scrape_bb_laptops_num.py';
         this.skuItemScriptPath = './script_packages/scrape_bb_items.py';

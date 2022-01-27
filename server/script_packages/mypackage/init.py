@@ -46,5 +46,4 @@ def get_Chrome_driver_path():
     cwd = os.getcwd()
     driver_path = '\script_packages\mypackage\chromedriver.exe'
     chrome_driver_path = cwd+driver_path
-
     return chrome_driver_path

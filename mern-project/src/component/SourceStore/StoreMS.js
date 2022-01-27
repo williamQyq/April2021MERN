@@ -5,18 +5,10 @@ import { getMSItems } from 'reducers/actions/itemMSActions';
 import { setTableState } from 'reducers/actions/itemActions';   //save user's table settings
 import { MICROSOFT } from 'reducers/actions/types';
 import PropTypes from 'prop-types';
-import { Table, Input, Button, Space, Typography, Row, Menu, Dropdown, Divider, Col, Tooltip, Upload } from 'antd';
+import { Table, Input, Button, Space, Divider } from 'antd';
 import Highlighter from 'react-highlight-words';
-import {
-    SearchOutlined,
-    DownOutlined,
-    PlusCircleOutlined,
-    ShoppingCartOutlined,
-} from '@ant-design/icons';
-import { Link, withRouter } from 'react-router-dom';
-import { scrollToTableRow, locateSearchedItem } from 'component/SourceStore/StoreTableUtilities';
-
-const { Title, Text } = Typography;
+import { SearchOutlined } from '@ant-design/icons';
+import { scrollToTableRow, locateSearchedItem, tableColumns, StoreHeader } from 'component/SourceStore/StoreTableUtilities';
 
 class MS extends React.Component {
     constructor(props) {
@@ -140,128 +132,13 @@ class MS extends React.Component {
     };
 
     render() {
-        const path = this.props.match.path;
         const data = this.props.items;
-        const { loading } = this.state;
-
-        //create columns data based on dataIndex
-        const columns = [
-            {
-                title: 'Name',
-                dataIndex: 'name',
-                key: 'name',
-                width: '30%',
-                ...this.getColumnSearchProps('name'),
-                // sorter: (a, b) => a.name.length - b.name.length,
-                // sortDirections: ['descend', 'ascend'],
-            },
-            {
-                title: 'UPC',
-                dataIndex: 'upc',
-                key: 'upc',
-                width: '15%',
-                ...this.getColumnSearchProps('upc'),
-            },
-            {
-                title: 'Quantity',
-                dataIndex: 'qty',
-                key: 'quantity',
-                width: '10%',
-                sorter: (a, b) => a.qty - b.qty,
-            },
-            {
-                title: 'Price Diff',
-                dataIndex: 'priceDiff',
-                key: 'priceDiff',
-                width: '10%',
-                // defaultSortOrder: tableState.priceDiff,
-                sorter: (a, b) => a.priceDiff - b.priceDiff,
-                render: (text, record) => {
-                    text = Math.round(parseFloat(text));
-                    return (
-                        record.isCurrentPriceLower ?
-                            <Text type="success">$ {text}</Text> : <Text type="danger">$ {text}</Text>
-                    )
-                }
-            },
-            {
-                title: <Tooltip
-                    placement="topLeft"
-                    title='Click to sort on price diff'>
-                    Current Price
-                </Tooltip>,
-                dataIndex: 'currentPrice',
-                key: 'currentPrice',
-                width: '10%',
-                // defaultSortOrder: tableState.currentPrice,
-                sorter: (a, b) => a.currentPrice - b.currentPrice,
-                render: (text, record) => (
-                    record.isCurrentPriceLower ? <Text type="success">$ {text}</Text>
-                        : <Text type="danger">$ {text}</Text>
-                )
-            },
-            {
-                title: 'Capture Date',
-                dataIndex: 'captureDate',
-                key: 'captureDate',
-                width: '10%',
-                // defaultSortOrder: tableState.captureDate,
-                sorter: (a, b) => new Date(a.captureDate) - new Date(b.captureDate),
-                sortDirections: ['descend', 'ascend', 'descend'],
-            },
-            {
-                title: 'Action',
-                key: 'action',
-                width: '10%',
-                render: (text, record) => (
-                    <Space size="middle">
-                        <Dropdown overlay={menu(record)} placement="bottomCenter">
-                            <a href="# " className="ant-dropdown-link" >
-                                More Actions <DownOutlined />
-                            </a>
-                        </Dropdown>
-                    </Space>
-                ),
-            },
-
-        ];
-
-        const menu = (record) => (
-            <Menu>
-                <Menu.Item key="AddToWatchList">
-                    <Button disabled className="menu-btn">
-                        <PlusCircleOutlined />
-                    </Button>
-                </Menu.Item>
-                <Menu.Item key="GetItemDetail">
-
-                    <Button className="menu-btn" onClick={() => this.handleClick(MICROSOFT, record._id)}>
-                        <Link to={`${path}/item-detail`}>
-                            <SearchOutlined />
-                        </Link>
-                    </Button>
-
-                </Menu.Item>
-                <Menu.Item key="AddToCart">
-                    <Button disabled className="menu-btn">
-                        <ShoppingCartOutlined />
-                    </Button>
-                </Menu.Item>
-            </Menu >
-        );
+        const scroll = { y: "calc(100vh - 335px)" };
+        const columns = tableColumns(this.getColumnSearchProps, this.handleClick, MICROSOFT)
 
         return (
             <>
-                <Row gutter={16} style={{ alignItems: 'center' }}>
-                    <Col>
-                        <Title level={4}>Microsoft Store</Title>
-                    </Col>
-                    <Col>
-                        <Button type="primary" disabled={loading} loading={loading}>
-                            Retrieve Now
-                        </Button>
-                    </Col>
-                </Row>
+                <StoreHeader storeName={MICROSOFT} isLoading={this.state.loading} />
                 <Divider />
                 <Table
                     showSorterTooltip={false}
@@ -272,7 +149,7 @@ class MS extends React.Component {
                         showSizeChanger: true,
                         pageSizeOptions: ['10', '20', '50', '100']
                     }}
-                    scroll={{ y: "calc(100vh - 335px)" }}
+                    scroll={scroll}
                 />
             </>
         )
@@ -291,4 +168,4 @@ const mapStateToProps = (state) => ({
     itemDetail: state.item.itemDetail
 })
 
-export default withRouter(connect(mapStateToProps, { getMSItems, setTableState })(MS));
+export default connect(mapStateToProps, { getMSItems, setTableState })(MS);

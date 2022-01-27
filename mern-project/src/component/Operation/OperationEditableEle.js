@@ -47,7 +47,7 @@ export const mergedColumns = (actions) => {
         {
             title: 'Upc',
             dataIndex: 'upc',
-            editable: false
+            editable: true
         },
         {
             title: 'Name',
@@ -83,7 +83,7 @@ export const mergedColumns = (actions) => {
         {
             title: 'Action',
             key: 'action',
-            render: (_, record) => <Action actions={actions} record={record} />
+            render: (_, record) => <Action actions={actions} record={record} />,
         },
     ];
 
@@ -99,8 +99,9 @@ export const mergedColumns = (actions) => {
                 inputType: col.dataIndex === "settleRateUniv" ? "number" : "text",
                 dataIndex: col.dataIndex,
                 title: col.title,
-                editing: actions.isEditing(record)
-            })
+                editing: actions.isEditing(record),
+            }),
+
         }
     });
 
@@ -191,7 +192,8 @@ export const nestedTableColumns = (actions) => {
                 inputType: col.dataIndex === "settlementRate" ? "number" : "text",
                 dataIndex: col.dataIndex,
                 title: col.title,
-                editing: actions.isEditing(record)
+                editing: actions.isEditing(record),
+
             })
         }
     });
@@ -201,7 +203,7 @@ export const nestedTableColumns = (actions) => {
  * @usage: main table and nested child tables action  
  */
 const menu = (
-    <Menu>
+    <Menu disabled>
         <Menu.Item key='action1'>Action 1</Menu.Item>
         <Menu.Item key='action2'>Action 2</Menu.Item>
     </Menu>
@@ -230,6 +232,7 @@ const Action = ({ actions, record }) => {
         </Space>) : (
         <Space size="middle">
             <Link
+                disabled
                 onClick={(e) => {
                     e.stopPropagation();
                     actions.publish(record)

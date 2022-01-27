@@ -31,6 +31,11 @@ const routes = [
     component: lazy(() => import('component/InBound')),
     exact: true
   },
+  {
+    path: 'app/configuration',
+    component: lazy(() => import('component/Operation/Configuration')),
+    exact: true
+  }
 
   // {
   //   path: 'app/price-alert',

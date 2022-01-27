@@ -39,7 +39,6 @@ router.get('/', (req, res) => {
 
 });
 
-
 router.post('/push_price/:_id', (req, res) => {
     ItemBB.findByIdAndUpdate(req.params._id, {
         $push: {
@@ -75,6 +74,12 @@ router.get('/detail/:_id', (req, res) => {
             res.json(items)
         });
 });
+
+router.get('/item-spec', (req, res) => {
+    const { link, store } = req.query;
+    
+    res.json("success")
+})
 
 
 module.exports = router;

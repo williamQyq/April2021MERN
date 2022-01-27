@@ -6,8 +6,8 @@ const { Title, Text } = Typography;
 
 const KeyStat = () => {
     return (
-        <>
-            <Row className="key-stat-row">
+        <div className='card'>
+            <Row>
                 <Title level={4}>Key Statistics</Title>
                 <Divider />
                 <Col className="key-stat-col">
@@ -23,7 +23,7 @@ const KeyStat = () => {
                     <Row><Text>-</Text></Row>
                 </Col>
             </Row>
-            <Row className="key-stat-row">
+            <Row>
                 <Title level={4}>WMS Statistics</Title>
                 <Divider />
                 <Col className="key-stat-col">
@@ -43,7 +43,7 @@ const KeyStat = () => {
                     <Row><Text>-</Text></Row>
                 </Col>
             </Row>
-        </>
+        </div>
     );
 }
 

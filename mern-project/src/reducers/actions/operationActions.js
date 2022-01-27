@@ -2,7 +2,7 @@ import axios from 'axios';
 import Papa from "papaparse";
 import {
     GET_AMZ_PROD_PRICING,
-    AMAZON_RES_LOADING,
+    RES_LOADING,
     UPLOAD_ASINS_MAPPING,
     // GET_ERRORS,
 } from './types';
@@ -10,7 +10,7 @@ import {
 // GET Upc Asins Mapping Record from db, then get asin pricing info via SP API,
 // then get upc quantity info from wms. Finally, dispatch product pricing data.
 export const getProductPricing = () => dispatch => {
-    dispatch(setAmazonResLoading());
+    dispatch(setResLoading());
     axios.get('/api/operation').then(res => {
         getWmsProdQty(res.data).then(result => {
             dispatch({
@@ -31,13 +31,19 @@ export const getWmsProdQty = prods => {
 }
 
 export const uploadAsinsMapping = (file) => dispatch => {
-    // dispatch(setAmazonResLoading());
+    dispatch(setResLoading());
     return new Promise((resolve, reject) => {
         Papa.parse(file, {
             complete: (results) => {
                 const uploadFile = results.data;
                 axios.post('/api/operation/upload/asins-mapping', { uploadFile })
-                    .then(res => resolve(res))
+                    .then(res => {
+                        dispatch({
+                            type: UPLOAD_ASINS_MAPPING,
+                            payload: res.data
+                        })
+                        resolve(res)
+                    })
             },
             error: err => {
                 reject(err)
@@ -46,8 +52,8 @@ export const uploadAsinsMapping = (file) => dispatch => {
     })
 }
 
-const setAmazonResLoading = () => {
+const setResLoading = () => {
     return {
-        type: AMAZON_RES_LOADING
+        type: RES_LOADING
     };
 }

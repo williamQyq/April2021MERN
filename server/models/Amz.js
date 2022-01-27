@@ -26,10 +26,10 @@ const AmzProdPricingSchema = new Schema({
             default: Date.now
         }
     }
-}, { collection: 'AmzProdPricing' });
+}, { collection: 'amzProdPricing' });
 
 
 module.exports = {
-    ProdPricing: mongoose.model('amzProdPricing', AmzProdPricingSchema),
-    Identifier: mongoose.model('amzIdentifier', IdentifierSchema)
+    ProdPricing: mongoose.model('AmzProdPricing', AmzProdPricingSchema),
+    Identifier: mongoose.model('AmzIdentifier', IdentifierSchema)
 }

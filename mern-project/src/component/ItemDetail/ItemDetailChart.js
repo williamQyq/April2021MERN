@@ -1,6 +1,6 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
-import { Divider, Row } from 'antd';
+import { Divider } from 'antd';
 import ChartMenu from 'component/ItemDetail/ItemDetailChartMenu.js';
 import { useSelector } from 'react-redux';
 import { setChartConfig, setChartData, setColorOnPriceUpOrDrop, setDataPoints, setLabels } from 'component/ItemDetail/ChartUtilities';
@@ -16,15 +16,13 @@ const PriceHistoryChart = () => {
     const config = setChartConfig(data);
 
     return (
-        <Row className="chart-row">
+        <div className='chart'>
             <Line
                 data={config.data}
                 options={config.options} />
             <Divider dashed={true} />
             <ChartMenu />
-            <Divider />
-        </Row>
-
+        </div>
     );
 }
 

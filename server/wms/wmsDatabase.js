@@ -1,7 +1,7 @@
 const tunnel = require('tunnel-ssh');
 const { MongoClient } = require('mongodb');
 const express = require('express');
-const wmsConfig = require('./config/wmsConfig');
+const wmsConfig = require('../config/wmsConfig');
 
 //when modules/instance being required in nodejs, it will only load once.
 let wmsDatabase;

@@ -1,7 +1,8 @@
 import {
     GET_AMZ_PROD_PRICING,
-    AMAZON_RES_LOADING,
-    UPLOAD_ASINS_MAPPING
+    RES_LOADING,
+    UPLOAD_ASINS_MAPPING,
+    GET_ITEM_SPEC,
 } from './actions/types';
 
 const initialState = {
@@ -18,7 +19,7 @@ export default function Reducer(state = initialState, action) {
                 loading: false
             };
 
-        case AMAZON_RES_LOADING:
+        case RES_LOADING:
             return {
                 ...state,
                 loading: true

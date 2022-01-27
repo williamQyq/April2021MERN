@@ -5,6 +5,7 @@ import time
 from random import seed
 from random import randint
 
+
 def track_instock_info(product, driver):
     driver.get(product["link"])
 
@@ -114,10 +115,12 @@ def get_sku_items(driver):
     #     click_next(driver)
     #     wait_until_page_refresh(driver, searched_items)
 
+
 def sleep_random_sec(min, max):
     seed()
     randomSec = randint(7, 10)
     time.sleep(randomSec)
+
 
 def get_page_items(sku_items):
     for item_element in sku_items:
@@ -209,3 +212,48 @@ def wait_new_items_loaded(driver, searched_items):
         return new_items
     except:
         return False
+
+
+def get_product_specification(driver):
+    spec = {}
+    value = []
+    key = []
+    open_specification_wrapper(driver)
+
+    try:
+        row_values = WebDriverWait(driver, 20).until(
+            EC.presence_of_all_elements_located(
+                (By.XPATH, '//div[@class="row-value col-xs-6 v-fw-regular"]')
+            )
+        )
+
+        row_titles = WebDriverWait(driver, 20).until(
+            EC.presence_of_all_elements_located(
+                (By.XPATH,
+                 '//div[@class="title-container col-xs-6 v-fw-medium"]/div')
+            )
+        )
+        for row_value in row_values:
+            value.append(row_value.text)
+
+        for row_title in row_titles:
+            key.append(row_title.text)
+
+        spec = dict(zip(key, value))
+       
+    except Exception as e:
+        return
+
+    return spec
+
+
+def open_specification_wrapper(driver):
+    try:
+        spec_btn = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located(
+                (By.XPATH,
+                 '//button[@data-track="Specifications: Accordion Open"]')
+            )
+        ).click()
+    except:
+        return
