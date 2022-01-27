@@ -76,8 +76,9 @@ router.get('/detail/:_id', (req, res) => {
 });
 
 router.get('/item-spec', (req, res) => {
-    const { link } = req.query;
-    res.json()
+    const { link, store } = req.query;
+    
+    res.json("success")
 })
 
 

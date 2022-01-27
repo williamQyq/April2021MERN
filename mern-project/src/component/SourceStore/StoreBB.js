@@ -130,15 +130,13 @@ class BB extends React.Component {
         this.setState({ searchText: '' });
     };
 
-    handleActionClick = (store, _id) => {
-        this.props.setTableState(store, _id);
-    };
+   
 
     render() {
         const data = this.props.items;
         const { loading } = this.state;
 
-        const columns = tableColumns(this.getColumnSearchProps, this.handleActionClick, BESTBUY);
+        const columns = tableColumns(this.getColumnSearchProps, BESTBUY);
 
         const scroll = {y:"calc(100vh - 335px)"};
 

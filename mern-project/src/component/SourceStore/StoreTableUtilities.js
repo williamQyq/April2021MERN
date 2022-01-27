@@ -1,4 +1,4 @@
-import { Menu, Button, Typography, Tooltip, Space, Dropdown, Row, Col } from "antd";
+import { Menu, Button, Typography, Tooltip, Space, Dropdown, Row, Col, message } from "antd";
 import {
     SearchOutlined,
     ShoppingCartOutlined,
@@ -7,8 +7,8 @@ import {
     WindowsOutlined,
 } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
-import { connect, useDispatch } from "react-redux";
-import { getItemSpec } from "reducers/actions/itemBBActions";
+import { useDispatch } from "react-redux";
+import { getItemSpec, setTableSettings } from "reducers/actions/itemBBActions";
 
 const { Text, Title } = Typography;
 
@@ -34,7 +34,7 @@ export const scrollToTableRow = (document, row) => {
     v.scrollTop = tableRowHight * (row - 3);
 }
 
-export const tableColumns = (getColumnSearchProps, handleActionClick, storeName) => {
+export const tableColumns = (getColumnSearchProps, storeName) => {
     //create columns data based on dataIndex
     return (
         [
@@ -110,11 +110,8 @@ export const tableColumns = (getColumnSearchProps, handleActionClick, storeName)
                         <Dropdown
                             trigger={["click"]}
                             overlay={
-                                <ActionMenu
-                                    record={record}
-                                    handleActionClick={handleActionClick}
-                                    storeName={storeName}
-                                />}
+                                ActionMenu({ record, storeName })
+                            }
                             placement="bottomCenter">
                             <a href="# " className="ant-dropdown-link" >
                                 More Actions <DownOutlined />
@@ -129,30 +126,51 @@ export const tableColumns = (getColumnSearchProps, handleActionClick, storeName)
 
 }
 
+message.config = {
+    maxCount: 3
+}
+
 const ActionMenu = (props) => {
-    const { record, handleActionClick, storeName } = props
+    const { record, storeName } = props
     const location = useLocation();
     const dispatch = useDispatch()
     const path = location.pathname;
 
     const getOnlineSpecification = () => {
-        getItemSpec(record, dispatch);
-        console.log(`record from spec${JSON.stringify(record, null, 4)}`)
+        getItemSpec(record, storeName, dispatch).then(status => {
+            if (status === "success")
+                message.success("Get Tech Specification!")
+            else
+                message.error("Fail to get Tech Specification!")
+        }).catch(e => {
+            message.error("Fail to get Tech Specification!")
+        });
+    }
+
+    const handleActionClick = (store, _id) => {
+        setTableSettings(dispatch, store, _id);
+    };
+
+    const buttonSetting = {
+        block: true,
+        size: "large",
+        type: "link"
     }
     return (
         <Menu>
             <Menu.Item key="AddToWatchList">
-                <Button disabled className="menu-btn">
+                <Button disabled {...buttonSetting}>
                     <PlusCircleOutlined />
+
                 </Button>
             </Menu.Item>
             <Menu.Item key="GetItemDetail">
 
-                <Button className="menu-btn" onClick={() => {
+                <Button {...buttonSetting} onClick={() => {
                     console.log(`clicked record ============:\n${JSON.stringify(record, null, 4)}`)
                     handleActionClick(storeName, record._id)
                 }}>
-                    <Link to={`${path}/item-detail`}>
+                    <Link to={`${path}/item-detail`} className="action-link">
                         <SearchOutlined />
                         Detail
                     </Link>
@@ -160,13 +178,13 @@ const ActionMenu = (props) => {
 
             </Menu.Item>
             <Menu.Item key="AddToCart">
-                <Button disabled className="menu-btn">
+                <Button disabled {...buttonSetting}>
                     <ShoppingCartOutlined />
                     Cart
                 </Button>
             </Menu.Item>
             <Menu.Item key="GetOnlineSpec">
-                <Button className="menu-btn" onClick={getOnlineSpecification}>
+                <Button {...buttonSetting} onClick={getOnlineSpecification}>
                     <WindowsOutlined />
                     Spec
                 </Button>

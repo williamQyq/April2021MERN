@@ -31,13 +31,19 @@ export const getWmsProdQty = prods => {
 }
 
 export const uploadAsinsMapping = (file) => dispatch => {
-    // dispatch(setResLoading());
+    dispatch(setResLoading());
     return new Promise((resolve, reject) => {
         Papa.parse(file, {
             complete: (results) => {
                 const uploadFile = results.data;
                 axios.post('/api/operation/upload/asins-mapping', { uploadFile })
-                    .then(res => resolve(res))
+                    .then(res => {
+                        dispatch({
+                            type: UPLOAD_ASINS_MAPPING,
+                            payload: res.data
+                        })
+                        resolve(res)
+                    })
             },
             error: err => {
                 reject(err)
