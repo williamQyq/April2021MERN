@@ -73,7 +73,7 @@ def check_product_instock(driver):
 def get_sku_items_num(driver):
 
     try:
-        item_count = WebDriverWait(driver, 10).until(
+        footer = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located(
                 (By.XPATH, "//div[@class='footer top-border wrapper']//span"))
         ).text
@@ -81,9 +81,9 @@ def get_sku_items_num(driver):
         pattern_total_num = ".* of (\d*) items"
         pattern_num_per_page = "\d*-(\d*) of \d*"
         num_per_page = re.search(
-            pattern_num_per_page, item_count).group(1)
+            pattern_num_per_page, footer).group(1)
         total_num = re.search(
-            pattern_total_num, item_count).group(1)
+            pattern_total_num, footer).group(1)
     except:
         return False
 
