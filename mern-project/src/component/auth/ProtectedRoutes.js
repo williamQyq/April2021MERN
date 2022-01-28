@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import routes from 'component/auth/AuthenticatedRoutes.js'; // Route list
 import ErrorPage from 'component/ErrorPage';
 

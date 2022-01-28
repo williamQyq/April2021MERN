@@ -5,7 +5,6 @@ import 'component/ItemDetail/ItemDetail.scss';
 import { Col, Row } from 'antd';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { LeftOutlined } from '@ant-design/icons';
 import LeftPanel from 'component/ItemDetail/ItemDetailLeftPanel.js'
 import OrderPanel from 'component/ItemDetail/ItemDetailOrderCard.js';
 import { getItemDetail } from 'reducers/actions/itemActions.js';
