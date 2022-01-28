@@ -16,10 +16,10 @@ class Script {
         console.log(`[Script] Start running ${this.constructor.name}...`)
         return spawn('python', [scriptPath, arg]);
     }
-    listenOn(python) {
-        python.stdout.on('data', (data) => {
-            console.log(`Pipe data from script: ${this.constructor.name}...`);
-            this.data = JSON5.parse(data.toString());
+    listenOn(python, callback) {
+        python.stdout.pipe(JSONStream.parse()).on('data', (data) => {
+            // console.log(`Pipe data from script: ${this.constructor.name}...`);
+            callback(data)
         })
     }
     listenClose(python, resolve) {
