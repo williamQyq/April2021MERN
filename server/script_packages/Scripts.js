@@ -160,10 +160,10 @@ class Bestbuy extends Script {
             console.log(`# ${this.count} ${this.storeName} Attention**, this item does not have number sku. Skip: ${item.sku}`);
         }
     }
-
-    insertItemConfig(item) {
-
+    upsertItemConfig(item) {
+        // console.log(`config:\n${JSON.stringify(item, null, 4)}`)
     }
+
 }
 
 

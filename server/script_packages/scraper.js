@@ -56,7 +56,19 @@ const getAllNewLaptops = (store, pagesInfo, callback) => (
     })
 )
 
+const getItemConfiguration = (store, uri) => {
+    return new Promise((resolve, reject) => {
+        store.exec(store.itemConfigScriptPath, uri, (config) => {
+            store.upsertItemConfig(config)
+            resolve(config)
+        }).catch(e => reject(e))
+    })
+
+}
+
 module.exports = {
     getMicrosoftLaptops,
-    getBestbuyLaptops
+    getBestbuyLaptops,
+    getItemConfiguration
+
 }

@@ -4,7 +4,7 @@
 */
 const { Bestbuy } = require('./script_packages/Scripts')
 const BBItem = require('./models/BBItem')
-const { getBestbuyLaptops,getMicrosoftLaptops } = require('./script_packages/scraper.js');
+const { getBestbuyLaptops,getMicrosoftLaptops,getBestbuyItemConfig } = require('./script_packages/scraper.js');
 const { ObjectFlags } = require('typescript');
 
 const test = () => {
