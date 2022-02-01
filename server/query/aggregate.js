@@ -1,6 +1,6 @@
 // @get aggregate query
 
-const CUR_PRICE = {
+const LAST_PRICE = {
     $arrayElemAt: [
         "$price_timestamps.price", -1
     ]
@@ -16,7 +16,7 @@ const PRICE_CAPTURE_DATE = {
     ]
 }
 const PRICE_DIFF = {
-    $subtract: [CUR_PRICE, PREV_PRICE]
+    $subtract: [LAST_PRICE, PREV_PRICE]
 }
 
 // @sort aggregate query
@@ -35,9 +35,9 @@ const PROJ_ITEM = {
         sku: 1,
         qty: 1,
         upc: 1,
-        currentPrice: CUR_PRICE,
+        currentPrice: LAST_PRICE,
         isCurrentPriceLower: {
-            $lt: [CUR_PRICE, PREV_PRICE]
+            $lt: [LAST_PRICE, PREV_PRICE]
         },
         priceDiff: PRICE_DIFF,
         captureDate: PRICE_CAPTURE_DATE
@@ -52,13 +52,15 @@ const PROJ_ITEM_DETAIL = {
         qty: 1,
         upc: 1,
         price_timestamps: 1,
-        currentPrice: CUR_PRICE,
+        currentPrice: LAST_PRICE,
         priceDiff: PRICE_DIFF,
     }
 }
+
 // @update aggregate query
 module.exports = {
     PROJ_ITEM,
     PROJ_ITEM_DETAIL,
     SORT_ON_CAPTURE_DATE,
+    LAST_PRICE
 }

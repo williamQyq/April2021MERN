@@ -2,38 +2,29 @@
     this file for functionality testing purpose
 
 */
-
-
-const BBItem = require('./models/BBItem');
-const MsItem = require('./models/MsItem');
-
-const {
-    BBScript,
-    BBSkuItemScript,
-    MsScript,
-    MsSkuItemScript
-
-} = require('./script_packages/Scripts.js');
-const { bestbuyScraper, microsoftScraper } = require('./script_packages/scraper.js');
+const { Bestbuy } = require('./script_packages/Scripts')
+const BBItem = require('./models/BBItem')
+const { bestbuy } = require('./script_packages/scraper.js');
 const { ObjectFlags } = require('typescript');
 
 const test = () => {
     console.log("[Test] starting test.js");
+    bestbuy().then(res => { console.log(`bestbuy: `, res) });
+    // const store = new Bestbuy(BBItem);
+    // store.insertAndUpdatePriceChangedItem({
+    //     link: "www.bb.com",
+    //     sku: "111",
+    //     currentPrice: 2,
+    //     name: "test"
+    // })
+ 
+}
 
-    // updateSchema()
-    // microsoftScraper();
-    testBBSkuItem().then(result => {
-        console.log(result)
-    }).catch(err => {
-        console.log(err)
+const prom = (callback) => {
+    callback()
+    return new Promise((resolve, reject) => {
+        resolve("promise resolve")
     })
-
-    // testMsSkuItem()
-    //     .then(result => {
-    //         console.log(result)
-    //     }).catch(err => {
-    //         console.error(err);
-    //     })
 
 }
 
