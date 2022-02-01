@@ -3,7 +3,7 @@ import 'antd/dist/antd.css';
 import 'component/ItemDetail/ItemDetail.scss';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Col, Card, Skeleton, Divider, Input, Form, InputNumber } from 'antd';
+import { Card, Skeleton, Divider, Input, Form, InputNumber } from 'antd';
 import { EditOutlined, EllipsisOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import Meta from 'antd/lib/card/Meta';
 

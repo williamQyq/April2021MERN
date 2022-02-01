@@ -6,11 +6,7 @@ import time
 import json
 
 
-def get_sku_items_num(driver, sku_item_link):
-
-    result = {'total_num': 0, 'num_per_page': 0}
-    driver.get(sku_item_link)
-
+def get_sku_items_num(driver):
     try:
         totalProductsOutput = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located(
@@ -20,14 +16,14 @@ def get_sku_items_num(driver, sku_item_link):
 
         pattern_total_num = 'Showing.*of\s(\d*).*'
         pattern_num_per_page = 'Showing\s\d*\s-\s(\d*)\sof\s\d*.*'
-        result['total_num'] = re.search(
+        total_num = re.search(
             pattern_total_num, totalProductsOutput).group(1)
-        result['num_per_page'] = re.search(
+        num_per_page = re.search(
             pattern_num_per_page, totalProductsOutput).group(1)
     except:
         return False
-    finally:
-        return result
+
+    return num_per_page, total_num
 
 # get all Laptops New sku items
 
@@ -52,7 +48,7 @@ def get_sku_items(driver, link, pages_num):
         has_next_page = i < pages_num - 1
         if has_next_page:
             seed()
-            time.sleep(randint(10, 15))
+            time.sleep(randint(10, 13))
             navigate_next_page(driver, link, i)
             wait_until_page_refresh(driver, cur_item_list)
 
@@ -87,6 +83,7 @@ def get_cur_page_items(sku_items):
 
         # print out item, caught by process listen data.
         print(json.dumps(item))
+
         cur_item_list.append(prd_id)
 
     return cur_item_list

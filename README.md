@@ -132,3 +132,30 @@ Redux store maintains a global state that all components can access via ***Conne
 >
 >**server-> routes->api:**
 > - the endpoints respond to the proxy request made from client browsers.
+
+**Script packages**
+
+*Scripts.js*
+
+A class that defines all the functionalities that are needed for spawing a python selenium script process.
+
+On receiving data JSONstream, invoke callback function that is defined inside the outer function to process the receiving data. (Promise chain probably won't fit here, since not waiting for the completion of child process close. )
+
+quite complicated, probably not the best practice.
+
+        cosnt operation = (store,callback)=>{
+                store.exec(SCRIPT_PATH, PARM, (data)=>{
+                        ...data handling
+                        callback(data)
+                })
+
+        }
+
+Save Item in database procedure
+>1. $setOnInsert item.
+>2. check if db has documet and price changed.
+>3. push to price_timestamps array field
+
+scripts files need to print double quotes, cause standard JSON are formatted in double quotes
+
+still have questions on async performance improvement

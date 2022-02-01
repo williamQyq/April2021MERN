@@ -1,31 +1,30 @@
 const spawn = require('child_process').execFile;
 const JSON5 = require('json5');
 const JSONStream = require('JSONStream');
-const { getCurPrice } = require('../query/aggregate.js');
+const { LAST_PRICE } = require('../query/aggregate.js');
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 
 // Script class, integrate python scripts into nodejs
 class Script {
-    constructor(model, search = undefined) {
+    constructor(model) {
         this.model = model;
-        this.search = search;
         this.storeName = "";
-
+        this.count = 0;
     }
     spawnScript(scriptPath, arg) {
         arg = JSON.stringify(arg);
         console.log(`[Script] Start running ${this.constructor.name}...`)
         return spawn('python', [scriptPath, arg]);
     }
-    listenOn(python) {
-        python.stdout.on('data', (data) => {
-            console.log(`Pipe data from script: ${this.constructor.name}...`);
-            this.data = JSON5.parse(data.toString());
+    listenOn(python, callback) {
+        python.stdout.pipe(JSONStream.parse()).on('data', (data) => {
+            callback(data)
         })
     }
     listenClose(python, resolve) {
         python.on('exit', (code) => {
-            // console.log(`\n${this.constructor.name} child process close all stdio with code ${code}`);
-            resolve(this.data);
+            resolve(`\n${this.constructor.name} child process close all stdio with code ${code}`);
         })
     }
     listenErr(python, reject) {
@@ -41,16 +40,21 @@ class Script {
         })
     }
 
-    insertOrUpdateItem(item) {
-        let isSkuInsert = this.setOnInsert(item); //true if insert new item; false if item exists.
+    async insertAndUpdatePriceChangedItem(item) {
+        item.currentPrice = Number(item.currentPrice)
+        let isInsert = await this.setOnInsert(item); //true if insert new item; false if item exists.
 
-        if (!isSkuInsert) {
-            this.findPriceChangedItemAndUpdate(item);
+        //not insert, has doc in db
+        if (!isInsert) {
+            await this.findPriceChangedItemAndUpdate(item);
         }
+        this.count += 1;
     }
 
-    setOnInsert(item) {
+    async setOnInsert(item) {
         let SET_ON_INSERT_QUERY = { sku: item.sku };
+        let isInsert = false;
+
         let update = {
             $setOnInsert: {
                 sku: item.sku,
@@ -63,30 +67,28 @@ class Script {
         };
         let options = { upsert: true };
 
-        this.model.updateOne(SET_ON_INSERT_QUERY, update, options).then(result => {       //insert if sku not exists
+        await this.model.updateOne(SET_ON_INSERT_QUERY, update, options).then(result => {       //insert if sku not exists
             // console.log(`result:${JSON.stringify(result)}`)
             if (result.upserted) {
                 console.log(`# ${this.count} ${this.storeName} Inserted new item into DB on SKU: ${item.sku}`)
-                this.count += 1;
-                return true;
+                isInsert = true
             }
         });
-        return false;
+
+        return isInsert;
     }
 
-    findPriceChangedItemAndUpdate(item) {
+    async findPriceChangedItemAndUpdate(item) {
         //aggregate find item that matched on sku in DB, then update price changed item.
-        this.model.aggregate([
+        await this.model.aggregate([
             {
                 $project: {
-                    link: 1,
-                    name: 1,
                     sku: 1,
-                    previousPrice: getCurPrice,     //tricky, get db current price which becomes prev price.
-                    isCurrentPriceChanged: {        //check if capture price equal current price in db.
+                    updatePrice: item.currentPrice,
+                    isPriceChanged: {        //check if capture price equal current price in db.
                         $ne: [
                             item.currentPrice,       //lastest price from scrape
-                            getCurPrice             //price in db
+                            LAST_PRICE             //price in db
                         ]
                     }
                 }
@@ -94,17 +96,21 @@ class Script {
             {
                 $match: {
                     sku: item.sku,
-                    isCurrentPriceChanged: true
+                    isPriceChanged: true
                 }
             }
-        ]).then(changedItems => {
-            this.findSkuAndUpdate(changedItems, item);
+        ]).then(docs => {
+            if (docs.length != 0) {
+                docs.forEach(doc =>
+                    this.pushUpdatedPrice(doc, item)
+                )
+            } else {
+                console.log(`# ${this.count} ${this.storeName} Item exists, Price not Changed: ${item.sku}`);
+            }
         })
     }
 
-    findSkuAndUpdate(changedItems, item) {
-
-        let itemInDatabase = changedItems.pop(); //aggregate array result; if item price changed, else pop empty arr and get null.
+    pushUpdatedPrice(doc, item) {
         let options = { upsert: true, new: true, setDefaultsOnInsert: true, useFindAndModify: false }
         let update = {
             $push: {
@@ -114,21 +120,23 @@ class Script {
             }
         }
 
-        if (itemInDatabase != null) {   //if found match item in database and the price of itemSku is changed
-            this.model.findByIdAndUpdate(itemInDatabase._id, update, options).then(item => {
-                console.log(`# ${this.count} ${this.storeName} Update price changed item in DB on SKU:${item.sku}\n`)
-                // console.log(`${JSON5.stringify(item)}\n`)
-                this.count += 1;
-            })
-        } else {
-            console.log(`# ${this.count} ${this.storeName} Item exists, Price not Changed: ${item.sku}`);
-            this.count += 1;
-        }
+        this.model.findByIdAndUpdate(doc._id, update, options).then(item => {
+            console.log(`# ${this.count} ${this.storeName} Update price changed item in DB on SKU:${item.sku}\n`)
+            // console.log(`${JSON5.stringify(item)}\n`)
+        })
     }
 
+    exec(scriptPath, argv, callback) {
+        const python = this.spawnScript(scriptPath, argv);
+        this.listenOn(python, callback);
+        return new Promise((resolve, reject) => {
+            this.listenClose(python, resolve);
+            this.listenErr(python, reject);
+        })
+    }
 }
 
-class BBScript extends Script {
+class Bestbuy extends Script {
     constructor(model) {
         super(model);
         this.storeName = "Bestbuy";
@@ -136,34 +144,28 @@ class BBScript extends Script {
         this.linkSearchScriptPath = './script_packages/scrape_bb_item_on_sku.py';
         this.pageNumScriptPath = './script_packages/scrape_bb_laptops_num.py';
         this.skuItemScriptPath = './script_packages/scrape_bb_items.py';
-    }
-}
-
-class BBSkuItemScript extends BBScript {
-    constructor(model) {
-        super(model);
-        this.count = 0;
+        this.itemConfigScriptPath = './script_packages/scrape_bb_config_on_sku.py';
     }
 
-    listenOn(python) {
-        python.stdout.pipe(JSONStream.parse()).on('data', (data) => {
-            if (!isNaN(data.sku)) {   //validate non package sku items
-                data.currentPrice = Number(data.currentPrice);    //tricky, convert data.currentPrice from string to number, instead of parseFloat toFixed.
-                this.insertOrUpdateItem(data);
-            } else {
-                console.log(`# ${this.count} ${this.storeName} Attention**, this item does not have number sku. Skip: ${data.sku}`);
-                this.count += 1;
+    insertAndUpdatePriceChangedItem(item) {
+        if (!isNaN(item.sku)) {
+            item.currentPrice = Number(item.currentPrice)
+            let isInsert = this.setOnInsert(item); //true if insert new item; false if item exists.
+
+            //not insert, has doc in db
+            if (!isInsert) {
+                this.findPriceChangedItemAndUpdate(item);
             }
-
-        })
-    }
-    listenClose(python, resolve) {
-        python.on('exit', (code) => {
-            resolve(`\n${this.constructor.name} child process close with code: ${code}`);
-        })
+        } else {
+            console.log(`# ${this.count} ${this.storeName} Attention**, this item does not have number sku. Skip: ${item.sku}`);
+        }
     }
 
+    insertItemConfig(item) {
+
+    }
 }
+
 
 class KeepaScript extends Script {
     constructor(searchTerm) {
@@ -175,7 +177,7 @@ class KeepaScript extends Script {
 
 }
 
-class MsScript extends Script {
+class Microsoft extends Script {
     constructor(model) {
         super(model);
         this.storeName = "Microsoft";
@@ -184,37 +186,9 @@ class MsScript extends Script {
         this.skuItemScriptPath = './script_packages/scrape_ms_items.py';
     }
 }
-class MsSkuItemScript extends MsScript {
-    constructor(model) {
-        super(model);
-        this.count = 0;
-    }
-    listenOn(python) {
-        python.stdout.pipe(JSONStream.parse()).on('data', (data) => {
-            if (isNaN(data.sku)) {
-                data.currentPrice = Number(data.currentPrice);    //tricky, convert data.currentPrice from string to number, instead of parseFloat toFixed.
-                this.insertOrUpdateItem(data);
-            } else {
-                console.log(`# ${this.count} ${this.storeName} Attention**, this item does not have sku. Skip: ${data.sku}`);
-                this.count += 1;
-            }
-
-        })
-    }
-    listenClose(python, resolve) {
-        python.on('exit', (code) => {
-            resolve(`\n${this.constructor.name} child process close with code: ${code}`);
-        })
-    }
-
-
-}
 
 module.exports = {
-    BBScript: BBScript,
-    BBSkuItemScript: BBSkuItemScript,
-    KeepaScript: KeepaScript,
-    MsScript: MsScript,
-    MsSkuItemScript: MsSkuItemScript
-
+    Bestbuy,
+    KeepaScript,
+    Microsoft,
 }

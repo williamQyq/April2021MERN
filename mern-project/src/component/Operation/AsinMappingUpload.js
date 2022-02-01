@@ -55,8 +55,4 @@ const FileUpload = (props) => {
     )
 }
 
-const mapStateToProps = {
-
-}
-
 export default connect(null, { uploadAsinsMapping })(FileUpload);

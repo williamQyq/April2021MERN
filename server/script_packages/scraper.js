@@ -1,87 +1,62 @@
-const WatchListItem = require('../models/WatchListItem');
 const BBItem = require('../models/BBItem');
 const MsItem = require('../models/MsItem');
 const {
-    BBScript,
-    BBSkuItemScript,
-    MsScript,
-    MsSkuItemScript
+    Bestbuy,
+    Microsoft,
 } = require('./scripts.js');
 
-
-const bbLinkScraper = (_id, link) => {
-    //Script Object crawl product price from a link
-    let product = new BBScript(WatchListItem);
-
-    getBestBuyLaptopPrice(product, _id, link).then(() => {
-        console.log(`bbscraper: ${JSON.stringify(product.data)}`)
-        product.updateDBPriceById(Watch, product.data);
-    })
-
-}
-const getBestBuyLaptopPrice = (product, _id, link) => {
-    //spawn script process to get product price
-    const python = product.spawnPriceScript(_id, link);
-
-    //listen stdout of script, get product price info
-    product.listenOn(python);
-
+//get pages info, then for each page save new and price changed laptop to db 
+const getBestbuyLaptops = () => {
+    let store = new Bestbuy(BBItem);
     return new Promise((resolve, reject) => {
-        product.listenClose(python, resolve);
-        product.listenErr(python, reject);
-    });
-}
-
-//Load bestbuy all new products lists Promise
-//Get bestbuy page numbers; then for each page and sku item, findSkuAndUpdate
-const bestbuyScraper = async () => {
-    return getNumOfAllNewLaptops(BBScript).then(pageInfo => {
-        console.log(`[BB num of all laptops new condtion]: ${pageInfo.total_num} - ${pageInfo.num_per_page}/per page.`);
-        return getAndSaveAllNewLaptops(BBSkuItemScript, BBItem, pageInfo.total_num, pageInfo.num_per_page)
+        getNumOfAllNewLaptops(store, (pagesInfo) => {
+            getAllNewLaptops(store, pagesInfo, (item) => {
+                store.insertAndUpdatePriceChangedItem(item)
+            })
+                .then(result => resolve(result))
+                .catch(e => reject(e))
+        })
+            .catch(e => reject(e))
     })
+
 }
 
 //Load microsoft all new products lists Promise
 //Get microsoft page numbers; then for each page and sku item, findSkuAndUpdate
-const microsoftScraper = async () => {
-    return getNumOfAllNewLaptops(MsScript).then(pageInfo => {
-        console.log(`[MS num of all laptops new condtion]: ${pageInfo.total_num} - ${pageInfo.num_per_page}/per page.`);
-        return getAndSaveAllNewLaptops(MsSkuItemScript, MsItem, pageInfo.total_num, pageInfo.num_per_page)
+const getMicrosoftLaptops = () => {
+    let store = new Microsoft(MsItem);
+    return new Promise((resolve, reject) => {
+        getNumOfAllNewLaptops(store, (pagesInfo) => {
+            getAllNewLaptops(store, pagesInfo, (item) => {
+                store.insertAndUpdatePriceChangedItem(item)
+            })
+                .then(result => resolve(result))
+                .catch(e => reject(e))
+        })
+            .catch(e => reject(e))
     })
+
 }
 
 // get all laptops new condition number promise, resolve when retrieve items number.
-const getNumOfAllNewLaptops = (StoreScript) => {
+const getNumOfAllNewLaptops = (store, callback) => (
+    store.exec(store.pageNumScriptPath, store.link, (data) => {
+        const { total_num, num_per_page } = data;
+        console.log(`[BB num of all laptops new condtion]: ${total_num} - ${num_per_page}/per page.`);
+        let pagesInfo = store.getLinkInfo(total_num, num_per_page)
+        callback(pagesInfo)
+    })
 
-    let Store = new StoreScript();
-
-    //spawn script to get items number
-    const python = Store.spawnScript(Store.pageNumScriptPath, Store.link);
-
-    // listen for script, get total items number
-    Store.listenOn(python);
-    return new Promise((resolve, reject) => {
-        Store.listenClose(python, resolve);
-        Store.listenErr(python, reject);
-    });
-}
+)
 
 // get all laptops sku-items promise, resolve when retrieve all skus, names, currentPrices.
-const getAndSaveAllNewLaptops = (StoreScript, StoreItemModel, totalNum, numEachPage) => {
-
-    let Store = new StoreScript(StoreItemModel);
-
-    const pageInfo = Store.getLinkInfo(totalNum, numEachPage);
-    const python = Store.spawnScript(Store.skuItemScriptPath, pageInfo);
-    Store.listenOn(python);
-    return new Promise((resolve, reject) => {
-        Store.listenClose(python, resolve);
-        Store.listenErr(python, reject);
-    });
-}
+const getAllNewLaptops = (store, pagesInfo, callback) => (
+    store.exec(store.skuItemScriptPath, pagesInfo, (data) => {
+        callback(data)
+    })
+)
 
 module.exports = {
-    bbLinkScraper: bbLinkScraper,
-    bestbuyScraper: bestbuyScraper,
-    microsoftScraper: microsoftScraper,
+    getMicrosoftLaptops,
+    getBestbuyLaptops
 }

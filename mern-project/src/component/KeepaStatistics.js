@@ -1,7 +1,6 @@
 import React from 'react';
 import UTILS from 'styles/Util.js';
-import { Line } from 'react-chartjs-2';
-import { Divider, Row, Typography, Input } from 'antd';
+import { Divider, Typography, Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
