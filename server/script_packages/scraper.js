@@ -2,8 +2,7 @@ const BBItem = require('../models/BBItem');
 const MsItem = require('../models/MsItem');
 const {
     Bestbuy,
-    MsScript,
-    MsSkuItemScript
+    Microsoft,
 } = require('./scripts.js');
 
 //get pages info, then for each page save new and price changed laptop to db 
@@ -24,11 +23,19 @@ const getBestbuyLaptops = () => {
 
 //Load microsoft all new products lists Promise
 //Get microsoft page numbers; then for each page and sku item, findSkuAndUpdate
-const getMicrosoftLaptops = async () => {
-    return getNumOfAllNewLaptops(MsScript).then(pageInfo => {
-        console.log(`[MS num of all laptops new condtion]: ${pageInfo.total_num} - ${pageInfo.num_per_page}/per page.`);
-        return getAndSaveAllNewLaptops(MsSkuItemScript, MsItem, pageInfo.total_num, pageInfo.num_per_page)
+const getMicrosoftLaptops = () => {
+    let store = new Microsoft(MsItem);
+    return new Promise((resolve, reject) => {
+        getNumOfAllNewLaptops(store, (pagesInfo) => {
+            getAllNewLaptops(store, pagesInfo, (item) => {
+                store.insertAndUpdatePriceChangedItem(item)
+            })
+                .then(result => resolve(result))
+                .catch(e => reject(e))
+        })
+            .catch(e => reject(e))
     })
+
 }
 
 // get all laptops new condition number promise, resolve when retrieve items number.

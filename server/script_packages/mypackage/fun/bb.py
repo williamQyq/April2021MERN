@@ -95,7 +95,6 @@ def get_sku_items_num(driver):
 def get_sku_items(driver):
     # driver.manage().delete_all_cookies()
     sku_items = None
-    searched_items = []
     try:
         sku_items = WebDriverWait(driver, 10).until(
             EC.presence_of_all_elements_located(
@@ -104,16 +103,9 @@ def get_sku_items(driver):
         )
 
         for searched_item in get_page_items(sku_items):
-            searched_items.append(searched_item)
             yield searched_item
     except Exception as e:
         return False
-
-    # click next page until reach last page and no matched sku in current items sku lst
-    # has_next_page = i < pages - 1
-    # if(has_next_page):
-    #     click_next(driver)
-    #     wait_until_page_refresh(driver, searched_items)
 
 
 def sleep_random_sec(min, max):
@@ -240,7 +232,7 @@ def get_product_specification(driver):
             key.append(row_title.text)
 
         spec = dict(zip(key, value))
-       
+
     except Exception as e:
         return
 

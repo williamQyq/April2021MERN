@@ -77,7 +77,6 @@ db.once('open', () => {
 
         if (change.operationType === 'insert' || change.operationType === 'update') {
             io.sockets.emit(`server:changestream_bb`,null);
-
         }
     })
 
@@ -93,28 +92,6 @@ db.once('open', () => {
     // @AMAZON SP UPDATE
     // amazonScheduler.start();
     amazonScheduler();
-
-
-    // changeStream.on('change', (change) => {
-    //     const doc = change.fullDocument;
-
-    //     if (change.operationType === 'insert') {
-
-    //         //socket.emit
-    //         io.sockets.emit(`server:changestream`, doc._id);
-    //         bbLinkScraper(doc._id, doc.link);
-
-    //     }
-
-    //     if (change.operationType === 'delete') {
-    //         //socket.emit
-    //         io.sockets.emit(`server:changestream`, doc);
-    //     }
-    //     if (change.operationType === 'update') {
-    //         //socket.emit
-    //         io.sockets.emit(`server:changestream`, doc);
-    //     }
-    // })
 
 });
 

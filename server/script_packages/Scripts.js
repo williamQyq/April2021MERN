@@ -40,20 +40,21 @@ class Script {
         })
     }
 
-    insertAndUpdatePriceChangedItem(item) {
+    async insertAndUpdatePriceChangedItem(item) {
         item.currentPrice = Number(item.currentPrice)
-        let isInsert = this.setOnInsert(item); //true if insert new item; false if item exists.
+        let isInsert = await this.setOnInsert(item); //true if insert new item; false if item exists.
 
         //not insert, has doc in db
         if (!isInsert) {
-            this.findPriceChangedItemAndUpdate(item);
+            await this.findPriceChangedItemAndUpdate(item);
         }
-
-        this.count += 1
+        this.count += 1;
     }
 
-    setOnInsert(item) {
+    async setOnInsert(item) {
         let SET_ON_INSERT_QUERY = { sku: item.sku };
+        let isInsert = false;
+
         let update = {
             $setOnInsert: {
                 sku: item.sku,
@@ -66,19 +67,20 @@ class Script {
         };
         let options = { upsert: true };
 
-        this.model.updateOne(SET_ON_INSERT_QUERY, update, options).then(result => {       //insert if sku not exists
+        await this.model.updateOne(SET_ON_INSERT_QUERY, update, options).then(result => {       //insert if sku not exists
             // console.log(`result:${JSON.stringify(result)}`)
             if (result.upserted) {
                 console.log(`# ${this.count} ${this.storeName} Inserted new item into DB on SKU: ${item.sku}`)
-                return true;
+                isInsert = true
             }
         });
-        return false;
+
+        return isInsert;
     }
 
-    findPriceChangedItemAndUpdate(item) {
+    async findPriceChangedItemAndUpdate(item) {
         //aggregate find item that matched on sku in DB, then update price changed item.
-        this.model.aggregate([
+        await this.model.aggregate([
             {
                 $project: {
                     sku: 1,
@@ -143,9 +145,25 @@ class Bestbuy extends Script {
         this.pageNumScriptPath = './script_packages/scrape_bb_laptops_num.py';
         this.skuItemScriptPath = './script_packages/scrape_bb_items.py';
         this.itemConfigScriptPath = './script_packages/scrape_bb_config_on_sku.py';
-        this.count = 0;
     }
 
+    insertAndUpdatePriceChangedItem(item) {
+        if (!isNaN(item.sku)) {
+            item.currentPrice = Number(item.currentPrice)
+            let isInsert = this.setOnInsert(item); //true if insert new item; false if item exists.
+
+            //not insert, has doc in db
+            if (!isInsert) {
+                this.findPriceChangedItemAndUpdate(item);
+            }
+        } else {
+            console.log(`# ${this.count} ${this.storeName} Attention**, this item does not have number sku. Skip: ${item.sku}`);
+        }
+    }
+
+    insertItemConfig(item) {
+
+    }
 }
 
 
@@ -159,7 +177,7 @@ class KeepaScript extends Script {
 
 }
 
-class MsScript extends Script {
+class Microsoft extends Script {
     constructor(model) {
         super(model);
         this.storeName = "Microsoft";
@@ -168,36 +186,9 @@ class MsScript extends Script {
         this.skuItemScriptPath = './script_packages/scrape_ms_items.py';
     }
 }
-class MsSkuItemScript extends MsScript {
-    constructor(model) {
-        super(model);
-        this.count = 0;
-    }
-    listenOn(python) {
-        python.stdout.pipe(JSONStream.parse()).on('data', (data) => {
-            if (isNaN(data.sku)) {
-                data.currentPrice = Number(data.currentPrice);    //tricky, convert data.currentPrice from string to number, instead of parseFloat toFixed.
-                this.insertOrUpdateItem(data);
-            } else {
-                console.log(`# ${this.count} ${this.storeName} Attention**, this item does not have sku. Skip: ${data.sku}`);
-                this.count += 1;
-            }
-
-        })
-    }
-    listenClose(python, resolve) {
-        python.on('exit', (code) => {
-            resolve(`\n${this.constructor.name} child process close with code: ${code}`);
-        })
-    }
-
-
-}
 
 module.exports = {
     Bestbuy,
-    KeepaScript: KeepaScript,
-    MsScript: MsScript,
-    MsSkuItemScript: MsSkuItemScript
-
+    KeepaScript,
+    Microsoft,
 }

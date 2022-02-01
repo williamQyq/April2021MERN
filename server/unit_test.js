@@ -4,12 +4,12 @@
 */
 const { Bestbuy } = require('./script_packages/Scripts')
 const BBItem = require('./models/BBItem')
-const { bestbuy } = require('./script_packages/scraper.js');
+const { getBestbuyLaptops,getMicrosoftLaptops } = require('./script_packages/scraper.js');
 const { ObjectFlags } = require('typescript');
 
 const test = () => {
     console.log("[Test] starting test.js");
-    bestbuy().then(res => { console.log(`bestbuy: `, res) });
+    getMicrosoftLaptops().then(res => { console.log(`ms: `, res) });
     // const store = new Bestbuy(BBItem);
     // store.insertAndUpdatePriceChangedItem({
     //     link: "www.bb.com",

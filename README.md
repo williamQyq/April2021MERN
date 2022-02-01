@@ -155,3 +155,7 @@ Save Item in database procedure
 >1. $setOnInsert item.
 >2. check if db has documet and price changed.
 >3. push to price_timestamps array field
+
+scripts files need to print double quotes, cause standard JSON are formatted in double quotes
+
+still have questions on async performance improvement
