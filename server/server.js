@@ -87,7 +87,7 @@ db.once('open', () => {
             io.sockets.emit(`amzProdPric changed`, null)
         }
     })
-    // test();
+    test();
     scrapeScheduler.start();
     // @AMAZON SP UPDATE
     // amazonScheduler.start();

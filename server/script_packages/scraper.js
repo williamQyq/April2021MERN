@@ -10,8 +10,8 @@ const getBestbuyLaptops = () => {
     let store = new Bestbuy(BBItem);
     return new Promise((resolve, reject) => {
         getNumOfAllNewLaptops(store, (pagesInfo) => {
-            getAllNewLaptops(store, pagesInfo, (item) => {
-                store.insertAndUpdatePriceChangedItem(item)
+            getAllNewLaptops(store, pagesInfo, async (item) => {
+                await store.insertAndUpdatePriceChangedItem(item)
             })
                 .then(result => resolve(result))
                 .catch(e => reject(e))
@@ -27,8 +27,8 @@ const getMicrosoftLaptops = () => {
     let store = new Microsoft(MsItem);
     return new Promise((resolve, reject) => {
         getNumOfAllNewLaptops(store, (pagesInfo) => {
-            getAllNewLaptops(store, pagesInfo, (item) => {
-                store.insertAndUpdatePriceChangedItem(item)
+            getAllNewLaptops(store, pagesInfo, async (item) => {
+                await store.insertAndUpdatePriceChangedItem(item)
             })
                 .then(result => resolve(result))
                 .catch(e => reject(e))

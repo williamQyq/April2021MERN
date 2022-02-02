@@ -2,22 +2,19 @@
     this file for functionality testing purpose
 
 */
-const { Bestbuy } = require('./script_packages/Scripts')
+// const { Bestbuy } = require('./script_packages/Scripts')
 const BBItem = require('./models/BBItem')
-const { getBestbuyLaptops,getMicrosoftLaptops,getBestbuyItemConfig } = require('./script_packages/scraper.js');
+const { getBestbuyLaptops, getMicrosoftLaptops, getBestbuyItemConfig } = require('./script_packages/scraper.js');
 const { ObjectFlags } = require('typescript');
+const { Stores, Microsoft, Bestbuy } = require('./script_packages/Stores');
+const test = async () => {
+    // console.log("[Test] starting test.js");
+    // let store = new Bestbuy()
 
-const test = () => {
-    console.log("[Test] starting test.js");
-    getMicrosoftLaptops().then(res => { console.log(`ms: `, res) });
-    // const store = new Bestbuy(BBItem);
-    // store.insertAndUpdatePriceChangedItem({
-    //     link: "www.bb.com",
-    //     sku: "111",
-    //     currentPrice: 2,
-    //     name: "test"
-    // })
- 
+    // await store.initBrowser();
+    // await store.initPage();
+    // await store.getItems();
+
 }
 
 const prom = (callback) => {
