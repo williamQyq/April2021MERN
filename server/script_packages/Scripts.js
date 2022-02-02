@@ -192,4 +192,5 @@ module.exports = {
     Bestbuy,
     KeepaScript,
     Microsoft,
+    Script
 }

@@ -46,6 +46,7 @@ app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/keepa', require('./routes/api/keepa'));
 app.use('/api/wms', require('./routes/api/wms'));
 app.use('/api/operation', require('./routes/api/operation'));
+app.use('/api/inbound', require('./routes/api/inbound'));
 
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, '../mern-project/build')));
@@ -76,7 +77,7 @@ db.once('open', () => {
         const doc = change.fullDocument;
 
         if (change.operationType === 'insert' || change.operationType === 'update') {
-            io.sockets.emit(`server:changestream_bb`,null);
+            io.sockets.emit(`server:changestream_bb`, null);
         }
     })
 

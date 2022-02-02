@@ -14,7 +14,9 @@ import Proptypes from 'prop-types';
 
 import store from 'store.js';
 import Home from 'component/Home/Home.js';
+import HomeMobile from 'component/Home/HomeMobile.js';
 import io from 'socket.io-client';
+import { BrowserView, MobileView } from 'react-device-detect';
 
 // const socket = io('localhost:3000', {
 //   'reconnection': true,
@@ -40,7 +42,12 @@ class App extends React.Component {
       <Switch>
         <Route exact path="/" component={SignIn} />
         <PrivateRoute path="/app" isAuthenticated={this.props.isAuthenticated} >
-          <Home />
+          <BrowserView>
+            <Home />
+          </BrowserView>
+          <MobileView>
+            <HomeMobile />
+          </MobileView>
         </PrivateRoute>
         <Route component={ErrorPage} />
       </Switch>
