@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../../middleware/auth.js');
 const wms = require('../../wms/wmsDatabase.js');
-const { outputGsheet } = require('../../script_packages/gsheet/gsheet');
+const { outputGsheet } = require('../../script_packages/gsheet/gsheet.js');
 //@route GET api/wms
 router.get('/inv-receive/wrongadds', (req, res) => {
     const collection = wms.getDatabase().collection('inventoryReceive')

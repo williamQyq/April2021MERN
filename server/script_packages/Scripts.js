@@ -1,9 +1,6 @@
 const spawn = require('child_process').execFile;
-const JSON5 = require('json5');
 const JSONStream = require('JSONStream');
 const { LAST_PRICE } = require('../query/aggregate.js');
-const mongoose = require('mongoose');
-const ObjectId = mongoose.Types.ObjectId;
 
 // Script class, integrate python scripts into nodejs
 class Script {
@@ -28,9 +25,9 @@ class Script {
         })
     }
     listenErr(python, reject) {
-        python.on('uncaughtException', err => {
+        python.on('error', err => {
 
-            reject(`\nERROR ${this.constructor.name}: ${err}`);
+            reject(`\n***ERROR ${this.constructor.name}:\n${err}`);
         })
     }
     getLinkInfo(totalNum, numPerPage) {     //return link and calculate the # of pages need to loop.

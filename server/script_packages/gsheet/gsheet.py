@@ -1,5 +1,13 @@
+import json
+
+
 def main():
-    print('gsheet.py exec')
+
+    msg = {
+        'msg': "finished"
+    }
+    json_string = json.dumps(msg)
+    print(json_string)
 
 
 main()

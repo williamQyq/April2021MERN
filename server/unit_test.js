@@ -7,10 +7,11 @@ const BBItem = require('./models/BBItem')
 const { getBestbuyLaptops, getMicrosoftLaptops, getBestbuyItemConfig } = require('./script_packages/scraper.js');
 const { ObjectFlags } = require('typescript');
 const { Stores, Microsoft, Bestbuy } = require('./script_packages/Stores');
+const { Script } = require('./script_packages/Scripts')
 const test = async () => {
     // console.log("[Test] starting test.js");
     // let store = new Bestbuy()
-
+   
     // await store.initBrowser();
     // await store.initPage();
     // await store.getItems();
