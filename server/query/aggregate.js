@@ -34,7 +34,7 @@ const PROJ_ITEM = {
         name: 1,
         sku: 1,
         qty: 1,
-        upc: 1,
+        upc: "$item_spec.upc",
         currentPrice: LAST_PRICE,
         isCurrentPriceLower: {
             $lt: [LAST_PRICE, PREV_PRICE]
