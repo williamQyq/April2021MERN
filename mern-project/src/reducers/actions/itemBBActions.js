@@ -1,11 +1,14 @@
 import axios from 'axios';
 import Moment from 'moment';
+import { returnErrors } from './errorActions'
 import {
     GET_BB_ITEMS,
     GET_BB_ITEM_DETAIL,
     ITEMS_LOADING,
     GET_ITEM_SPEC,
-    SET_TABLE_STATE
+    ADD_ITEM_SPEC,
+    SET_TABLE_STATE,
+    GET_ERRORS,
 } from './types';
 
 export const getBBItems = () => dispatch => {
@@ -60,18 +63,17 @@ export const setTableSettings = (dispatch, store, clickedId) => {
     })
 }
 
-export const getItemSpec = async (record, storeName, dispatch) => {
+export const addItemSpec = async (record, dispatch) => {
     dispatch(setItemsLoading);
-    return axios.get('/api/bb_items/item-spec', {
-        params: {
-            link: record.link,
-            store: storeName
-        }
-    }).then(res => {
-        dispatch({
-            type: GET_ITEM_SPEC,
-            payload: res.data
+    axios.post('/api/bb_items/itemSpec/add', record)
+        .then(res => {
+            if (res.data.status === "success") {
+                dispatch({
+                    type: ADD_ITEM_SPEC,
+                    payload: res.data
+                })
+            } else {
+                dispatch(returnErrors(res.data.msg, res.data.status))
+            }
         })
-        return res.data
-    })
 }

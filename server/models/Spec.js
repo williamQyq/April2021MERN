@@ -7,6 +7,10 @@ const ItemSpecSchema = new Schema({
         type: String,
         require: true
     },
+    sku: {
+        type: String,
+        require: true
+    },
     source: {
         type: String,
     },
@@ -36,4 +40,6 @@ const ItemSpecSchema = new Schema({
 
 }, { collection: 'itemSpec' });
 
-module.exports = mongoose.models.ItemSpec || mongoose.model('ItemSpec', ItemSpecSchema);
+module.exports = {
+    ItemSpec: mongoose.models.ItemSpec || mongoose.model('ItemSpec', ItemSpecSchema)
+}

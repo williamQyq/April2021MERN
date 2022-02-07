@@ -8,7 +8,7 @@ import {
 } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch } from "react-redux";
-import { getItemSpec, setTableSettings } from "reducers/actions/itemBBActions";
+import { addItemSpec, setTableSettings } from "reducers/actions/itemBBActions";
 
 const { Text, Title } = Typography;
 
@@ -136,15 +136,9 @@ const ActionMenu = (props) => {
     const dispatch = useDispatch()
     const path = location.pathname;
 
-    const getOnlineSpecification = () => {
-        getItemSpec(record, storeName, dispatch).then(status => {
-            if (status === "success")
-                message.success("Get Tech Specification!")
-            else
-                message.error("Fail to get Tech Specification!")
-        }).catch(e => {
-            message.error("Fail to get Tech Specification!")
-        });
+    const addItemSpecification = () => {
+        addItemSpec(record, dispatch)
+        message.success("Sent Item config request.")
     }
 
     const handleActionClick = (store, _id) => {
@@ -184,7 +178,7 @@ const ActionMenu = (props) => {
                 </Button>
             </Menu.Item>
             <Menu.Item key="GetOnlineSpec">
-                <Button {...buttonSetting} onClick={getOnlineSpecification}>
+                <Button {...buttonSetting} onClick={addItemSpecification}>
                     <WindowsOutlined />
                     Spec
                 </Button>

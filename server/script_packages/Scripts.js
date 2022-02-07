@@ -6,7 +6,7 @@ const { LAST_PRICE } = require('../query/aggregate.js');
 class Script {
     constructor(model) {
         this.model = model;
-        this.storeName = "";
+        this.storeName = undefined;
         this.count = 0;
     }
     spawnScript(scriptPath, arg) {

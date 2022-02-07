@@ -8,21 +8,15 @@ const { getBestbuyLaptops, getMicrosoftLaptops, getBestbuyItemConfig } = require
 const { ObjectFlags } = require('typescript');
 const { Stores, Microsoft, Bestbuy } = require('./script_packages/Stores');
 const { Script } = require('./script_packages/Scripts')
+const { countAddOne } = require('./query/utitlities.js')
 const test = async () => {
     // console.log("[Test] starting test.js");
     // let store = new Bestbuy()
-   
+
     // await store.initBrowser();
     // await store.initPage();
     // await store.getItems();
-
-}
-
-const prom = (callback) => {
-    callback()
-    return new Promise((resolve, reject) => {
-        resolve("promise resolve")
-    })
+  
 
 }
 
