@@ -7,6 +7,8 @@ const {
     PROJ_ITEM,
     PROJ_ITEM_DETAIL,
     SORT_ON_CAPTURE_DATE,
+    UNWIND_ITEM_SPEC_AND_PRESERVE_ORIGIN,
+    LOOKUP_ITEM_SPEC,
 } = require('./aggregate.js')
 
 const saveItemConfiguration = async (config) => {
@@ -27,17 +29,8 @@ const isItemConfigFound = async (sku) => {
 }
 const getStoreItems = (Model) => (
     Model.aggregate([
-        {
-            $lookup: {
-                from: "itemSpec",
-                localField: "sku",
-                foreignField: "sku",
-                as: "item_spec"
-            }
-        },
-        {
-            $unwind: "$item_spec"
-        },
+        LOOKUP_ITEM_SPEC,
+        UNWIND_ITEM_SPEC_AND_PRESERVE_ORIGIN,
         PROJ_ITEM,
         SORT_ON_CAPTURE_DATE,
 

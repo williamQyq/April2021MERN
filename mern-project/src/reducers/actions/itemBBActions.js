@@ -65,7 +65,8 @@ export const setTableSettings = (dispatch, store, clickedId) => {
 
 export const addItemSpec = async (record, dispatch) => {
     dispatch(setItemsLoading);
-    axios.post('/api/bb_items/itemSpec/add', record)
+    const config = { headers: { 'Content-Type': 'application/json' } }
+    axios.put('/api/bb_items/itemSpec/add', record, config)
         .then(res => {
             if (res.data.status === "success") {
                 dispatch({

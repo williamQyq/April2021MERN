@@ -19,7 +19,7 @@ router.get('/detail/:_id', (req, res) => {
         });
 });
 
-router.post('/itemSpec/add', async (req, res) => {
+router.put('/itemSpec/add', async (req, res) => {
     const { link, sku } = req.body;
     let bestbuy = new Bestbuy(Model)
     let isConfigFound = await util.isItemConfigFound(sku)
