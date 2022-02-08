@@ -23,11 +23,13 @@ export const getProductPricing = () => dispatch => {
 }
 
 export const getWmsProdQty = prods => {
-    return Promise.all(prods.map(async (prod) => {
-        await axios.get('/api/wms/quantity', { params: { upc: prod.upc } })
-            .then(res => { prod.wmsQuantity = res.data })
-        return prod;
-    }))
+    return Promise.all(
+        prods.map(async (prod) => {
+            await axios.get(`/api/wms/quantity/${prod.upc}`)
+                .then(res => { prod.wmsQuantity = res.data })
+            return prod;
+        })
+    )
 }
 
 export const uploadAsinsMapping = (file) => dispatch => {

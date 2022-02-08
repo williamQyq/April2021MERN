@@ -9,7 +9,8 @@ import {
     ProfileOutlined,
     DesktopOutlined,
     ScanOutlined,
-    CloudDownloadOutlined
+    CloudDownloadOutlined,
+    TrademarkOutlined
 } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
 const { Sider } = Layout;
@@ -29,7 +30,10 @@ const HomeSider = (props) => {
 
     return (
         <Sider trigger={null} collapsible collapsed={collapsed}>
-            {/* <div className="logo">RockyStone</div> */}
+            <div className="logo">
+                <TrademarkOutlined style={{ margin: "auto", fontSize: "48px" }} />
+            </div>
+
             <Menu
                 theme="dark"
                 mode="inline"

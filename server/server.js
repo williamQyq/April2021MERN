@@ -7,7 +7,7 @@ const { scrapeScheduler } = require('./script_packages/scrapeScheduler.js');    
 const { amazonScheduler } = require('./amazonSP/amazonSchedule.js');
 const { bbLinkScraper } = require('./script_packages/scraper.js');
 const wms = require("./wms/wmsDatabase.js");    // @local wms server connection
-const { Server } = require("socket.io")
+const { Server } = require("socket.io");
 // @CREATE WMS CONNECTION
 wms.wmsService();
 
@@ -16,7 +16,7 @@ const app = express();
 app.use(express.json());
 
 const server = require("http").createServer(app)
-const io = new Server(server);
+const io = new Server(server, { 'pingTimeout': 7000, 'pingInterval': 3000 });
 const port = process.env.PORT || 5000;
 
 //@Mongoose connection; Connect to Mongo.
@@ -46,6 +46,7 @@ app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/keepa', require('./routes/api/keepa'));
 app.use('/api/wms', require('./routes/api/wms'));
 app.use('/api/operation', require('./routes/api/operation'));
+app.use('/api/inbound', require('./routes/api/inbound'));
 
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, '../mern-project/build')));
@@ -64,30 +65,30 @@ io.on("connection", (socket) => {
 const db = mongoose.connection;  //set up mongoose connection
 const collection = config.get("collection");
 db.once('open', () => {
-    const bestbuyStore = db.collection(collection.bestbuy);
-    // const productPriceListings = db.collection(collection.watchList);
-    const amzProdPricing = db.collection(collection.amzProdPricing);
+    const bbStoreListings = db.collection(collection.bestbuy).watch();
+    const amzProdPricing = db.collection(collection.amzProdPricing).watch();
+    const itemSpec = db.collection(collection.itemSpec).watch();
 
-    // const changeStream = productPriceListings.watch();
-    const bbChangeStream = bestbuyStore.watch();
-    const amzProdPricStream = amzProdPricing.watch();
 
-    bbChangeStream.on('change', (change) => {
-        const doc = change.fullDocument;
-
-        if (change.operationType === 'insert' || change.operationType === 'update') {
-            io.sockets.emit(`server:changestream_bb`,null);
-        }
-    })
-
-    amzProdPricStream.on('change', (change) => {
+    bbStoreListings.on('change', (change) => {
         // const doc = change.fullDocument;
         // console.log(`change fulldocument:=====`, JSON.stringify(change.fullDocument, null, 4))
         if (change.operationType === 'insert' || change.operationType === 'update' || change.operationType === 'delete') {
-            io.sockets.emit(`amzProdPric changed`, null)
+            io.sockets.emit(`bbStoreListings`, null)
         }
     })
-    // test();
+    amzProdPricing.on('change', (change) => {
+        if (change.operationType === 'insert' || change.operationType === 'update' || change.operationType === 'delete') {
+            io.sockets.emit(`amzProdPricing`, null)
+        }
+    })
+    itemSpec.on('change', (change) => {
+        if (change.operationType === 'insert' || change.operationType === 'update' || change.operationType === 'delete') {
+            io.sockets.emit(`itemSpec`, null)
+        }
+    })
+
+    test();
     scrapeScheduler.start();
     // @AMAZON SP UPDATE
     // amazonScheduler.start();

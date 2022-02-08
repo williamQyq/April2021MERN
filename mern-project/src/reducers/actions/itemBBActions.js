@@ -1,11 +1,15 @@
+import { message } from 'antd';
 import axios from 'axios';
 import Moment from 'moment';
+import { returnErrors } from './errorActions'
 import {
     GET_BB_ITEMS,
     GET_BB_ITEM_DETAIL,
     ITEMS_LOADING,
     GET_ITEM_SPEC,
-    SET_TABLE_STATE
+    ADD_ITEM_SPEC,
+    SET_TABLE_STATE,
+    GET_ERRORS,
 } from './types';
 
 export const getBBItems = () => dispatch => {
@@ -48,7 +52,7 @@ export const getBBItemDetail = (_id) => dispatch => {
     })
 };
 
-export const setTableSettings = (dispatch, store, clickedId) => {
+export const setTableSettings = (store, clickedId) => dispatch => {
     dispatch(setItemsLoading());
 
     dispatch({
@@ -60,18 +64,20 @@ export const setTableSettings = (dispatch, store, clickedId) => {
     })
 }
 
-export const getItemSpec = async (record, storeName, dispatch) => {
+export const addItemSpec = (record) => dispatch => {
     dispatch(setItemsLoading);
-    return axios.get('/api/bb_items/item-spec', {
-        params: {
-            link: record.link,
-            store: storeName
-        }
-    }).then(res => {
-        dispatch({
-            type: GET_ITEM_SPEC,
-            payload: res.data
+    const config = { headers: { 'Content-Type': 'application/json' } }
+    axios.put('/api/bb_items/itemSpec/add', record, config)
+        .then(res => {
+            if (res.data.status === "success") {
+                dispatch({
+                    type: ADD_ITEM_SPEC,
+                    payload: res.data
+                })
+                message.success(res.data.msg)
+            } else {
+                message.warn(res.data.msg)
+                dispatch(returnErrors(res.data.msg, res.data.status))
+            }
         })
-        return res.data
-    })
 }

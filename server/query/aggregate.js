@@ -34,7 +34,7 @@ const PROJ_ITEM = {
         name: 1,
         sku: 1,
         qty: 1,
-        upc: 1,
+        upc: "$item_spec.upc",
         currentPrice: LAST_PRICE,
         isCurrentPriceLower: {
             $lt: [LAST_PRICE, PREV_PRICE]
@@ -50,10 +50,25 @@ const PROJ_ITEM_DETAIL = {
         name: 1,
         sku: 1,
         qty: 1,
-        upc: 1,
+        upc: "$item_spec.upc",
         price_timestamps: 1,
         currentPrice: LAST_PRICE,
         priceDiff: PRICE_DIFF,
+    }
+}
+const LOOKUP_ITEM_SPEC = {
+    $lookup: {
+        from: "itemSpec",
+        localField: "sku",
+        foreignField: "sku",
+        as: "item_spec"
+    }
+}
+
+const UNWIND_ITEM_SPEC_AND_PRESERVE_ORIGIN = {
+    $unwind: {
+        path: "$item_spec",
+        preserveNullAndEmptyArrays: true
     }
 }
 
@@ -62,5 +77,7 @@ module.exports = {
     PROJ_ITEM,
     PROJ_ITEM_DETAIL,
     SORT_ON_CAPTURE_DATE,
-    LAST_PRICE
+    LAST_PRICE,
+    LOOKUP_ITEM_SPEC,
+    UNWIND_ITEM_SPEC_AND_PRESERVE_ORIGIN
 }

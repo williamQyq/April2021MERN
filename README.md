@@ -137,15 +137,23 @@ Redux store maintains a global state that all components can access via ***Conne
 
 *Scripts.js*
 
+I used nodejs to spawn a python process and listen on the stdout standard streams on 'data' to retrieve the result.
+However, I just found a better way which is using Puppeteer,an Nodejs library developed by Google, used for html parsing, getting screen shot and so on.
+
+The Class Scripts
 A class that defines all the functionalities that are needed for spawing a python selenium script process.
 
-On receiving data JSONstream, invoke callback function that is defined inside the outer function to process the receiving data. (Promise chain probably won't fit here, since not waiting for the completion of child process close. )
+On receiving data JSONstream, invoke callback function that is defined inside the outer function to process the receiving data. (In concern of the callback hell, promise chain probably won't fit here, since not waiting for the completion of child process close. )
 
 quite complicated, probably not the best practice.
+        
+        const {Store} = require('./scripts.js');
+        const {model} = require('./models/**.js);
 
+        let store = new Store(model);
         cosnt operation = (store,callback)=>{
-                store.exec(SCRIPT_PATH, PARM, (data)=>{
-                        ...data handling
+                store.exec(SCRIPT_PATH, argvs, (data)=>{
+                        (...data handling code here)
                         callback(data)
                 })
 
@@ -155,7 +163,3 @@ Save Item in database procedure
 >1. $setOnInsert item.
 >2. check if db has documet and price changed.
 >3. push to price_timestamps array field
-
-scripts files need to print double quotes, cause standard JSON are formatted in double quotes
-
-still have questions on async performance improvement

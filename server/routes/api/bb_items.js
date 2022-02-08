@@ -1,43 +1,47 @@
 const express = require('express');
 const router = express.Router();
-const mongoose = require('mongoose');
-const ObjectId = mongoose.Types.ObjectId;
-
-const ItemBB = require('../../models/BBItem.js'); //Item Model
-const {
-    PROJ_ITEM,
-    PROJ_ITEM_DETAIL,
-    SORT_ON_CAPTURE_DATE,
-} = require('../../query/aggregate.js')
+const { Bestbuy } = require('../../script_packages/scripts.js');
+const Model = require('../../models/BBItem.js'); //Item Model
+const { getItemConfiguration } = require('../../script_packages/scraper.js');
+const util = require('../../query/utitlities.js');
 
 // @route GET api/items
 router.get('/', (req, res) => {
-    ItemBB.aggregate([
-        PROJ_ITEM,
-        SORT_ON_CAPTURE_DATE
-    ])
+    util.getStoreItems(Model)
         .then(items => res.json(items));
 
 });
 
 router.get('/detail/:_id', (req, res) => {
-    ItemBB.aggregate([
-        PROJ_ITEM_DETAIL,
-        {
-            $match: {
-                _id: ObjectId(req.params._id)
-            }
-        }
-    ])
+    util.getStoreItemDetailById(Model, req.params._id)
         .then(items => {
             res.json(items)
         });
 });
 
-router.get('/item-spec', (req, res) => {
-    const { link, store } = req.query;
-    console.log(link, store)
-    res.json("success")
+router.put('/itemSpec/add', async (req, res) => {
+    const { link, sku } = req.body;
+    let bestbuy = new Bestbuy(Model)
+
+    let doc = await util.isItemConfigFound(sku)
+    if (!doc) {
+        let item = await getItemConfiguration(bestbuy, link)
+        console.log(`[${item.UPC}] Get item config request finished.`)
+        util.saveItemConfiguration(item, sku).then(() =>
+            res.json({
+                status: "success",
+                msg: "Upsert item config finished.",
+                id: item.UPC
+            }))
+    } else {
+        console.log(`[itemSpec add req]Item config already exists: ${doc.upc}.`)
+        res.json({
+            status: "warning",
+            msg: "Item config already exists.",
+            id: doc.upc
+        })
+    }
+
 })
 
 // //@route ***currently not used***

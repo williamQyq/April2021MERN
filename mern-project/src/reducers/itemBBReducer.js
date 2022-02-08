@@ -1,7 +1,8 @@
 import {
     GET_BB_ITEMS,
     ITEMS_LOADING,
-    GET_ITEM_SPEC
+    GET_ITEM_SPEC,
+    ADD_ITEM_SPEC
 } from './actions/types';
 
 const initialState = {
@@ -24,6 +25,11 @@ export default function Reducer(state = initialState, action) {
                 loading: true
             }
         case GET_ITEM_SPEC:
+            return {
+                ...state,
+                loading: false
+            }
+        case ADD_ITEM_SPEC:
             return {
                 ...state,
                 loading: false

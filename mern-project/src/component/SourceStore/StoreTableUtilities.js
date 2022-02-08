@@ -1,4 +1,4 @@
-import { Menu, Button, Typography, Tooltip, Space, Dropdown, Row, Col, message } from "antd";
+import { Menu, Button, Typography, Tooltip, Space, Dropdown, Row, Col, message, Alert } from "antd";
 import {
     SearchOutlined,
     ShoppingCartOutlined,
@@ -7,8 +7,10 @@ import {
     WindowsOutlined,
 } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
-import { useDispatch } from "react-redux";
-import { getItemSpec, setTableSettings } from "reducers/actions/itemBBActions";
+import { useDispatch, useSelector } from "react-redux";
+import { addItemSpec, setTableSettings } from "reducers/actions/itemBBActions";
+import { clearErrors } from "reducers/actions/errorActions";
+import { useEffect } from "react";
 
 const { Text, Title } = Typography;
 
@@ -53,13 +55,6 @@ export const tableColumns = (getColumnSearchProps, storeName) => {
                 key: 'upc',
                 width: '15%',
                 ...getColumnSearchProps('upc'),
-            },
-            {
-                title: 'Quantity',
-                dataIndex: 'qty',
-                key: 'quantity',
-                width: '10%',
-                sorter: (a, b) => a.qty - b.qty,
             },
             {
                 title: 'Price Diff',
@@ -131,24 +126,19 @@ message.config = {
 }
 
 const ActionMenu = (props) => {
+    
     const { record, storeName } = props
     const location = useLocation();
     const dispatch = useDispatch()
+    
     const path = location.pathname;
 
-    const getOnlineSpecification = () => {
-        getItemSpec(record, storeName, dispatch).then(status => {
-            if (status === "success")
-                message.success("Get Tech Specification!")
-            else
-                message.error("Fail to get Tech Specification!")
-        }).catch(e => {
-            message.error("Fail to get Tech Specification!")
-        });
+    const addItemSpecification = () => {
+        dispatch(addItemSpec(record));
     }
 
     const handleActionClick = (store, _id) => {
-        setTableSettings(dispatch, store, _id);
+        dispatch(setTableSettings(store, _id));
     };
 
     const buttonSetting = {
@@ -184,7 +174,10 @@ const ActionMenu = (props) => {
                 </Button>
             </Menu.Item>
             <Menu.Item key="GetOnlineSpec">
-                <Button {...buttonSetting} onClick={getOnlineSpecification}>
+                <Button {...buttonSetting} onClick={() => {
+                    handleActionClick(storeName, record._id)
+                    addItemSpecification()
+                }}>
                     <WindowsOutlined />
                     Spec
                 </Button>
@@ -199,9 +192,31 @@ export const StoreHeader = ({ storeName, isLoading }) => (
             <Title level={4}>{storeName}</Title>
         </Col>
         <Col>
+            <ErrorAlert />
+        </Col>
+        {/* <Col>
             <Button type="primary" disabled={isLoading} loading={isLoading}>
                 Retrieve Now
             </Button>
-        </Col>
+        </Col> */}
     </Row>
 );
+
+export const ErrorAlert = () => {
+    const { status, msg } = useSelector((state) =>
+        state.error
+    );
+    const dispatch = useDispatch();
+
+    return status ?
+        (
+            <Alert
+                message={msg}
+                type={status}
+                showIcon
+                banner
+                closable
+                afterClose={() => { dispatch(clearErrors()); }}
+            />
+        ) : null
+}

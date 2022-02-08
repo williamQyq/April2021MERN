@@ -7,6 +7,13 @@ import { defaultSettings, title, footer } from 'component/Operation/Settings.js'
 import { EditableCell, mergedColumns } from 'component/Operation/OperationEditableEle.js';
 import { getProductPricing } from 'reducers/actions/operationActions.js';
 import OperationMenu from 'component/Operation/OperationMenu';
+import { io } from 'socket.io-client';
+
+const socket = io('localhost:3000', {
+    'reconnection': true,
+    'reconnectionDelay': 500,
+    'reconnectionAttempts': 5
+});
 
 const { Title } = Typography;
 
@@ -23,9 +30,9 @@ class OperationProductList extends React.Component {
 
     componentDidMount() {
         this.props.getProductPricing()
-        // this.props.socket.on(`amzProdPric changed`, () => {
-        //     this.props.getProductPricing();
-        // })
+        socket.on(`amzProdPricing`, () => {
+            this.props.getProductPricing();
+        })
     }
     isEditing = (record) => record._id === this.state.editingKey
 
