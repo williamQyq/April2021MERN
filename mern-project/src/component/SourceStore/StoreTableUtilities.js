@@ -10,6 +10,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import { addItemSpec, setTableSettings } from "reducers/actions/itemBBActions";
 import { clearErrors } from "reducers/actions/errorActions";
+import { useEffect } from "react";
 
 const { Text, Title } = Typography;
 
@@ -125,18 +126,19 @@ message.config = {
 }
 
 const ActionMenu = (props) => {
+    
     const { record, storeName } = props
     const location = useLocation();
     const dispatch = useDispatch()
+    
     const path = location.pathname;
 
     const addItemSpecification = () => {
-        addItemSpec(record, dispatch)
-        message.success("Sent Item config request.")
+        dispatch(addItemSpec(record));
     }
 
     const handleActionClick = (store, _id) => {
-        setTableSettings(dispatch, store, _id);
+        dispatch(setTableSettings(store, _id));
     };
 
     const buttonSetting = {
@@ -204,6 +206,8 @@ export const ErrorAlert = () => {
     const { status, msg } = useSelector((state) =>
         state.error
     );
+    const dispatch = useDispatch();
+
     return status ?
         (
             <Alert
@@ -212,7 +216,7 @@ export const ErrorAlert = () => {
                 showIcon
                 banner
                 closable
-            // afterClose={clearErrors}
+                afterClose={() => { dispatch(clearErrors()); }}
             />
         ) : null
 }

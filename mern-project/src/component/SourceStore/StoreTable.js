@@ -3,7 +3,7 @@ import 'component/SourceStore/Store.scss';
 import { Table, Input, Button, Space, Divider } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined, } from '@ant-design/icons';
-import { ErrorAlert, locateSearchedItem, scrollToTableRow, StoreHeader } from 'component/SourceStore/StoreTableUtilities';
+import { locateSearchedItem, scrollToTableRow, StoreHeader } from 'component/SourceStore/StoreTableUtilities';
 import { tableColumns } from 'component/SourceStore/StoreTableUtilities';
 
 

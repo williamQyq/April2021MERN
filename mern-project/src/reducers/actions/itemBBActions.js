@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import axios from 'axios';
 import Moment from 'moment';
 import { returnErrors } from './errorActions'
@@ -51,7 +52,7 @@ export const getBBItemDetail = (_id) => dispatch => {
     })
 };
 
-export const setTableSettings = (dispatch, store, clickedId) => {
+export const setTableSettings = (store, clickedId) => dispatch => {
     dispatch(setItemsLoading());
 
     dispatch({
@@ -63,7 +64,7 @@ export const setTableSettings = (dispatch, store, clickedId) => {
     })
 }
 
-export const addItemSpec = async (record, dispatch) => {
+export const addItemSpec = (record) => dispatch => {
     dispatch(setItemsLoading);
     const config = { headers: { 'Content-Type': 'application/json' } }
     axios.put('/api/bb_items/itemSpec/add', record, config)
@@ -73,7 +74,9 @@ export const addItemSpec = async (record, dispatch) => {
                     type: ADD_ITEM_SPEC,
                     payload: res.data
                 })
+                message.success(res.data.msg)
             } else {
+                message.warn(res.data.msg)
                 dispatch(returnErrors(res.data.msg, res.data.status))
             }
         })

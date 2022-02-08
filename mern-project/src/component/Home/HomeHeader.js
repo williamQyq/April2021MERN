@@ -8,14 +8,14 @@ const HomeHeader = (props) => {
     const [collapsed, setCollapsed] = useState(isCollapsed);
 
     return (
-        <Header className="site-layout-background">
+        <Header className="header" >
             {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
                 className: 'trigger',
                 onClick: (e) => {
                     e.preventDefault();
                     setCollapsed(!collapsed);
                     toggle(collapsed);
-                    
+
                 },
             })}
             <LogoutOutlined onClick={(e) => {
