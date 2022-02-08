@@ -1,4 +1,4 @@
-import { Menu, Button, Typography, Tooltip, Space, Dropdown, Row, Col, message } from "antd";
+import { Menu, Button, Typography, Tooltip, Space, Dropdown, Row, Col, message, Alert } from "antd";
 import {
     SearchOutlined,
     ShoppingCartOutlined,
@@ -7,8 +7,9 @@ import {
     WindowsOutlined,
 } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addItemSpec, setTableSettings } from "reducers/actions/itemBBActions";
+import { clearErrors } from "reducers/actions/errorActions";
 
 const { Text, Title } = Typography;
 
@@ -53,13 +54,6 @@ export const tableColumns = (getColumnSearchProps, storeName) => {
                 key: 'upc',
                 width: '15%',
                 ...getColumnSearchProps('upc'),
-            },
-            {
-                title: 'Quantity',
-                dataIndex: 'qty',
-                key: 'quantity',
-                width: '10%',
-                sorter: (a, b) => a.qty - b.qty,
             },
             {
                 title: 'Price Diff',
@@ -178,7 +172,10 @@ const ActionMenu = (props) => {
                 </Button>
             </Menu.Item>
             <Menu.Item key="GetOnlineSpec">
-                <Button {...buttonSetting} onClick={addItemSpecification}>
+                <Button {...buttonSetting} onClick={() => {
+                    handleActionClick(storeName, record._id)
+                    addItemSpecification()
+                }}>
                     <WindowsOutlined />
                     Spec
                 </Button>
@@ -193,9 +190,29 @@ export const StoreHeader = ({ storeName, isLoading }) => (
             <Title level={4}>{storeName}</Title>
         </Col>
         <Col>
+            <ErrorAlert />
+        </Col>
+        {/* <Col>
             <Button type="primary" disabled={isLoading} loading={isLoading}>
                 Retrieve Now
             </Button>
-        </Col>
+        </Col> */}
     </Row>
 );
+
+export const ErrorAlert = () => {
+    const { status, msg } = useSelector((state) =>
+        state.error
+    );
+    return status ?
+        (
+            <Alert
+                message={msg}
+                type={status}
+                showIcon
+                banner
+                closable
+            // afterClose={clearErrors}
+            />
+        ) : null
+}

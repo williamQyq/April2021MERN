@@ -22,24 +22,23 @@ router.get('/detail/:_id', (req, res) => {
 router.put('/itemSpec/add', async (req, res) => {
     const { link, sku } = req.body;
     let bestbuy = new Bestbuy(Model)
-    let isConfigFound = await util.isItemConfigFound(sku)
-    if (!isConfigFound) {
-        getItemConfiguration(bestbuy, link).then(config => {
-            console.log(`[${config.UPC}] Get item config request finished.`)
-            config.sku = sku;
-            util.saveItemConfiguration(config)
-                .then(() => res.json({
-                    status: "success",
-                    msg: "Upsert item config finished.",
-                    id: config.UPC
-                }));
-        })
+
+    let doc = await util.isItemConfigFound(sku)
+    if (!doc) {
+        let item = await getItemConfiguration(bestbuy, link)
+        console.log(`[${item.UPC}] Get item config request finished.`)
+        util.saveItemConfiguration(item, sku).then(() =>
+            res.json({
+                status: "success",
+                msg: "Upsert item config finished.",
+                id: item.UPC
+            }))
     } else {
-        console.log('[itemSpec add req]Item config already exists.')
+        console.log(`[itemSpec add req]Item config already exists: ${doc.upc}.`)
         res.json({
             status: "warning",
             msg: "Item config already exists.",
-            id: sku
+            id: doc.upc
         })
     }
 

@@ -11,21 +11,21 @@ const {
     LOOKUP_ITEM_SPEC,
 } = require('./aggregate.js')
 
-const saveItemConfiguration = async (config) => {
+const saveItemConfiguration = (config, sku) => {
 
-    const query = { upc: config.UPC, sku: config.sku }
+    const query = { upc: config.UPC, sku: sku }
     const update = {
         $setOnInsert: {
             spec: config
         }
     }
     const option = { upsert: true, useFindAndModify: false }
-    await ItemSpec.findOneAndUpdate(query, update, option)
+    return ItemSpec.findOneAndUpdate(query, update, option)
 }
 
 const isItemConfigFound = async (sku) => {
     const res = await ItemSpec.findOne({ sku: sku })
-    return res ? true : false
+    return res ? res : false
 }
 const getStoreItems = (Model) => (
     Model.aggregate([
