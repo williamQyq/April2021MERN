@@ -1,48 +1,52 @@
 const cron = require('node-cron');
-const { ProdPricing } = require('../models/Amz')
 const { SpBucket } = require('./RateLimiter.js')
-
+const {
+    findAllProdPricing, setProdPricingOffer
+} = require('../query/utitlities')
 // cron scheduler update Amazon sku
 // const amazonScheduler = cron.schedule("* 5 * * * *", () => {
 //     checkProductPricing();
 
 
 // });
+const bucket = new SpBucket();
 
 const amazonScheduler = () => {
-    // checkProductPricing();
+    // getSellingPartnerProdPricing();
 
 };
 
-const checkProductPricing = () => {
-    const bucket = new SpBucket();
+const getSellingPartnerProdPricing = () => {
 
     //get prods asins in database 
-    ProdPricing.find().then(prods => {
+    findAllProdPricing().then(prods => {
         prods.forEach(prod => {
             const upcAsinMapping = bucket.getProdAsins(prod);
             bucket.addProdPricingTask(upcAsinMapping);
         })
 
         bucket.doTaskQueue()
-            .then(amzRes => {
-                saveOffers(amzRes);
-            }).catch(e => {
+            .then(offers => {
+                saveOffers(offers)
+            })
+            .catch(e => {
                 console.log(`undefined task****\n ${e}`)
             });
         // bucket.throttle();
     })
 }
 
-const saveOffers = (res) => {
-    res.forEach(prodPricRes => {
-        prodPricRes.prom.forEach(asinPricRes => {
+const saveOffers = (offers) => {
+    offers.forEach(prod => {
+        prod.prom.forEach(asin => {
             // console.log(`amzAsinRes========\n`, JSON.stringify(amzAsinRes.ASIN, null, 4))
-            const filter = { "upc": prodPricRes.upc, "identifiers.asin": asinPricRes.ASIN }
-            const update = { $set: { "identifiers.$.offers": asinPricRes.Product.Offers } }
-            const option = { useFindAndModify: false }
-            ProdPricing.findOneAndUpdate(filter, update, option)
-                .then(res => console.log(`[Amazon SP] UPC:${res.upc} updated #[${asinPricRes.ASIN}]# asin succeed.`))
+            let identifier = {
+                upc: prod.upc,
+                asin: asin.ASIN,
+                offers: asin.Product.Offers
+            }
+            setProdPricingOffer(identifier)
+                .then(res => console.log(`[Amazon SP] UPC:${res.upc} updated #[${asin.ASIN}]# asin succeed.`))
                 .catch(err => console.log(`[ERR]: amz save offers err.\n${err}`))
         })
     })
@@ -51,5 +55,5 @@ const saveOffers = (res) => {
 
 module.exports = {
     amazonScheduler: amazonScheduler,
-    checkProductPricing: checkProductPricing
+    getSellingPartnerProdPricing
 }

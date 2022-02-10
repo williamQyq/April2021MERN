@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../../middleware/auth.js');
 const { ProdPricing, Identifier } = require('../../models/Amz.js');
-
+const { checkProdPricing, getSellingPartnerProdPricing } = require('../../amazonSP/amazonSchedule.js')
 // @route GET api/amazonSP
 // @desc: get all amazon seller central sync product pricing offers 
 router.get('/', (req, res) => {
@@ -13,17 +13,18 @@ router.get('/', (req, res) => {
 // @desc: save upc asin mapping Schema for ProductPricing API
 router.post('/upload/asins-mapping', (req, res) => {
     const { uploadFile } = req.body
-    uploadFile.shift();
     console.log(`received file:======${JSON.stringify(uploadFile)}`)
-    processMappingFile(uploadFile).then(() => {
-        res.json('success')
-    }).catch(e => {
-        console.log(`error:`, e)
-        res.json('err')
-    })
+    processMappingFile(uploadFile)
+        .then(res.json('success'))
+        .then(() => { getSellingPartnerProdPricing() })
+        .catch(e => {
+            console.log(`error:`, e)
+            res.json('err')
+        })
 })
 
 const processMappingFile = (file) => {
+    file.shift();
     return Promise.all(
         file.map(row => {
             let upc = row[0];
