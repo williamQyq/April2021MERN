@@ -1,5 +1,5 @@
 import { Form, Radio, Switch } from 'antd';
-import OperationNestedTable from 'component/Operation/OperationProductListNestedTable.js';
+import OperationNestedTable from 'component/Operation/OperationProductListNestedTable.jsx';
 
 export const title = () => 'Here is title';
 export const footer = () => 'Here is footer';
@@ -8,6 +8,7 @@ export const expandable = {
     expandRowByClick: true,
     expandedRowRender: record => <OperationNestedTable record={record} />
 };
+
 
 export const defaultSettings = {
     bordered: true,

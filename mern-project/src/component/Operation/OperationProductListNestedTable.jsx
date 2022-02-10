@@ -1,7 +1,7 @@
 import React from 'react';
 import 'antd/dist/antd.css';
 import { Table, Form } from 'antd';
-import { EditableCell, nestedTableColumns } from 'component/Operation/OperationEditableEle';
+import { EditableCell, nestedColumns } from 'component/Operation/OperationEditableEle';
 
 export default class NestedTable extends React.Component {
     constructor(props) {
@@ -88,7 +88,7 @@ export default class NestedTable extends React.Component {
             save: this.save,
             editingKey: this.state.editingKey
         }
-        const columns = nestedTableColumns(actions);  //pass handler to create nested Table columns
+        const columns = nestedColumns(actions);  //pass handler to create nested Table columns
         const { record } = this.props
         return (
             <Form ref={this.formRef} component={false} >
@@ -101,7 +101,7 @@ export default class NestedTable extends React.Component {
                     columns={columns}
                     dataSource={this.getAmzRecord(record)}
                     pagination={false}
-                    rowKey={'asin'}
+                    rowKey={"_id"}
                 />
             </Form>
         )

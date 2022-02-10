@@ -13,8 +13,8 @@ import { connect } from 'react-redux';
 import Proptypes from 'prop-types';
 
 import store from 'store.js';
-import Home from 'component/Home/Home.js';
-import HomeMobile from 'component/Home/HomeMobile.js';
+import Home from 'component/Home/Home.jsx';
+import HomeMobile from 'component/Home/HomeMobile.jsx';
 import io from 'socket.io-client';
 import { BrowserView, MobileView } from 'react-device-detect';
 

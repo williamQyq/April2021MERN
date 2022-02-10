@@ -10,7 +10,7 @@ import {
 import { Typography, Row, Button, List, Menu, Dropdown, Divider } from 'antd';
 import { connect } from 'react-redux';
 import { getItems, deleteItem } from 'reducers/actions/itemActions';
-import AddItemModal from "component/utility/AddItemModal.js";
+import AddItemModal from "component/utility/AddItemModal.jsx";
 
 const { Title, Text } = Typography;
 

@@ -1,10 +1,10 @@
 import React from 'react';
+import 'antd/dist/antd.css';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import 'antd/dist/antd.css';
 import { Table, Form, Typography } from 'antd';
 import { defaultSettings, title, footer } from 'component/Operation/Settings.js';
-import { EditableCell, mergedColumns } from 'component/Operation/OperationEditableEle.js';
+import { EditableCell, mainColumns } from 'component/Operation/OperationEditableEle.js';
 import { getProductPricing } from 'reducers/actions/operationActions.js';
 import OperationMenu from 'component/Operation/OperationMenu';
 import { io } from 'socket.io-client';
@@ -151,7 +151,7 @@ class OperationProductList extends React.Component {
             publish: this.publish,
             editingKey: this.state.editingKey
         }
-        const columns = mergedColumns(actions)
+        const columns = mainColumns(actions)
 
         return (
             <>

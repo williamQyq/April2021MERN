@@ -9,9 +9,9 @@ import {
 import store from 'store.js';
 import { loadUser, logout } from 'reducers/actions/authActions.js';
 import { connect } from 'react-redux';
-import HomeContent from 'component/Home/HomeContent.js';
-import HomeHeader from 'component/Home/HomeHeader.js';
-import HomeSider from 'component/Home/HomeSider.js';
+import HomeContent from 'component/Home/HomeContent.jsx';
+import HomeHeader from 'component/Home/HomeHeader.jsx';
+import HomeSider from 'component/Home/HomeSider.jsx';
 
 class Home extends React.Component {
 

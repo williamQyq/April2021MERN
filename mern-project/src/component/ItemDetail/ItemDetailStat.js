@@ -1,4 +1,3 @@
-import 'component/ItemDetail/ItemDetail.scss';
 import { Row, Col, Divider, Typography } from 'antd';
 import React from 'react';
 const { Title, Text } = Typography;
