@@ -163,3 +163,7 @@ Save Item in database procedure
 >1. $setOnInsert item.
 >2. check if db has documet and price changed.
 >3. push to price_timestamps array field
+
+**ESM vs CommonJs**
+        
+        import ... ***vs*** const {...} = require('.../')

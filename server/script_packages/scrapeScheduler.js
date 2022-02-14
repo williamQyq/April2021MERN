@@ -2,7 +2,7 @@ const cron = require('node-cron');
 const { getBestbuyLaptops, getMicrosoftLaptops } = require('./scraper.js');
 
 //cron scheduler run pyProcessBB get bb prices at 6 pm everyday
-const scrapeScheduler = cron.schedule("00 08 10 * * *", () => {
+const scrapeScheduler = cron.schedule("00 20 09 * * *", () => {
     scrapeStores();
 
 });
@@ -10,11 +10,11 @@ const scrapeScheduler = cron.schedule("00 08 10 * * *", () => {
 //scrape Stores after random delay minutes
 const scrapeStores = () => {
 
-    let count = 0;
+    let cd = 10;
     let interval = setInterval(() => {
-        console.log(`${(count + 1)} minutes pass...`);
-        count += 1;
-    }, 60000);
+        console.log(`Script will start in ${cd} sec...`);
+        cd--;
+    }, 10000);
 
     //run scraper in an hour, random time.
     setTimeout(() => {

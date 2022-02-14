@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const config = require('config');
-const { test } = require('./unit_test.js'); //unit test for python scripts
 const { scrapeScheduler } = require('./script_packages/scrapeScheduler.js');    //scripts scheduler, node-cron
 const { amazonScheduler } = require('./amazonSP/amazonSchedule.js');
 const wms = require("./wms/wmsDatabase.js");    // @local wms server connection
@@ -87,7 +86,6 @@ db.once('open', () => {
         }
     })
 
-    test();
     scrapeScheduler.start();
     // @AMAZON SP UPDATE
     // amazonScheduler.start();

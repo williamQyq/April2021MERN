@@ -1,7 +1,15 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import { model, Schema } from "mongoose";
 
-const BBItemSchema = new Schema({
+//Create Schema for self tracking list 
+export interface BBItem {
+    link: URL;
+    sku: string;
+    name: string;
+    price_timestamps: Array<{ price: number, date: Date }>;
+    created_date: Date;
+}
+
+const BBItemSchema = new Schema<BBItem>({
     link: {
         type: String,
         require: true
@@ -29,5 +37,4 @@ const BBItemSchema = new Schema({
     }
 }, { collection: 'bbStoreListings' });
 
-
-module.exports = mongoose.model("BBItem", BBItemSchema);
+export default model<BBItem>("BBItem", BBItemSchema)

@@ -40,12 +40,11 @@ const saveOffers = (offers) => {
     offers.forEach(prod => {
         prod.prom.forEach(asin => {
             // console.log(`amzAsinRes========\n`, JSON.stringify(amzAsinRes.ASIN, null, 4))
-            let identifier = {
+            setProdPricingOffer({
                 upc: prod.upc,
                 asin: asin.ASIN,
                 offers: asin.Product.Offers
-            }
-            setProdPricingOffer(identifier)
+            })
                 .then(res => console.log(`[Amazon SP] UPC:${res.upc} updated #[${asin.ASIN}]# asin succeed.`))
                 .catch(err => console.log(`[ERR]: amz save offers err.\n${err}`))
         })
