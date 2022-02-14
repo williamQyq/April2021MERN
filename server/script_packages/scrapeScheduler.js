@@ -10,11 +10,11 @@ const scrapeScheduler = cron.schedule("00 20 09 * * *", () => {
 //scrape Stores after random delay minutes
 const scrapeStores = () => {
 
-    let cd = 10;
+    let count = 0;
     let interval = setInterval(() => {
-        console.log(`Script will start in ${cd} sec...`);
-        cd--;
-    }, 10000);
+        console.log(`${(count + 1)} minutes pass...`);
+        count += 1;
+    }, 60000);
 
     //run scraper in an hour, random time.
     setTimeout(() => {

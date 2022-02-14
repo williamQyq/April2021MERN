@@ -1,7 +1,7 @@
 const { BBItem } = require('../models/BBItem.js')
 const { MsItem } = require('../models/MsItem.js')
 const { ItemSpec } = require('../models/Spec.js')
-const { ProdPricing } = require('../models/Amz.js')
+const { ProdPricing, Identifier } = require('../models/Amz.js')
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const {
@@ -63,6 +63,31 @@ const setProdPricingOffer = (identifier) => {
     return ProdPricing.findOneAndUpdate(filter, update, option)
 
 }
+const upsertProdPricingNewAsin = (record) => {
+    const { upc, asin } = record;
+    let newIdentifier = new Identifier({
+        asin: asin,
+    })
+    let newProd = new ProdPricing({
+        upc: upc,
+        identifiers: []
+    })
+
+    let query = { upc: upc }
+    let update = { $setOnInsert: { newProd } }
+    let option = { upsert: true, new: true, useFindAndModify: false };
+    return ProdPricing.updateOne(query, update, option)
+        .then(async () => {
+            let query = { "upc": upc }
+            let update = { $pull: { "identifiers": { "asin": asin } } }
+            await ProdPricing.updateOne(query, update)
+        }).then(async () => {
+            let query = { upc: upc }
+            let update = { $push: { identifiers: newIdentifier } }
+            await ProdPricing.updateOne(query, update)
+        })
+
+}
 
 module.exports = {
     saveItemConfiguration,
@@ -71,5 +96,6 @@ module.exports = {
     getStoreItemDetailById,
     findAllProdPricing,
     findProdPricingOnUpc,
-    setProdPricingOffer
+    setProdPricingOffer,
+    upsertProdPricingNewAsin
 }

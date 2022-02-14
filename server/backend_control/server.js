@@ -1,7 +1,10 @@
-import {BestBuy} from "../script_packages/Stores"
 
-let bb = new BestBuy()
-bb.test()
+const test = async()=>{
+
+    
+};
+
+test();
 // const { MongoClient } = require('mongodb');
 // const config = require('../config/default.json');
 // const { docs } = require('googleapis/build/src/apis/docs');
