@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { Bestbuy } = require('../../script_packages/scripts.js');
+const { Bestbuy } = require('../../script_packages/Stores');
 const Model = require('../../models/BBItem.js'); //Item Model
 const { getItemConfiguration } = require('../../script_packages/scraper.js');
-const { saveItemConfiguration, getStoreItemDetailById, getStoreItems } = require('../../query/utitlities.js');
+const { saveItemConfiguration, getStoreItemDetailById, getStoreItems, findItemConfig } = require('../../query/utitlities.js');
 
 // @route GET api/items
 router.get('/', (req, res) => {
@@ -22,7 +22,7 @@ router.get('/detail/:_id', (req, res) => {
 router.put('/itemSpec/add', async (req, res) => {
     let message;
     const { link, sku } = req.body;
-    let bestbuy = new Bestbuy(Model)
+    let bestbuy = new Bestbuy()
 
     let doc = await findItemConfig(sku)
     if (!doc) {

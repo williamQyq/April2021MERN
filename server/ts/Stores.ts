@@ -32,6 +32,7 @@ export class Stores implements StoresInterface {
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
+                '--window-size=1920,1080'
             ],
         });
 
