@@ -21,14 +21,15 @@ export default class StoreTable extends React.Component {
     }
 
     componentDidMount() {
-        this.handleScrollPosition(this.props.items, this.props.itemDetail);
+        this.handleScrollPosition(this.props.items, this.props.tableState);
     }
 
-    handleScrollPosition = (items, searchedItem) => {
-        if (searchedItem) {
-            let item = locateSearchedItem(items, searchedItem._id)
-            this.setState({ searchedRowId: item._id })
-            scrollToTableRow(document, item.index)
+    handleScrollPosition = (items, clickHistory) => {
+        console.log(`clickHistory iD:`, clickHistory.clickedId)
+        if (clickHistory) {
+            let itemHistory = locateSearchedItem(items, clickHistory.clickedId)
+            this.setState({ searchedRowId: itemHistory._id })
+            scrollToTableRow(document, itemHistory.index)
         }
     }
 

@@ -8,9 +8,9 @@ import {
 } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
-import { addItemSpec, setTableSettings } from "reducers/actions/itemBBActions";
+import { addItemSpec } from "reducers/actions/itemBBActions";
 import { clearErrors } from "reducers/actions/errorActions";
-import { useEffect } from "react";
+import { setTableState } from "reducers/actions/itemActions";
 
 const { Text, Title } = Typography;
 
@@ -126,19 +126,20 @@ message.config = {
 }
 
 const ActionMenu = (props) => {
-    
+
     const { record, storeName } = props
     const location = useLocation();
     const dispatch = useDispatch()
-    
+
     const path = location.pathname;
 
     const addItemSpecification = () => {
         dispatch(addItemSpec(record));
     }
 
-    const handleActionClick = (store, _id) => {
-        dispatch(setTableSettings(store, _id));
+    const saveActionHistory = () => {
+        console.log(`clicked`, record._id)
+        dispatch(setTableState(storeName, record._id));
     };
 
     const buttonSetting = {
@@ -156,10 +157,7 @@ const ActionMenu = (props) => {
             </Menu.Item>
             <Menu.Item key="GetItemDetail">
 
-                <Button {...buttonSetting} onClick={() => {
-                    console.log(`clicked record ============:\n${JSON.stringify(record, null, 4)}`)
-                    handleActionClick(storeName, record._id)
-                }}>
+                <Button {...buttonSetting} onClick={saveActionHistory}>
                     <Link to={`${path}/item-detail`} className="action-link">
                         <SearchOutlined />
                         Detail
@@ -175,8 +173,8 @@ const ActionMenu = (props) => {
             </Menu.Item>
             <Menu.Item key="GetOnlineSpec">
                 <Button {...buttonSetting} onClick={() => {
-                    handleActionClick(storeName, record._id)
-                    addItemSpecification()
+                    saveActionHistory();
+                    addItemSpecification();
                 }}>
                     <WindowsOutlined />
                     Spec
