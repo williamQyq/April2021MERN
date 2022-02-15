@@ -1,7 +1,7 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 import { Divider } from 'antd';
-import ChartMenu from 'component/ItemDetail/ItemDetailChartMenu.js';
+import ChartMenu from 'component/ItemDetail/ItemDetailChartMenu';
 import { useSelector } from 'react-redux';
 import { setChartConfig, setChartData, setColorOnPriceUpOrDrop, setDataPoints, setLabels } from 'component/ItemDetail/ChartUtilities';
 

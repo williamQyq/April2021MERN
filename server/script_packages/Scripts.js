@@ -1,5 +1,5 @@
 const spawn = require('child_process').execFile;
-const JSONStream = require('JSONStream');
+const { parse } = require('JSONStream');
 const { LAST_PRICE } = require('../query/aggregate.js');
 
 // Script class, integrate python scripts into nodejs
@@ -15,7 +15,7 @@ class Script {
         return spawn('python', [scriptPath, arg]);
     }
     listenOn(python, callback) {
-        python.stdout.pipe(JSONStream.parse()).on('data', (data) => {
+        python.stdout.pipe(parse()).on('data', (data) => {
             callback(data)
         })
     }

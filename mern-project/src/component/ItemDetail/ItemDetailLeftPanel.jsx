@@ -3,12 +3,10 @@ import { connect } from 'react-redux';
 import { Row, Typography, Spin, Skeleton } from 'antd';
 import { SyncOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types';
-import 'component/ItemDetail/ItemDetail.scss';
 import { getItemDetail } from 'reducers/actions/itemActions.js';
 import KeyStatistics from 'component/ItemDetail/ItemDetailStat.js';
-import PriceHistoryChart from 'component/ItemDetail/ItemDetailChart.js';
+import PriceHistoryChart from 'component/ItemDetail/ItemDetailChart.jsx';
 import KeepaStatistics from 'component/KeepaStatistics.js';
-import 'component/ItemDetail/ItemDetail.scss';
 
 const { Title } = Typography;
 const antIcon = <SyncOutlined spin />;

@@ -56,13 +56,16 @@ const getAllNewLaptops = (store, pagesInfo, callback) => (
     })
 )
 
-const getItemConfiguration = (store, uri) => {
-    return new Promise((resolve, reject) => {
-        store.exec(store.itemConfigScriptPath, uri, (config) => {
-            resolve(config)
-        }).catch(e => reject(e))
-    })
+const getItemConfiguration = async (store, url) => {
+    console.log(`[getItemConfig] starting...`)
+    let browser = await store.initBrowser();
+    let page = await store.initPage(browser);
+    let spec = await store.getItemSpec(page, url)
 
+    await page.close();
+    await browser.close();
+    console.log(JSON.stringify(spec, null, 4))
+    return spec
 }
 
 module.exports = {

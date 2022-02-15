@@ -1,6 +1,7 @@
 const { BBItem } = require('../models/BBItem.js')
 const { MsItem } = require('../models/MsItem.js')
 const { ItemSpec } = require('../models/Spec.js')
+const { ProdPricing, Identifier } = require('../models/Amz.js')
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const {
@@ -23,7 +24,7 @@ const saveItemConfiguration = (config, sku) => {
     return ItemSpec.findOneAndUpdate(query, update, option)
 }
 
-const isItemConfigFound = async (sku) => {
+const findItemConfig = async (sku) => {
     const res = await ItemSpec.findOne({ sku: sku })
     return res ? res : false
 }
@@ -46,10 +47,55 @@ const getStoreItemDetailById = (Model, _id) => (
         }
     ])
 )
+const findAllProdPricing = () => {
+    return ProdPricing.find({})
+}
+
+const findProdPricingOnUpc = (upc) => {
+    return ProdPricing.find({ upc: upc })
+}
+
+const setProdPricingOffer = (identifier) => {
+    const { upc, asin, offers } = identifier;
+    const filter = { "upc": upc, "identifiers.asin": asin }
+    const update = { $set: { "identifiers.$.offers": offers } }
+    const option = { useFindAndModify: false }
+    return ProdPricing.findOneAndUpdate(filter, update, option)
+
+}
+const upsertProdPricingNewAsin = (record) => {
+    const { upc, asin } = record;
+    let newIdentifier = new Identifier({
+        asin: asin,
+    })
+    let newProd = new ProdPricing({
+        upc: upc,
+        identifiers: []
+    })
+
+    let query = { upc: upc }
+    let update = { $setOnInsert: { newProd } }
+    let option = { upsert: true, new: true, useFindAndModify: false };
+    return ProdPricing.updateOne(query, update, option)
+        .then(async () => {
+            let query = { "upc": upc }
+            let update = { $pull: { "identifiers": { "asin": asin } } }
+            await ProdPricing.updateOne(query, update)
+        }).then(async () => {
+            let query = { upc: upc }
+            let update = { $push: { identifiers: newIdentifier } }
+            await ProdPricing.updateOne(query, update)
+        })
+
+}
 
 module.exports = {
     saveItemConfiguration,
-    isItemConfigFound,
+    findItemConfig,
     getStoreItems,
     getStoreItemDetailById,
+    findAllProdPricing,
+    findProdPricingOnUpc,
+    setProdPricingOffer,
+    upsertProdPricingNewAsin
 }

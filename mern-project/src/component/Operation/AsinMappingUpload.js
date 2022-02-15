@@ -1,5 +1,5 @@
 import 'antd/dist/antd.css';
-import 'component/Operation/operation.scss';
+import './Operation.scss';
 import { Upload, message } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import { uploadAsinsMapping } from 'reducers/actions/operationActions';

@@ -28,10 +28,10 @@ class BB extends React.Component {
     }
 
     render() {
-        const { items, itemDetail } = this.props;
+        const { items, tableState } = this.props;
         const { store } = this.state;
         return (
-            <StoreTable items={items} itemDetail={itemDetail} store={store} />
+            <StoreTable {...this.props} store={store} />
         )
     }
 }
@@ -39,12 +39,12 @@ class BB extends React.Component {
 BB.prototypes = {
     getBBItems: PropTypes.func.isRequired,
     items: PropTypes.array.isRequired,
-    itemDetail: PropTypes.object.isRequired
+    tableState: PropTypes.object.isRequired
 }
 
 const mapStateToProps = (state) => ({
     items: state.bestbuy.items,
-    itemDetail: state.item.itemDetail
+    tableState: state.item.tableState
 })
 
 export default connect(mapStateToProps, { getBBItems })(BB);

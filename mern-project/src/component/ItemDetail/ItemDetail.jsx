@@ -5,9 +5,9 @@ import 'component/ItemDetail/ItemDetail.scss';
 import { Col, Row } from 'antd';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import LeftPanel from 'component/ItemDetail/ItemDetailLeftPanel.js'
-import OrderPanel from 'component/ItemDetail/ItemDetailOrderCard.js';
-import { getItemDetail } from 'reducers/actions/itemActions.js';
+import LeftPanel from 'component/ItemDetail/ItemDetailLeftPanel'
+import OrderPanel from 'component/ItemDetail/ItemDetailOrderCard';
+import { getItemDetail } from 'reducers/actions/itemActions';
 
 class ItemDetail extends React.Component {
     constructor(props) {

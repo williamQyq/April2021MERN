@@ -4,7 +4,7 @@ import { Divider, Typography, Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import ChartMenu from 'component/ItemDetail/ItemDetailChartMenu.js';
+import ChartMenu from 'component/ItemDetail/ItemDetailChartMenu.jsx';
 import { getKeepaStat } from 'reducers/actions/keepaActions';
 
 const { Title } = Typography;

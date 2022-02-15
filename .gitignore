@@ -1,5 +1,4 @@
 *.exe
 node_modules/
 __pycache__/
-server/config/default.json
-server/config/wmsConfig.js
+server/config/*

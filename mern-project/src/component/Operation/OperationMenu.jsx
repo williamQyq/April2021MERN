@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Menu } from 'antd';
 import { LineChartOutlined, AreaChartOutlined } from '@ant-design/icons';
 import { Settings } from 'component/Operation/Settings'
-import Upload from './AsinMappingUpload';
+import Upload from 'component/Operation/AsinMappingUpload';
 
 const OperationMenu = (props) => {
     const [selectedMenuKey, setSelectedMenuKey] = useState("settings");
