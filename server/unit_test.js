@@ -14,7 +14,7 @@ const test = async () => {
     let spec = await bb.getItemSpec(page, url)
     console.log(JSON.stringify(spec, null, 4))
     
-    
+    console.log(spec.UPC)
     await page.close();
     await browser.close();
     // await store.initBrowser();

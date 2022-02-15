@@ -87,8 +87,10 @@ class Bestbuy extends Stores {
 
         let spec = {}
         keys.forEach((key, index) => {
+            key = key.replace(/\s/g,"")
             spec[key] = values[index]
         })
+
         return spec
     }
 }
