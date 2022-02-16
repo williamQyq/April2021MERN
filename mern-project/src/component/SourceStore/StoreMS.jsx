@@ -18,10 +18,10 @@ class MS extends React.Component {
         this.props.getMSItems();
     }
     render() {
-        const { items, itemDetail } = this.props;
+        const { items, tableState } = this.props;
         const { store } = this.state;
         return (
-            <StoreTable items={items} itemDetail={itemDetail} store={store} />
+            <StoreTable {...this.props} store={store} />
         )
     }
 }
@@ -29,12 +29,12 @@ class MS extends React.Component {
 MS.prototypes = {
     getMSItems: PropTypes.func.isRequired,
     items: PropTypes.array.isRequired,
-    itemDetail: PropTypes.object.isRequired
+    tableState: PropTypes.object.isRequired
 }
 
 const mapStateToProps = (state) => ({
     items: state.microsoft.items,
-    itemDetail: state.item.itemDetail
+    tableState: state.item.tableState
 })
 
 export default connect(mapStateToProps, { getMSItems })(MS);

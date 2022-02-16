@@ -7,7 +7,7 @@ const { amazonScheduler } = require('./amazonSP/amazonSchedule.js');
 const wms = require("./wms/wmsDatabase.js");    // @local wms server connection
 const { Server } = require("socket.io");
 // @CREATE WMS CONNECTION
-wms.wmsService();
+wms.startService();
 
 //@Bodyparser Middleware
 const app = express();

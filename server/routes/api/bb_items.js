@@ -26,9 +26,10 @@ router.put('/itemSpec/add', async (req, res) => {
 
     let doc = await findItemConfig(sku)
     if (!doc) {
-        let item = await getItemConfiguration(bestbuy, link)
-        console.log(`[${item.UPC}] Get item config request finished.`)
         try {
+            let item = await getItemConfiguration(bestbuy, link)
+            console.log(`[${item.UPC}] Get item config request finished.`)
+
             await saveItemConfiguration(item, sku)
             message = {
                 status: "success",
@@ -36,7 +37,11 @@ router.put('/itemSpec/add', async (req, res) => {
                 id: item.UPC
             }
         } catch (e) {
-            console.error(e)
+            message = {
+                status: "error",
+                msg: "Get item spec failed.",
+                id: null
+            }
         }
     } else {
         console.log(`[itemSpec add req]Item config already exists: ${doc.upc}.`)

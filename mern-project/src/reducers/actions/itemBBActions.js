@@ -79,5 +79,8 @@ export const addItemSpec = (record) => dispatch => {
                 message.warn(res.data.msg)
                 dispatch(returnErrors(res.data.msg, res.data.status))
             }
+        }).catch(e => {
+            message.warn("addItemSpec failed.")
+            dispatch(returnErrors("addItemSpec failed.", "error"))
         })
 }
