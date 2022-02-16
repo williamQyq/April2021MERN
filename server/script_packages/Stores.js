@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-const { USER_AGENT } = require('../config/puppeteerConfig.js');
+const { ip } = require('config');
 const BBItem = require('../models/BBItem')
 const MSItem = require('../models/MsItem');
 
@@ -18,7 +18,7 @@ class Stores {
     }
     async initPage(browser) {
         const page = await browser.newPage();
-        await page.setUserAgent(USER_AGENT);
+        await page.setUserAgent(ip.USER_AGENT);
         await page.setRequestInterception(true);
         page.on('request', (req) => {
             if (req.resourceType() === 'image') {
@@ -87,7 +87,7 @@ class Bestbuy extends Stores {
 
         let spec = {}
         keys.forEach((key, index) => {
-            key = key.replace(/\s/g,"")
+            key = key.replace(/\s/g, "")
             spec[key] = values[index]
         })
 

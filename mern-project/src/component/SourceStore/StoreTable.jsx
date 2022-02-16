@@ -25,7 +25,6 @@ export default class StoreTable extends React.Component {
     }
 
     handleScrollPosition = (items, clickHistory) => {
-        console.log(`clickHistory iD:`, clickHistory.clickedId)
         if (clickHistory) {
             let itemHistory = locateSearchedItem(items, clickHistory.clickedId)
             this.setState({ searchedRowId: itemHistory._id })
