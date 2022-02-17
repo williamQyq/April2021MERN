@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom'; // Link pass state props to leftPanel and sideitemDetail
-import 'antd/dist/antd.css';
+import 'antd/dist/antd.min.css';
 import 'component/ItemDetail/ItemDetail.scss';
 import { Col, Row } from 'antd';
 import { connect } from 'react-redux';

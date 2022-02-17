@@ -1,6 +1,6 @@
 import React from 'react';
 import 'component/Home/Home.scss';
-import 'antd/dist/antd.css';
+import 'antd/dist/antd.min.css';
 import { Layout } from 'antd';
 import {
   BrowserRouter as Router,

@@ -67,9 +67,10 @@ This project has access to the mongo database of the warehouse and the Amazon Se
 >3. follow heroku deployment process...
 >
 
-## Deploy to AWS:
-
- >*comming soon...*
+## Deploy to AWS EC2:
+1. scp -i MY_AWS_RSA_KEY.pem ubuntu@DNS.compute-1.amazonaws.com
+2. sudo apt-get install (nodejs, nginx, pm2)
+1. scp -i MY_AWS_RSA_KEY.pem -r <PATH>\client\build\* ubuntu@DNS.compute-1.amazonaws.com:~/client/deploy
 
 ## Common issues：
 >1. Unable to git push to repository using **SourceTree** because of git auth token expired? Solve:  

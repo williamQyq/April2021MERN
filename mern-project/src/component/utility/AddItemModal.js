@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import 'antd/dist/antd.css';
+import 'antd/dist/antd.min.css';
 import { Modal, Button, Input } from 'antd';
 import { PlusSquareOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';

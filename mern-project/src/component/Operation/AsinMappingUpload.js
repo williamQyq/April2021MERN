@@ -1,4 +1,4 @@
-import 'antd/dist/antd.css';
+import 'antd/dist/antd.min.css';
 import './Operation.scss';
 import { Upload, message } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';

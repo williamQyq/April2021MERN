@@ -1,5 +1,5 @@
 import React from 'react';
-import 'antd/dist/antd.css';
+import 'antd/dist/antd.min.css';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Card, Skeleton, Divider, Input, Form, InputNumber } from 'antd';
