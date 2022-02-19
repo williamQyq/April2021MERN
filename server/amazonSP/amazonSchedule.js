@@ -4,17 +4,15 @@ const {
     findAllProdPricing, setProdPricingOffer
 } = require('../query/utitlities')
 // cron scheduler update Amazon sku
-// const amazonScheduler = cron.schedule("* 5 * * * *", () => {
-//     checkProductPricing();
-
-
-// });
+const amazonScheduler = cron.schedule("* * 1 * * *", () => {
+    getSellingPartnerProdPricing()
+});
 const bucket = new SpBucket();
 
-const amazonScheduler = () => {
-    // getSellingPartnerProdPricing();
+// const amazonScheduler = () => {
+//     // getSellingPartnerProdPricing();
 
-};
+// };
 
 const getSellingPartnerProdPricing = () => {
 

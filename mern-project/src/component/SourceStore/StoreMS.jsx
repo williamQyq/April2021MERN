@@ -18,7 +18,6 @@ class MS extends React.Component {
         this.props.getMSItems();
     }
     render() {
-        const { items, tableState } = this.props;
         const { store } = this.state;
         return (
             <StoreTable {...this.props} store={store} />

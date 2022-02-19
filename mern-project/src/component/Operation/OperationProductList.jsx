@@ -9,7 +9,7 @@ import { getProductPricing } from 'reducers/actions/operationActions.js';
 import OperationMenu from 'component/Operation/OperationMenu';
 import { io } from 'socket.io-client';
 
-const socket = io('localhost:3000', {
+const socket = io('/', {
     'reconnection': true,
     'reconnectionDelay': 500,
     'reconnectionAttempts': 5

@@ -1,6 +1,5 @@
 const tunnel = require('tunnel-ssh');
 const { MongoClient } = require('mongodb');
-const express = require('express');
 const wmsConfig = require('../config/wmsConfig');
 
 //when modules/instance being required in nodejs, it will only load once.
@@ -32,13 +31,6 @@ const close = () => {
 }
 
 const startService = () => {
-    const server = express();
-    server.use(express.json());
-
-    // @WMS connection; Connect to WMS Database via tunnel-ssh
-    server.listen(wmsConfig.localPort, () => {
-        console.log(`WMS service started on port 4000`)
-    })
 
     connect(wmsConfig, () => {
         console.log(`WMS Database Connected...`);
