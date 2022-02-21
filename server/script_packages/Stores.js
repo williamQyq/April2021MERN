@@ -36,30 +36,73 @@ class Stores {
             (elements.map(e => e.textContent))
             , ...elements)
     }
+
+    //map key of res with footer, asign res
+    compareMapHelper(obj1, obj2) {
+        for (let [key, val] of obj1) {
+            val = obj2.get(key)
+        }
+        return obj1;
+    }
+    getRegexValue(str, regexExpr) {
+        let res = str.match(regexExpr).slice(1)[0]
+        if (res == null)
+            return null
+        return res
+    }
 }
 
 class Microsoft extends Stores {
+    static #model = MSItem;
     constructor() {
         super();
         this.url = {
             base: 'https://www.microsoft.com/en-us/store/b/shop-all-pcs?categories=2+in+1||Laptops||Desktops||PC+Gaming&s=store&skipitems=',
             skipItemsNum: 0
         }
-        this.model = MSItem
     }
-    async getPagesNum() {
+    async #parsePageNumFooter(page) {
+        let res = {
+            numPerPage: undefined,
+            totalNum: undefined
+        };
+        const FOOTER_XPATH_EXPR = '//p[@class="c-paragraph-3"]'
+        const NUM_PAGE_REGEX_EXPR = /.*Showing\s\d*\s-\s(\d*)\sof\s\d*.*/
+        const TOTAL_NUM_REGEX_EXPR = /.*Showing.*of\s(\d*).*/
+        // const ele = (await page.$x(FOOTER_XPATH_EXPR))
+        // let footer = await page.evaluate((...el) => el.map(el => el.textContent), ...ele)
+        let footer = (await this.evaluateElementsText(page, FOOTER_XPATH_EXPR))[0]
+        res.numPerPage = Number(this.getRegexValue(footer, NUM_PAGE_REGEX_EXPR))
+        res.totalNum = Number(this.getRegexValue(footer, TOTAL_NUM_REGEX_EXPR))
+        console.log(`[${this.constructor.name}][Parse Page Num Footer] numPerPage:${res.numPerPage}, totalNum:${res.totalNum}`)
+        return res
+    }
+    async closeDialog(page) {
+        let dialogCloseBtn = (await page.$x('//div[@class="sfw-dialog"]/div[@class="c-glyph glyph-cancel"]'))[0]
+        dialogCloseBtn.click()
+    }
+    async getPagesNum(page, url) {
+        await page.goto(url);
+        try {
+            await this.closeDialog(page)
+        } catch (e) {
+            console.error(`${this.constructor.name}\n`, e)
+        }
+        let res = await this.#parsePageNumFooter(page)
+        return (Math.ceil(res.totalNum / res.numPerPage))
+    }
+    async getItems(page, url, callback) {
+        await page.goto(url)
+        await page.waitForTimeout(10000);
 
-    }
-    async getItems() {
-        await this.page.goto(this.url + this.skipItemsNum)
-        await this.page.waitForTimeout(10000);
-        // await this.page.waitForXPath()
-        await this.page.close();
-        await this.browser.close();
+        await callback()
+        await page.close();
+        await browser.close();
     }
 }
 
 class Bestbuy extends Stores {
+    static #model = BBItem;
     constructor() {
         super();
         this.url = {
@@ -67,7 +110,6 @@ class Bestbuy extends Stores {
             tail: '&id=pcat17071&iht=n&ks=960&list=y&qp=condition_facet%3DCondition~New&sc=Global&st=categoryid%24pcmcat138500050001&type=page&usc=All%20Categories',
             cp: 1
         }
-        this.model = BBItem
     }
     async getItemSpec(page, url) {
         await page.goto(url);
@@ -76,17 +118,18 @@ class Bestbuy extends Stores {
         return itemSpec;
     }
     async #openSpecWrapper(page) {
-        const specWrapper = (await page.$x('//button[@data-track="Specifications: Accordion Open"]'))[0]
+        let specWrapper = (await page.$x('//button[@data-track="Specifications: Accordion Open"]'))[0]
         specWrapper.click()
     }
     async #parseItemSpec(page) {
-        const keys_xpath_expr = '//div[@class="title-container col-xs-6 v-fw-medium"]/div'
-        const values_xpath_expr = '//div[@class="row-value col-xs-6 v-fw-regular"]'
-        const keys = await this.evaluateElementsText(page, keys_xpath_expr)
-        const values = await this.evaluateElementsText(page, values_xpath_expr)
+        const KEYS_XPATH_EXPR = '//div[@class="title-container col-xs-6 v-fw-medium"]/div'
+        const VALUES_XPATH_EXPR = '//div[@class="row-value col-xs-6 v-fw-regular"]'
+        let keys = await this.evaluateElementsText(page, KEYS_XPATH_EXPR)
+        let values = await this.evaluateElementsText(page, VALUES_XPATH_EXPR)
 
         let spec = {}
         keys.forEach((key, index) => {
+            // key= key.split(' ').join('')
             key = key.replace(/\s/g, "")
             spec[key] = values[index]
         })

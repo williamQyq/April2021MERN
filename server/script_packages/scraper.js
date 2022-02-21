@@ -3,7 +3,7 @@ const MsItem = require('../models/MsItem');
 const {
     Bestbuy,
     Microsoft,
-} = require('./scripts.js');
+} = require('./Scripts.js');
 
 //get pages info, then for each page save new and price changed laptop to db 
 const getBestbuyLaptops = () => {

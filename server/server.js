@@ -2,10 +2,11 @@ const mongoose = require('mongoose');
 const path = require('path');
 const config = require('config');
 const { scrapeScheduler } = require('./script_packages/scrapeScheduler.js');    //scripts scheduler, node-cron
-const { amazonScheduler } = require('./amazonSP/amazonSchedule.js');
+// const { amazonScheduler } = require('./amazonSP/amazonSchedule.js');
 const wms = require("./wms/wmsDatabase.js");    // @local wms server connection
 const { Server } = require("socket.io");
-const { server } = require('./index')
+const { server } = require('./index');
+const { amazonScheduler } = require('./amazonSP/amazonSchedule.js');
 // @CREATE WMS CONNECTION
 wms.startService();
 
@@ -58,7 +59,7 @@ db.once('open', () => {
     scrapeScheduler.start();
     // @AMAZON SP UPDATE
     // amazonScheduler.start();
-    amazonScheduler.start();
+    // amazonScheduler()
 
 });
 

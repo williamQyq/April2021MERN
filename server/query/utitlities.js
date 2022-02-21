@@ -1,7 +1,7 @@
 const { BBItem } = require('../models/BBItem.js')
 const { MsItem } = require('../models/MsItem.js')
 const { ItemSpec } = require('../models/Spec.js')
-const { ProdPricing, Identifier } = require('../models/Amz.js')
+const { AmzProdPricing, AmzIdentifier } = require('../models/Amz.js')
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const {
@@ -48,11 +48,11 @@ const getStoreItemDetailById = (Model, _id) => (
     ])
 )
 const findAllProdPricing = () => {
-    return ProdPricing.find({})
+    return AmzProdPricing.find({})
 }
 
 const findProdPricingOnUpc = (upc) => {
-    return ProdPricing.find({ upc: upc })
+    return AmzProdPricing.find({ upc: upc })
 }
 
 const setProdPricingOffer = (identifier) => {
@@ -60,15 +60,15 @@ const setProdPricingOffer = (identifier) => {
     const filter = { "upc": upc, "identifiers.asin": asin }
     const update = { $set: { "identifiers.$.offers": offers } }
     const option = { useFindAndModify: false }
-    return ProdPricing.findOneAndUpdate(filter, update, option)
+    return AmzProdPricing.findOneAndUpdate(filter, update, option)
 
 }
 const upsertProdPricingNewAsin = (record) => {
     const { upc, asin } = record;
-    let newIdentifier = new Identifier({
+    let newIdentifier = new AmzIdentifier({
         asin: asin,
     })
-    let newProd = new ProdPricing({
+    let newProd = new AmzProdPricing({
         upc: upc,
         identifiers: []
     })
@@ -76,15 +76,15 @@ const upsertProdPricingNewAsin = (record) => {
     let query = { upc: upc }
     let update = { $setOnInsert: { newProd } }
     let option = { upsert: true, new: true, useFindAndModify: false };
-    return ProdPricing.updateOne(query, update, option)
+    return AmzProdPricing.updateOne(query, update, option)
         .then(async () => {
             let query = { "upc": upc }
             let update = { $pull: { "identifiers": { "asin": asin } } }
-            await ProdPricing.updateOne(query, update)
+            await AmzProdPricing.updateOne(query, update)
         }).then(async () => {
             let query = { upc: upc }
             let update = { $push: { identifiers: newIdentifier } }
-            await ProdPricing.updateOne(query, update)
+            await AmzProdPricing.updateOne(query, update)
         })
 
 }
