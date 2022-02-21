@@ -84,12 +84,15 @@ class Microsoft extends Stores {
     async getPagesNum(page, url) {
         await page.goto(url);
         try {
-            await this.closeDialog(page)
+            await this.closeDialog(page)    //may or may not close the dialog, it depends if the dialog shows up.
         } catch (e) {
             console.error(`${this.constructor.name}\n`, e)
         }
         let res = await this.#parsePageNumFooter(page)
-        return (Math.ceil(res.totalNum / res.numPerPage))
+        return ({
+            pagesNum: Math.ceil(res.totalNum / res.numPerPage),
+            numPerPage: res.numPerPage
+        })
     }
     async getItems(page, url, callback) {
         await page.goto(url)
