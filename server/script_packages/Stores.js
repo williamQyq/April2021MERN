@@ -1,7 +1,5 @@
 const puppeteer = require('puppeteer');
 const { ip } = require('config');
-const BBItem = require('../models/BBItem')
-const MSItem = require('../models/MsItem');
 
 class Stores {
     constructor() {
@@ -29,13 +27,27 @@ class Stores {
         });
         return page
     }
-    async evaluateElementsText(page, xpath_expr) {
-        await page.waitForXPath(xpath_expr)
-        const elements = await page.$x(xpath_expr)
+    //@param: puppeter page, xpath expression
+    //@return: text context
+    async evaluateElementsText(page, XPATH_EXPR) {
+        await page.waitForXPath(XPATH_EXPR)
+        const elements = await page.$x(XPATH_EXPR)
         return await page.evaluate((...elements) =>
             (elements.map(e => e.textContent))
             , ...elements)
     }
+
+    //@param: puppeter page, xpath expression, attribute id
+    //@return: attribute context
+    async evaluateItemAttribute(page, XPATH_EXPR, ATTRIBUTE_ID) {
+        const elements = await page.$x(XPATH_EXPR)
+        let res = await page.evaluate((ATTRIBUTE_ID, ...elements) =>
+            (elements.map(e => JSON.parse(e.getAttribute(ATTRIBUTE_ID))))
+            , ATTRIBUTE_ID, ...elements)
+
+        return res
+    }
+
 
     //map key of res with footer, asign res
     compareMapHelper(obj1, obj2) {
@@ -53,7 +65,6 @@ class Stores {
 }
 
 class Microsoft extends Stores {
-    static #model = MSItem;
     constructor() {
         super();
         this.url = {
@@ -61,6 +72,7 @@ class Microsoft extends Stores {
             skipItemsNum: 0
         }
     }
+
     async #parsePageNumFooter(page) {
         let res = {
             numPerPage: undefined,
@@ -69,18 +81,20 @@ class Microsoft extends Stores {
         const FOOTER_XPATH_EXPR = '//p[@class="c-paragraph-3"]'
         const NUM_PAGE_REGEX_EXPR = /.*Showing\s\d*\s-\s(\d*)\sof\s\d*.*/
         const TOTAL_NUM_REGEX_EXPR = /.*Showing.*of\s(\d*).*/
-        // const ele = (await page.$x(FOOTER_XPATH_EXPR))
-        // let footer = await page.evaluate((...el) => el.map(el => el.textContent), ...ele)
+
         let footer = (await this.evaluateElementsText(page, FOOTER_XPATH_EXPR))[0]
         res.numPerPage = Number(this.getRegexValue(footer, NUM_PAGE_REGEX_EXPR))
         res.totalNum = Number(this.getRegexValue(footer, TOTAL_NUM_REGEX_EXPR))
+
         console.log(`[${this.constructor.name}][Parse Page Num Footer] numPerPage:${res.numPerPage}, totalNum:${res.totalNum}`)
         return res
     }
+
     async closeDialog(page) {
         let dialogCloseBtn = (await page.$x('//div[@class="sfw-dialog"]/div[@class="c-glyph glyph-cancel"]'))[0]
         dialogCloseBtn.click()
     }
+
     async getPagesNum(page, url) {
         await page.goto(url);
         try {
@@ -94,18 +108,50 @@ class Microsoft extends Stores {
             numPerPage: res.numPerPage
         })
     }
-    async getItems(page, url, callback) {
+
+    //parse evaluate result no need
+    async evaluatePriceAttribute(page, XPATH_EXPR, ATTRIBUTE_ID) {
+        const elements = await page.$x(XPATH_EXPR)
+        let res = await page.evaluate((ATTRIBUTE_ID, ...elements) =>
+            (elements.map(e => Number(e.getAttribute(ATTRIBUTE_ID).replace(/[$|,]/g, ""))))
+            , ATTRIBUTE_ID, ...elements)
+
+        return res
+    }
+
+    async #parseItemsList(page) {
+        const ITEMS_LIST_EXPR = '//div[@class="m-channel-placement-item f-wide f-full-bleed-image"]/a'
+        const PRICE_LIST_EXPR = '//span[@itemprop="price"]'
+        const ITEM_ATTRIBUTE_ID = "data-m"
+        const PRICE_ATTRIBUTE_ID = "content"
+
+        let itemAttrLists = await this.evaluateItemAttribute(page, ITEMS_LIST_EXPR, ITEM_ATTRIBUTE_ID)
+        let priceAttrLists = await this.evaluatePriceAttribute(page, PRICE_LIST_EXPR, PRICE_ATTRIBUTE_ID)
+        return itemAttrLists.map((item, index) => {
+            let pid = item['pid']
+            let name = item["tags"]["prdName"]
+            let link = 'https://www.microsoft.com/en-us/d/' + name.replace(/\s/g, "-").replace(/"/g, "").toLowerCase() + '/' + pid
+            let currentPrice = priceAttrLists[index]
+
+            return ({
+                link: link,
+                sku: pid,
+                curretPrice: currentPrice,
+                name: name
+            });
+        })
+    }
+
+    async getItems(page, url) {
         await page.goto(url)
         await page.waitForTimeout(10000);
 
-        await callback()
-        await page.close();
-        await browser.close();
+        let items = await this.#parseItemsList(page)
+        return items
     }
 }
 
 class Bestbuy extends Stores {
-    static #model = BBItem;
     constructor() {
         super();
         this.url = {
