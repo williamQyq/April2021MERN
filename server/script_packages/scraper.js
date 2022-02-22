@@ -1,6 +1,7 @@
 const BBItem = require('../models/BBItem');
 const MSItem = require('../models/MsItem');
 const { Bestbuy, Microsoft } = require('./Stores');
+const { saveStoreItemToDatabase } = require('../query/utitlities')
 
 //get pages info, then for each page save new and price changed laptop to db 
 // const getBestbuyLaptops = () => {
@@ -57,29 +58,35 @@ const getMicrosoftLaptops = async () => {
     let MS = new Microsoft();
     let msUrl = MS.url
     let url = msUrl.base + msUrl.skipItemsNum
+    let storeModel = MSItem
     let browser = await MS.initBrowser();
     let page = await MS.initPage(browser);
-    const { pagesNum, numPerPage } = await MS.getPagesNum(page, url)
 
-    return new Promise(async (resolve, reject) => {
-        try {
-            msUrl.skipItemsNum = 0
+    const { pagesNum, numPerPage } = await MS.getPagesNum(page, url)    //puppeteer script get web footer contains page numbers.
 
-            //for each page, get items and save to database
-            for (let i = 0; i < pagesNum; i++) {
-                msUrl.skipItemsNum += (numPerPage * i);
-                let url = msUrl.base + msUrl.skipItemsNum;
-                await MS.getItems(page, url).then(items =>
-                    items.forEach((item, index) => {
-                        console.log(`[Microsoft]page ${i} # ${index}:${item.sku} get item finished.`)
-                        // saveItemToDatabase(item, MSItem)
-                    }))
-            }
-            resolve(`[Microsoft] Finished.`)
-        } catch (e) {
-            reject(e)
-        }
-    })
+    //for each page, get items and save to database
+    msUrl.skipItemsNum = 0
+    for (let i = 0; i < pagesNum; i++) {
+        msUrl.skipItemsNum += (numPerPage * i);
+        let url = msUrl.base + msUrl.skipItemsNum;
+        await MS.getItems(page, url)
+            .then(async (items) => {
+                for (const item of items) {
+                    await saveStoreItemToDatabase(item, storeModel)
+                        .then(res =>
+                            console.log(`[Microsoft]page ${i} # ${index}:${item.sku} get item finished.`)
+                        )
+                }
+            })
+            .catch(e => {
+                console.error(e)
+            })
+            .finally(() => {
+                console.log(`[Microsoft]Page ${i} finished.`)
+            })
+    }
+
+
 
 }
 

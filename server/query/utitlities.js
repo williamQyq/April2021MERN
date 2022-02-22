@@ -12,6 +12,7 @@ const {
     LOOKUP_ITEM_SPEC,
 } = require('./aggregate.js')
 
+//@itemSpec
 const saveItemConfiguration = (config, sku) => {
 
     const query = { upc: config.UPC, sku: sku }
@@ -23,11 +24,75 @@ const saveItemConfiguration = (config, sku) => {
     const option = { upsert: true, useFindAndModify: false }
     return ItemSpec.findOneAndUpdate(query, update, option)
 }
-
+//@itemSpec
 const findItemConfig = async (sku) => {
     const res = await ItemSpec.findOne({ sku: sku })
     return res ? res : false
 }
+//@StoreListings
+const saveStoreItemToDatabase = async (item, storeModel) => {
+    return setOnInsert(item, storeModel)
+        .then(async (item) => {
+            if (item != null)
+                await updateItemIfPriceChanged(item, storeModel)
+        })
+        .catch(e => console.error(e))
+        .finally(() => console.log(`save item finished.`))
+}
+
+const setOnInsert = async (item, storeModel) => {
+    const query = { sku: item.sku };
+    const update = {
+        $setOnInsert: {
+            sku: item.sku,
+            name: item.name,
+            link: item.link,
+            price_timestamps: [{
+                price: item.currentPrice
+            }]
+        }
+    };
+    const options = { upsert: true };
+
+    let isInsert = await storeModel.updateOne(query, update, options)
+        .then(result => result.upserted ? true : false)
+
+    return isInsert ? null : item
+}
+
+const updateItemIfPriceChanged = async (item, storeModel) => {
+    return await this.storeModel.aggregate([
+        {
+            $project: {
+                sku: 1,
+                updatePrice: item.currentPrice,
+                isPriceChanged: {        //check if capture price equal current price in db.
+                    $ne: [
+                        item.currentPrice,       //lastest price from scrape
+                        LAST_PRICE             //price in db
+                    ]
+                }
+            }
+        },
+        {
+            $match: {
+                sku: item.sku,
+                isPriceChanged: true
+            }
+        }
+    ]).then(async (docs) => {
+        if (docs.length == 0)
+            return false
+
+        for (const doc of docs) {
+            await this.pushUpdatedPrice(doc, item)
+        }
+        return ture
+    })
+}
+
+
+//@StoreListings
 const getStoreItems = (Model) => (
     Model.aggregate([
         LOOKUP_ITEM_SPEC,
@@ -37,6 +102,7 @@ const getStoreItems = (Model) => (
 
     ])
 )
+//@StoreListings
 const getStoreItemDetailById = (Model, _id) => (
     Model.aggregate([
         PROJ_ITEM_DETAIL,
@@ -47,14 +113,15 @@ const getStoreItemDetailById = (Model, _id) => (
         }
     ])
 )
+//@AmzProdPricing
 const findAllProdPricing = () => {
     return AmzProdPricing.find({})
 }
-
+//@AmzProdPricing
 const findProdPricingOnUpc = (upc) => {
     return AmzProdPricing.find({ upc: upc })
 }
-
+//@AmzProdPricing
 const setProdPricingOffer = (identifier) => {
     const { upc, asin, offers } = identifier;
     const filter = { "upc": upc, "identifiers.asin": asin }
@@ -63,6 +130,7 @@ const setProdPricingOffer = (identifier) => {
     return AmzProdPricing.findOneAndUpdate(filter, update, option)
 
 }
+//@AmzProdPricing
 const upsertProdPricingNewAsin = (record) => {
     const { upc, asin } = record;
     let newIdentifier = new AmzIdentifier({
@@ -97,5 +165,6 @@ module.exports = {
     findAllProdPricing,
     findProdPricingOnUpc,
     setProdPricingOffer,
-    upsertProdPricingNewAsin
+    upsertProdPricingNewAsin,
+    saveStoreItemToDatabase
 }

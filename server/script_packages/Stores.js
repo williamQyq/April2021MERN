@@ -149,6 +149,10 @@ class Microsoft extends Stores {
         let items = await this.#parseItemsList(page)
         return items
     }
+    
+    async getItemSpec(page, url) {
+        return
+    }
 }
 
 class Bestbuy extends Stores {
