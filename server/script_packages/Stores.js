@@ -1,5 +1,7 @@
 const puppeteer = require('puppeteer');
 const { ip } = require('config');
+const BBItem = require('../models/BBItem');
+const MSItem = require('../models/MsItem');
 
 class Stores {
     constructor() {
@@ -40,14 +42,25 @@ class Stores {
     //@param: puppeter page, xpath expression, attribute id
     //@return: attribute context
     async evaluateItemAttribute(page, XPATH_EXPR, ATTRIBUTE_ID) {
+        await page.waitForXPath(XPATH_EXPR)
         const elements = await page.$x(XPATH_EXPR)
         let res = await page.evaluate((ATTRIBUTE_ID, ...elements) =>
             (elements.map(e => JSON.parse(e.getAttribute(ATTRIBUTE_ID))))
             , ATTRIBUTE_ID, ...elements)
 
         return res
+        
     }
+    //parse evaluate result no need
+    async evaluatePriceAttribute(page, XPATH_EXPR, ATTRIBUTE_ID) {
+        await page.waitForXPath(XPATH_EXPR)
+        const elements = await page.$x(XPATH_EXPR)
+        let res = await page.evaluate((ATTRIBUTE_ID, ...elements) =>
+            (elements.map(e => Number(e.getAttribute(ATTRIBUTE_ID).replace(/[$|,]/g, ""))))
+            , ATTRIBUTE_ID, ...elements)
 
+        return res
+    }
 
     //map key of res with footer, asign res
     compareMapHelper(obj1, obj2) {
@@ -65,12 +78,14 @@ class Stores {
 }
 
 class Microsoft extends Stores {
+    model = MSItem
     constructor() {
         super();
-        this.url = {
-            base: 'https://www.microsoft.com/en-us/store/b/shop-all-pcs?categories=2+in+1||Laptops||Desktops||PC+Gaming&s=store&skipitems=',
-            skipItemsNum: 0
-        }
+        this.url = 'https://www.microsoft.com/en-us/store/b/shop-all-pcs?categories=2+in+1||Laptops||Desktops||PC+Gaming&s=store&skipitems=';
+    }
+
+    initURL(skipItemsNum) {
+        return this.url + skipItemsNum
     }
 
     async #parsePageNumFooter(page) {
@@ -109,16 +124,6 @@ class Microsoft extends Stores {
         })
     }
 
-    //parse evaluate result no need
-    async evaluatePriceAttribute(page, XPATH_EXPR, ATTRIBUTE_ID) {
-        const elements = await page.$x(XPATH_EXPR)
-        let res = await page.evaluate((ATTRIBUTE_ID, ...elements) =>
-            (elements.map(e => Number(e.getAttribute(ATTRIBUTE_ID).replace(/[$|,]/g, ""))))
-            , ATTRIBUTE_ID, ...elements)
-
-        return res
-    }
-
     async #parseItemsList(page) {
         const ITEMS_LIST_EXPR = '//div[@class="m-channel-placement-item f-wide f-full-bleed-image"]/a'
         const PRICE_LIST_EXPR = '//span[@itemprop="price"]'
@@ -131,31 +136,33 @@ class Microsoft extends Stores {
             let pid = item['pid']
             let name = item["tags"]["prdName"]
             let link = 'https://www.microsoft.com/en-us/d/' + name.replace(/\s/g, "-").replace(/"/g, "").toLowerCase() + '/' + pid
-            let currentPrice = priceAttrLists[index]
+            let currentPrice = Number(priceAttrLists[index])
 
             return ({
                 link: link,
                 sku: pid,
-                curretPrice: currentPrice,
+                currentPrice: currentPrice,
                 name: name
             });
         })
     }
 
-    async getItems(page, url) {
+    async getPageItems(page, url) {
         await page.goto(url)
         await page.waitForTimeout(10000);
 
         let items = await this.#parseItemsList(page)
         return items
     }
-    
+
+
     async getItemSpec(page, url) {
         return
     }
 }
 
 class Bestbuy extends Stores {
+    model = BBItem
     constructor() {
         super();
         this.url = {

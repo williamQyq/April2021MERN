@@ -6,13 +6,15 @@
 const { puppeteerErrors } = require('puppeteer');
 const { Bestbuy, Microsoft } = require('./script_packages/Stores.js');
 const { getMicrosoftLaptops } = require('./script_packages/scraper');
+const { saveStoreItemToDatabase } = require('./query/utitlities.js');
+const MSItem = require('./models/MsItem');
 
 const main = async () => {
-    puppeteerStoresTest()
+    await getMicrosoftLaptops()
 }
 
 const puppeteerStoresTest = async () => {
-    await getMicrosoftLaptops();
+
     // try {
     //     let ms = new Microsoft();
     //     msUrl = ms.url
@@ -30,7 +32,19 @@ const puppeteerStoresTest = async () => {
     //     console.log(`Error========:\n`, e)
     // }
 }
-
+const puppSaveStoreItemTest = async () => {
+    let item = {
+        "link": "https://www.microsoft.com/en-us/d/surface-laptop-go/94FC0BDGQ7WV",
+        "sku": "94",
+        "currentPrice": 499.99,
+        "name": "Surface Laptop Go"
+    }
+    try {
+        await saveStoreItemToDatabase(item, MSItem)
+    } catch (e) {
+        console.error(e)
+    }
+}
 const puppeteerStoresPageNumTest = async () => {
     try {
         let ms = new Microsoft();
@@ -49,4 +63,4 @@ const puppeteerStoresPageNumTest = async () => {
     }
 }
 
-main();
+module.exports = { main }

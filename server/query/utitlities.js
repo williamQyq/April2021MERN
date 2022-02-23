@@ -10,6 +10,7 @@ const {
     SORT_ON_CAPTURE_DATE,
     UNWIND_ITEM_SPEC_AND_PRESERVE_ORIGIN,
     LOOKUP_ITEM_SPEC,
+    LAST_PRICE
 } = require('./aggregate.js')
 
 //@itemSpec
@@ -29,15 +30,15 @@ const findItemConfig = async (sku) => {
     const res = await ItemSpec.findOne({ sku: sku })
     return res ? res : false
 }
-//@StoreListings
+//@StoreListings -----------------------------
 const saveStoreItemToDatabase = async (item, storeModel) => {
-    return setOnInsert(item, storeModel)
-        .then(async (item) => {
-            if (item != null)
-                await updateItemIfPriceChanged(item, storeModel)
-        })
-        .catch(e => console.error(e))
-        .finally(() => console.log(`save item finished.`))
+    //insert if has sku record
+    let isUpserted = await setOnInsert(item, storeModel)
+
+    if (!isUpserted)
+        //push updated price to priceTimestamps field
+        await updateItemIfPriceChanged(item, storeModel)
+
 }
 
 const setOnInsert = async (item, storeModel) => {
@@ -53,15 +54,14 @@ const setOnInsert = async (item, storeModel) => {
         }
     };
     const options = { upsert: true };
-
-    let isInsert = await storeModel.updateOne(query, update, options)
+    let isUpserted = await storeModel.updateOne(query, update, options)
         .then(result => result.upserted ? true : false)
 
-    return isInsert ? null : item
+    return isUpserted
 }
 
-const updateItemIfPriceChanged = async (item, storeModel) => {
-    return await this.storeModel.aggregate([
+const updateItemIfPriceChanged = (item, storeModel) => {
+    return storeModel.aggregate([
         {
             $project: {
                 sku: 1,
@@ -82,15 +82,25 @@ const updateItemIfPriceChanged = async (item, storeModel) => {
         }
     ]).then(async (docs) => {
         if (docs.length == 0)
-            return false
-
-        for (const doc of docs) {
-            await this.pushUpdatedPrice(doc, item)
-        }
-        return ture
+            return
+        await Promise.all(docs.map(doc => pushUpdatedPrice(doc, item, storeModel)))
     })
 }
 
+const pushUpdatedPrice = (doc, item, storeModel) => {
+    let options = { upsert: true, new: true, setDefaultsOnInsert: true, useFindAndModify: false }
+    let update = {
+        $push: {
+            price_timestamps: {
+                price: item.currentPrice
+            }
+        }
+    }
+
+    return storeModel.findByIdAndUpdate(doc._id, update, options)
+
+}
+//----------------------------
 
 //@StoreListings
 const getStoreItems = (Model) => (
