@@ -32,6 +32,7 @@ const findItemConfig = async (sku) => {
 }
 //@StoreListings -----------------------------
 const saveStoreItemToDatabase = async (item, storeModel) => {
+    item.currentPrice = Number(item.currentPrice)
     //insert if has sku record
     let isUpserted = await setOnInsert(item, storeModel)
 

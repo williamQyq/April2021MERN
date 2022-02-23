@@ -2,7 +2,7 @@ const cron = require('node-cron');
 const { getBestbuyLaptops, getMicrosoftLaptops } = require('./scraper.js');
 
 //cron scheduler run pyProcessBB get bb prices at 6 pm everyday
-const scrapeScheduler = cron.schedule("00 19 14 * * *", () => {
+const scrapeScheduler = cron.schedule("00 12 18 * * *", () => {
     scrapeStores();
 
 });
@@ -10,16 +10,17 @@ const scrapeScheduler = cron.schedule("00 19 14 * * *", () => {
 //scrape Stores after random delay minutes
 const scrapeStores = () => {
 
-    let count = 0;
+    let rand = getRandomMiliSec(10000)
+    let count = 0
     let interval = setInterval(() => {
-        console.log(`${(count + 1)} minutes pass...`);
-        count += 1;
-    }, 60000);
+        console.log(`[Script]count down in ***${Math.floor((rand / 1000) - count)}*** sec...`);
+        count += 1
+    }, 1000);
 
     //run scraper in an hour, random time.
     setTimeout(() => {
         clearInterval(interval);
-        console.log(`Delay timer finished.`)
+        console.log(`[Script] start`)
 
         // scrappers: bestbuy,microsoft
         Promise.allSettled([getMicrosoftLaptops(), getBestbuyLaptops()])
@@ -28,15 +29,12 @@ const scrapeStores = () => {
                     console.log(`Result:${result.status}`)
                 })
             })
-    }, getRandomMins(2))
+    }, rand)
 }
 
 // get random mins less than max
-const getRandomMins = (max) => {
-    min = Math.floor(Math.random() * max);
-    sec = min * 60000;
-    console.log(`Random delay mins: ${min}`);
-    return sec;
+const getRandomMiliSec = (milisec) => {
+    return Math.floor(Math.random() * milisec);
 }
 
 module.exports = {

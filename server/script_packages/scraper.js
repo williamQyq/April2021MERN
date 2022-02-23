@@ -49,24 +49,21 @@ const getBestbuyLaptops = async () => {
     let page = await BB.initPage(browser);
 
     let storeUrl = BB.initURL(cp)
-    // const { pagesNum } = await BB.getPagesNum(page, storeUrl)    //puppeteer script get web footer contains page numbers.
-    let pagesNum = 1
+    const { pagesNum } = await BB.getPagesNum(page, storeUrl)    //puppeteer script get web footer contains page numbers.
     //for each page, get items and save to database
     for (let i = 0; i < pagesNum; i++) {
-        let pageUrl = BB.initURL(cp)
-        cp += 1;
+        let pageUrl = BB.initURL(i+1)
 
         await BB.getPageItems(page, pageUrl)
             .then(async (items) => {
                 await Promise.all(items.map(async (item, index) =>
-                    console.log(JSON.stringify(item, null, 4))
-                    // await saveStoreItemToDatabase(item, BB.model)
-                    //     .then(() => {
-                    //         console.log(JSON.stringify(
-                    //             `[Bestbuy]page ${i} # ${index}: ${item.sku} - $${item.currentPrice} get item finished.`,
-                    //             null, 4
-                    //         ))
-                    //     })
+                    await saveStoreItemToDatabase(item, BB.model)
+                        .then(() => {
+                            console.log(JSON.stringify(
+                                `[Bestbuy]page ${i} # ${index}: ${item.sku} - $${item.currentPrice} get item finished.`,
+                                null, 4
+                            ))
+                        })
                 ))
             })
             .catch(e => {

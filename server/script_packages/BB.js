@@ -82,7 +82,7 @@ class Bestbuy extends Stores {
 
     async #parseItemsList(page) {
         const ITEMS_LIST_EXPR = '//li[@class="sku-item"]'
-        const PRICE_LIST_EXPR = ITEMS_LIST_EXPR + '//div[@class="priceView-hero-price priceView-customer-price"]/span[@class="sr-only"]'
+        const PRICE_LIST_EXPR = ITEMS_LIST_EXPR + '//div[@class="priceView-hero-price priceView-customer-price"]/span[@aria-hidden="true"]'
         const NAME_LIST_EXPR = ITEMS_LIST_EXPR + '//h4[@class="sku-header"]/a'
         const ITEM_ATTRIBUTE_ID = "data-sku-id"
 
@@ -92,9 +92,9 @@ class Bestbuy extends Stores {
         let priceTextLists = await this.evaluateElementsText(page, PRICE_LIST_EXPR)
         let nameLists = await this.evaluateElementsText(page, NAME_LIST_EXPR)
         return itemAttrLists.map((sku, index) => {
-            let link = siteLink.replace(/\*\*\*sku\*\*\*/, sku)
+            let link = siteLink.replace(/\*\*\*sku\*\*\*/g, sku)
             let name = nameLists[index]
-            let currentPrice = Number(priceTextLists[index])
+            let currentPrice = Number(priceTextLists[index].replace(/[\s|$]/g, ""))
 
             return ({
                 link: link,

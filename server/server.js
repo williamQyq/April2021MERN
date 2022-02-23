@@ -6,7 +6,7 @@ const wms = require("./wms/wmsDatabase.js");    // @local wms server connection
 const { scrapeScheduler } = require('./script_packages/scrapeScheduler.js');    //scripts scheduler, node-cron
 const { amazonScheduler } = require('./amazonSP/amazonSchedule.js');
 
-const { main } = require('./unit_test')
+// const { main } = require('./unit_test')
 // @CREATE WMS CONNECTION
 wms.startService();
 
@@ -55,7 +55,7 @@ db.once('open', () => {
         }
     })
 
-    main()
+    // main()
     scrapeScheduler.start();
     // @AMAZON SP UPDATE
     // amazonScheduler.start();
