@@ -5,12 +5,12 @@
 
 const { puppeteerErrors } = require('puppeteer');
 const { Bestbuy, Microsoft } = require('./script_packages/Stores.js');
-const { getMicrosoftLaptops } = require('./script_packages/scraper');
+const { getMicrosoftLaptops, getBestbuyLaptops } = require('./script_packages/scraper');
 const { saveStoreItemToDatabase } = require('./query/utitlities.js');
 const MSItem = require('./models/MsItem');
 
 const main = async () => {
-    await getMicrosoftLaptops()
+    await getBestbuyLaptops()
 }
 
 const puppeteerStoresTest = async () => {

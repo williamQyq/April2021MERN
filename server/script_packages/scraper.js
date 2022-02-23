@@ -1,4 +1,5 @@
-const { Bestbuy, Microsoft } = require('./Stores');
+const Bestbuy = require('./BB');
+const Microsoft = require('./MS');
 const { saveStoreItemToDatabase } = require('../query/utitlities')
 
 const getMicrosoftLaptops = async () => {
@@ -12,8 +13,8 @@ const getMicrosoftLaptops = async () => {
 
     //for each page, get items and save to database
     for (let i = 0; i < pagesNum; i++) {
-        skipItemsNum += numPerPage;
         let pageUrl = MS.initURL(skipItemsNum)
+        skipItemsNum += numPerPage;
 
         await MS.getPageItems(page, pageUrl)
             .then(async (items) => {
@@ -42,35 +43,37 @@ const getMicrosoftLaptops = async () => {
 
 const getBestbuyLaptops = async () => {
 
-    let MS = new Bestbuy();
-    let skipItemsNum = 0
-    let browser = await MS.initBrowser();
-    let page = await MS.initPage(browser);
+    let BB = new Bestbuy();
+    let cp = 1
+    let browser = await BB.initBrowser();
+    let page = await BB.initPage(browser);
 
-    let storeUrl = MS.initURL(skipItemsNum)
-    const { pagesNum, numPerPage } = await MS.getPagesNum(page, storeUrl)    //puppeteer script get web footer contains page numbers.
-
+    let storeUrl = BB.initURL(cp)
+    // const { pagesNum } = await BB.getPagesNum(page, storeUrl)    //puppeteer script get web footer contains page numbers.
+    let pagesNum = 1
     //for each page, get items and save to database
     for (let i = 0; i < pagesNum; i++) {
-        skipItemsNum += (numPerPage * i);
-        let pageUrl = MS.initURL(skipItemsNum)
-        await MS.getPageItems(page, pageUrl)
+        let pageUrl = BB.initURL(cp)
+        cp += 1;
+
+        await BB.getPageItems(page, pageUrl)
             .then(async (items) => {
                 await Promise.all(items.map(async (item, index) =>
-                    await saveStoreItemToDatabase(item, MS.model)
-                        .then(() => {
-                            console.log(JSON.stringify(
-                                `[Microsoft]page ${i} # ${index}: ${item.sku} - $${item.currentPrice} get item finished.`,
-                                null, 4
-                            ))
-                        })
+                    console.log(JSON.stringify(item, null, 4))
+                    // await saveStoreItemToDatabase(item, BB.model)
+                    //     .then(() => {
+                    //         console.log(JSON.stringify(
+                    //             `[Bestbuy]page ${i} # ${index}: ${item.sku} - $${item.currentPrice} get item finished.`,
+                    //             null, 4
+                    //         ))
+                    //     })
                 ))
             })
             .catch(e => {
                 console.error(e)
             })
             .finally(() => {
-                console.log(`[Microsoft]Page ${i} finished.`)
+                console.log(`[Bestbuy]Page ${i} finished.`)
             })
     }
 
@@ -94,7 +97,7 @@ const getItemConfiguration = async (store, url) => {
 
 module.exports = {
     getMicrosoftLaptops,
-    // getBestbuyLaptops,
+    getBestbuyLaptops,
     getItemConfiguration
 
 }

@@ -17,10 +17,10 @@ app.use('/api/ms_items', require('./routes/api/ms_items'));
 app.use('/api/items', require('./routes/api/items'));
 app.use('/api/users', require('./routes/api/users'));
 app.use('/api/auth', require('./routes/api/auth'));
-app.use('/api/keepa', require('./routes/api/keepa'));
+// app.use('/api/keepa', require('./routes/api/keepa'));
 app.use('/api/wms', require('./routes/api/wms'));
 app.use('/api/operation', require('./routes/api/operation'));
-app.use('/api/inbound', require('./routes/api/inbound'));
+// app.use('/api/inbound', require('./routes/api/inbound'));
 
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, '../mern-project/build')));

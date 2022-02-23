@@ -55,7 +55,7 @@ db.once('open', () => {
         }
     })
 
-    // main()
+    main()
     scrapeScheduler.start();
     // @AMAZON SP UPDATE
     // amazonScheduler.start();
