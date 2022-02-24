@@ -32,11 +32,11 @@ const getMicrosoftLaptops = async () => {
                             MS.printMsg(msgMap)
 
                         })
-                        .catch(e => console.error(`ERROR: page ${i} # ${index}: ${item.sku} ${item.name}`))
+                        .catch(e => console.error(`ERROR: page ${i} # ${index}: ${item.sku} ${item.name}\n`, e))
                 ))
             })
             .catch(e => {
-                console.error(`ERROR:[Bestbuy] page ${i} # ${index}: ${item.sku} ${item.name}\n`, e)
+                console.error(`\nERROR:[Microsoft] page ${i}\n`)
             })
             .finally(() => {
                 console.log(`[Microsoft]===Page ${i} finished.===`)
@@ -57,29 +57,33 @@ const getBestbuyLaptops = async () => {
 
     let storeUrl = BB.initURL(cp)
     const { pagesNum } = await BB.getPagesNum(page, storeUrl)    //puppeteer script get web footer contains page numbers.
+
     //for each page, get items and save to database
     for (let i = 0; i < pagesNum; i++) {
         let pageUrl = BB.initURL(i + 1)
 
+        //get items on page#-> for each item saveDatabase-> printResult-> finished
         await BB.getPageItems(page, pageUrl)
-            .then(async (items) => {
-                await Promise.all(items.map(async (item, index) =>
-                    await saveStoreItemToDatabase(item, BB.model)
-                        .then(msg => {
-                            let msgMap = new Map([
-                                ["store", "Bestbuy"],
-                                ["page", i],
-                                ["index", index],
-                                ["sku", item.sku],
-                                ["currentPrice", item.currentPrice],
-                                ["msg", msg]
-                            ])
-                            BB.printMsg(msgMap)
-                        })
-                ))
+            .then(items => Promise.all(items.map(async (item, index) => {
+                if (item)
+                    return saveStoreItemToDatabase(item, BB.model).then(msg => {
+                        return new Map([
+                            ["store", "Bestbuy"],
+                            ["page", i],
+                            ["index", index],
+                            ["sku", item.sku],
+                            ["currentPrice", item.currentPrice],
+                            ["msg", msg]
+                        ])
+                    })
+            })))
+            .then(results => {
+                results.forEach(result => {
+                    BB.printMsg(result)
+                })
             })
-            .catch(e => {
-                console.error(`ERROR:[Bestbuy] page ${i} # ${index}: ${item.sku} ${item.name}\n`, e)
+            .catch(() => {
+                console.error(`\nERROR:[Bestbuy] page ${i}\n`)
             })
             .finally(() => {
                 console.log(`[Bestbuy]===Page ${i} finished.===`)
@@ -91,7 +95,7 @@ const getBestbuyLaptops = async () => {
 
 }
 
-
+//enum store<Bestbuy|Microsoft>
 const getItemConfiguration = async (store, url) => {
     console.log(`[getItemConfig] starting...`)
     let browser = await store.initBrowser();

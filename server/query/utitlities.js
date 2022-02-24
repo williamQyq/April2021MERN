@@ -43,7 +43,7 @@ const saveStoreItemToDatabase = async (item, storeModel) => {
     else {
         msg = "NEW ITEM UPSERT"
     }
-
+    
     return msg
 
 }

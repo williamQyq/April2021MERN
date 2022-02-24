@@ -3,7 +3,7 @@ const moment = require('moment')
 const { getBestbuyLaptops, getMicrosoftLaptops } = require('./scraper.js');
 
 //cron scheduler run pyProcessBB get bb prices at 6 pm everyday
-const scrapeScheduler = cron.schedule("00 12 18 * * *", () => {
+const scrapeScheduler = cron.schedule("00 09 12 * * *", () => {
     scrapeStores();
 
 });

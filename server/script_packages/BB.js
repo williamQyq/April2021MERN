@@ -106,11 +106,34 @@ class Bestbuy extends Stores {
     }
 
     async getPageItems(page, url) {
+        let items;
         await page.goto(url)
         await page.waitForTimeout(10000);
-
-        let items = await this.#parseItemsList(page)
+        try {
+            items = await this.#parseItemsList(page)
+        } catch {
+            await page.goto(url)
+            items = await this.retry(() => this.#parseItemsList(page), 2000)
+        }
         return items
+    }
+
+    retry(callback, milisec) {
+        return new Promise((resolve, reject) => {
+            let interval = setInterval(async () => {
+                let res = await callback();
+                console.log("retrying...")
+                if (res) {
+                    clearInterval(interval)
+                    resolve(res)
+                }
+            }, milisec)
+
+            setTimeout(() => {
+                clearInterval(interval);
+                reject()
+            }, 10000)
+        })
     }
 }
 

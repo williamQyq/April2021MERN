@@ -4,34 +4,33 @@
 */
 
 const { puppeteerErrors } = require('puppeteer');
-const { Bestbuy, Microsoft } = require('./script_packages/Stores.js');
 const { getMicrosoftLaptops, getBestbuyLaptops } = require('./script_packages/scraper');
 const { saveStoreItemToDatabase } = require('./query/utitlities.js');
 const MSItem = require('./models/MsItem');
+const Bestbuy = require('./script_packages/BB.js');
 
 const main = async () => {
     // await getMicrosoftLaptops()
     // await getBestbuyLaptops()
+    // puppeteerStoresPageTest()
 }
 
-const puppeteerStoresTest = async () => {
+const puppeteerStoresPageTest = async () => {
+    let store = new Bestbuy();
+    let url = store.initURL(5)
+    try {
 
-    // try {
-    //     let ms = new Microsoft();
-    //     msUrl = ms.url
-    //     url = msUrl.base + msUrl.skipItemsNum
+        let browser = await store.initBrowser();
+        let page = await store.initPage(browser);
+        let items = await store.getPageItems(page, url)
 
-    //     let browser = await ms.initBrowser();
-    //     let page = await ms.initPage(browser);
-    //     let items = await ms.getItems(page, url)
+        console.log(JSON.stringify(items, null, 4))
 
-    //     console.log(JSON.stringify(items, null, 4))
-
-    //     await page.close();
-    //     await browser.close();
-    // } catch (e) {
-    //     console.log(`Error========:\n`, e)
-    // }
+        await page.close();
+        await browser.close();
+    } catch (e) {
+        console.log(`Error========:\n`, e)
+    }
 }
 const puppSaveStoreItemTest = async () => {
     let item = {

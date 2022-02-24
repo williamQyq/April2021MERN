@@ -45,6 +45,7 @@ class Microsoft extends Stores {
     }
 
     async closeDialog(page) {
+        await page.waitForXPath('//div[@class="sfw-dialog"]/div[@class="c-glyph glyph-cancel"]')
         let dialogCloseBtn = (await page.$x('//div[@class="sfw-dialog"]/div[@class="c-glyph glyph-cancel"]'))[0]
         dialogCloseBtn.click()
     }
@@ -72,6 +73,7 @@ class Microsoft extends Stores {
         let itemAttrLists = await this.evaluateItemAttribute(page, ITEMS_LIST_EXPR, ITEM_ATTRIBUTE_ID)
         let priceAttrLists = await this.evaluatePriceAttribute(page, PRICE_LIST_EXPR, PRICE_ATTRIBUTE_ID)
         return itemAttrLists.map((item, index) => {
+            item = JSON.parse(item)
             let pid = item['pid']
             let name = item["tags"]["prdName"]
             let link = 'https://www.microsoft.com/en-us/d/' + name.replace(/\s/g, "-").replace(/"/g, "").toLowerCase() + '/' + pid

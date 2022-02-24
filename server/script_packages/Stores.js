@@ -7,10 +7,9 @@ class Stores {
 
     printMsg(msgMap) {
         // `[Bestbuy]page ${i} # ${index}: ${item.sku} - $${item.currentPrice} get item finished. <State: ${msg}>`
-        console.log(JSON.stringify(
-            `[${msgMap.get("store")}]page ${msgMap.get("page")} # ${msgMap.get("index")}: ${msgMap.get("sku")} - $${msgMap.get("currentPrice")} get item finished. <State: ${msgMap.get("msg")}>`,
-            null, 4
-        ))
+        console.log(
+            `[${msgMap.get("store")}]page ${msgMap.get("page")} # ${msgMap.get("index")}: ${msgMap.get("sku")} - $${msgMap.get("currentPrice")} get item finished. <State: ${msgMap.get("msg")}>`
+        )
 
     }
     async initBrowser() {
@@ -19,6 +18,7 @@ class Stores {
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
+                '--window-size=1920,1080'
             ],
         });
         return browser;
@@ -52,7 +52,7 @@ class Stores {
         await page.waitForXPath(XPATH_EXPR)
         const elements = await page.$x(XPATH_EXPR)
         let res = await page.evaluate((ATTRIBUTE_ID, ...elements) =>
-            (elements.map(e => JSON.parse(e.getAttribute(ATTRIBUTE_ID))))
+            (elements.map(e => e.getAttribute(ATTRIBUTE_ID)))
             , ATTRIBUTE_ID, ...elements)
 
         return res
