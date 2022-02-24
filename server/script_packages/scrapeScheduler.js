@@ -27,11 +27,6 @@ const scrapeStores = () => {
         Promise.allSettled([getMicrosoftLaptops(), getBestbuyLaptops()])
             .then(results => {
                 results.forEach((result) => {
-                    let currentDate = new Date();
-                    let cDay = currentDate.getDate()
-                    let cMonth = currentDate.getMonth() + 1
-                    let cYear = currentDate.getFullYear()
-                    let time = currentDate.getHours() + ":" + currentDate.getMinutes() + ":" + currentDate.getSeconds();
                     console.log(`Result:${result.status} - ${moment().format('MMMM Do YYYY, h:mm:ss a')}`)
                 })
             })
