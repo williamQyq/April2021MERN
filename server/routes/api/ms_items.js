@@ -3,7 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 
-const ItemMS = require('../../models/MSItem.js'); //Item Model
+const ItemMS = require('../../models/MsItem.js'); //Item Model
 const {
     PROJ_ITEM,
     PROJ_ITEM_DETAIL,
