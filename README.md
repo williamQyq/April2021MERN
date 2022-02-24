@@ -1,6 +1,6 @@
 # RockyStone ERP - William
 *status*: under development...  
-*latest update: 1/27/2022*  
+*latest update: 2/22/2022*  
 
 author: Yuqing (William) Qiao  
 description: MERN stack project
