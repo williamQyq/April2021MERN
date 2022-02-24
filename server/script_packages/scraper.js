@@ -20,19 +20,26 @@ const getMicrosoftLaptops = async () => {
             .then(async (items) => {
                 await Promise.all(items.map(async (item, index) =>
                     saveStoreItemToDatabase(item, MS.model)
-                        .then(() => {
-                            console.log(JSON.stringify(
-                                `[Microsoft]page ${i} # ${index}: ${item.sku} - $${item.currentPrice} get item finished.`,
-                                null, 4
-                            ))
+                        .then(msg => {
+                            let msgMap = new Map([
+                                ["store", "Microsoft"],
+                                ["page", i],
+                                ["index", index],
+                                ["sku", item.sku],
+                                ["currentPrice", item.currentPrice],
+                                ["msg", msg]
+                            ])
+                            MS.printMsg(msgMap)
+
                         })
+                        .catch(e => console.error(`ERROR: page ${i} # ${index}: ${item.sku} ${item.name}`))
                 ))
             })
             .catch(e => {
-                console.error(e)
+                console.error(`ERROR:[Bestbuy] page ${i} # ${index}: ${item.sku} ${item.name}\n`, e)
             })
             .finally(() => {
-                console.log(`[Microsoft]Page ${i} finished.`)
+                console.log(`[Microsoft]===Page ${i} finished.===`)
             })
     }
 
@@ -52,25 +59,30 @@ const getBestbuyLaptops = async () => {
     const { pagesNum } = await BB.getPagesNum(page, storeUrl)    //puppeteer script get web footer contains page numbers.
     //for each page, get items and save to database
     for (let i = 0; i < pagesNum; i++) {
-        let pageUrl = BB.initURL(i+1)
+        let pageUrl = BB.initURL(i + 1)
 
         await BB.getPageItems(page, pageUrl)
             .then(async (items) => {
                 await Promise.all(items.map(async (item, index) =>
                     await saveStoreItemToDatabase(item, BB.model)
-                        .then(() => {
-                            console.log(JSON.stringify(
-                                `[Bestbuy]page ${i} # ${index}: ${item.sku} - $${item.currentPrice} get item finished.`,
-                                null, 4
-                            ))
+                        .then(msg => {
+                            let msgMap = new Map([
+                                ["store", "Bestbuy"],
+                                ["page", i],
+                                ["index", index],
+                                ["sku", item.sku],
+                                ["currentPrice", item.currentPrice],
+                                ["msg", msg]
+                            ])
+                            BB.printMsg(msgMap)
                         })
                 ))
             })
             .catch(e => {
-                console.error(e)
+                console.error(`ERROR:[Bestbuy] page ${i} # ${index}: ${item.sku} ${item.name}\n`, e)
             })
             .finally(() => {
-                console.log(`[Bestbuy]Page ${i} finished.`)
+                console.log(`[Bestbuy]===Page ${i} finished.===`)
             })
     }
 

@@ -1,4 +1,5 @@
 const cron = require('node-cron');
+const moment = require('moment')
 const { getBestbuyLaptops, getMicrosoftLaptops } = require('./scraper.js');
 
 //cron scheduler run pyProcessBB get bb prices at 6 pm everyday
@@ -26,7 +27,12 @@ const scrapeStores = () => {
         Promise.allSettled([getMicrosoftLaptops(), getBestbuyLaptops()])
             .then(results => {
                 results.forEach((result) => {
-                    console.log(`Result:${result.status}`)
+                    let currentDate = new Date();
+                    let cDay = currentDate.getDate()
+                    let cMonth = currentDate.getMonth() + 1
+                    let cYear = currentDate.getFullYear()
+                    let time = currentDate.getHours() + ":" + currentDate.getMinutes() + ":" + currentDate.getSeconds();
+                    console.log(`Result:${result.status} - ${moment().format('MMMM Do YYYY, h:mm:ss a')}`)
                 })
             })
     }, rand)

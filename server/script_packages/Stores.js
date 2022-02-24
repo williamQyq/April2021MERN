@@ -4,6 +4,15 @@ const { ip } = require('config');
 class Stores {
     constructor() {
     }
+
+    printMsg(msgMap) {
+        // `[Bestbuy]page ${i} # ${index}: ${item.sku} - $${item.currentPrice} get item finished. <State: ${msg}>`
+        console.log(JSON.stringify(
+            `[${msgMap.get("store")}]page ${msgMap.get("page")} # ${msgMap.get("index")}: ${msgMap.get("sku")} - $${msgMap.get("currentPrice")} get item finished. <State: ${msgMap.get("msg")}>`,
+            null, 4
+        ))
+
+    }
     async initBrowser() {
         const browser = await puppeteer.launch({
             headless: true,

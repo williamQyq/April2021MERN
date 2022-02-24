@@ -94,7 +94,7 @@ class Bestbuy extends Stores {
         return itemAttrLists.map((sku, index) => {
             let link = siteLink.replace(/\*\*\*sku\*\*\*/g, sku)
             let name = nameLists[index]
-            let currentPrice = Number(priceTextLists[index].replace(/[\s|$]/g, ""))
+            let currentPrice = Number(priceTextLists[index].replace(/[\s|$|,]/g, ""))
 
             return ({
                 link: link,

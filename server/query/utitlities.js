@@ -32,13 +32,19 @@ const findItemConfig = async (sku) => {
 }
 //@StoreListings -----------------------------
 const saveStoreItemToDatabase = async (item, storeModel) => {
-    item.currentPrice = Number(item.currentPrice)
-    //insert if has sku record
-    let isUpserted = await setOnInsert(item, storeModel)
+    let msg = '';
+    let isUpserted = await setOnInsert(item, storeModel)    //insert if no document
 
-    if (!isUpserted)
+    if (!isUpserted) {
         //push updated price to priceTimestamps field
-        await updateItemIfPriceChanged(item, storeModel)
+        let isPricedPushed = await updateItemIfPriceChanged(item, storeModel)
+        msg = isPricedPushed ? "UPDATED PRICE" : "PRICE NOT CHANGED"
+    }
+    else {
+        msg = "NEW ITEM UPSERT"
+    }
+
+    return msg
 
 }
 
@@ -61,6 +67,7 @@ const setOnInsert = async (item, storeModel) => {
     return isUpserted
 }
 
+//updateItemIfPriceChanged(item:Item, storeModel:Mongoose<model>)-> enum<true|false>isItemPriceChanged
 const updateItemIfPriceChanged = (item, storeModel) => {
     return storeModel.aggregate([
         {
@@ -83,8 +90,10 @@ const updateItemIfPriceChanged = (item, storeModel) => {
         }
     ]).then(async (docs) => {
         if (docs.length == 0)
-            return
+            return false
+
         await Promise.all(docs.map(doc => pushUpdatedPrice(doc, item, storeModel)))
+        return true
     })
 }
 

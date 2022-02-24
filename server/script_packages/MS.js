@@ -75,7 +75,7 @@ class Microsoft extends Stores {
             let pid = item['pid']
             let name = item["tags"]["prdName"]
             let link = 'https://www.microsoft.com/en-us/d/' + name.replace(/\s/g, "-").replace(/"/g, "").toLowerCase() + '/' + pid
-            let currentPrice = Number(priceAttrLists[index])
+            let currentPrice = priceAttrLists[index]
 
             return ({
                 link: link,

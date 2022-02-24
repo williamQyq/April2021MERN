@@ -10,6 +10,7 @@ const { saveStoreItemToDatabase } = require('./query/utitlities.js');
 const MSItem = require('./models/MsItem');
 
 const main = async () => {
+    // await getMicrosoftLaptops()
     // await getBestbuyLaptops()
 }
 
