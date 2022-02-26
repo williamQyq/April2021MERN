@@ -1,6 +1,6 @@
 # RockyStone ERP - William
 *status*: under development...  
-*latest update: 1/27/2022*  
+*latest update: 2/22/2022*  
 
 author: Yuqing (William) Qiao  
 description: MERN stack project
@@ -37,15 +37,21 @@ This project has access to the mongo database of the warehouse and the Amazon Se
                 host: <HOST PUBLIC IP ADDRESS OR PIVATE IP ADDRESS>,
                 port: <DEFAULT PORT:22>,
                 dstPort: <DEFAULT PORT:27017>,
+                privateKey:require(fs).readFileSync('/path/to/key'),
+                passphrase:''
                 localPort: process.env.PORT || <YOUR_PORT>,
                 keepAlive: true
         }
 *tips: you probably need to set up **port forwarding** or configure remote access for MongoDB.*  
 
+**generate RSA ssh keys**:
+- command: ssh-keygen
+- save the public key
+
 ## To build
 
->1. download & save lastest *chromedriver.exe* to:  
-***server/script_packages/mypackage/***
+>1. ~~download & save lastest *chromedriver.exe* to: ***server/script_packages/mypackage/***~~
+(`no longer needed, already switched to puppeteer.`)  
 >2. `npm run server-install` & `npm run client-install` to install required dependency
 >3. `npm run dev`
 
@@ -67,9 +73,103 @@ This project has access to the mongo database of the warehouse and the Amazon Se
 >3. follow heroku deployment process...
 >
 
-## Deploy to AWS:
+## Deploy to AWS EC2:
+- scp -i MY_AWS_RSA_KEY.pem ubuntu@DNS.compute-1.amazonaws.com
+- sudo apt-get install (nodejs, nginx, pm2)
+- scp -i MY_AWS_RSA_KEY.pem -r <PATH>\client\build\* ubuntu@DNS.compute-1.amazonaws.com:~/client/deploy
 
- >*comming soon...*
+After installed nginx, edit below files.
+
+**/etc/nginx/nginx.conf:**
+
+        user ubuntu;
+        worker_processes  1;
+
+        error_log  /var/log/nginx/error.log warn;
+        pid        /var/run/nginx.pid;
+
+        events {
+        worker_connections  1024;
+        }
+
+        http {
+        include       /etc/nginx/mime.types;
+        default_type  application/octet-stream;
+
+        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                        '$status $body_bytes_sent "$http_referer" '
+                        '"$http_user_agent" "$http_x_forwarded_for"';
+
+        access_log  /var/log/nginx/access.log  main;
+
+        sendfile        on;
+        #tcp_nopush     on;
+
+        client_body_buffer_size 100k;
+        client_header_buffer_size 1k;
+        client_max_body_size 100k;
+        large_client_header_buffers 2 1k;
+        client_body_timeout 10;
+        client_header_timeout 10;
+        keepalive_timeout 5 5;
+        send_timeout 10;
+        server_tokens off;
+        #gzip  on; on;
+
+        include /etc/nginx/conf.d/*.conf;
+        }
+
+**/etc/nginx/conf.d/default:**
+
+        server {
+                #listen       80;
+                listen 80 default_server;
+                listen [::]:80 default_server;
+                server_name  yourdomain.com;
+
+                access_log /home/ubuntu/client/server_logs/host.access.log main;
+
+                location / {
+                        root   /home/ubuntu/client/deploy;
+                        index  index.html index.htm;
+                        try_files $uri /index.html;
+                        add_header X-Frame-Options SAMEORIGIN;
+                        add_header X-Content-Type-Options nosniff;
+                        add_header X-XSS-Protection "1; mode=block";
+                        add_header Strict-Transport-Security "max-age=31536000; includeSubdomains;";
+                }
+
+                error_page   500 502 503 504  /50x.html;
+                location = /50x.html {
+                        root   /usr/share/nginx/html;
+                }
+
+                #server_tokens off;
+                # node api reverse proxy
+                location /api/ {
+                        proxy_pass http://localhost:5000;
+                }
+
+                #socket.io proxy settings
+                location /socket.io/ {
+                        proxy_http_version 1.1;
+                        proxy_set_header Upgrade $http_upgrade;
+                        proxy_set_header Connection "Upgrade";
+                        proxy_set_header Host $host;
+                        proxy_hide_header 'Access-Control-Allow-Origin';
+                        proxy_pass http://localhost:5000;
+                }
+
+                location ~ /\.ht {
+                        deny  all;
+                }
+
+        }
+
+**To use Puppeteer on EC2**
+- sudo npm install -g puppeteer --unsafe-perm=true -allow-root && sudo apt install chromium-browser -y
+
+- sudo apt update && sudo apt install -y gconf-service libgbm-dev libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget
 
 ## Common issues：
 >1. Unable to git push to repository using **SourceTree** because of git auth token expired? Solve:  
@@ -110,7 +210,7 @@ Redux store maintains a global state that all components can access via ***Conne
 
 >**mern-project->src->component->reducers->actions:**
 > - ...Redux actions
-> - axios make http request from client browser to express router endpoints(URIs) in server.
+> - axios make Promise based http request from client browser to express router endpoints(URIs) in server.
 > - proxy http request made in client which change ip address to server ip address. ***package.json***  
 
 >**mern-project->src->component->reducers:**  
@@ -135,35 +235,12 @@ Redux store maintains a global state that all components can access via ***Conne
 
 **Script packages**
 
-*Scripts.js*
-
-I used nodejs to spawn a python process and listen on the stdout standard streams on 'data' to retrieve the result.
-However, I just found a better way which is using Puppeteer,an Nodejs library developed by Google, used for html parsing, getting screen shot and so on.
-
-The Class Scripts
-A class that defines all the functionalities that are needed for spawing a python selenium script process.
-
-On receiving data JSONstream, invoke callback function that is defined inside the outer function to process the receiving data. (In concern of the callback hell, promise chain probably won't fit here, since not waiting for the completion of child process close. )
-
-quite complicated, probably not the best practice.
-        
-        const {Store} = require('./scripts.js');
-        const {model} = require('./models/**.js);
-
-        let store = new Store(model);
-        cosnt operation = (store,callback)=>{
-                store.exec(SCRIPT_PATH, argvs, (data)=>{
-                        (...data handling code here)
-                        callback(data)
-                })
-
-        }
-
 Save Item in database procedure
 >1. $setOnInsert item.
 >2. check if db has documet and price changed.
 >3. push to price_timestamps array field
 
-**ESM vs CommonJs**
+**EsModule vs CommonJs**
         
-        import ... ***vs*** const {...} = require('.../')
+        import ...from...  
+        const {...} = require('.../')

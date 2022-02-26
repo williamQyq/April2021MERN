@@ -8,7 +8,7 @@ const IdentifierSchema = new Schema({
         require: true
     },
     offers: []
-}, { _id: false})
+}, { _id: false })
 
 //Create Schema for self tracking list 
 const AmzProdPricingSchema = new Schema({
@@ -30,6 +30,6 @@ const AmzProdPricingSchema = new Schema({
 
 
 module.exports = {
-    ProdPricing: mongoose.model('AmzProdPricing', AmzProdPricingSchema),
-    Identifier: mongoose.model('AmzIdentifier', IdentifierSchema)
+    AmzProdPricing: mongoose.model('AmzProdPricing', AmzProdPricingSchema),
+    AmzIdentifier: mongoose.model('AmzIdentifier', IdentifierSchema)
 }

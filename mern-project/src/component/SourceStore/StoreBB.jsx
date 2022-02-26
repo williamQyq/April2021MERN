@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import StoreTable from 'component/SourceStore/StoreTable';
 
 import { io } from 'socket.io-client';
-const socket = io('localhost:3000', {
+const socket = io('/', {
     'reconnection': true,
     'reconnectionDelay': 500,
     'reconnectionAttempts': 5
@@ -28,7 +28,6 @@ class BB extends React.Component {
     }
 
     render() {
-        const { items, tableState } = this.props;
         const { store } = this.state;
         return (
             <StoreTable {...this.props} store={store} />

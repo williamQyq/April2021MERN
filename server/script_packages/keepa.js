@@ -1,4 +1,4 @@
-const { KeepaScript } = require('./scripts.js');
+const { KeepaScript } = require('./Scripts.js');
 
 const getKeepaStat = (searchTerm) => {
     let keepa = new KeepaScript(searchTerm);

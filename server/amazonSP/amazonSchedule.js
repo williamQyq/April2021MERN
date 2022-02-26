@@ -4,20 +4,17 @@ const {
     findAllProdPricing, setProdPricingOffer
 } = require('../query/utitlities')
 // cron scheduler update Amazon sku
-// const amazonScheduler = cron.schedule("* 5 * * * *", () => {
-//     checkProductPricing();
-
-
+// const amazonScheduler = cron.schedule("* * 1 * * *", async () => {
+//     await getSellingPartnerProdPricing()
 // });
 const bucket = new SpBucket();
 
-const amazonScheduler = () => {
-    // getSellingPartnerProdPricing();
+const amazonScheduler = async () => {
+    await getSellingPartnerProdPricing();
 
 };
 
-const getSellingPartnerProdPricing = () => {
-
+const getSellingPartnerProdPricing = () =>
     //get prods asins in database 
     findAllProdPricing().then(prods => {
         prods.forEach(prod => {
@@ -34,7 +31,6 @@ const getSellingPartnerProdPricing = () => {
             });
         // bucket.throttle();
     })
-}
 
 const saveOffers = (offers) => {
     offers.forEach(prod => {
@@ -53,6 +49,6 @@ const saveOffers = (offers) => {
 
 
 module.exports = {
-    amazonScheduler: amazonScheduler,
+    amazonScheduler,
     getSellingPartnerProdPricing
 }

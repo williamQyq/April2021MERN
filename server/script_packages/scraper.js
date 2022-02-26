@@ -1,61 +1,101 @@
-const BBItem = require('../models/BBItem');
-const MsItem = require('../models/MsItem');
-const {
-    Bestbuy,
-    Microsoft,
-} = require('./scripts.js');
+const Bestbuy = require('./BB');
+const Microsoft = require('./MS');
+const { saveStoreItemToDatabase } = require('../query/utitlities')
 
-//get pages info, then for each page save new and price changed laptop to db 
-const getBestbuyLaptops = () => {
-    let store = new Bestbuy(BBItem);
-    return new Promise((resolve, reject) => {
-        getNumOfAllNewLaptops(store, (pagesInfo) => {
-            getAllNewLaptops(store, pagesInfo, async (item) => {
-                await store.insertAndUpdatePriceChangedItem(item)
+const getMicrosoftLaptops = async () => {
+
+    let MS = new Microsoft();
+    let skipItemsNum = 0
+    let browser = await MS.initBrowser();
+    let page = await MS.initPage(browser);
+    let storeUrl = MS.initURL(skipItemsNum)
+    const { pagesNum, numPerPage } = await MS.getPagesNum(page, storeUrl)    //puppeteer script get web footer contains page numbers.
+
+    //for each page, get items and save to database
+    for (let i = 0; i < pagesNum; i++) {
+        let pageUrl = MS.initURL(skipItemsNum)
+        skipItemsNum += numPerPage;
+
+        await MS.getPageItems(page, pageUrl)
+            .then(async (items) => {
+                await Promise.all(items.map(async (item, index) =>
+                    saveStoreItemToDatabase(item, MS.model)
+                        .then(msg => {
+                            let msgMap = new Map([
+                                ["store", "Microsoft"],
+                                ["page", i],
+                                ["index", index],
+                                ["sku", item.sku],
+                                ["currentPrice", item.currentPrice],
+                                ["msg", msg]
+                            ])
+                            MS.printMsg(msgMap)
+
+                        })
+                        .catch(e => console.error(`ERROR: page ${i} # ${index}: ${item.sku} ${item.name}\n`, e))
+                ))
             })
-                .then(result => resolve(result))
-                .catch(e => reject(e))
-        })
-            .catch(e => reject(e))
-    })
+            .catch(e => {
+                console.error(`\nERROR:[Microsoft] page ${i}\n`)
+            })
+            .finally(() => {
+                console.log(`[Microsoft]===Page ${i} finished.===`)
+            })
+    }
+
+    await page.close()
+    await browser.close()
 
 }
 
-//Load microsoft all new products lists Promise
-//Get microsoft page numbers; then for each page and sku item, findSkuAndUpdate
-const getMicrosoftLaptops = () => {
-    let store = new Microsoft(MsItem);
-    return new Promise((resolve, reject) => {
-        getNumOfAllNewLaptops(store, (pagesInfo) => {
-            getAllNewLaptops(store, pagesInfo, async (item) => {
-                await store.insertAndUpdatePriceChangedItem(item)
+const getBestbuyLaptops = async () => {
+
+    let BB = new Bestbuy();
+    let cp = 1
+    let browser = await BB.initBrowser();
+    let page = await BB.initPage(browser);
+
+    let storeUrl = BB.initURL(cp)
+    const { pagesNum } = await BB.getPagesNum(page, storeUrl)    //puppeteer script get web footer contains page numbers.
+
+    //for each page, get items and save to database
+    for (let i = 0; i < pagesNum; i++) {
+        let pageUrl = BB.initURL(i + 1)
+
+        //get items on page#-> for each item saveDatabase-> printResult-> finished
+        await BB.getPageItems(page, pageUrl)
+            .then(items => Promise.all(items.map(async (item, index) => {
+                if (item)
+                    return saveStoreItemToDatabase(item, BB.model).then(msg => {
+                        return new Map([
+                            ["store", "Bestbuy"],
+                            ["page", i],
+                            ["index", index],
+                            ["sku", item.sku],
+                            ["currentPrice", item.currentPrice],
+                            ["msg", msg]
+                        ])
+                    })
+            })))
+            .then(results => {
+                results.forEach(result => {
+                    BB.printMsg(result)
+                })
             })
-                .then(result => resolve(result))
-                .catch(e => reject(e))
-        })
-            .catch(e => reject(e))
-    })
+            .catch(() => {
+                console.error(`\nERROR:[Bestbuy] page ${i}\n`)
+            })
+            .finally(() => {
+                console.log(`[Bestbuy]===Page ${i} finished.===`)
+            })
+    }
+
+    await page.close()
+    await browser.close()
 
 }
 
-// get all laptops new condition number promise, resolve when retrieve items number.
-const getNumOfAllNewLaptops = (store, callback) => (
-    store.exec(store.pageNumScriptPath, store.link, (data) => {
-        const { total_num, num_per_page } = data;
-        console.log(`[BB num of all laptops new condtion]: ${total_num} - ${num_per_page}/per page.`);
-        let pagesInfo = store.getLinkInfo(total_num, num_per_page)
-        callback(pagesInfo)
-    })
-
-)
-
-// get all laptops sku-items promise, resolve when retrieve all skus, names, currentPrices.
-const getAllNewLaptops = (store, pagesInfo, callback) => (
-    store.exec(store.skuItemScriptPath, pagesInfo, (data) => {
-        callback(data)
-    })
-)
-
+//enum store<Bestbuy|Microsoft>
 const getItemConfiguration = async (store, url) => {
     console.log(`[getItemConfig] starting...`)
     let browser = await store.initBrowser();
@@ -64,7 +104,7 @@ const getItemConfiguration = async (store, url) => {
 
     await page.close();
     await browser.close();
-    console.log(JSON.stringify(spec, null, 4))
+    console.log(`[getItemConfiguration]:\n${JSON.stringify(spec, null, 4)}`)
     return spec
 }
 

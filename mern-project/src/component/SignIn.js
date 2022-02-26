@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout, Form, Input, Button, Typography, message } from 'antd';
-import 'antd/dist/antd.css';
+import 'antd/dist/antd.min.css';
 import 'styles/login.scss';
 import { Link, withRouter } from "react-router-dom";
 import { UserOutlined, LockOutlined } from '@ant-design/icons';

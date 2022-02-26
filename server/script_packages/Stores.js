@@ -1,10 +1,16 @@
 const puppeteer = require('puppeteer');
-const { USER_AGENT } = require('../config/puppeteerConfig.js');
-const BBItem = require('../models/BBItem')
-const MSItem = require('../models/MsItem');
+const { ip } = require('config');
 
 class Stores {
     constructor() {
+    }
+
+    printMsg(msgMap) {
+        // `[Bestbuy]page ${i} # ${index}: ${item.sku} - $${item.currentPrice} get item finished. <State: ${msg}>`
+        console.log(
+            `[${msgMap.get("store")}]page ${msgMap.get("page")} # ${msgMap.get("index")}: ${msgMap.get("sku")} - $${msgMap.get("currentPrice")} get item finished. <State: ${msgMap.get("msg")}>`
+        )
+
     }
     async initBrowser() {
         const browser = await puppeteer.launch({
@@ -12,13 +18,14 @@ class Stores {
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
+                '--window-size=1920,1080'
             ],
         });
         return browser;
     }
     async initPage(browser) {
         const page = await browser.newPage();
-        await page.setUserAgent(USER_AGENT);
+        await page.setUserAgent(ip.USER_AGENT);
         await page.setRequestInterception(true);
         page.on('request', (req) => {
             if (req.resourceType() === 'image') {
@@ -29,74 +36,53 @@ class Stores {
         });
         return page
     }
-    async evaluateElementsText(page, xpath_expr) {
-        await page.waitForXPath(xpath_expr)
-        const elements = await page.$x(xpath_expr)
+    //@param: puppeter page, xpath expression
+    //@return: text context
+    async evaluateElementsText(page, XPATH_EXPR) {
+        await page.waitForXPath(XPATH_EXPR)
+        const elements = await page.$x(XPATH_EXPR)
         return await page.evaluate((...elements) =>
             (elements.map(e => e.textContent))
             , ...elements)
     }
-}
 
-class Microsoft extends Stores {
-    constructor() {
-        super();
-        this.url = {
-            base: 'https://www.microsoft.com/en-us/store/b/shop-all-pcs?categories=2+in+1||Laptops||Desktops||PC+Gaming&s=store&skipitems=',
-            skipItemsNum: 0
+    //@param: puppeter page, xpath expression, attribute id
+    //@return: attribute context
+    async evaluateItemAttribute(page, XPATH_EXPR, ATTRIBUTE_ID) {
+        await page.waitForXPath(XPATH_EXPR)
+        const elements = await page.$x(XPATH_EXPR)
+        let res = await page.evaluate((ATTRIBUTE_ID, ...elements) =>
+            (elements.map(e => e.getAttribute(ATTRIBUTE_ID)))
+            , ATTRIBUTE_ID, ...elements)
+
+        return res
+
+    }
+    //parse evaluate result no need
+    async evaluatePriceAttribute(page, XPATH_EXPR, ATTRIBUTE_ID) {
+        await page.waitForXPath(XPATH_EXPR)
+        const elements = await page.$x(XPATH_EXPR)
+        let res = await page.evaluate((ATTRIBUTE_ID, ...elements) =>
+            (elements.map(e => Number(e.getAttribute(ATTRIBUTE_ID).replace(/[$|,]/g, ""))))
+            , ATTRIBUTE_ID, ...elements)
+
+        return res
+    }
+
+    //map key of res with footer, asign res
+    compareMapHelper(obj1, obj2) {
+        for (let [key, val] of obj1) {
+            val = obj2.get(key)
         }
-        this.model = MSItem
+        return obj1;
     }
-    async getPagesNum() {
-
-    }
-    async getItems() {
-        await this.page.goto(this.url + this.skipItemsNum)
-        await this.page.waitForTimeout(10000);
-        // await this.page.waitForXPath()
-        await this.page.close();
-        await this.browser.close();
+    getRegexValue(str, regexExpr) {
+        let res = str.match(regexExpr).slice(1)[0]
+        if (res == null)
+            return null
+        return res
     }
 }
 
-class Bestbuy extends Stores {
-    constructor() {
-        super();
-        this.url = {
-            head: 'https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&browsedCategory=pcmcat138500050001&cp=',
-            tail: '&id=pcat17071&iht=n&ks=960&list=y&qp=condition_facet%3DCondition~New&sc=Global&st=categoryid%24pcmcat138500050001&type=page&usc=All%20Categories',
-            cp: 1
-        }
-        this.model = BBItem
-    }
-    async getItemSpec(page, url) {
-        await page.goto(url);
-        await this.#openSpecWrapper(page);
-        let itemSpec = await this.#parseItemSpec(page);
-        return itemSpec;
-    }
-    async #openSpecWrapper(page) {
-        const specWrapper = (await page.$x('//button[@data-track="Specifications: Accordion Open"]'))[0]
-        specWrapper.click()
-    }
-    async #parseItemSpec(page) {
-        const keys_xpath_expr = '//div[@class="title-container col-xs-6 v-fw-medium"]/div'
-        const values_xpath_expr = '//div[@class="row-value col-xs-6 v-fw-regular"]'
-        const keys = await this.evaluateElementsText(page, keys_xpath_expr)
-        const values = await this.evaluateElementsText(page, values_xpath_expr)
 
-        let spec = {}
-        keys.forEach((key, index) => {
-            key = key.replace(/\s/g,"")
-            spec[key] = values[index]
-        })
-
-        return spec
-    }
-}
-
-module.exports = {
-    Stores,
-    Microsoft,
-    Bestbuy
-}
+module.exports = Stores;
