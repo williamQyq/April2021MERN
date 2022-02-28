@@ -8,7 +8,7 @@ import {
 } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
-import { addItemSpec } from "reducers/actions/itemBBActions";
+import { addItemSpec } from "reducers/actions/itemActions";
 import { clearErrors } from "reducers/actions/errorActions";
 import { setTableState } from "reducers/actions/itemActions";
 
@@ -134,7 +134,7 @@ const ActionMenu = (props) => {
     const path = location.pathname;
 
     const addItemSpecification = () => {
-        dispatch(addItemSpec(record));
+        dispatch(addItemSpec(record, storeName));
     }
 
     const saveActionHistory = () => {

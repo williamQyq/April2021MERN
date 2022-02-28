@@ -44,19 +44,19 @@ class Microsoft extends Stores {
         return res
     }
 
-    async closeDialog(page) {
-        await page.waitForXPath('//div[@class="sfw-dialog"]/div[@class="c-glyph glyph-cancel"]')
-        let dialogCloseBtn = (await page.$x('//div[@class="sfw-dialog"]/div[@class="c-glyph glyph-cancel"]'))[0]
-        dialogCloseBtn.click()
+    async #closeDialogIfAny(page) {
+        try {
+            await page.waitForXPath('//div[@class="sfw-dialog"]/div[@class="c-glyph glyph-cancel"]')
+            let dialogCloseBtn = (await page.$x('//div[@class="sfw-dialog"]/div[@class="c-glyph glyph-cancel"]'))[0]
+            dialogCloseBtn.click()
+        } catch {
+            console.error(`${this.constructor.name}: no dialog shows up, skipping.`)
+        }
     }
 
     async getPagesNum(page, url) {
         await page.goto(url);
-        try {
-            await this.closeDialog(page)    //may or may not close the dialog, it depends if the dialog shows up.
-        } catch (e) {
-            console.error(`${this.constructor.name}\n`, e)
-        }
+        await this.#closeDialogIfAny(page)    //may or may not close the dialog, it depends if the dialog shows up.
         let res = await this.#parsePageNumFooter(page)
         return ({
             pagesNum: Math.ceil(res.totalNum / res.numPerPage),

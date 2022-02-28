@@ -1,13 +1,9 @@
-import { message } from 'antd';
 import axios from 'axios';
 import Moment from 'moment';
-import { returnErrors } from './errorActions'
 import {
     GET_BB_ITEMS,
     GET_BB_ITEM_DETAIL,
     ITEMS_LOADING,
-    GET_ITEM_SPEC,
-    ADD_ITEM_SPEC,
     SET_TABLE_STATE,
     GET_ERRORS,
 } from './types';
@@ -62,25 +58,4 @@ export const setTableSettings = (store, clickedId) => dispatch => {
             clickedId
         }
     })
-}
-
-export const addItemSpec = (record) => dispatch => {
-    dispatch(setItemsLoading);
-    const config = { headers: { 'Content-Type': 'application/json' } }
-    axios.put('/api/bb_items/itemSpec/add', record, config)
-        .then(res => {
-            if (res.data.status === "success") {
-                dispatch({
-                    type: ADD_ITEM_SPEC,
-                    payload: res.data
-                })
-                message.success(res.data.msg)
-            } else {
-                message.warn(res.data.msg)
-                dispatch(returnErrors(res.data.msg, res.data.status))
-            }
-        }).catch(e => {
-            message.warn("addItemSpec failed.")
-            dispatch(returnErrors("addItemSpec failed.", "error"))
-        })
 }
