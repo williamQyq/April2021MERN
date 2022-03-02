@@ -12,4 +12,17 @@ router.get('/quantity/:upc', (req, res) => {
         })
 });
 
+router.post('/quantity/all', async (req, res) => {
+    const { upcs } = req.body;
+    let quantityMapArray = []
+
+    const collection = wms.getDatabase().collection('sellerInv')
+    await collection.find({ '_id.UPC': { $in: upcs }, '_id.org': "M" }).forEach(doc => {
+        quantityMapArray.push([doc._id.UPC, doc.qty])
+    })
+
+    res.json(quantityMapArray)
+
+})
+
 module.exports = router;

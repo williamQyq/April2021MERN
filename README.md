@@ -1,6 +1,6 @@
 # RockyStone ERP - William
 *status*: under development...  
-*latest update: 2/22/2022*  
+*latest update: 3/2/2022*  
 
 author: Yuqing (William) Qiao  
 description: MERN stack project
@@ -244,3 +244,29 @@ Save Item in database procedure
         
         import ...from...  
         const {...} = require('.../')
+
+## Software Architecture that can be improved in future
+-  Migrate the authentication & authorization implementation from a legacy improvised mechanism to standard OAuth 2.0 protocol, securing data access management for users, third party business partners and REST calls between services.
+- Migrate the nodejs to Java(Jersey based backend services)
+- docker cluster
+- PID control algorithm based smart bidding strategy
+
+## New knowledge today 03/01/22:
+
+- elastic search (AWS OpenSearch derived from elasticsearch)
+- Ngram search
+- hexo.io  - npm framework for creating blog page
+- smart bidding Reading Wechat blog: PID Control fundamental and implementation on Python
+
+## New knowledge today 03/02/22:
+
+        collection.find(query).stream()
+        .on('data', function(doc){
+        // handle doc
+        })
+        .on('error', function(err){
+        // handle error
+        })
+        .on('end', function(){
+        // final callback
+        });

@@ -7,11 +7,11 @@ export const mainColumnGroup = (actions) => [
         dataIndex: 'upc',
         editable: true
     },
-    {
-        title: 'Name',
-        dataIndex: 'name',
-        editable: true,
-    },
+    // {
+    //     title: 'Name',
+    //     dataIndex: 'name',
+    //     editable: true,
+    // },
     {
         title: 'WMS Quantity',
         dataIndex: 'wmsQuantity',
@@ -22,12 +22,12 @@ export const mainColumnGroup = (actions) => [
         dataIndex: 'unitCost',
         editable: false,
     },
-    {
-        title: 'Settlement Rate Universal',
-        dataIndex: 'settleRateUniv',
-        editable: true,
-        inputType: "number"
-    },
+    // {
+    //     title: 'Settlement Rate Universal',
+    //     dataIndex: 'settleRateUniv',
+    //     editable: true,
+    //     inputType: "number"
+    // },
     {
         title: 'Status',
         dataIndex: 'status',
@@ -81,19 +81,19 @@ export const nestedColumnGroup = (actions) => [
         key: 'amzRegularPrice',
         editable: false
     },
-    {
-        title: 'Settlement Rate',
-        dataIndex: 'settlementRate',
-        key: 'settlementRate',
-        editable: true
-    },
-    {
-        title: 'Settlement Price',
-        dataIndex: 'settlementPrice',
-        key: 'settlementPrice',
-        editable: true
+    // {
+    //     title: 'Settlement Rate',
+    //     dataIndex: 'settlementRate',
+    //     key: 'settlementRate',
+    //     editable: true
+    // },
+    // {
+    //     title: 'Settlement Price',
+    //     dataIndex: 'settlementPrice',
+    //     key: 'settlementPrice',
+    //     editable: true
 
-    },
+    // },
     {
         title: 'Status',
         dataIndex: 'status',

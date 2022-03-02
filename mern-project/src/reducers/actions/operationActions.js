@@ -12,24 +12,32 @@ import {
 export const getProductPricing = () => dispatch => {
     dispatch(setResLoading());
     axios.get('/api/operation').then(res => {
-        getWmsProdQty(res.data).then(result => {
+        getWmsProdQty(res.data).then(data => {
             dispatch({
                 type: GET_AMZ_PROD_PRICING,
-                payload: result
+                payload: data
             })
         });
     })
 
 }
 
-export const getWmsProdQty = prods => {
-    return Promise.all(
-        prods.map(async (prod) => {
-            await axios.get(`/api/wms/quantity/${prod.upc}`)
-                .then(res => { prod.wmsQuantity = res.data })
-            return prod;
-        })
-    )
+export const getWmsProdQty = async (prods) => {
+    const config = {
+        headers: {
+            "Content-type": "application/json"
+        }
+    };
+
+    const upcs = prods.map(prod => prod.upc)
+
+    let res = await axios.post(`/api/wms/quantity/all`, { upcs }, config)
+    let prodsQtyMap = new Map(res.data)
+    prods.forEach(prod => {
+        prod.wmsQuantity = prodsQtyMap.get(prod.upc)
+    });
+
+    return prods;
 }
 
 export const uploadAsinsMapping = (file) => dispatch => {
