@@ -31,12 +31,12 @@ class Bestbuy extends Stores {
         return itemSpec;
     }
     async #openSpecWrapper(page) {
-        let specWrapper = (await page.$x('//button[@data-track="Specifications: Accordion Open"]'))[0]
+        let specWrapper = (await page.$x('//div[@class="specs-container specs-wrapper all-specs-wrapper"]'))[0]
         specWrapper.click()
     }
     async #parseItemSpec(page) {
-        const KEYS_XPATH_EXPR = '//div[@class="title-container col-xs-6 v-fw-medium"]/div'
-        const VALUES_XPATH_EXPR = '//div[@class="row-value col-xs-6 v-fw-regular"]'
+        const KEYS_XPATH_EXPR = '//div[@class="row-title"]'
+        const VALUES_XPATH_EXPR = '//div[contains(@class,"row-value")]'
         let keys = await this.evaluateElementsText(page, KEYS_XPATH_EXPR)
         let values = await this.evaluateElementsText(page, VALUES_XPATH_EXPR)
 

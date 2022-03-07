@@ -12,6 +12,7 @@ router.get('/', (req, res) => {
 
 });
 
+// @route GET api/items
 router.get('/detail/:_id', (req, res) => {
     getStoreItemDetailById(Model, req.params._id)
         .then(items => {
@@ -42,6 +43,7 @@ router.put('/itemSpec/add', async (req, res) => {
                 msg: "Get item spec failed.",
                 id: null
             }
+            console.error(`[getItemConfig] Get item config error ${sku}`)
         }
     } else {
         console.log(`[itemSpec add req]Item config already exists: ${doc.upc}.`)
