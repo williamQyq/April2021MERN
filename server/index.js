@@ -1,8 +1,10 @@
 const express = require('express');
+
 //@Bodyparser Middleware
 const app = express();
 app.use(express.json());
 const port = process.env.PORT || 5000;
+
 // @server connection
 let server = app.listen(port, () => {
     console.log(`Server started on port ${port}`);

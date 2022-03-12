@@ -1,7 +1,6 @@
-
-const test = async()=>{
-
-    
+const {getSellingPartnerProdPricing} = require("../amazonSP/amazonSchedule")
+const test = async ()=>{
+    await getSellingPartnerProdPricing();
 };
 
 test();

@@ -1,20 +1,20 @@
 const cron = require('node-cron');
-const { SpBucket } = require('./RateLimiter.js')
+const { bucket } = require('./RateLimiter.js')
 const {
-    findAllProdPricing, setProdPricingOffer
+    findAllProdPricing,
+    setProdPricingOffer
 } = require('../query/utitlities')
 // cron scheduler update Amazon sku
-// const amazonScheduler = cron.schedule("* * 1 * * *", async () => {
-//     await getSellingPartnerProdPricing()
-// });
-const bucket = new SpBucket();
+const amazonScheduler = cron.schedule("* * 1 * * *", async () => {
+    await getSellingPartnerProdPricing()
+});
 
-const amazonScheduler = async () => {
-    await getSellingPartnerProdPricing();
+// const amazonScheduler = async () => {
+//     await getSellingPartnerProdPricing();
 
-};
+// };
 
-const getSellingPartnerProdPricing = () =>
+const getSellingPartnerProdPricing = async () =>
     //get prods asins in database 
     findAllProdPricing().then(prods => {
         prods.forEach(prod => {
@@ -29,7 +29,7 @@ const getSellingPartnerProdPricing = () =>
             .catch(e => {
                 console.log(`undefined task****\n ${e}`)
             });
-        // bucket.throttle();
+        // bucket.throttle(30);
     })
 
 const saveOffers = (offers) => {

@@ -8,11 +8,15 @@ const { getMicrosoftLaptops, getBestbuyLaptops } = require('./script_packages/sc
 const { saveStoreItemToDatabase } = require('./query/utitlities.js');
 const MSItem = require('./models/MsItem');
 const Bestbuy = require('./script_packages/BB.js');
+const { getSellingPartnerProdPricing } = require('./amazonSP/amazonSchedule')
+
 
 const main = async () => {
     // await getMicrosoftLaptops()
     // await getBestbuyLaptops()
     // puppeteerStoresPageTest()
+
+    // await getSellingPartnerProdPricing()
 }
 
 const puppeteerStoresPageTest = async () => {
@@ -63,4 +67,6 @@ const puppeteerStoresPageNumTest = async () => {
     }
 }
 
-module.exports = { main }
+module.exports = {
+    main
+}

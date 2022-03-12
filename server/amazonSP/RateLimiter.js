@@ -1,7 +1,6 @@
 const cron = require('node-cron');
 const config = require('config');
 const { performance } = require('perf_hooks');
-const JSON5 = require('json5');
 
 const amazonSellingPartner = async () => {
     const CREDENTIALS = config.get('amazonCredentials');
@@ -29,8 +28,8 @@ class LeakyBucket {
     }
 
     //start
-    throttle = () => {
-        cron.schedule("* * * * *", () => {
+    throttle = (minInterval) => {
+        cron.schedule(`${minInterval} * * * *`, () => {
             if (!this.isTaskQueueEmpty()) {
                 this.doTaskQueue();
             }
@@ -147,7 +146,9 @@ class LeakyBucket {
     }
 }
 
+const bucket = new LeakyBucket();
+
 module.exports = {
-    SpBucket: LeakyBucket,
-    amazonSellingPartner: amazonSellingPartner
+    bucket,
+    amazonSellingPartner
 }

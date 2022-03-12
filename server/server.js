@@ -5,7 +5,7 @@ const { server } = require('./index');
 
 const wms = require("./wms/wmsDatabase.js");    // @local wms server connection
 const { scrapeScheduler } = require('./script_packages/scrapeScheduler.js');    //scripts scheduler, node-cron
-const { amazonScheduler } = require('./amazonSP/amazonSchedule.js');
+// const { amazonScheduler } = require('./amazonSP/amazonSchedule.js');
 
 const { main } = require('./unit_test')
 
