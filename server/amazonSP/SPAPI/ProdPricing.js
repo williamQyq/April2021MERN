@@ -1,3 +1,4 @@
+const { resolveModuleName } = require('typescript');
 const { amazonSellingPartner } = require('../RateLimiter');
 
 class ProdPricing {
@@ -7,7 +8,7 @@ class ProdPricing {
             operation: "getPricing",
             endpoint: "productPricing",
             query: {
-                MarketPlaceId: "",
+                MarketPlaceId: "ATVPDKIKX0DER",
                 Asins: undefined,
                 ItemType: "Asin"
             }
@@ -28,17 +29,24 @@ class ProdPricing {
 
     // create upc asins prodpricing task
     createTask(upc, asins) {
-        
-        const createProdPricingTask = async () => {
+
+        const doProdPricingTask = async (resolve, reject) => {
+            let taskConfig = { ...this.config };  //make a copy of config
+            taskConfig.query.Asins = asins;
+
             const SP = await amazonSellingPartner();
-            try{
-                let res = await SP.callAPI()
-            } catch{
-
+            try {
+                let res = await SP.callAPI(taskConfig)
+                resolve({ upc, prom: res })
+            } catch (e) {
+                console.error(`AWS SP API ERROR:\n${e}`)
+                reject(`AWS SP API ERROR:\n${e}`)
             }
-
-
         }
+
+        return new Promise((resolve, reject) => {
+            doProdPricingTask(resolve, reject)
+        })
 
     }
 

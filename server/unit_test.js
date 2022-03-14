@@ -24,9 +24,13 @@ const main = async () => {
     //     .then(prods => pp.createProdAsinsMapping(prods))
     //     .then(upcAsinsMap => {
     //         for (let [upc, asins] of upcAsinsMap) {
-    //             let task = pp.createTask(upc, asins)
-    //             bucket.addTask(task)
+    //             // console.log(upc, asins)
+    //             // let task = pp.createTask(upc, asins)
+    //             // bucket.addTask(task)
     //         }
+    //     })
+    //     .then(() => {
+    //         // bucket.doTaskQueue()
     //     })
 
 }

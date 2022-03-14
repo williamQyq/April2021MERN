@@ -35,9 +35,11 @@ class LeakyBucket {
             }
         })
     }
-    // @Public
+    /*
+     *  @Public
+     *  @desc: task enqueue
+     */ 
     addTask(task) {
-        //task
         this.#enqueue(task);
     }
 
@@ -102,13 +104,17 @@ class LeakyBucket {
         return { upc, asins }
     }
 
+    /*
+     *  @public
+     *  @type boolean
+     */
     isTaskQueueEmpty() {
         return this.queue.length > 0 ? false : true;
     }
 
     /*
      *  @private
-     *  @create task for a chunck of asins
+     *  @desc: create task for a chunck of asins
      */
     #createTask(upc, asins) {
         return new Promise((resolve, reject) => {
@@ -117,7 +123,7 @@ class LeakyBucket {
     }
     /*
      *  @private
-     *  @slice asins into task chuncks on API request limit
+     *  @desc: slice asins into task chuncks on API request limit
      */
     #sliceAsinsOnLimit(asins, limit) {
         let chuncks = [], i;
@@ -128,7 +134,7 @@ class LeakyBucket {
     }
     /*
      *  @private
-     *  @push task to queue
+     *  @desc: push task to queue
      */
     #enqueue(task) {
         this.queue.push(task);
