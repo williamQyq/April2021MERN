@@ -1,6 +1,6 @@
 const Bestbuy = require('./BB');
 const Microsoft = require('./MS');
-const { saveStoreItemToDatabase } = require('../query/utitlities')
+const { saveStoreItemToDatabase } = require('../query/utilities')
 
 const getMicrosoftLaptops = async () => {
 

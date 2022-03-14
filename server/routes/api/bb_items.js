@@ -3,7 +3,7 @@ const router = express.Router();
 const Bestbuy = require('../../script_packages/BB');
 const Model = require('../../models/BBItem.js'); //Item Model
 const { getItemConfiguration } = require('../../script_packages/scraper.js');
-const { saveItemConfiguration, getStoreItemDetailById, getStoreItems, findItemConfig } = require('../../query/utitlities.js');
+const { saveItemConfiguration, getStoreItemDetailById, getStoreItems, findItemConfig } = require('../../query/utilities.js');
 
 // @route GET api/items
 router.get('/', (req, res) => {

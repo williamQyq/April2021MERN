@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../../middleware/auth.js');
 const { getSellingPartnerProdPricing } = require('../../amazonSP/amazonSchedule.js');
-const { findAllProdPricing, upsertProdPricingNewAsin } = require('../../query/utitlities.js');
+const { findAllProdPricing, upsertProdPricingNewAsin } = require('../../query/utilities.js');
 
 // @route GET api/amazonSP
 // @desc: get all amazon seller central sync product pricing offers 

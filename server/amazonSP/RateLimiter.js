@@ -35,6 +35,11 @@ class LeakyBucket {
             }
         })
     }
+    // @Public
+    addTask(task) {
+        //task
+        this.#enqueue(task);
+    }
 
     addProdPricingTask(mapping) {
         let chuncks = this.#sliceAsinsOnLimit(mapping.asins, this.#asinsLimit); //each chunck contains an limited number of asins

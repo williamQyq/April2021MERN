@@ -3,7 +3,7 @@ const { bucket } = require('./RateLimiter.js')
 const {
     findAllProdPricing,
     setProdPricingOffer
-} = require('../query/utitlities')
+} = require('../query/utilities')
 // cron scheduler update Amazon sku
 const amazonScheduler = cron.schedule("* * 1 * * *", async () => {
     await getSellingPartnerProdPricing()
