@@ -74,7 +74,8 @@ export default class NestedTable extends React.Component {
             editingKey: this.state.editingKey
         }
         const columns = nestedColumns(actions);  //pass handler to create nested Table columns
-        const data = this.getAmzRecord(this.state.record)
+        const { record } = this.state;
+
         return (
             <Form ref={this.formRef} component={false} >
                 <Table
@@ -84,7 +85,7 @@ export default class NestedTable extends React.Component {
                         }
                     }}
                     columns={columns}
-                    dataSource={data}
+                    dataSource={this.getAmzRecord(record)}
                     pagination={false}
                     rowKey={"asin"}
                 />

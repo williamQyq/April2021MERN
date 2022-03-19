@@ -1,6 +1,6 @@
-import { InputNumber, Input, Form, Space, Typography, Badge, Dropdown, Menu } from "antd";
 import ActionMenu from "component/Operation/OperationAction";
-import { setTableState } from "reducers/actions/itemActions";
+import { StatusBadge } from "component/Operation/OperationStatusBadge";
+
 
 export const mainColumnGroup = (actions) => {
     const { getColumnSearchProps } = actions;
@@ -42,13 +42,9 @@ export const mainColumnGroup = (actions) => {
                 dataIndex: 'status',
                 key: 'state',
                 ...getColumnSearchProps('status'),
-                render: (_, record) =>
-                    <span>
-                        <Badge status="success" />
-                        Finished
-                    </span>
-
-
+                render: (_, record) => {
+                    return <StatusBadge record={record} />
+                }
             },
             {
                 title: 'Action',
@@ -74,7 +70,7 @@ export const nestedColumnGroup = (actions) => [
     },
     {
         title: 'Fulfillment Channel',
-        dataIndex: 'fulfillmentChannel',
+        dataIndex: 'FulfillmentChannel',
         key: 'fulfillmentChannel',
         editable: false,
         filters: [
@@ -90,7 +86,7 @@ export const nestedColumnGroup = (actions) => [
     },
     {
         title: 'Amazon Regular Price',
-        dataIndex: 'amzRegularPrice',
+        dataIndex: ['RegularPrice', 'Amount'],
         key: 'amzRegularPrice',
         editable: false
     },
@@ -111,11 +107,9 @@ export const nestedColumnGroup = (actions) => [
         title: 'Status',
         dataIndex: 'status',
         key: 'state',
-        render: () =>
-            <span>
-                <Badge status="success" />
-                Finished
-            </span>
+        render: (_, record) => {
+            return <StatusBadge record={record} />
+        }
 
     },
     {
