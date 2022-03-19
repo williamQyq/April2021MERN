@@ -42,11 +42,12 @@ export const mainColumnGroup = (actions) => {
                 dataIndex: 'status',
                 key: 'state',
                 ...getColumnSearchProps('status'),
-                render: () =>
+                render: (_, record) =>
                     <span>
                         <Badge status="success" />
                         Finished
                     </span>
+
 
             },
             {
@@ -67,7 +68,7 @@ export const nestedColumnGroup = (actions) => [
     },
     {
         title: 'Sku',
-        dataIndex: 'sku',
+        dataIndex: 'SellerSKU',
         key: 'sku',
         editable: false
     },

@@ -17,24 +17,9 @@ export default class NestedTable extends React.Component {
     getAmzRecord = (record) => {
         const data = [];
         record.identifiers.forEach(identifier => {
-
-            if (identifier.offers == null) {
-                data.push({
-                    key: identifier._id,
-                    asin: identifier.asin,
-                })
-
-            } else {
-                identifier.offers.forEach(offer => {
-                    data.push({
-                        key: identifier._id,
-                        asin: identifier.asin,
-                        sku: offer.SellerSKU,
-                        fulfillmentChannel: offer.FulfillmentChannel,
-                        amzRegularPrice: offer.RegularPrice.Amount,
-                    })
-                })
-            }
+            identifier.offers.forEach(offer => {
+                data.push({ ...offer, asin: identifier.asin })
+            })
         })
 
         return data
@@ -89,7 +74,7 @@ export default class NestedTable extends React.Component {
             editingKey: this.state.editingKey
         }
         const columns = nestedColumns(actions);  //pass handler to create nested Table columns
-        const { record } = this.props
+        const data = this.getAmzRecord(this.state.record)
         return (
             <Form ref={this.formRef} component={false} >
                 <Table
@@ -99,9 +84,9 @@ export default class NestedTable extends React.Component {
                         }
                     }}
                     columns={columns}
-                    dataSource={this.getAmzRecord(record)}
+                    dataSource={data}
                     pagination={false}
-                    rowKey={"_id"}
+                    rowKey={"asin"}
                 />
             </Form>
         )
