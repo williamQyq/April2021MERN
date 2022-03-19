@@ -1,50 +1,62 @@
 import { InputNumber, Input, Form, Space, Typography, Badge, Dropdown, Menu } from "antd";
 import ActionMenu from "component/Operation/OperationAction";
+import { setTableState } from "reducers/actions/itemActions";
 
-export const mainColumnGroup = (actions) => [
-    {
-        title: 'Upc',
-        dataIndex: 'upc',
-        editable: true
-    },
-    // {
-    //     title: 'Name',
-    //     dataIndex: 'name',
-    //     editable: true,
-    // },
-    {
-        title: 'WMS Quantity',
-        dataIndex: 'wmsQuantity',
-        editable: false,
-    },
-    {
-        title: 'Unit Cost',
-        dataIndex: 'unitCost',
-        editable: false,
-    },
-    // {
-    //     title: 'Settlement Rate Universal',
-    //     dataIndex: 'settleRateUniv',
-    //     editable: true,
-    //     inputType: "number"
-    // },
-    {
-        title: 'Status',
-        dataIndex: 'status',
-        key: 'state',
-        render: () =>
-            <span>
-                <Badge status="success" />
-                Finished
-            </span>
+export const mainColumnGroup = (actions) => {
+    const { getColumnSearchProps } = actions;
+    return (
+        [
+            {
+                title: 'Upc',
+                dataIndex: 'upc',
+                editable: true,
+                ...getColumnSearchProps('upc')
+            },
+            // {
+            //     title: 'Name',
+            //     dataIndex: 'name',
+            //     editable: true,
+            // },
+            {
+                title: 'WMS Quantity',
+                dataIndex: 'wmsQuantity',
+                editable: false,
+                sorter: (a, b) => a.wmsQuantity - b.wmsQuantity,
+                ...getColumnSearchProps('wmsQuantity'),
+                // defaultSortOrder: setTableState.wmsQuantity,
+                sortDirections: ['descend', 'ascend', 'descend']
+            },
+            {
+                title: 'Unit Cost',
+                dataIndex: 'unitCost',
+                editable: false,
+            },
+            // {
+            //     title: 'Settlement Rate Universal',
+            //     dataIndex: 'settleRateUniv',
+            //     editable: true,
+            //     inputType: "number"
+            // },
+            {
+                title: 'Status',
+                dataIndex: 'status',
+                key: 'state',
+                ...getColumnSearchProps('status'),
+                render: () =>
+                    <span>
+                        <Badge status="success" />
+                        Finished
+                    </span>
 
-    },
-    {
-        title: 'Action',
-        key: 'action',
-        render: (_, record) => <ActionMenu actions={actions} record={record} />,
-    },
-];
+            },
+            {
+                title: 'Action',
+                key: 'action',
+                render: (_, record) => <ActionMenu actions={actions} record={record} />,
+            },
+        ]
+    );
+}
 
 export const nestedColumnGroup = (actions) => [
     {

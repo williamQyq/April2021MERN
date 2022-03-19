@@ -1,4 +1,4 @@
-import { Menu, Button, Typography, Tooltip, Space, Dropdown, Row, Col, message, Alert } from "antd";
+import { Menu, Button, Typography, Tooltip, Space, Dropdown, Row, Col, message, Alert, Divider } from "antd";
 import {
     SearchOutlined,
     ShoppingCartOutlined,
@@ -185,19 +185,22 @@ const ActionMenu = (props) => {
 }
 
 export const StoreHeader = ({ storeName, isLoading }) => (
-    <Row gutter={16} style={{ alignItems: 'center' }}>
-        <Col>
-            <Title level={4}>{storeName}</Title>
-        </Col>
-        <Col>
-            <ErrorAlert />
-        </Col>
-        {/* <Col>
+    <>
+        <Row gutter={16} style={{ alignItems: 'center' }}>
+            <Col>
+                <Title level={4}>{storeName}</Title>
+            </Col>
+            <Col>
+                <ErrorAlert />
+            </Col>
+            {/* <Col>
             <Button type="primary" disabled={isLoading} loading={isLoading}>
                 Retrieve Now
             </Button>
         </Col> */}
-    </Row>
+        </Row>
+        <Divider />
+    </>
 );
 
 export const ErrorAlert = () => {

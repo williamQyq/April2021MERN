@@ -26,6 +26,7 @@ export const defaultSettings = {
     expandable,
 }
 
+
 export const Settings = ({
     handler,
     bordered,
