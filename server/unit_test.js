@@ -5,7 +5,12 @@
 
 const { puppeteerErrors } = require('puppeteer');
 const { getMicrosoftLaptops, getBestbuyLaptops } = require('./script_packages/scraper');
-const { saveStoreItemToDatabase, findAllProdPricing } = require('./query/utilities.js');
+const {
+    saveStoreItemToDatabase,
+    findAllProdPricing,
+    findProdPricingOnUpc,
+    saveProdPricingOffers
+} = require('./query/utilities.js');
 const MSItem = require('./models/MsItem');
 const Bestbuy = require('./script_packages/BB.js');
 const { getSellingPartnerProdPricing } = require('./amazonSP/amazonSchedule');
@@ -16,6 +21,19 @@ const main = async () => {
     // await getMicrosoftLaptops()
     // await getBestbuyLaptops()
     // puppeteerStoresPageTest()
+    findProdPricingOnUpc("196068774585").then(prod => {
+        let input = prod.pop()
+        const upcAsinMapping = bucket.getProdAsins(input);
+        console.log(JSON.stringify(upcAsinMapping, null, 4))
+
+        bucket.addProdPricingTask(upcAsinMapping);
+    }).then(() => {
+        bucket.doTaskQueue().then(offers => {
+            // console.log(`================\n${JSON.stringify(offers, null, 4)}`)
+            saveProdPricingOffers(offers)
+        })
+    })
+
 
     // await getSellingPartnerProdPricing()
 

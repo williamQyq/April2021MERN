@@ -17,7 +17,7 @@ router.post('/upload/asins-mapping', (req, res) => {
     console.log(`received file:======${JSON.stringify(uploadFile)}`)
     processMappingFile(uploadFile)
         .then(res.json('success'))
-        .then(() => getSellingPartnerProdPricing())
+        // .then(() => getSellingPartnerProdPricing())
         .catch(e => {
             console.log(`error:`, e)
             res.json('err')

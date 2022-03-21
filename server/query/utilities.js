@@ -43,7 +43,7 @@ const saveStoreItemToDatabase = async (item, storeModel) => {
     else {
         msg = "NEW ITEM UPSERT"
     }
-    
+
     return msg
 
 }
@@ -177,6 +177,21 @@ const upsertProdPricingNewAsin = (record) => {
 
 }
 
+const saveProdPricingOffers = (offers) => {
+    offers.forEach(prod => {
+        prod.prom.forEach(asin => {
+            // console.log(`amzAsinRes========\n`, JSON.stringify(amzAsinRes.ASIN, null, 4))
+            setProdPricingOffer({
+                upc: prod.upc,
+                asin: asin.ASIN,
+                offers: asin.Product.Offers
+            })
+                .then(res => console.log(`[Amazon SP] UPC:${res.upc} updated #[${asin.ASIN}]# asin succeed.`))
+                .catch(err => console.log(`[ERR]: amz save offers err.\n${err}`))
+        })
+    })
+}
+
 module.exports = {
     saveItemConfiguration,
     findItemConfig,
@@ -186,5 +201,6 @@ module.exports = {
     findProdPricingOnUpc,
     setProdPricingOffer,
     upsertProdPricingNewAsin,
-    saveStoreItemToDatabase
+    saveStoreItemToDatabase,
+    saveProdPricingOffers
 }

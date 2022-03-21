@@ -107,9 +107,7 @@ export const nestedColumnGroup = (actions) => [
         title: 'Status',
         dataIndex: 'status',
         key: 'state',
-        render: (_, record) => {
-            return <StatusBadge record={record} />
-        }
+        render: (_, record) => <StatusBadge record={record} />
 
     },
     {

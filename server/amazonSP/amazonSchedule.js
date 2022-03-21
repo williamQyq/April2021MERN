@@ -5,14 +5,14 @@ const {
     setProdPricingOffer
 } = require('../query/utilities')
 // cron scheduler update Amazon sku
-const amazonScheduler = cron.schedule("* * 1 * * *", async () => {
-    await getSellingPartnerProdPricing()
-});
+// const amazonScheduler = cron.schedule("* * 1 * * *", async () => {
+//     await getSellingPartnerProdPricing()
+// });
 
-// const amazonScheduler = async () => {
-//     await getSellingPartnerProdPricing();
+const amazonScheduler = async () => {
+    await getSellingPartnerProdPricing();
 
-// };
+};
 
 const getSellingPartnerProdPricing = async () =>
     //get prods asins in database 

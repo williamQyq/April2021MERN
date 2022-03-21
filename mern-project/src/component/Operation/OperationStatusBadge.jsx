@@ -14,15 +14,25 @@ export const MainStatusBadge = ({ record }) => {
     }
     const hasOffersActive = () => {
         let hasActiveOffers = false;
-        record.identifiers.forEach(identifier => {
-            hasActiveOffers = identifier.offers == null ? false : true;
-        })
+        
+        //filter clean null offers
+        let identifiers = record.identifiers.filter(identifier =>
+            identifier.offers != null
+        )
+        
+        //check if has active offers
+        for (let identifier of identifiers) {
+            if (identifier.offers.length > 0) {
+                hasActiveOffers = true;
+                break;
+            }
+        }
+      
         return hasActiveOffers
     }
-
     let isWmsQtyActive = hasWmsQty();
     let isOfferActive = hasOffersActive();
-    let status = "success", msg = "Finished";
+    let status = "error", msg = "unknown";
 
     if (isWmsQtyActive && !isOfferActive) {
         status = "warning";
@@ -30,9 +40,12 @@ export const MainStatusBadge = ({ record }) => {
     } else if (!isWmsQtyActive && isOfferActive) {
         status = "error";
         msg = "Zombie Asins";
-    } else if (!isWmsQtyActive && !isOfferActive){
-        status ="default";
+    } else if (!isWmsQtyActive && !isOfferActive) {
+        status = "default";
         msg = "Out of Stock";
+    } else if (isWmsQtyActive && isOfferActive) {
+        status = "success";
+        msg = "Finished";
     }
 
     return <Badge status={status} text={msg} />
