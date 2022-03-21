@@ -17,40 +17,50 @@ const { getSellingPartnerProdPricing } = require('./amazonSP/amazonSchedule');
 const ProdPricing = require('./amazonSP/SPAPI/ProdPricing');
 const { bucket } = require('./amazonSP/RateLimiter');
 
+
+
+
 const main = async () => {
     // await getMicrosoftLaptops()
     // await getBestbuyLaptops()
     // puppeteerStoresPageTest()
-    findProdPricingOnUpc("196068774585").then(prod => {
-        let input = prod.pop()
-        const upcAsinMapping = bucket.getProdAsins(input);
-        console.log(JSON.stringify(upcAsinMapping, null, 4))
-
-        bucket.addProdPricingTask(upcAsinMapping);
-    }).then(() => {
-        bucket.doTaskQueue().then(offers => {
-            // console.log(`================\n${JSON.stringify(offers, null, 4)}`)
-            saveProdPricingOffers(offers)
-        })
-    })
-
-
     // await getSellingPartnerProdPricing()
 
-    // let pp = new ProdPricing();
-    // findAllProdPricing()
-    //     .then(prods => pp.createProdAsinsMapping(prods))
-    //     .then(upcAsinsMap => {
-    //         for (let [upc, asins] of upcAsinsMap) {
-    //             // console.log(upc, asins)
-    //             // let task = pp.createTask(upc, asins)
-    //             // bucket.addTask(task)
-    //         }
-    //     })
-    //     .then(() => {
-    //         // bucket.doTaskQueue()
-    //     })
 
+}
+
+
+const testCreateTask = () => {
+    let pp = new ProdPricing();
+    findAllProdPricing()
+        .then(prods => pp.createProdAsinsMapping(prods))
+        .then(upcAsinsMap => {
+            for (let [upc, asins] of upcAsinsMap) {
+                console.log(upc, asins)
+                let task = pp.createTask(upc, asins)
+                bucket.addTask(task)
+            }
+        })
+        .then(() => {
+            bucket.doTaskQueue()
+        })
+
+}
+const checkProdPricingAndSaveOffers = async () => {
+    findAllProdPricing()
+        .then(prods => {
+            prods.forEach(prod => {
+                const upcAsinMapping = bucket.getProdAsins(prod);
+                bucket.addProdPricingTask(upcAsinMapping);
+            })
+        })
+        .then(() => bucket.doTaskQueue())
+        .then(offers => {
+            saveProdPricingOffers(offers)
+        })
+        .catch(e => {
+            console.log(`has error==${e}`)
+        })
 }
 
 const puppeteerStoresPageTest = async () => {

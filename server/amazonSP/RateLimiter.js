@@ -38,7 +38,7 @@ class LeakyBucket {
     /*
      *  @Public
      *  @desc: task enqueue
-     */ 
+     */
     addTask(task) {
         this.#enqueue(task);
     }
@@ -51,7 +51,7 @@ class LeakyBucket {
         })
     }
 
-    async doProdPricingTask(resolve, reject, upc, asins) {
+    async initProdPricingTask(resolve, reject, upc, asins) {
         const SP = await amazonSellingPartner();
 
         try {
@@ -64,7 +64,6 @@ class LeakyBucket {
                     ItemType: 'Asin'
                 },
             })
-
             resolve({ upc, prom: res });
 
         } catch (e) {
@@ -75,17 +74,11 @@ class LeakyBucket {
 
     doTaskQueue() {
 
-        const promisesArray = this.queue.map(async (task, index) => {
-            await this.delayIfReachedLimit(index)
+        const promisesArray = this.queue.map((task, index) =>
+            this.#dequeue(task, index)
+        )
 
-            let duration = await this.#measurePromise(task);
-            this.#performance += duration;
-
-            console.log(`Task:${index}; current Performance: ${this.#performance}; duration: ${duration}`)
-            return this.#dequeue();
-        })
-
-        return Promise.all(promisesArray)
+        return Promise.allSettled(promisesArray)
     }
 
     async delayIfReachedLimit(index) {
@@ -118,7 +111,7 @@ class LeakyBucket {
      */
     #createTask(upc, asins) {
         return new Promise((resolve, reject) => {
-            this.doProdPricingTask(resolve, reject, upc, asins);
+            this.initProdPricingTask(resolve, reject, upc, asins);
         })
     }
     /*
@@ -143,8 +136,14 @@ class LeakyBucket {
      *  @private
      *  @return: first task in task queue
      */
-    #dequeue() {
-        return this.queue.shift();
+    #dequeue(task, index) {
+        // await this.delayIfReachedLimit(index)
+
+        // let duration = await this.#measurePromise(task);
+        // this.#performance += duration;
+
+        // console.log(`Task:${index}; current Performance: ${this.#performance}; duration: ${duration}`)
+        return this.queue.pop();
     }
 
     #delay(ms) {

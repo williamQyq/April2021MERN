@@ -179,9 +179,8 @@ const upsertProdPricingNewAsin = (record) => {
 
 const saveProdPricingOffers = (offers) => {
     offers.forEach(prod => {
-        prod.prom.forEach(asin => {
-            // console.log(`amzAsinRes========\n`, JSON.stringify(amzAsinRes.ASIN, null, 4))
-            setProdPricingOffer({
+        prod.prom.forEach(async (asin) => {
+            await setProdPricingOffer({
                 upc: prod.upc,
                 asin: asin.ASIN,
                 offers: asin.Product.Offers
