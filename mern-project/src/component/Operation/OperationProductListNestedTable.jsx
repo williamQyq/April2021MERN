@@ -21,9 +21,11 @@ export default class NestedTable extends React.Component {
     getAmzRecord = (record) => {
         const data = [];
         let identifiers = record.identifiers.filter(identifier => identifier.offers != null)
+        let index = 0;
         identifiers.forEach(identifier => {
             identifier.offers.forEach(offer => {
-                data.push({ ...offer, asin: identifier.asin, _id: identifier._id })
+                data.push({ ...offer, asin: identifier.asin, key: index })
+                index += 1;
             })
         })
 
@@ -91,7 +93,7 @@ export default class NestedTable extends React.Component {
                     columns={columns}
                     dataSource={data}
                     pagination={false}
-                    rowKey={"_id"}
+                // rowKey={"_id"}
                 />
             </Form>
         )
