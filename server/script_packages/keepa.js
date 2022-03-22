@@ -1,6 +1,6 @@
-const { KeepaScript } = require('./Scripts.js');
+import KeepaScript from './Scripts.js'
 
-const getKeepaStat = (searchTerm) => {
+export const getKeepaStat = (searchTerm) => {
     let keepa = new KeepaScript(searchTerm);
 
     //spawn script to search keepa
@@ -12,8 +12,4 @@ const getKeepaStat = (searchTerm) => {
         keepa.listenClose(python, resolve);
         keepa.listenErr(python, reject);
     });
-}
-
-module.exports = {
-    getKeepaStat: getKeepaStat
 }

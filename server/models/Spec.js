@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 //Create Schema for self tracking list 
@@ -40,6 +40,4 @@ const ItemSpecSchema = new Schema({
 
 }, { collection: 'itemSpec' });
 
-module.exports = {
-    ItemSpec: mongoose.models.ItemSpec || mongoose.model('ItemSpec', ItemSpecSchema)
-}
+export default mongoose.models.ItemSpec || mongoose.model('ItemSpec', ItemSpecSchema)

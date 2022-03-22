@@ -1,11 +1,13 @@
-const cron = require('node-cron');
-const config = require('config');
-const { performance } = require('perf_hooks');
+import cron from 'node-cron';
+import config from 'config';
+import { performance } from 'perf_hooks';
 
-const amazonSellingPartner = async () => {
+import SellingPartnerAPI from 'amazon-sp-api';
+
+export const amazonSellingPartner = async () => {
     const CREDENTIALS = config.get('amazonCredentials');
     const IAM = config.get('amazonIAMRole');
-    const SellingPartnerAPI = require('amazon-sp-api');
+
 
     return new SellingPartnerAPI({
         region: "na",
@@ -166,9 +168,4 @@ class LeakyBucket {
     }
 }
 
-const bucket = new LeakyBucket();
-
-module.exports = {
-    bucket,
-    amazonSellingPartner
-}
+export const bucket = new LeakyBucket();

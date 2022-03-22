@@ -1,5 +1,5 @@
-const MSItem = require('../models/MsItem');
-const Stores = require('./Stores');
+import MSItem from '../models/MsItem.js';
+import Stores from './Stores.js';
 
 /*
 interface Microsoft{
@@ -16,7 +16,7 @@ interface Microsoft{
 }
 */
 
-class Microsoft extends Stores {
+export default class Microsoft extends Stores {
     model = MSItem
     constructor() {
         super();
@@ -101,5 +101,3 @@ class Microsoft extends Stores {
         return
     }
 }
-
-module.exports = Microsoft

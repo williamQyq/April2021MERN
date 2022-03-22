@@ -1,6 +1,6 @@
-const keys = require("../config/keys");
-const db = require('../config/keys').mongoURI;
-const { MongoClient } = require('mongodb');
+import keys from "../config/keys";
+import db from '../config/keys'.mongoURI;
+import { MongoClient } from 'mongodb';
 
 async function main (){
 

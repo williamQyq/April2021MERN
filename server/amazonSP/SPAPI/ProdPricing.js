@@ -1,6 +1,6 @@
-const { amazonSellingPartner } = require('../RateLimiter');
+import { amazonSellingPartner } from '../RateLimiter.js';
 
-class ProdPricing {
+export default class ProdPricing {
 
     static limit = {
         ratePerSec: 10,
@@ -58,7 +58,4 @@ class ProdPricing {
 
 
 
-
 }
-
-module.exports = ProdPricing;

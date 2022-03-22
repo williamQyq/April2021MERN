@@ -1,7 +1,7 @@
-const express = require('express');
+import express from 'express';
+import auth from '../../middleware/auth.js';
+import { getKeepaStat } from '../../script_packages/keepa.js';
 const router = express.Router();
-const auth = require('../../middleware/auth.js');
-const { getKeepaStat } = require('../../script_packages/keepa.js');
 
 // @route GET api/items
 router.get('/', (req, res) => {
@@ -15,4 +15,4 @@ router.get('/', (req, res) => {
         })
 
 });
-module.exports = router;
+export default router;

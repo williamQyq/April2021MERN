@@ -1,7 +1,8 @@
-const puppeteer = require('puppeteer');
-const { ip } = require('config');
+import puppeteer from 'puppeteer';
+import config from 'config';
 
-class Stores {
+const { agent } = config;
+export default class Stores {
     constructor() {
     }
 
@@ -25,7 +26,7 @@ class Stores {
     }
     async initPage(browser) {
         const page = await browser.newPage();
-        await page.setUserAgent(ip.USER_AGENT);
+        await page.setUserAgent(agent.USER_AGENT);
         await page.setRequestInterception(true);
         page.on('request', (req) => {
             if (req.resourceType() === 'image') {
@@ -83,6 +84,3 @@ class Stores {
         return res
     }
 }
-
-
-module.exports = Stores;

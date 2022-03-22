@@ -1,7 +1,7 @@
-const BBItem = require('../models/BBItem');
-const Stores = require('./Stores')
+import BBItem from '../models/BBItem.js';
+import Stores from './Stores.js';
 /*
-interface Bestbuy{
+interface Bestbuy {
     initURL(cp)
     async getItemSpec(page, url)
     async #openSpecWrapper(page)
@@ -11,11 +11,11 @@ interface Bestbuy{
     async getPagesNum(page, url)
     async #parseItemsList(page)
     async getPageItems(page, url)
-    
+
 }
 */
 
-class Bestbuy extends Stores {
+export default class Bestbuy extends Stores {
     model = BBItem
     constructor() {
         super();
@@ -136,5 +136,3 @@ class Bestbuy extends Stores {
         })
     }
 }
-
-module.exports = Bestbuy;

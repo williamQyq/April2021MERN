@@ -1,20 +1,20 @@
-const { BBItem } = require('../models/BBItem.js')
-const { MsItem } = require('../models/MsItem.js')
-const { ItemSpec } = require('../models/Spec.js')
-const { AmzProdPricing, AmzIdentifier } = require('../models/Amz.js')
-const mongoose = require('mongoose');
-const ObjectId = mongoose.Types.ObjectId;
-const {
+import BBItem from '../models/BBItem.js'
+import MsItem from '../models/MsItem.js'
+import ItemSpec from '../models/Spec.js'
+import { AmzProdPricing, AmzIdentifier } from '../models/Amz.js'
+import mongoose from 'mongoose';
+
+const { ObjectId } = mongoose.Types;
+import {
     PROJ_ITEM,
     PROJ_ITEM_DETAIL,
     SORT_ON_CAPTURE_DATE,
     UNWIND_ITEM_SPEC_AND_PRESERVE_ORIGIN,
     LOOKUP_ITEM_SPEC,
     LAST_PRICE
-} = require('./aggregate.js')
-
+} from './aggregate.js';
 //@itemSpec
-const saveItemConfiguration = (config, sku) => {
+export const saveItemConfiguration = (config, sku) => {
 
     const query = { upc: config.UPC, sku: sku }
     const update = {
@@ -26,12 +26,12 @@ const saveItemConfiguration = (config, sku) => {
     return ItemSpec.findOneAndUpdate(query, update, option)
 }
 //@itemSpec
-const findItemConfig = async (sku) => {
+export const findItemConfig = async (sku) => {
     const res = await ItemSpec.findOne({ sku: sku })
     return res ? res : false
 }
 //@StoreListings -----------------------------
-const saveStoreItemToDatabase = async (item, storeModel) => {
+export const saveStoreItemToDatabase = async (item, storeModel) => {
     let msg = '';
     let isUpserted = await setOnInsert(item, storeModel)    //insert if no document
 
@@ -48,7 +48,7 @@ const saveStoreItemToDatabase = async (item, storeModel) => {
 
 }
 
-const setOnInsert = async (item, storeModel) => {
+export const setOnInsert = async (item, storeModel) => {
     const query = { sku: item.sku };
     const update = {
         $setOnInsert: {
@@ -68,7 +68,7 @@ const setOnInsert = async (item, storeModel) => {
 }
 
 //updateItemIfPriceChanged(item:Item, storeModel:Mongoose<model>)-> enum<true|false>isItemPriceChanged
-const updateItemIfPriceChanged = (item, storeModel) => {
+export const updateItemIfPriceChanged = (item, storeModel) => {
     return storeModel.aggregate([
         {
             $project: {
@@ -97,7 +97,7 @@ const updateItemIfPriceChanged = (item, storeModel) => {
     })
 }
 
-const pushUpdatedPrice = (doc, item, storeModel) => {
+export const pushUpdatedPrice = (doc, item, storeModel) => {
     let options = { upsert: true, new: true, setDefaultsOnInsert: true, useFindAndModify: false }
     let update = {
         $push: {
@@ -113,7 +113,7 @@ const pushUpdatedPrice = (doc, item, storeModel) => {
 //----------------------------
 
 //@StoreListings
-const getStoreItems = (Model) => (
+export const getStoreItems = (Model) => (
     Model.aggregate([
         LOOKUP_ITEM_SPEC,
         UNWIND_ITEM_SPEC_AND_PRESERVE_ORIGIN,
@@ -123,7 +123,7 @@ const getStoreItems = (Model) => (
     ])
 )
 //@StoreListings
-const getStoreItemDetailById = (Model, _id) => (
+export const getStoreItemDetailById = (Model, _id) => (
     Model.aggregate([
         PROJ_ITEM_DETAIL,
         {
@@ -134,15 +134,15 @@ const getStoreItemDetailById = (Model, _id) => (
     ])
 )
 //@AmzProdPricing
-const findAllProdPricing = () => {
+export const findAllProdPricing = () => {
     return AmzProdPricing.find({})
 }
 //@AmzProdPricing
-const findProdPricingOnUpc = (upc) => {
+export const findProdPricingOnUpc = (upc) => {
     return AmzProdPricing.find({ upc: upc })
 }
 //@AmzProdPricing
-const setProdPricingOffer = (identifier) => {
+export const setProdPricingOffer = (identifier) => {
     const { upc, asin, offers } = identifier;
     const filter = { "upc": upc, "identifiers.asin": asin }
     const update = { $set: { "identifiers.$.offers": offers } }
@@ -151,7 +151,7 @@ const setProdPricingOffer = (identifier) => {
 
 }
 //@AmzProdPricing
-const upsertProdPricingNewAsin = (record) => {
+export const upsertProdPricingNewAsin = (record) => {
     const { upc, asin } = record;
     let newIdentifier = new AmzIdentifier({
         asin: asin,
@@ -177,7 +177,7 @@ const upsertProdPricingNewAsin = (record) => {
 
 }
 
-const saveProdPricingOffers = (offers) => {
+export const saveProdPricingOffers = (offers) => {
     offers.forEach(prod => {
         prod.prom.forEach(async (asin) => {
             await setProdPricingOffer({
@@ -189,17 +189,4 @@ const saveProdPricingOffers = (offers) => {
                 .catch(err => console.log(`[ERR]: amz save offers err.\n${err}`))
         })
     })
-}
-
-module.exports = {
-    saveItemConfiguration,
-    findItemConfig,
-    getStoreItems,
-    getStoreItemDetailById,
-    findAllProdPricing,
-    findProdPricingOnUpc,
-    setProdPricingOffer,
-    upsertProdPricingNewAsin,
-    saveStoreItemToDatabase,
-    saveProdPricingOffers
 }

@@ -1,4 +1,13 @@
-const express = require('express');
+import express from 'express';
+import bbItemsRouter from './routes/api/bb_items.js'
+import msItemsRouter from './routes/api/ms_items.js'
+import itemsRouter from './routes/api/items.js'
+import usersRouter from './routes/api/users.js'
+import authRouter from './routes/api/auth.js'
+import wmsRouter from './routes/api/wms.js'
+import operationRouter from './routes/api/operation.js'
+
+
 
 //@Bodyparser Middleware
 const app = express();
@@ -6,20 +15,20 @@ app.use(express.json());
 const port = process.env.PORT || 5000;
 
 // @server connection
-let server = app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`Server started on port ${port}`);
 });
 
 //@routes; direct axios request from client
-app.use('/api/bb_items', require('./routes/api/bb_items'));
-app.use('/api/ms_items', require('./routes/api/ms_items'));
+app.use('/api/bb_items', bbItemsRouter);
+app.use('/api/ms_items', msItemsRouter);
 // app.use('/api/cc_items', require('./routes/api/cc_items'));
-app.use('/api/items', require('./routes/api/items'));
-app.use('/api/users', require('./routes/api/users'));
-app.use('/api/auth', require('./routes/api/auth'));
+app.use('/api/items', itemsRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/auth', authRouter);
 // app.use('/api/keepa', require('./routes/api/keepa'));
-app.use('/api/wms', require('./routes/api/wms'));
-app.use('/api/operation', require('./routes/api/operation'));
+app.use('/api/wms', wmsRouter);
+app.use('/api/operation', operationRouter);
 // app.use('/api/inbound', require('./routes/api/inbound'));
 
 if (process.env.NODE_ENV === 'production') {
@@ -29,7 +38,4 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
-module.exports = {
-    app,
-    server
-}
+export default server;

@@ -1,20 +1,20 @@
-const cron = require('node-cron');
-const { bucket } = require('./RateLimiter.js')
-const {
+import cron from 'node-cron';
+import { bucket } from './RateLimiter.js'
+import {
     findAllProdPricing,
     setProdPricingOffer
-} = require('../query/utilities')
+} from '../query/utilities.js'
 // cron scheduler update Amazon sku
-// const amazonScheduler = cron.schedule("* * 1 * * *", async () => {
+// export const amazonScheduler = cron.schedule("* * 1 * * *", async () => {
 //     await getSellingPartnerProdPricing()
 // });
 
-const amazonScheduler = async () => {
+export const amazonScheduler = async () => {
     await getSellingPartnerProdPricing();
 
 };
 
-const getSellingPartnerProdPricing = async () =>
+export const getSellingPartnerProdPricing = async () =>
     //get prods asins in database 
     findAllProdPricing().then(prods => {
         prods.forEach(prod => {
@@ -44,10 +44,4 @@ const saveOffers = (offers) => {
                 .catch(err => console.log(`[ERR]: amz save offers err.\n${err}`))
         })
     })
-}
-
-
-module.exports = {
-    amazonScheduler,
-    getSellingPartnerProdPricing
 }

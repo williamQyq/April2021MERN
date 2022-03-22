@@ -1,9 +1,10 @@
-const express = require('express');
+import express from 'express';
+import Bestbuy from '../../script_packages/BB.js';
+import Model from '../../models/BBItem.js';
+import { getItemConfiguration } from '../../script_packages/scraper.js';
+import { saveItemConfiguration, getStoreItemDetailById, getStoreItems, findItemConfig } from '../../query/utilities.js';
+
 const router = express.Router();
-const Bestbuy = require('../../script_packages/BB');
-const Model = require('../../models/BBItem.js'); //Item Model
-const { getItemConfiguration } = require('../../script_packages/scraper.js');
-const { saveItemConfiguration, getStoreItemDetailById, getStoreItems, findItemConfig } = require('../../query/utilities.js');
 
 // @route GET api/items
 router.get('/', (req, res) => {
@@ -57,4 +58,4 @@ router.put('/itemSpec/add', async (req, res) => {
     res.json(message)
 })
 
-module.exports = router;
+export default router;

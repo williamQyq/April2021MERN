@@ -270,3 +270,21 @@ Save Item in database procedure
         .on('end', function(){
         // final callback
         });
+
+## New knowledge today 03/22/22:
+>1. exports, export default, module.exports
+- To solve the error "The requested module does not provide an export named 'default'", be consistent with your ES6 imports and exports. If a value is exported as a default export, it has to be imported as a default import and if it's exported as a named export, it has to be imported as a named import.
+
+>2. use "real" destructuring after importing the object:
+
+
+        import model from './.*.js';
+        const {...} = model;
+
+>3. below does not work in es6, ***path must include full file name-file type**
+        
+        module.exports = {
+                'name': {object}
+        }
+
+        import {name} from './path';

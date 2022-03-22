@@ -1,12 +1,12 @@
-const {getSellingPartnerProdPricing} = require("../amazonSP/amazonSchedule")
+import {getSellingPartnerProdPricing} from "../amazonSP/amazonSchedule"
 const test = async ()=>{
     await getSellingPartnerProdPricing();
 };
 
 test();
-// const { MongoClient } = require('mongodb');
-// const config = require('../config/default.json');
-// const { docs } = require('googleapis/build/src/apis/docs');
+// import { MongoClient } from 'mongodb';
+// import config from '../config/default.json';
+// import { docs } from 'googleapis/build/src/apis/docs';
 // const mongoURI = config.mongoURI;
 // const collection = config.collection;
 

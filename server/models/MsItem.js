@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 //Create Schema for self tracking list 
@@ -36,4 +36,4 @@ const MSItemSchema = new Schema({
     }
 }, { collection: 'msStoreListings' });
 
-module.exports = mongoose.models.MSItem || mongoose.model('MSItem', MSItemSchema);
+export default mongoose.models.MSItem || mongoose.model('MSItem', MSItemSchema);
