@@ -1,8 +1,11 @@
-const { resolveModuleName } = require('typescript');
 const { amazonSellingPartner } = require('../RateLimiter');
 
 class ProdPricing {
 
+    static limit = {
+        ratePerSec: 10,
+        asinsLimit: 20
+    }
     constructor() {
         this.config = {
             operation: "getPricing",
@@ -15,9 +18,12 @@ class ProdPricing {
         }
     }
 
-    //@desc: create a mapping between upc and its asins.
-    //@return: a Map of upc and asins
-    createProdAsinsMapping(prodList) {
+    /* 
+    @private
+    @desc: create a mapping between upc and its asins.
+    @param:
+    @return: a Map of upc and asins */
+    #createProdAsinsMapping_(prodList) {
         const upcAsinsMap = new Map();
         prodList.forEach(prod => {
             let asins = prod.identifiers.map(identifier => (identifier.asin));

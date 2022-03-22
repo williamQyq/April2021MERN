@@ -21,8 +21,7 @@ const getSellingPartnerProdPricing = async () =>
             const upcAsinMapping = bucket.getProdAsins(prod);
             bucket.addProdPricingTask(upcAsinMapping);
         })
-
-        bucket.doTaskQueue()
+            .then(bucket.doTaskQueue())
             .then(offers => {
                 saveOffers(offers)
             })

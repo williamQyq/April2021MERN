@@ -15,7 +15,17 @@ const amazonSellingPartner = async () => {
     });
 
 }
+const PRODUCT_PRICING = "productPricing";
 
+
+// class TaskNode{
+//     constructor(task){
+//         this.type = task.type;
+
+//         this.next = null;
+//         this.prev = null;
+//     }
+// }
 
 class LeakyBucket {
     static capacity = 100;
