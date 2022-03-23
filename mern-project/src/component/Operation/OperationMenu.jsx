@@ -1,5 +1,5 @@
 import React from 'react';
-import 'antd/dist/antd.min.css';
+import './Operation.scss';
 import { useState } from 'react';
 import { Menu, Tree } from 'antd';
 import { LineChartOutlined, AreaChartOutlined, DownOutlined } from '@ant-design/icons';
