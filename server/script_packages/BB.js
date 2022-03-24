@@ -1,7 +1,7 @@
-const BBItem = require('../models/BBItem');
-const Stores = require('./Stores')
+import BBItem from '../models/BBItem.js';
+import Stores from './Stores.js';
 /*
-interface Bestbuy{
+interface Bestbuy {
     initURL(cp)
     async getItemSpec(page, url)
     async #openSpecWrapper(page)
@@ -11,11 +11,11 @@ interface Bestbuy{
     async getPagesNum(page, url)
     async #parseItemsList(page)
     async getPageItems(page, url)
-    
+
 }
 */
 
-class Bestbuy extends Stores {
+export default class Bestbuy extends Stores {
     model = BBItem
     constructor() {
         super();
@@ -31,12 +31,12 @@ class Bestbuy extends Stores {
         return itemSpec;
     }
     async #openSpecWrapper(page) {
-        let specWrapper = (await page.$x('//button[@data-track="Specifications: Accordion Open"]'))[0]
+        let specWrapper = (await page.$x('//div[@class="specs-container specs-wrapper all-specs-wrapper"]'))[0]
         specWrapper.click()
     }
     async #parseItemSpec(page) {
-        const KEYS_XPATH_EXPR = '//div[@class="title-container col-xs-6 v-fw-medium"]/div'
-        const VALUES_XPATH_EXPR = '//div[@class="row-value col-xs-6 v-fw-regular"]'
+        const KEYS_XPATH_EXPR = '//div[@class="row-title"]'
+        const VALUES_XPATH_EXPR = '//div[contains(@class,"row-value")]'
         let keys = await this.evaluateElementsText(page, KEYS_XPATH_EXPR)
         let values = await this.evaluateElementsText(page, VALUES_XPATH_EXPR)
 
@@ -136,5 +136,3 @@ class Bestbuy extends Stores {
         })
     }
 }
-
-module.exports = Bestbuy;

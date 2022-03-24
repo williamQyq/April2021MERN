@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const BBItemSchema = new Schema({
@@ -29,5 +29,4 @@ const BBItemSchema = new Schema({
     }
 }, { collection: 'bbStoreListings' });
 
-
-module.exports = mongoose.model("BBItem", BBItemSchema);
+export default mongoose.model("BBItem", BBItemSchema)

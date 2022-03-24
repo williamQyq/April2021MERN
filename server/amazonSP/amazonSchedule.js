@@ -1,35 +1,34 @@
-const cron = require('node-cron');
-const { SpBucket } = require('./RateLimiter.js')
-const {
-    findAllProdPricing, setProdPricingOffer
-} = require('../query/utitlities')
+import cron from 'node-cron';
+import { bucket } from './RateLimiter.js'
+import {
+    findAllProdPricing,
+    setProdPricingOffer
+} from '../query/utilities.js'
 // cron scheduler update Amazon sku
-// const amazonScheduler = cron.schedule("* * 1 * * *", async () => {
+// export const amazonScheduler = cron.schedule("* * 1 * * *", async () => {
 //     await getSellingPartnerProdPricing()
 // });
-const bucket = new SpBucket();
 
-const amazonScheduler = async () => {
+export const amazonScheduler = async () => {
     await getSellingPartnerProdPricing();
 
 };
 
-const getSellingPartnerProdPricing = () =>
+export const getSellingPartnerProdPricing = async () =>
     //get prods asins in database 
     findAllProdPricing().then(prods => {
         prods.forEach(prod => {
             const upcAsinMapping = bucket.getProdAsins(prod);
             bucket.addProdPricingTask(upcAsinMapping);
         })
-
-        bucket.doTaskQueue()
+            .then(bucket.doTaskQueue())
             .then(offers => {
                 saveOffers(offers)
             })
             .catch(e => {
                 console.log(`undefined task****\n ${e}`)
             });
-        // bucket.throttle();
+        // bucket.throttle(30);
     })
 
 const saveOffers = (offers) => {
@@ -45,10 +44,4 @@ const saveOffers = (offers) => {
                 .catch(err => console.log(`[ERR]: amz save offers err.\n${err}`))
         })
     })
-}
-
-
-module.exports = {
-    amazonScheduler,
-    getSellingPartnerProdPricing
 }

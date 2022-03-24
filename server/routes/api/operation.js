@@ -1,8 +1,8 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const auth = require('../../middleware/auth.js');
-const { getSellingPartnerProdPricing } = require('../../amazonSP/amazonSchedule.js');
-const { findAllProdPricing, upsertProdPricingNewAsin } = require('../../query/utitlities.js');
+import auth from '../../middleware/auth.js';
+import { getSellingPartnerProdPricing } from '../../amazonSP/amazonSchedule.js';
+import { findAllProdPricing, upsertProdPricingNewAsin } from '../../query/utilities.js';
 
 // @route GET api/amazonSP
 // @desc: get all amazon seller central sync product pricing offers 
@@ -17,7 +17,7 @@ router.post('/upload/asins-mapping', (req, res) => {
     console.log(`received file:======${JSON.stringify(uploadFile)}`)
     processMappingFile(uploadFile)
         .then(res.json('success'))
-        .then(() => getSellingPartnerProdPricing())
+        // .then(() => getSellingPartnerProdPricing())
         .catch(e => {
             console.log(`error:`, e)
             res.json('err')
@@ -36,4 +36,4 @@ const processMappingFile = (file) => {
 }
 
 
-module.exports = router;
+export default router;

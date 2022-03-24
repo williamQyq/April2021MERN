@@ -17,7 +17,7 @@ export const defaultSettings = {
     scroll: {},
     yScroll: true,
     size: 'default',
-    top: 'none',
+    top: 'topRight',
     bottom: 'bottomRight',
     rowKey: "_id",
     tableLayout: undefined,
@@ -25,6 +25,7 @@ export const defaultSettings = {
     footer,
     expandable,
 }
+
 
 export const Settings = ({
     handler,

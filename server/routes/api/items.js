@@ -1,10 +1,10 @@
-const express = require('express');
+import express from 'express';
+import auth from '../../middleware/auth.js';
+import Item from '../../models/WatchListItem.js';
 const router = express.Router();
-const auth = require('../../middleware/auth.js');
-//Item Model
-const Item = require('../../models/WatchListItem');
+
 // @route GET api/items
-router.get('/',(req, res) => {
+router.get('/', (req, res) => {
     Item.find()
         .sort({ created_date: -1 })
         .then(items => res.json(items));
@@ -41,4 +41,4 @@ router.post('/push_price/:_id', auth, (req, res) => {
 });
 
 
-module.exports = router;
+export default router;

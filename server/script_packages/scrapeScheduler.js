@@ -1,9 +1,9 @@
-const cron = require('node-cron');
-const moment = require('moment')
-const { getBestbuyLaptops, getMicrosoftLaptops } = require('./scraper.js');
+import cron from 'node-cron';
+import moment from 'moment';
+import { getBestbuyLaptops, getMicrosoftLaptops } from './scraper.js';
 
 //cron scheduler run pyProcessBB get bb prices at 6 pm everyday
-const scrapeScheduler = cron.schedule("00 14 11 * * *", () => {
+const scrapeScheduler = cron.schedule("00 18 09 * * *", () => {
     scrapeStores();
 
 });
@@ -38,6 +38,4 @@ const getRandomMiliSec = (milisec) => {
     return Math.floor(Math.random() * milisec);
 }
 
-module.exports = {
-    scrapeScheduler: scrapeScheduler
-}
+export default scrapeScheduler;

@@ -1,12 +1,13 @@
-const cron = require('node-cron');
-const config = require('config');
-const { performance } = require('perf_hooks');
-const JSON5 = require('json5');
+import cron from 'node-cron';
+import config from 'config';
+import { performance } from 'perf_hooks';
 
-const amazonSellingPartner = async () => {
+import SellingPartnerAPI from 'amazon-sp-api';
+
+export const amazonSellingPartner = async () => {
     const CREDENTIALS = config.get('amazonCredentials');
     const IAM = config.get('amazonIAMRole');
-    const SellingPartnerAPI = require('amazon-sp-api');
+
 
     return new SellingPartnerAPI({
         region: "na",
@@ -16,7 +17,17 @@ const amazonSellingPartner = async () => {
     });
 
 }
+const PRODUCT_PRICING = "productPricing";
 
+
+// class TaskNode{
+//     constructor(task){
+//         this.type = task.type;
+
+//         this.next = null;
+//         this.prev = null;
+//     }
+// }
 
 class LeakyBucket {
     static capacity = 100;
@@ -29,12 +40,19 @@ class LeakyBucket {
     }
 
     //start
-    throttle = () => {
-        cron.schedule("* * * * *", () => {
+    throttle = (minInterval) => {
+        cron.schedule(`${minInterval} * * * *`, () => {
             if (!this.isTaskQueueEmpty()) {
                 this.doTaskQueue();
             }
         })
+    }
+    /*
+     *  @Public
+     *  @desc: task enqueue
+     */
+    addTask(task) {
+        this.#enqueue(task);
     }
 
     addProdPricingTask(mapping) {
@@ -45,7 +63,7 @@ class LeakyBucket {
         })
     }
 
-    async doProdPricingTask(resolve, reject, upc, asins) {
+    async initProdPricingTask(resolve, reject, upc, asins) {
         const SP = await amazonSellingPartner();
 
         try {
@@ -58,7 +76,6 @@ class LeakyBucket {
                     ItemType: 'Asin'
                 },
             })
-
             resolve({ upc, prom: res });
 
         } catch (e) {
@@ -69,17 +86,11 @@ class LeakyBucket {
 
     doTaskQueue() {
 
-        const promisesArray = this.queue.map(async (task, index) => {
-            await this.delayIfReachedLimit(index)
+        const promisesArray = this.queue.map((task, index) =>
+            this.#dequeue(task, index)
+        )
 
-            let duration = await this.#measurePromise(task);
-            this.#performance += duration;
-
-            console.log(`Task:${index}; current Performance: ${this.#performance}; duration: ${duration}`)
-            return this.#dequeue();
-        })
-
-        return Promise.all(promisesArray)
+        return Promise.allSettled(promisesArray)
     }
 
     async delayIfReachedLimit(index) {
@@ -98,22 +109,26 @@ class LeakyBucket {
         return { upc, asins }
     }
 
+    /*
+     *  @public
+     *  @type boolean
+     */
     isTaskQueueEmpty() {
         return this.queue.length > 0 ? false : true;
     }
 
     /*
      *  @private
-     *  @create task for a chunck of asins
+     *  @desc: create task for a chunck of asins
      */
     #createTask(upc, asins) {
         return new Promise((resolve, reject) => {
-            this.doProdPricingTask(resolve, reject, upc, asins);
+            this.initProdPricingTask(resolve, reject, upc, asins);
         })
     }
     /*
      *  @private
-     *  @slice asins into task chuncks on API request limit
+     *  @desc: slice asins into task chuncks on API request limit
      */
     #sliceAsinsOnLimit(asins, limit) {
         let chuncks = [], i;
@@ -124,7 +139,7 @@ class LeakyBucket {
     }
     /*
      *  @private
-     *  @push task to queue
+     *  @desc: push task to queue
      */
     #enqueue(task) {
         this.queue.push(task);
@@ -133,8 +148,14 @@ class LeakyBucket {
      *  @private
      *  @return: first task in task queue
      */
-    #dequeue() {
-        return this.queue.shift();
+    #dequeue(task, index) {
+        // await this.delayIfReachedLimit(index)
+
+        // let duration = await this.#measurePromise(task);
+        // this.#performance += duration;
+
+        // console.log(`Task:${index}; current Performance: ${this.#performance}; duration: ${duration}`)
+        return this.queue.pop();
     }
 
     #delay(ms) {
@@ -147,7 +168,4 @@ class LeakyBucket {
     }
 }
 
-module.exports = {
-    SpBucket: LeakyBucket,
-    amazonSellingPartner: amazonSellingPartner
-}
+export const bucket = new LeakyBucket();

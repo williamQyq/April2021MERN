@@ -1,6 +1,6 @@
 import React from 'react';
 import 'component/SourceStore/Store.scss';
-import { Table, Input, Button, Space, Divider } from 'antd';
+import { Table, Input, Button, Space } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined, } from '@ant-design/icons';
 import { locateSearchedItem, scrollToTableRow, StoreHeader } from 'component/SourceStore/StoreTableUtilities';
@@ -133,7 +133,6 @@ export default class StoreTable extends React.Component {
         return (
             <>
                 <StoreHeader storeName={store} isLoading={loading} />
-                <Divider />
                 <Table
                     showSorterTooltip={false}
                     columns={columns}

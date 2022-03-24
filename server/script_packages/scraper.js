@@ -1,8 +1,8 @@
-const Bestbuy = require('./BB');
-const Microsoft = require('./MS');
-const { saveStoreItemToDatabase } = require('../query/utitlities')
+import Bestbuy from './BB.js'
+import Microsoft from './MS.js';
+import { saveStoreItemToDatabase } from '../query/utilities.js';
 
-const getMicrosoftLaptops = async () => {
+export const getMicrosoftLaptops = async () => {
 
     let MS = new Microsoft();
     let skipItemsNum = 0
@@ -48,7 +48,7 @@ const getMicrosoftLaptops = async () => {
 
 }
 
-const getBestbuyLaptops = async () => {
+export const getBestbuyLaptops = async () => {
 
     let BB = new Bestbuy();
     let cp = 1
@@ -96,7 +96,7 @@ const getBestbuyLaptops = async () => {
 }
 
 //enum store<Bestbuy|Microsoft>
-const getItemConfiguration = async (store, url) => {
+export const getItemConfiguration = async (store, url) => {
     console.log(`[getItemConfig] starting...`)
     let browser = await store.initBrowser();
     let page = await store.initPage(browser);
@@ -108,9 +108,3 @@ const getItemConfiguration = async (store, url) => {
     return spec
 }
 
-module.exports = {
-    getMicrosoftLaptops,
-    getBestbuyLaptops,
-    getItemConfiguration
-
-}

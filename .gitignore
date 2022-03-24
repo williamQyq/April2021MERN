@@ -2,3 +2,5 @@
 node_modules/
 __pycache__/
 server/config/*
+server/script_packages/*
+server/unit_test.js

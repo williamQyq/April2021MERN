@@ -1,33 +1,33 @@
 // @get aggregate query
 
-const LAST_PRICE = {
+export const LAST_PRICE = {
     $arrayElemAt: [
         "$price_timestamps.price", -1
     ]
 }
-const PREV_PRICE = {
+export const PREV_PRICE = {
     $arrayElemAt: [
         "$price_timestamps.price", -2
     ]
 }
-const PRICE_CAPTURE_DATE = {
+export const PRICE_CAPTURE_DATE = {
     $arrayElemAt: [
         "$price_timestamps.date", -1
     ]
 }
-const PRICE_DIFF = {
+export const PRICE_DIFF = {
     $subtract: [LAST_PRICE, PREV_PRICE]
 }
 
 // @sort aggregate query
-const SORT_ON_CAPTURE_DATE = {
+export const SORT_ON_CAPTURE_DATE = {
     $sort: {
         captureDate: -1
     }
 }
 
 //@project aggregate query
-const PROJ_ITEM = {
+export const PROJ_ITEM = {
     $project: {
         key: "$_id",
         link: 1,
@@ -44,7 +44,7 @@ const PROJ_ITEM = {
     }
 }
 
-const PROJ_ITEM_DETAIL = {
+export const PROJ_ITEM_DETAIL = {
     $project: {
         link: 1,
         name: 1,
@@ -56,7 +56,7 @@ const PROJ_ITEM_DETAIL = {
         priceDiff: PRICE_DIFF,
     }
 }
-const LOOKUP_ITEM_SPEC = {
+export const LOOKUP_ITEM_SPEC = {
     $lookup: {
         from: "itemSpec",
         localField: "sku",
@@ -65,19 +65,9 @@ const LOOKUP_ITEM_SPEC = {
     }
 }
 
-const UNWIND_ITEM_SPEC_AND_PRESERVE_ORIGIN = {
+export const UNWIND_ITEM_SPEC_AND_PRESERVE_ORIGIN = {
     $unwind: {
         path: "$item_spec",
         preserveNullAndEmptyArrays: true
     }
-}
-
-// @update aggregate query
-module.exports = {
-    PROJ_ITEM,
-    PROJ_ITEM_DETAIL,
-    SORT_ON_CAPTURE_DATE,
-    LAST_PRICE,
-    LOOKUP_ITEM_SPEC,
-    UNWIND_ITEM_SPEC_AND_PRESERVE_ORIGIN
 }

@@ -1,10 +1,10 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const bcrypt = require('bcryptjs');
-const config = require('config');
-const jwt = require('jsonwebtoken');
-const auth = require('../../middleware/auth.js')
-const User = require('../../models/User'); //User Model
+import bcrypt from 'bcryptjs';
+import config from 'config';
+import jwt from 'jsonwebtoken';
+import auth from '../../middleware/auth.js'
+import User from '../../models/User.js'; //User Model
 
 // @route POST api/users
 // @desc Register new Users
@@ -58,4 +58,4 @@ router.post('/', auth, (req, res) => {
 });
 
 
-module.exports = router;
+export default router;

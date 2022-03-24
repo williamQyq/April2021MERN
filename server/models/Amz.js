@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const IdentifierSchema = new Schema({
@@ -28,8 +28,5 @@ const AmzProdPricingSchema = new Schema({
     }
 }, { collection: 'amzProdPricing' });
 
-
-module.exports = {
-    AmzProdPricing: mongoose.model('AmzProdPricing', AmzProdPricingSchema),
-    AmzIdentifier: mongoose.model('AmzIdentifier', IdentifierSchema)
-}
+export const AmzProdPricing = mongoose.model('AmzProdPricing', AmzProdPricingSchema);
+export const AmzIdentifier = mongoose.model('AmzIdentifier', IdentifierSchema);

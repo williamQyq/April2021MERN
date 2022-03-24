@@ -1,50 +1,59 @@
-import { InputNumber, Input, Form, Space, Typography, Badge, Dropdown, Menu } from "antd";
 import ActionMenu from "component/Operation/OperationAction";
+import { StatusBadge } from "component/Operation/OperationStatusBadge";
 
-export const mainColumnGroup = (actions) => [
-    {
-        title: 'Upc',
-        dataIndex: 'upc',
-        editable: true
-    },
-    // {
-    //     title: 'Name',
-    //     dataIndex: 'name',
-    //     editable: true,
-    // },
-    {
-        title: 'WMS Quantity',
-        dataIndex: 'wmsQuantity',
-        editable: false,
-    },
-    {
-        title: 'Unit Cost',
-        dataIndex: 'unitCost',
-        editable: false,
-    },
-    // {
-    //     title: 'Settlement Rate Universal',
-    //     dataIndex: 'settleRateUniv',
-    //     editable: true,
-    //     inputType: "number"
-    // },
-    {
-        title: 'Status',
-        dataIndex: 'status',
-        key: 'state',
-        render: () =>
-            <span>
-                <Badge status="success" />
-                Finished
-            </span>
 
-    },
-    {
-        title: 'Action',
-        key: 'action',
-        render: (_, record) => <ActionMenu actions={actions} record={record} />,
-    },
-];
+export const mainColumnGroup = (actions) => {
+    const { getColumnSearchProps } = actions;
+    return (
+        [
+            {
+                title: 'Upc',
+                dataIndex: 'upc',
+                editable: true,
+                ...getColumnSearchProps('upc')
+            },
+            // {
+            //     title: 'Name',
+            //     dataIndex: 'name',
+            //     editable: true,
+            // },
+            {
+                title: 'WMS Quantity',
+                dataIndex: 'wmsQuantity',
+                editable: false,
+                sorter: (a, b) => a.wmsQuantity - b.wmsQuantity,
+                ...getColumnSearchProps('wmsQuantity'),
+                // defaultSortOrder: setTableState.wmsQuantity,
+                sortDirections: ['descend', 'ascend', 'descend']
+            },
+            {
+                title: 'Unit Cost',
+                dataIndex: 'unitCost',
+                editable: false,
+            },
+            // {
+            //     title: 'Settlement Rate Universal',
+            //     dataIndex: 'settleRateUniv',
+            //     editable: true,
+            //     inputType: "number"
+            // },
+            {
+                title: 'Status',
+                dataIndex: 'status',
+                key: 'state',
+                ...getColumnSearchProps('status'),
+                render: (_, record) => {
+                    return <StatusBadge record={record} />
+                }
+            },
+            {
+                title: 'Action',
+                key: 'action',
+                render: (_, record) => <ActionMenu actions={actions} record={record} />,
+            },
+        ]
+    );
+}
 
 export const nestedColumnGroup = (actions) => [
     {
@@ -55,13 +64,13 @@ export const nestedColumnGroup = (actions) => [
     },
     {
         title: 'Sku',
-        dataIndex: 'sku',
+        dataIndex: 'SellerSKU',
         key: 'sku',
         editable: false
     },
     {
         title: 'Fulfillment Channel',
-        dataIndex: 'fulfillmentChannel',
+        dataIndex: 'FulfillmentChannel',
         key: 'fulfillmentChannel',
         editable: false,
         filters: [
@@ -77,7 +86,7 @@ export const nestedColumnGroup = (actions) => [
     },
     {
         title: 'Amazon Regular Price',
-        dataIndex: 'amzRegularPrice',
+        dataIndex: ['RegularPrice', 'Amount'],
         key: 'amzRegularPrice',
         editable: false
     },
@@ -98,11 +107,7 @@ export const nestedColumnGroup = (actions) => [
         title: 'Status',
         dataIndex: 'status',
         key: 'state',
-        render: () =>
-            <span>
-                <Badge status="success" />
-                Finished
-            </span>
+        render: (_, record) => <StatusBadge record={record} />
 
     },
     {

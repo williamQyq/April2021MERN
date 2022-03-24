@@ -1,7 +1,7 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const auth = require('../../middleware/auth.js');
-const wms = require('../../wms/wmsDatabase.js');
+import auth from '../../middleware/auth.js';
+import wms from '../../wms/wmsDatabase.js';
 //@route GET api/wms
 router.get('/quantity/:upc', (req, res) => {
     let upc = req.params.upc;
@@ -25,4 +25,4 @@ router.post('/quantity/all', async (req, res) => {
 
 })
 
-module.exports = router;
+export default router;

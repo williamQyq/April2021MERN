@@ -1,14 +1,14 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 const ObjectId = mongoose.Types.ObjectId;
 
-const ItemMS = require('../../models/MsItem.js'); //Item Model
-const {
+import ItemMS from '../../models/MsItem.js'; //Item Model
+import {
     PROJ_ITEM,
     PROJ_ITEM_DETAIL,
     SORT_ON_CAPTURE_DATE
-} = require('../../query/aggregate.js')
+} from '../../query/aggregate.js';
 
 // @route GET api/items
 router.get('/', (req, res) => {
@@ -46,4 +46,4 @@ router.get('/detail/:_id', (req, res) => {
 //     }, { useFindAndModify: false }).then(item => res.json({ success: true }));
 // });
 
-module.exports = router;
+export default router;

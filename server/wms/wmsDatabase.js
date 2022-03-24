@@ -1,7 +1,8 @@
-const tunnel = require('tunnel-ssh');
-const { MongoClient } = require('mongodb');
-const wmsConfig = require('../config/wmsConfig');
+import tunnel from 'tunnel-ssh';
+import mongodb from 'mongodb';
+import wmsConfig from '../config/wmsConfig.js';
 
+const { MongoClient } = mongodb;
 //when modules/instance being required in nodejs, it will only load once.
 let db;
 
@@ -37,4 +38,9 @@ const startService = () => {
     });
 }
 
-module.exports = { getDatabase, close, startService };
+const wms = {
+    startService,
+    close,
+    getDatabase
+}
+export default wms;

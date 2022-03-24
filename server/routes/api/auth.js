@@ -1,10 +1,11 @@
-const express = require('express');
+import express from 'express';
+import bcrypt from 'bcryptjs';
+import config from 'config';
+import jwt from 'jsonwebtoken';
+import User from '../../models/User.js';
+import auth from '../../middleware/auth.js'
 const router = express.Router();
-const bcrypt = require('bcryptjs');
-const config = require('config');
-const jwt = require('jsonwebtoken');
-const User = require('../../models/User'); //User Model
-const auth = require('../../middleware/auth.js')
+
 
 // @route POST api/auth
 // @desc authorize users
@@ -15,7 +16,7 @@ router.post('/', (req, res) => {
     if (!email || !password) {
         return res.status(400).json({ msg: 'All fields required' });
     }
- 
+
     User.findOne({ email })
         .then(user => {
             if (!user) return res.status(400).json({ msg: 'Unauthorized access denied' });
@@ -49,11 +50,11 @@ router.post('/', (req, res) => {
 // @route GET api/auth/user
 // @desc get users data
 // @access private
-router.get('/user', auth, (req, res) =>{
+router.get('/user', auth, (req, res) => {
     User.findById(req.user.id)
-    .select('-password')
-    .then(user => res.json(user));
+        .select('-password')
+        .then(user => res.json(user));
 
 });
 
-module.exports = router;
+export default router;

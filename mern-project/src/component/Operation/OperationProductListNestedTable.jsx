@@ -9,35 +9,27 @@ export default class NestedTable extends React.Component {
         this.state = {
             editingKey: "",
             record: props.record,
+            data: []
         }
     }
 
     formRef = React.createRef();
+    componentDidMount() {
+        this.getAmzRecord(this.props.record);
+    }
 
     getAmzRecord = (record) => {
         const data = [];
-        record.identifiers.forEach(identifier => {
-
-            if (identifier.offers == null) {
-                data.push({
-                    key: identifier._id,
-                    asin: identifier.asin,
-                })
-
-            } else {
-                identifier.offers.forEach(offer => {
-                    data.push({
-                        key: identifier._id,
-                        asin: identifier.asin,
-                        sku: offer.SellerSKU,
-                        fulfillmentChannel: offer.FulfillmentChannel,
-                        amzRegularPrice: offer.RegularPrice.Amount,
-                    })
-                })
-            }
+        let identifiers = record.identifiers.filter(identifier => identifier.offers != null)
+        let index = 0;
+        identifiers.forEach(identifier => {
+            identifier.offers.forEach(offer => {
+                data.push({ ...offer, asin: identifier.asin, key: index })
+                index += 1;
+            })
         })
 
-        return data
+        this.setState({ data: data });
     }
 
     isEditing = (record) => {
@@ -89,7 +81,7 @@ export default class NestedTable extends React.Component {
             editingKey: this.state.editingKey
         }
         const columns = nestedColumns(actions);  //pass handler to create nested Table columns
-        const { record } = this.props
+        const { data } = this.state;
         return (
             <Form ref={this.formRef} component={false} >
                 <Table
@@ -99,9 +91,9 @@ export default class NestedTable extends React.Component {
                         }
                     }}
                     columns={columns}
-                    dataSource={this.getAmzRecord(record)}
+                    dataSource={data}
                     pagination={false}
-                    rowKey={"_id"}
+                // rowKey={"_id"}
                 />
             </Form>
         )

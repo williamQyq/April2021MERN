@@ -1,13 +1,13 @@
-const mongoose = require('mongoose');
-const config = require('config');
-const { Server } = require("socket.io");
-const { server } = require('./index');
+import mongoose from 'mongoose';
+import config from 'config';
+import { Server } from "socket.io";
+import app from './index.js';
 
-const wms = require("./wms/wmsDatabase.js");    // @local wms server connection
-const { scrapeScheduler } = require('./script_packages/scrapeScheduler.js');    //scripts scheduler, node-cron
-const { amazonScheduler } = require('./amazonSP/amazonSchedule.js');
+import wms from "./wms/wmsDatabase.js";    // @local wms server connection
+import scrapeScheduler from './script_packages/scrapeScheduler.js';    //scripts scheduler, node-cron
+import { amazonScheduler } from './amazonSP/amazonSchedule.js';
 
-const { main } = require('./unit_test')
+import unitTest from './unit_test.js'
 
 
 // @CREATE WMS CONNECTION
@@ -24,7 +24,7 @@ mongoose.connect(mongoURI, {
     .catch(err => console.log(err));
 
 
-const io = new Server(server, { 'pingTimeout': 7000, 'pingInterval': 3000 });
+const io = new Server(app, { 'pingTimeout': 7000, 'pingInterval': 3000 });
 io.on("connection", (socket) => {
     console.log(`A user Connected: ${socket.id}`)
     socket.on(`disconnect`, () => {
@@ -58,7 +58,7 @@ db.once('open', () => {
         }
     })
 
-    main()
+    unitTest();
     scrapeScheduler.start();
     // @AMAZON SP UPDATE
     // amazonScheduler.start();
