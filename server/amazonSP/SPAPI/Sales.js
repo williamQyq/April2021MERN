@@ -1,5 +1,5 @@
 
-class Sales {
+export default class Sales {
     constructor() {
         this.config = {
 
@@ -7,5 +7,3 @@ class Sales {
     }
 
 }
-
-module.exports = Sales;

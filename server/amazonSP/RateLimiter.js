@@ -4,7 +4,7 @@ import { performance } from 'perf_hooks';
 
 import SellingPartnerAPI from 'amazon-sp-api';
 
-export const amazonSellingPartner = async () => {
+export const amazonSellingPartner = () => {
     const CREDENTIALS = config.get('amazonCredentials');
     const IAM = config.get('amazonIAMRole');
 
@@ -19,15 +19,6 @@ export const amazonSellingPartner = async () => {
 }
 const PRODUCT_PRICING = "productPricing";
 
-
-// class TaskNode{
-//     constructor(task){
-//         this.type = task.type;
-
-//         this.next = null;
-//         this.prev = null;
-//     }
-// }
 
 class LeakyBucket {
     static capacity = 100;
@@ -64,7 +55,7 @@ class LeakyBucket {
     }
 
     async initProdPricingTask(resolve, reject, upc, asins) {
-        const SP = await amazonSellingPartner();
+        const SP = amazonSellingPartner();
 
         try {
             let res = await SP.callAPI({

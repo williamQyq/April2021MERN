@@ -1,20 +1,22 @@
-import ProdPricing from './ProdPricing';
-import { bucket } from '../RateLimiter';
+import ProdPricing from './ProdPricing.js';
+import { bucket } from '../RateLimiter.js';
 
 /* 
-Interface Prod{
-
-
-}
-
+@desc: Product Pricing API: getPricing
+@param: prods:Array<AmzProdPricing>
+@return:
 */
+export const getCatalogItems = (prods) => {
+    let res;
+    let sp = new ProdPricing();
 
-const ProdPricing = (prods) => {
-    console.log(JSON.stringify(prods))
+    //create tasks for each prod
+    prods.forEach(prod => {
+        let tasks = sp.createTasks(prod);
+        tasks.forEach(task => bucket.addTask(task))
+    });
+    res = bucket.doTaskQueue();
 
-
-}
-
-module.exports = {
-    ProdPricing
+    // console.log(JSON.stringify(res, null, 4));
+    return res;
 }

@@ -52,7 +52,7 @@ export default class Bestbuy extends Stores {
         let spec = {}
         keys.forEach((key, index) => {
             // key= key.split(' ').join('')
-            key = key.replace(/\s/g, "")
+            key = key.replace(/\s/g, "")    //remove space
             spec[key] = values[index]
         })
 

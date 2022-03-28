@@ -1,17 +1,23 @@
 import { amazonSellingPartner } from '../RateLimiter.js';
 
+const PRODUCT_PRICING = "PROD_PRICING";
+const RATE_PER_SEC = 10;
+const ASINS_LIMIT = 20;
+
 export default class ProdPricing {
 
     static limit = {
-        ratePerSec: 10,
-        asinsLimit: 20
-    }
+        ratePerSec: RATE_PER_SEC,
+        asinsLimit: ASINS_LIMIT,
+        type: PRODUCT_PRICING
+    };
+    
     constructor() {
-        this.config = {
+        this.reqJSON = {
             operation: "getPricing",
             endpoint: "productPricing",
             query: {
-                MarketPlaceId: "ATVPDKIKX0DER",
+                MarketplaceId: "ATVPDKIKX0DER",
                 Asins: undefined,
                 ItemType: "Asin"
             }
@@ -22,40 +28,50 @@ export default class ProdPricing {
     @private
     @desc: create a mapping between upc and its asins.
     @param:
-    @return: a Map of upc and asins */
-    #createProdAsinsMapping_(prodList) {
-        const upcAsinsMap = new Map();
-        prodList.forEach(prod => {
-            let asins = prod.identifiers.map(identifier => (identifier.asin));
-            upcAsinsMap.set(prod.upc, asins);
-        });
+    @return: a Map of upc and asins 
+    */
+    #createProdAsinsMapping(prod) {
+        let upcAsinsMap = new Map();
+
+        let asins = prod.identifiers.map(identifier => identifier.asin);  //get all asins
+        let asinsChunks = this.#sliceAsinsOnLimit(asins);  //divide asins to chuncks on asins number limit
+        //add to Map for each asins chunk.
+        asinsChunks.forEach(asinsChunk => {
+            upcAsinsMap.set(prod.upc, asinsChunk);
+        })
 
         return upcAsinsMap;
     }
 
-    // create upc asins prodpricing task
-    createTask(upc, asins) {
+    #sliceAsinsOnLimit(asinsArray) {
+        let chuncks = [];
+        let limit = ProdPricing.limit.asinsLimit;
 
-        const doProdPricingTask = async (resolve, reject) => {
-            let taskConfig = { ...this.config };  //make a copy of config
-            taskConfig.query.Asins = asins;
-
-            const SP = await amazonSellingPartner();
-            try {
-                let res = await SP.callAPI(taskConfig)
-                resolve({ upc, prom: res })
-            } catch (e) {
-                console.error(`AWS SP API ERROR:\n${e}`)
-                reject(`AWS SP API ERROR:\n${e}`)
-            }
+        for (let i = 0; i < limit; i += limit) {
+            chuncks.push(asinsArray.slice(i, i + limit));
         }
-
-        return new Promise((resolve, reject) => {
-            doProdPricingTask(resolve, reject)
-        })
-
+        return chuncks;
     }
 
+    // create upc asins prodpricing task
+    createTasks(prod) {
+        let queue = [];
 
+        const taskPromise = async (upc, asins) => {
+            let param = { ...this.reqJSON };
+
+            param.query.Asins = asins;
+            let sp = amazonSellingPartner();
+            let res = await sp.callAPI(param)
+            return { upc, offers: res, limit: ProdPricing.limit }
+        }
+
+        let upcAsinsMap = this.#createProdAsinsMapping(prod);
+        for (let [upc, asins] of upcAsinsMap) {
+            queue.push(taskPromise(upc, asins))
+        }
+
+        return queue;
+    }
 
 }
