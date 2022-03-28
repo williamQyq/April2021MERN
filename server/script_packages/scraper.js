@@ -2,6 +2,9 @@ import Bestbuy from './BB.js'
 import Microsoft from './MS.js';
 import { saveStoreItemToDatabase } from '../query/utilities.js';
 
+/* 
+@desc: Get and save ms item price to db
+*/
 export const getMicrosoftLaptops = async () => {
 
     let MS = new Microsoft();
@@ -48,6 +51,9 @@ export const getMicrosoftLaptops = async () => {
 
 }
 
+/* 
+@desc: Get and save bb item price to db
+*/
 export const getBestbuyLaptops = async () => {
 
     let BB = new Bestbuy();
@@ -94,8 +100,14 @@ export const getBestbuyLaptops = async () => {
     await browser.close()
 
 }
-
-//enum store<Bestbuy|Microsoft>
+/* 
+@param:enum store<Bestbuy|Microsoft>
+@param: url:string
+@return: ItemSpec<spec:{
+        [key:string]:string
+        ...
+    }>
+*/
 export const getItemConfiguration = async (store, url) => {
     console.log(`[getItemConfig] starting...`)
     let browser = await store.initBrowser();

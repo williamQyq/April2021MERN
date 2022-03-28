@@ -20,6 +20,9 @@ const OperationMenu = (props) => {
         }
     }
 
+    const setContent = (expandedKeys, { expanded, node }) => {
+        console.log(expandedKeys,'expanded')
+    }
     const treeData = [
         {
             title: 'Controller',
@@ -52,7 +55,7 @@ const OperationMenu = (props) => {
     return (
         <Tree
             showIcon
-            defaultExpandParent
+            onExpand={setContent}
             defaultSelectedKeys={['controller']}
             switcherIcon={< DownOutlined />}
             treeData={treeData}

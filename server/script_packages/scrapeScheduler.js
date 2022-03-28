@@ -2,7 +2,7 @@ import cron from 'node-cron';
 import moment from 'moment';
 import { getBestbuyLaptops, getMicrosoftLaptops } from './scraper.js';
 
-//cron scheduler run pyProcessBB get bb prices at 6 pm everyday
+//cron scheduler starts everyday
 const scrapeScheduler = cron.schedule("00 18 09 * * *", () => {
     scrapeStores();
 

@@ -54,6 +54,14 @@ export default class Microsoft extends Stores {
         }
     }
 
+    /* 
+    @param: page:Puppeteer<page>
+    @param: url: string
+    @return: PageNum<{
+        [pagesNum:string]:pagesNum:number;
+        [numPerPage: string]:number;
+    }
+    */
     async getPagesNum(page, url) {
         await page.goto(url);
         await this.#closeDialogIfAny(page)    //may or may not close the dialog, it depends if the dialog shows up.
@@ -87,7 +95,16 @@ export default class Microsoft extends Stores {
             });
         })
     }
-
+    /* 
+        @param: page:Puppeteer<page>
+        @param: url: string
+        @return: Item<{
+                    [link:string]: link:url,
+                    [sku:string]: [sku:string],
+                    [currentPrice:string]: currentPrice:number,
+                    [name:string]: name:string
+        }>
+    */
     async getPageItems(page, url) {
         await page.goto(url)
         await page.waitForTimeout(10000);

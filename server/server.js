@@ -2,16 +2,23 @@ import mongoose from 'mongoose';
 import config from 'config';
 import { Server } from "socket.io";
 import app from './index.js';
-
 import wms from "./wms/wmsDatabase.js";    // @local wms server connection
 import scrapeScheduler from './script_packages/scrapeScheduler.js';    //scripts scheduler, node-cron
 import { amazonScheduler } from './amazonSP/amazonSchedule.js';
 
-import unitTest from './unit_test.js'
+import unitTest from './unit_test.js'   //For testing functionalities
 
 
 // @CREATE WMS CONNECTION
 wms.startService();
+
+const io = new Server(app, { 'pingTimeout': 7000, 'pingInterval': 3000 });
+io.on("connection", (socket) => {
+    console.log(`A user Connected: ${socket.id}`)
+    socket.on(`disconnect`, () => {
+        console.log(`USER DISCONNECTED`);
+    })
+})
 
 //@Mongoose connection; Connect to Mongo.
 const mongoURI = config.get('mongoURI');
@@ -22,15 +29,6 @@ mongoose.connect(mongoURI, {
 })
     .then(() => console.log('Atlas MongoDB Connected...'))
     .catch(err => console.log(err));
-
-
-const io = new Server(app, { 'pingTimeout': 7000, 'pingInterval': 3000 });
-io.on("connection", (socket) => {
-    console.log(`A user Connected: ${socket.id}`)
-    socket.on(`disconnect`, () => {
-        console.log(`USER DISCONNECTED`);
-    })
-})
 
 const db = mongoose.connection;  //set up mongoose connection
 db.once('open', () => {

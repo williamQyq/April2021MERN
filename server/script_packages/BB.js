@@ -24,6 +24,15 @@ export default class Bestbuy extends Stores {
     initURL(cp) {
         return this.url.replace(/(&cp=)(\d+)/, "$1" + cp)
     }
+
+    /* 
+    @param: page:Puppeteer<page>
+    @param: url: string
+    @return: ItemSpec<spec:{
+        [key:string]:string
+        ...
+    }>
+    */
     async getItemSpec(page, url) {
         await page.goto(url);
         await this.#openSpecWrapper(page);
@@ -71,6 +80,14 @@ export default class Bestbuy extends Stores {
 
     }
 
+    /* 
+    @param: page:Puppeteer<page>
+    @param: url: string
+    @return: PageNum<{
+        [pagesNum:string]:number;
+        [numPerPage: string]:number;
+    }
+    */
     async getPagesNum(page, url) {
         await page.goto(url);
         let { totalNum, numPerPage } = await this.#parsePageNumFooter(page)
@@ -105,6 +122,16 @@ export default class Bestbuy extends Stores {
         })
     }
 
+    /* 
+    @param: page:Puppeteer<page>
+    @param: url: string
+    @return: Item<{
+                [link:string]: link:url,
+                [sku:string]: [sku:string],
+                [currentPrice:string]: currentPrice:number,
+                [name:string]: name:string
+    }>
+    */
     async getPageItems(page, url) {
         let items;
         await page.goto(url)
