@@ -5,20 +5,18 @@ import { performance } from 'perf_hooks';
 import SellingPartnerAPI from 'amazon-sp-api';
 
 export const amazonSellingPartner = () => {
-    const CREDENTIALS = config.get('amazonCredentials');
-    const IAM = config.get('amazonIAMRole');
-
+    const CREDENTIALS = config.get('AMZ_CREDENTIALS');
+    const IAM = config.get('AMZ_IAM');
+    const REGION = config.get('REGION')
 
     return new SellingPartnerAPI({
-        region: "na",
+        region: REGION,
         credentials: CREDENTIALS,
         refresh_token: IAM.REFRESH_TOKEN
 
     });
 
 }
-const PRODUCT_PRICING = "productPricing";
-
 
 class LeakyBucket {
     static capacity = 100;
@@ -28,6 +26,26 @@ class LeakyBucket {
 
     constructor() {
         this.queue = [];
+    }
+    /*
+         *  @private
+         *  @desc: push task to queue
+         */
+    #enqueue(task) {
+        this.queue.push(task);
+    }
+    /*
+     *  @private
+     *  @return: first task in task queue
+     */
+    #dequeue(task, index) {
+        // await this.delayIfReachedLimit(index)
+
+        // let duration = await this.#measurePromise(task);
+        // this.#performance += duration;
+
+        // console.log(`Task:${index}; current Performance: ${this.#performance}; duration: ${duration}`)
+        return this.queue.pop();
     }
 
     //start
@@ -39,8 +57,9 @@ class LeakyBucket {
         })
     }
     /*
-     *  @Public
-     *  @desc: task enqueue
+     * @Public
+     * @desc: task enqueue
+     * @param: task: Promise<{upc:string, offers:AmzProdPricing, limit: APILimit}>
      */
     addTask(task) {
         this.#enqueue(task);
@@ -127,26 +146,6 @@ class LeakyBucket {
             chuncks.push(asins.slice(i, i + limit));
         }
         return chuncks;
-    }
-    /*
-     *  @private
-     *  @desc: push task to queue
-     */
-    #enqueue(task) {
-        this.queue.push(task);
-    }
-    /*
-     *  @private
-     *  @return: first task in task queue
-     */
-    #dequeue(task, index) {
-        // await this.delayIfReachedLimit(index)
-
-        // let duration = await this.#measurePromise(task);
-        // this.#performance += duration;
-
-        // console.log(`Task:${index}; current Performance: ${this.#performance}; duration: ${duration}`)
-        return this.queue.pop();
     }
 
     #delay(ms) {
