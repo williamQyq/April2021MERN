@@ -11,7 +11,7 @@ export default class ProdPricing {
         asinsLimit: ASINS_LIMIT,
         type: PRODUCT_PRICING
     };
-    
+
     constructor() {
         this.reqJSON = {
             operation: "getPricing",
@@ -59,15 +59,22 @@ export default class ProdPricing {
 
         const taskPromise = async (upc, asins) => {
             let param = { ...this.reqJSON };
-
             param.query.Asins = asins;
-            let sp = amazonSellingPartner();
-            let res = await sp.callAPI(param)
-            return { upc, offers: res, limit: ProdPricing.limit }
+            // if (asins.length > 1) param .ASIN: string
+                try {
+                    let sp = amazonSellingPartner();
+                    let sellingPartnerResponse = await sp.callAPI(param)
+                    return { upc, sellingPartnerResponse, limit: ProdPricing.limit }
+                } catch (e) {
+                    console.log("err=", e)
+                }
         }
 
         let upcAsinsMap = this.#createProdAsinsMapping(prod);
         for (let [upc, asins] of upcAsinsMap) {
+            if (!asins) {
+                console.log(`======${upc}==\n ${asins}`)
+            }
             queue.push(taskPromise(upc, asins))
         }
 

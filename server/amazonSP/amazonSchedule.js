@@ -2,7 +2,8 @@ import cron from 'node-cron';
 import { bucket } from './RateLimiter.js'
 import {
     findAllProdPricing,
-    setProdPricingOffer
+    findProdPricingOnUpc,
+    saveProdPricingOffer
 } from '../query/utilities.js'
 // cron scheduler update Amazon sku
 // export const amazonScheduler = cron.schedule("* * 1 * * *", async () => {
@@ -14,33 +15,29 @@ export const amazonScheduler = async () => {
 
 };
 
-export const getSellingPartnerProdPricing = async () =>
-    //get prods asins in database 
-    findAllProdPricing().then(prods => {
+export const getSellingPartnerProdPricing = async () => {
+    await findAllProdPricing().then(prods => {
         prods.forEach(prod => {
-            const upcAsinMapping = bucket.getProdAsins(prod);
-            bucket.addProdPricingTask(upcAsinMapping);
+            let sp = new ProdPricing();
+            let tasks = sp.createTasks(prod)
+            bucket.addTasks(tasks)
         })
-            .then(bucket.doTaskQueue())
-            .then(offers => {
-                saveOffers(offers)
-            })
-            .catch(e => {
-                console.log(`undefined task****\n ${e}`)
-            });
-        // bucket.throttle(30);
     })
+    await bucket.start().then(taskResults => {
+        saveProdPricingOffers(taskResults)
+    })
+}
 
-const saveOffers = (offers) => {
-    offers.forEach(prod => {
-        prod.prom.forEach(asin => {
-            // console.log(`amzAsinRes========\n`, JSON.stringify(amzAsinRes.ASIN, null, 4))
-            setProdPricingOffer({
-                upc: prod.upc,
-                asin: asin.ASIN,
-                offers: asin.Product.Offers
-            })
-                .then(res => console.log(`[Amazon SP] UPC:${res.upc} updated #[${asin.ASIN}]# asin succeed.`))
+
+const saveProdPricingOffers = (taskResults) => {
+    taskResults.forEach(res => {
+        let upc = res.upc;
+        let asinOffers = res.sellingPartnerResponse;
+        asinOffers.forEach(skuOffer => {
+            let asin = skuOffer.ASIN;
+            let offers = skuOffer.Product.Offers;
+            saveProdPricingOffer(upc, asin, offers)
+                .then(res => console.log(`[Amazon SP] UPC:${res.upc} updated #[${asin}]# asin succeed.`))
                 .catch(err => console.log(`[ERR]: amz save offers err.\n${err}`))
         })
     })

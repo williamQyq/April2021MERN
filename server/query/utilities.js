@@ -142,8 +142,7 @@ export const findProdPricingOnUpc = (upc) => {
     return AmzProdPricing.find({ upc: upc })
 }
 //@AmzProdPricing
-export const setProdPricingOffer = (identifier) => {
-    const { upc, asin, offers } = identifier;
+export const saveProdPricingOffer = (upc,asin,offers) => {
     const filter = { "upc": upc, "identifiers.asin": asin }
     const update = { $set: { "identifiers.$.offers": offers } }
     const option = { useFindAndModify: false }
@@ -175,18 +174,4 @@ export const upsertProdPricingNewAsin = (record) => {
             await AmzProdPricing.updateOne(query, update)
         })
 
-}
-
-export const saveProdPricingOffers = (offers) => {
-    offers.forEach(prod => {
-        prod.prom.forEach(async (asin) => {
-            await setProdPricingOffer({
-                upc: prod.upc,
-                asin: asin.ASIN,
-                offers: asin.Product.Offers
-            })
-                .then(res => console.log(`[Amazon SP] UPC:${res.upc} updated #[${asin.ASIN}]# asin succeed.`))
-                .catch(err => console.log(`[ERR]: amz save offers err.\n${err}`))
-        })
-    })
 }

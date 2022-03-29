@@ -38,14 +38,17 @@ class LeakyBucket {
      *  @private
      *  @return: first task in task queue
      */
-    #dequeue(task, index) {
-        // await this.delayIfReachedLimit(index)
-
-        // let duration = await this.#measurePromise(task);
-        // this.#performance += duration;
-
-        // console.log(`Task:${index}; current Performance: ${this.#performance}; duration: ${duration}`)
+    #dequeue() {
         return this.queue.pop();
+    }
+
+    #delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    #measureAndResolvePromise(prom) {
+        let onPromiseDone = () => performance.now() - start;
+        let start = performance.now();
+        return prom.then(result => ({ timeCost: onPromiseDone, result }));
     }
 
     //start
@@ -61,101 +64,58 @@ class LeakyBucket {
      * @desc: task enqueue
      * @param: task: Promise<{upc:string, offers:AmzProdPricing, limit: APILimit}>
      */
-    addTask(task) {
-        this.#enqueue(task);
-    }
-
-    addProdPricingTask(mapping) {
-        let chuncks = this.#sliceAsinsOnLimit(mapping.asins, this.#asinsLimit); //each chunck contains an limited number of asins
-        chuncks.forEach(asinsChunck => {
-            let task = this.#createTask(mapping.upc, asinsChunck)    //task promise created, return immediately
-            this.#enqueue(task);
+    addTasks(tasks) {
+        tasks.forEach(task => {
+            if (task != null)
+                this.#enqueue(task);
         })
     }
 
-    async initProdPricingTask(resolve, reject, upc, asins) {
-        const SP = amazonSellingPartner();
-
-        try {
-            let res = await SP.callAPI({
-                operation: 'getPricing',
-                endpoint: 'productPricing',
-                query: {
-                    MarketplaceId: 'ATVPDKIKX0DER',
-                    Asins: asins,
-                    ItemType: 'Asin'
-                },
-            })
-            resolve({ upc, prom: res });
-
-        } catch (e) {
-            console.error(`AWS SP API ERROR:\n${e}`)
-            reject(`AWS SP API ERROR:\n${e}`)
-        }
+    getCapacity() {
+        return this.queue.length;
     }
 
-    doTaskQueue() {
-
-        const promisesArray = this.queue.map((task, index) =>
-            this.#dequeue(task, index)
-        )
-
-        return Promise.allSettled(promisesArray)
+    #clearTimer() {
+        this.#performance = 0;
     }
-
-    async delayIfReachedLimit(index) {
-        if ((index + 1) % this.#ratePerSec == 0) {
-            this.#performance < 1000 ? async () => {
-                console.log(`Req Rate Limit Reached, delay 1 sec`)
-                await this.#delay(1000);
-            } : () => { }
-            this.#performance = 0;
-        }
-    }
-
-    getProdAsins(prod) {
-        let asins = prod.identifiers.map(identifier => (identifier.asin))
-        let upc = prod.upc;
-        return { upc, asins }
-    }
-
     /*
      *  @public
      *  @type boolean
      */
-    isTaskQueueEmpty() {
+    isQueueEmpty() {
         return this.queue.length > 0 ? false : true;
     }
 
-    /*
-     *  @private
-     *  @desc: create task for a chunck of asins
-     */
-    #createTask(upc, asins) {
-        return new Promise((resolve, reject) => {
-            this.initProdPricingTask(resolve, reject, upc, asins);
-        })
-    }
-    /*
-     *  @private
-     *  @desc: slice asins into task chuncks on API request limit
-     */
-    #sliceAsinsOnLimit(asins, limit) {
-        let chuncks = [], i;
-        for (i = 0; i < limit; i += limit) {
-            chuncks.push(asins.slice(i, i + limit));
+    async start() {
+        let results = [];
+        let isQueueEmpty = this.isQueueEmpty()
+        let capacity = this.getCapacity();
+        if (!isQueueEmpty) {
+            for (let i = 0; i < capacity; i++) {
+                let task = this.#dequeue()
+                let { result, timeCost } = await this.#measureAndResolvePromise(task)
+                this.performance += timeCost;
+                results.push(result)
+                await this.delayIfReachedLimit(i, result)
+            }
         }
-        return chuncks;
+
+        return results;
     }
 
-    #delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+
+    async delayIfReachedLimit(index, task) {
+        let ratePerSec = task.limit.ratePerSec;
+        let reqRateIsReached = (index + 1) % ratePerSec == 0 ? true : false;
+
+        if (reqRateIsReached && this.#performance >= 1000) {
+            console.log(`Req Rate Limit Reached, delay 1 sec`)
+            await this.#delay(1000);
+        }
+
+        this.#clearTimer();
     }
-    #measurePromise(prom) {
-        let onPromiseDone = () => performance.now() - start;
-        let start = performance.now();
-        return prom.then(onPromiseDone);
-    }
+
 }
 
 export const bucket = new LeakyBucket();
