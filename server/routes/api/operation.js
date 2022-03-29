@@ -14,24 +14,24 @@ router.get('/', (req, res) => {
 // @desc: save upc asin mapping Schema for ProductPricing API
 router.post('/upload/asins-mapping', (req, res) => {
     const { uploadFile } = req.body
-    console.log(`received file:======${JSON.stringify(uploadFile)}`)
+    console.log(`=======received file:======\n${JSON.stringify(uploadFile)}`)
     processMappingFile(uploadFile)
-        .then(res.json('success'))
-        // .then(() => getSellingPartnerProdPricing())
+        .then(() => { res.json('success') })
+        .then(() => findAllProdPricing())
+        .then(prods => getSellingPartnerProdPricing(prods))
         .catch(e => {
             console.log(`error:`, e)
-            res.json('err')
+            res.status(400).json({ msg: 'Upload File Invalid' })
         })
 })
 
 const processMappingFile = (file) => {
     file.shift();
-    return Promise.all(
-        file.map(row => {
-            let upc = row[0];
-            let asin = row[1];
-            return upsertProdPricingNewAsin({ upc, asin })
-        })
+    return Promise.allSettled(file.map(row => {
+        let upc = row[0];
+        let asin = row[1];
+        return upsertProdPricingNewAsin(upc, asin)
+    })
     )
 }
 

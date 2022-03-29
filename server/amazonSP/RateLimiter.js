@@ -45,10 +45,20 @@ class LeakyBucket {
     #delay(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
+
+    /*
+     * @Private
+     * @desc: update promise resolve time cost 
+     * @param: task: Promise<{upc:string, offers:AmzProdPricing, limit: APILimit}>
+     * @return: result:<{timeCost:number, {upc:string, offers: AmzProdPricing, limit}} ||
+     * {timeCost:number,undefined}>
+     */
     #measureAndResolvePromise(prom) {
         let onPromiseDone = () => performance.now() - start;
         let start = performance.now();
-        return prom.then(result => ({ timeCost: onPromiseDone, result }));
+        return prom.then(result => {
+            return { timeCost: onPromiseDone, result }
+        });
     }
 
     //start
@@ -66,12 +76,11 @@ class LeakyBucket {
      */
     addTasks(tasks) {
         tasks.forEach(task => {
-            if (task != null)
-                this.#enqueue(task);
+            this.#enqueue(task);
         })
     }
 
-    getCapacity() {
+    getQueueLength() {
         return this.queue.length;
     }
 
@@ -89,14 +98,17 @@ class LeakyBucket {
     async start() {
         let results = [];
         let isQueueEmpty = this.isQueueEmpty()
-        let capacity = this.getCapacity();
+        let queueLength = this.getQueueLength();
         if (!isQueueEmpty) {
-            for (let i = 0; i < capacity; i++) {
+            for (let i = 0; i < queueLength; i++) {
                 let task = this.#dequeue()
                 let { result, timeCost } = await this.#measureAndResolvePromise(task)
                 this.performance += timeCost;
+                if (result === undefined) {
+                    continue;
+                }
                 results.push(result)
-                await this.delayIfReachedLimit(i, result)
+                // await this.delayIfReachedLimit(i, spResult)
             }
         }
 

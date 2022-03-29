@@ -1,43 +1,33 @@
-import {getSellingPartnerProdPricing} from "../amazonSP/amazonSchedule"
-const test = async ()=>{
-    await getSellingPartnerProdPricing();
-};
+import pkg from 'mongodb';
+const {MongoClient} = pkg;
+import config from 'config';
 
-test();
-// import { MongoClient } from 'mongodb';
-// import config from '../config/default.json';
-// import { docs } from 'googleapis/build/src/apis/docs';
-// const mongoURI = config.mongoURI;
-// const collection = config.collection;
+const mongoURI = config.get("mongoURI");
+const collection = config.get('collection');
 
-// async function main() {
-//     const client = new MongoClient(mongoURI, {useUnifiedTopology: true, useNewUrlParser: true});
-//     try {
-//         await client.connect();
-//         const db = client.db("DB");
-//         const testdb = client.db("Product_Info")
+const DB= "DB";
+(async ()=>{
+    const client = new MongoClient(mongoURI, {useUnifiedTopology: true, useNewUrlParser: true});
+    try {
+        await client.connect();
+        const db = client.db(DB);
+        // const testdb = client.db("Product_Info")
 
-//         const query = {
-//             "price_timestamps.price":0
-//         }
-//         const update ={
-//             $pull:{price_timestamps: {price:0}}
-//         }
-     
+        const query = {
+            "upc":{$exists:false}
+        }
 
-//         const doc = await db.collection(collection.bestbuy).updateMany(query,update)
-//         // const doc = await testdb.collection("Pc_info").findOneAndUpdate(query,update)
-//         console.log(JSON.stringify(doc,null,4))
+        const doc = await db.collection(collection.amzProdPricing).deleteMany(query)
+        // const doc = await testdb.collection("Pc_info").findOneAndUpdate(query,update)
+        console.log(JSON.stringify(doc,null,4))
 
-//     } catch(e) {
-//         console.error(e);
-//     } finally {
-//         await client.close();
-//     }
+    } catch(e) {
+        console.error(e);
+    } finally {
+        await client.close();
+    }
+})();
 
-// }
-
-// main().catch(console.error);
 
 // //CRUD - create
 // // async function createMultipleListings(client, newListings) {

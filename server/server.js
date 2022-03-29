@@ -4,7 +4,7 @@ import { Server } from "socket.io";
 import app from './index.js';
 import wms from "./wms/wmsDatabase.js";    // @local wms server connection
 import scrapeScheduler from './script_packages/scrapeScheduler.js';    //scripts scheduler, node-cron
-import { amazonScheduler } from './amazonSP/amazonSchedule.js';
+// import { amazonScheduler } from './amazonSP/amazonSchedule.js';
 
 import unitTest from './unit_test.js'   //For testing functionalities
 
