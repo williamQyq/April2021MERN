@@ -21,7 +21,7 @@ router.post('/upload/asins-mapping', (req, res) => {
         .then(prods => getSellingPartnerProdPricing(prods))
         .catch(e => {
             console.log(`error:`, e)
-            res.status(400).json({ msg: 'Upload File Invalid' })
+            res.status(400).json({ msg: 'Upload File contains Invalid Input' })
         })
 })
 

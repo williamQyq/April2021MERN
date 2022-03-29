@@ -26,9 +26,6 @@ export const getSellingPartnerProdPricing = async (prods) => {
     })
     await bucket.start()
         .then(taskResults => updateProdPricingOffers(taskResults))
-        .finally(() => {
-            console.log('bucket task queue finished')
-        })
 }
 
 /* 
@@ -37,20 +34,22 @@ export const getSellingPartnerProdPricing = async (prods) => {
     @return: void
 */
 const updateProdPricingOffers = async (taskResults) => {
-    const validTasks = taskResults.filter(res => res.upc != null)
+    const validTaskResults = taskResults.filter(res => res.upc != undefined)
 
-    for (let res of validTasks) {
-        let upc = res.upc;
-        let asinOffers = res.sellingPartnerResponse;
-        if (asinOffers === undefined) {
-            console.log(`asinOffers undefined`, res)
-        }
-        for (let skuOffer of asinOffers) {
+    validTaskResults.forEach(result => {
+        let upc = result.upc;
+
+        //jump to next ProdPricing offer if contains undefined
+        result.sellingPartnerResponse.forEach(skuOffer => {
             let asin = skuOffer.ASIN;
             let offers = skuOffer.Product.Offers;
+
+            if (upc === undefined || asin === undefined || offers === undefined)
+                return;
+
             updateProdPricingOffer(upc, asin, offers)
                 .then(res => console.log(`[Amazon SP] UPC:${res.upc} updated #[${asin}]# asin succeed.`))
                 .catch(err => console.log(`\n***[ERR]: Save ProductPricing offer to database err.\n${err}\n`))
-        }
-    }
+        });
+    })
 }
