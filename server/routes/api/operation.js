@@ -14,9 +14,9 @@ router.get('/', (req, res) => {
 // @desc: save upc asin mapping Schema for ProductPricing API
 router.post('/upload/asins-mapping', (req, res) => {
     const { uploadFile } = req.body
-    console.log(`=======received file:======\n${JSON.stringify(uploadFile)}`)
+    console.log(`=======received file:======\n${JSON.stringify(uploadFile)}\n\n`)
     processMappingFile(uploadFile)
-        .then(() => { res.json('success') })
+        .then(() => res.json('success'))
         .then(() => findAllProdPricing())
         .then(prods => getSellingPartnerProdPricing(prods))
         .catch(e => {

@@ -12,7 +12,7 @@ export const getMicrosoftLaptops = async () => {
     let browser = await MS.initBrowser();
     let page = await MS.initPage(browser);
     let storeUrl = MS.initURL(skipItemsNum)
-    const { pagesNum, numPerPage } = await MS.getPagesNum(page, storeUrl)    //puppeteer script get web footer contains page numbers.
+    let { pagesNum, numPerPage } = await MS.getPagesNum(page, storeUrl)    //puppeteer script get web footer contains page numbers.
 
     //for each page, get items and save to database
     for (let i = 0; i < pagesNum; i++) {
@@ -20,8 +20,8 @@ export const getMicrosoftLaptops = async () => {
         skipItemsNum += numPerPage;
 
         await MS.getPageItems(page, pageUrl)
-            .then(async (items) => {
-                await Promise.all(items.map(async (item, index) =>
+            .then(items => {
+                return Promise.all(items.map((item, index) =>
                     saveStoreItemToDatabase(item, MS.model)
                         .then(msg => {
                             let msgMap = new Map([
@@ -39,7 +39,7 @@ export const getMicrosoftLaptops = async () => {
                 ))
             })
             .catch(e => {
-                console.error(`\nERROR:[Microsoft] page ${i}\n`)
+                console.error(`\nERROR:[Microsoft] page ${i} Ended with exception\n${e}`)
             })
             .finally(() => {
                 console.log(`[Microsoft]===Page ${i} finished.===`)
@@ -63,17 +63,16 @@ export const getBestbuyLaptops = async () => {
 
     let storeUrl = BB.initURL(cp)
     const { pagesNum } = await BB.getPagesNum(page, storeUrl)    //puppeteer script get web footer contains page numbers.
-
     //for each page, get items and save to database
     for (let i = 0; i < pagesNum; i++) {
         let pageUrl = BB.initURL(i + 1)
 
         //get items on page#-> for each item saveDatabase-> printResult-> finished
         await BB.getPageItems(page, pageUrl)
-            .then(items => Promise.all(items.map(async (item, index) => {
-                if (item)
-                    return saveStoreItemToDatabase(item, BB.model).then(msg => {
-                        return new Map([
+            .then(items => {
+                return Promise.all(items.map((item, index) =>
+                    saveStoreItemToDatabase(item, BB.model).then(msg => {
+                        let msgMap = new Map([
                             ["store", "Bestbuy"],
                             ["page", i],
                             ["index", index],
@@ -81,15 +80,12 @@ export const getBestbuyLaptops = async () => {
                             ["currentPrice", item.currentPrice],
                             ["msg", msg]
                         ])
+                        BB.printMsg(msgMap);
                     })
-            })))
-            .then(results => {
-                results.forEach(result => {
-                    BB.printMsg(result)
-                })
+                ))
             })
-            .catch(() => {
-                console.error(`\nERROR:[Bestbuy] page ${i}\n`)
+            .catch(e => {
+                console.error(`\nERROR:[Bestbuy] page ${i}\n Ended with exception.`)
             })
             .finally(() => {
                 console.log(`[Bestbuy]===Page ${i} finished.===`)

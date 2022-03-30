@@ -2,6 +2,24 @@ import puppeteer from 'puppeteer';
 import config from 'config';
 
 const { agent } = config;
+
+/* 
+declare class Stores{
+    printMsg(msgMap)
+    async initBrowser()
+    async initPage(browser)
+    async evaluateElementsText(page, XPATH_EXPR)
+    async evaluateItemAttribute(page, XPATH_EXPR, ATTRIBUTE_ID)
+    async evaluatePriceAttribute(page, XPATH_EXPR, ATTRIBUTE_ID)
+    compareMapHelper(obj1, obj2)
+    getRegexValue(str, regexExpr)
+
+}
+
+*/
+
+
+
 export default class Stores {
     constructor() {
     }
@@ -19,13 +37,14 @@ export default class Stores {
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
-                '--window-size=1920,1080'
+                // '--window-size=1920,1080'
             ],
         });
         return browser;
     }
     async initPage(browser) {
         const page = await browser.newPage();
+        // await page.setViewport({width: 1920,height: 1080})   //set view port to 1920x1080
         await page.setUserAgent(agent.USER_AGENT);
         await page.setRequestInterception(true);
         page.on('request', (req) => {

@@ -7,22 +7,24 @@ import auth from '../../middleware/auth.js'
 const router = express.Router();
 
 
-// @route POST api/auth
-// @desc authorize users
-// @access private
+// @route:  POST api/auth
+// @access: public
+// @desc:   authorize users login
 router.post('/', (req, res) => {
     const { email, password } = req.body;
+    let validateEmail = email.replace(/\s/g, '');
+    let validatePassword = password.replace(/\s/g, '');
 
-    if (!email || !password) {
+    if (!validateEmail || !validatePassword) {
         return res.status(400).json({ msg: 'All fields required' });
     }
 
-    User.findOne({ email })
+    User.findOne({ validateEmail })
         .then(user => {
             if (!user) return res.status(400).json({ msg: 'Unauthorized access denied' });
 
             //validate password
-            bcrypt.compare(password, user.password)
+            bcrypt.compare(validatePassword, user.password)
                 .then(isMatch => {
                     if (!isMatch) return res.status(400).json({ msg: 'Unauthorized credentials' });
 
@@ -47,9 +49,9 @@ router.post('/', (req, res) => {
         });
 });
 
-// @route GET api/auth/user
-// @desc get users data
-// @access private
+// @route:  GET api/auth/user
+// @desc:   get authorized users data
+// @access: private
 router.get('/user', auth, (req, res) => {
     User.findById(req.user.id)
         .select('-password')

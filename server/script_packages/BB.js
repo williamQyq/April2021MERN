@@ -1,18 +1,40 @@
 import BBItem from '../models/BBItem.js';
 import Stores from './Stores.js';
 /*
-interface Bestbuy {
-    initURL(cp)
-    async getItemSpec(page, url)
-    async #openSpecWrapper(page)
-    async #parseItemSpec(page)
-    async #parsePageNumFooter(page)
-    async closeDialog(page)
-    async getPagesNum(page, url)
-    async #parseItemsList(page)
-    async getPageItems(page, url)
+declare class Bestbuy {
+    public  initURL(cp):url
+    public  async getItemSpec(page, url):Array<ItemSpec>
+    private async #openSpecWrapper(page):void
+    private async #parseItemSpec(page):ItemSpec
+    private async #parsePageNumFooter(page):PageNumFooter
+    public  async closeDialog(page):void
+    public  async getPagesNum(page, url):PageNumFooter
+    private async #parseItemsList(page): Array<Item>
+    public  async getPageItems(page, url):Array<Item>
 
 }
+*/
+/* 
+interface Item{
+    link: url,
+    sku: string,
+    currentPrice: string,
+    name: string
+}
+*/
+/* 
+interface ItemSpec{
+    [key:string]:value:string
+    ...
+}
+*/
+
+/* 
+interface PageNumFooter{
+    numPerPage: number,
+    totalNum: number
+}
+
 */
 
 export default class Bestbuy extends Stores {
@@ -27,11 +49,8 @@ export default class Bestbuy extends Stores {
 
     /* 
     @param: page:Puppeteer<page>
-    @param: url: string
-    @return: ItemSpec<spec:{
-        [key:string]:string
-        ...
-    }>
+    @param: url:string
+    @return: itemSpec:ItemSpec
     */
     async getItemSpec(page, url) {
         await page.goto(url);
@@ -58,9 +77,12 @@ export default class Bestbuy extends Stores {
 
         return spec
     }
-
+    /* 
+    @param: page:Puppeteer<page>
+    @return: PageNumFooter
+    */
     async #parsePageNumFooter(page) {
-        let res = {
+        let pageNumFooter = {
             numPerPage: undefined,
             totalNum: undefined
         };
@@ -69,11 +91,12 @@ export default class Bestbuy extends Stores {
         const TOTAL_NUM_REGEX_EXPR = /.*of\s(\d*)\sitems/
 
         let footer = (await this.evaluateElementsText(page, FOOTER_XPATH_EXPR))[0]
-        res.numPerPage = Number(this.getRegexValue(footer, NUM_PAGE_REGEX_EXPR))
-        res.totalNum = Number(this.getRegexValue(footer, TOTAL_NUM_REGEX_EXPR))
+        pageNumFooter.numPerPage = Number(this.getRegexValue(footer, NUM_PAGE_REGEX_EXPR))
+        pageNumFooter.totalNum = Number(this.getRegexValue(footer, TOTAL_NUM_REGEX_EXPR))
 
-        console.log(`[${this.constructor.name}][Parse Page Num Footer] numPerPage:${res.numPerPage}, totalNum:${res.totalNum}`)
-        return res
+        console.log(`[${this.constructor.name}][Parse Page Num Footer] numPerPage:${pageNumFooter.numPerPage}, totalNum:${pageNumFooter.totalNum}`)
+
+        return pageNumFooter
     }
 
     async closeDialog(page) {
@@ -83,54 +106,56 @@ export default class Bestbuy extends Stores {
     /* 
     @param: page:Puppeteer<page>
     @param: url: string
-    @return: PageNum<{
-        [pagesNum:string]:number;
-        [numPerPage: string]:number;
-    }
+    @return: PageNumFooter
     */
     async getPagesNum(page, url) {
         await page.goto(url);
         let { totalNum, numPerPage } = await this.#parsePageNumFooter(page)
-        return ({
+        let pageNumFooter = {
             pagesNum: Math.ceil(totalNum / numPerPage),
             numPerPage: numPerPage
-        })
-    }
+        }
 
+        return pageNumFooter
+    }
+    /* 
+        @param: page:Puppeteer<page>
+        @return: itemsArray:Array<Item>
+        @access: private
+    */
     async #parseItemsList(page) {
-        const ITEMS_LIST_EXPR = '//li[@class="sku-item"]'
-        const PRICE_LIST_EXPR = ITEMS_LIST_EXPR + '//div[@class="priceView-hero-price priceView-customer-price"]/span[@aria-hidden="true"]'
-        const NAME_LIST_EXPR = ITEMS_LIST_EXPR + '//h4[@class="sku-header"]/a'
-        const ITEM_ATTRIBUTE_ID = "data-sku-id"
+        const SKU_LIST_EXPR = '//li[@class="sku-item"]'
+        const PRICE_LIST_EXPR = SKU_LIST_EXPR + '//div[@class="priceView-hero-price priceView-customer-price"]/span[@aria-hidden="true"]'
+        const NAME_LIST_EXPR = SKU_LIST_EXPR + '//h4[@class="sku-header"]/a'
+        const SKU_ATTRIBUTE_ID = "data-sku-id"
 
         const siteLink = 'https://www.bestbuy.com/site/***sku***.p?skuId=***sku***'
 
-        let itemAttrLists = await this.evaluateItemAttribute(page, ITEMS_LIST_EXPR, ITEM_ATTRIBUTE_ID)
+        let skuAttrLists = await this.evaluateItemAttribute(page, SKU_LIST_EXPR, SKU_ATTRIBUTE_ID)
         let priceTextLists = await this.evaluateElementsText(page, PRICE_LIST_EXPR)
         let nameLists = await this.evaluateElementsText(page, NAME_LIST_EXPR)
-        return itemAttrLists.map((sku, index) => {
+
+        //Parsed Array<Item>
+        let itemsArray = skuAttrLists.map((sku, index) => {
             let link = siteLink.replace(/\*\*\*sku\*\*\*/g, sku)
             let name = nameLists[index]
             let currentPrice = Number(priceTextLists[index].replace(/[\s|$|,]/g, ""))
-
-            return ({
-                link: link,
-                sku: sku,
-                currentPrice: currentPrice,
-                name: name
-            });
+            let item = {
+                link,
+                sku,
+                currentPrice,
+                name
+            }
+            return item;
         })
+        
+        return itemsArray;
     }
 
     /* 
-    @param: page:Puppeteer<page>
+    @param: page: Puppeteer<page>
     @param: url: string
-    @return: Item<{
-                [link:string]: link:url,
-                [sku:string]: [sku:string],
-                [currentPrice:string]: currentPrice:number,
-                [name:string]: name:string
-    }>
+    @return: items: Array<Item>
     */
     async getPageItems(page, url) {
         let items;
@@ -145,21 +170,37 @@ export default class Bestbuy extends Stores {
         return items
     }
 
+    /* 
+    @desc: Retry only one more time after milisec.
+    @param: callback:Function
+    @param: milisec:number
+    @return: Promise<Array<Item>>
+    */
     retry(callback, milisec) {
         return new Promise((resolve, reject) => {
-            let interval = setInterval(async () => {
-                let res = await callback();
-                console.log("retrying...")
-                if (res) {
-                    clearInterval(interval)
+            // let interval = setInterval(async () => {
+            //     let res = await callback();
+            //     console.log("retrying...")
+            //     if (res) {
+            //         clearInterval(interval)
+            //         resolve(res)
+            //     }
+            // }, milisec)
+
+            // setTimeout(() => {
+            //     clearInterval(interval);
+            //     reject()
+            // }, 10000)
+
+            setTimeout(async () => {
+                try {
+                    let res = await callback();
                     resolve(res)
+                } catch {
+                    console.error("***Parse BB Item ERR***")
+                    reject()
                 }
             }, milisec)
-
-            setTimeout(() => {
-                clearInterval(interval);
-                reject()
-            }, 10000)
         })
     }
 }

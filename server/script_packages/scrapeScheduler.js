@@ -3,7 +3,7 @@ import moment from 'moment';
 import { getBestbuyLaptops, getMicrosoftLaptops } from './scraper.js';
 
 //cron scheduler starts everyday
-const scrapeScheduler = cron.schedule("00 18 09 * * *", () => {
+const scrapeScheduler = cron.schedule("00 00 07 * * *", () => {
     scrapeStores();
 
 });

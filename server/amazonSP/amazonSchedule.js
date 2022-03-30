@@ -17,11 +17,15 @@ export const amazonScheduler = async () => {
 
 };
 
-export const getSellingPartnerProdPricing = async (prods) => {
+/* 
+    @desc:  Retrieve AMZ ProdPricing for each task in bucket queue
+    @param: prods: Array<ProductAsinsMapping>
 
+*/
+export const getSellingPartnerProdPricing = async (prods) => {
+    let sp = new ProdPricing();
     prods.forEach(prod => {
-        let sp = new ProdPricing();
-        let tasks = sp.createTasks(prod)
+        let tasks = sp.createTasks(prod)    //list of tasks, each task contain upc and maximum 20 asins mapping.
         bucket.addTasks(tasks)
     })
     await bucket.start()

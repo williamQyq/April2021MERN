@@ -2,18 +2,40 @@ import MSItem from '../models/MsItem.js';
 import Stores from './Stores.js';
 
 /*
-interface Microsoft{
-    initURL(skipItemsNum)->URL
-    async getItemSpec(page:puppeteer<page>, url:URL)-> Object<ItemSpec>
-    async #openSpecWrapper(page:puppeteer<page>)-> Null
-    async #parseItemSpec(page:puppeteer<page>)->Object<ItemSpec>
-    async #parsePageNumFooter(page:puppeteer<page>)->Object<PageNumFooter>
-    async closeDialog(page:puppeteer<page>)-> Null
-    async getPagesNum(page:puppeteer<page>, url:URL)->Object<PageNumFooter>
-    async #parseItemsList(page:puppeteer<page>)->Object<StoreItems>
-    async getPageItems(page:puppeteer<page>, url:URL)->Object<StoreItems>
+declare class Microsoft{
+    initURL(skipItemsNum):url
+    async getItemSpec(page:puppeteer<page>, url:URL): ItemSpec
+    async #openSpecWrapper(page:puppeteer<page>):void
+    async #parseItemSpec(page:puppeteer<page>): ItemSpec
+    async #parsePageNumFooter(page:puppeteer<page>): PageNumFooter
+    async closeDialog(page:puppeteer<page>):void
+    async getPagesNum(page:puppeteer<page>, url:URL): PageNumFooter>
+    async #parseItemsList(page:puppeteer<page>): Array<Item>
+    async getPageItems(page:puppeteer<page>, url:URL): Array<Item>
     
 }
+*/
+/* 
+interface Item{
+    link: url,
+    sku: string,
+    currentPrice: string,
+    name: string
+}
+*/
+/* 
+interface ItemSpec{
+    [key:string]:value:string
+    ...
+}
+*/
+
+/* 
+interface PageNumFooter{
+    numPerPage: number,
+    totalNum: number
+}
+
 */
 
 export default class Microsoft extends Stores {
@@ -48,8 +70,8 @@ export default class Microsoft extends Stores {
         try {
             await page.waitForXPath('//div[@class="sfw-dialog"]/div[@class="c-glyph glyph-cancel"]')
             let dialogCloseBtn = (await page.$x('//div[@class="sfw-dialog"]/div[@class="c-glyph glyph-cancel"]'))[0]
-            dialogCloseBtn.click()
-        } catch {
+            await dialogCloseBtn.click()
+        } catch (e) {
             console.error(`${this.constructor.name}: no dialog shows up, skipping.`)
         }
     }
@@ -57,21 +79,26 @@ export default class Microsoft extends Stores {
     /* 
     @param: page:Puppeteer<page>
     @param: url: string
-    @return: PageNum<{
-        [pagesNum:string]:pagesNum:number;
-        [numPerPage: string]:number;
-    }
+    @return: PageNumFooter
     */
     async getPagesNum(page, url) {
         await page.goto(url);
         await this.#closeDialogIfAny(page)    //may or may not close the dialog, it depends if the dialog shows up.
         let res = await this.#parsePageNumFooter(page)
-        return ({
+
+        let pageNumFooter = {
             pagesNum: Math.ceil(res.totalNum / res.numPerPage),
             numPerPage: res.numPerPage
-        })
+        }
+
+        return pageNumFooter
     }
 
+    /* 
+        @param: page:Puppeteer<page>
+        @param: url: string
+        @return: Array<Item>
+    */
     async #parseItemsList(page) {
         const ITEMS_LIST_EXPR = '//div[@class="m-channel-placement-item f-wide f-full-bleed-image"]/a'
         const PRICE_LIST_EXPR = '//span[@itemprop="price"]'
@@ -80,30 +107,27 @@ export default class Microsoft extends Stores {
 
         let itemAttrLists = await this.evaluateItemAttribute(page, ITEMS_LIST_EXPR, ITEM_ATTRIBUTE_ID)
         let priceAttrLists = await this.evaluatePriceAttribute(page, PRICE_LIST_EXPR, PRICE_ATTRIBUTE_ID)
-        return itemAttrLists.map((item, index) => {
+        let itemsArray = itemAttrLists.map((item, index) => {
             item = JSON.parse(item)
-            let pid = item['pid']
+            let sku = item['pid']
             let name = item["tags"]["prdName"]
-            let link = 'https://www.microsoft.com/en-us/d/' + name.replace(/\s/g, "-").replace(/"/g, "").toLowerCase() + '/' + pid
+            let link = 'https://www.microsoft.com/en-us/d/' + name.replace(/\s/g, "-").replace(/"/g, "").toLowerCase() + '/' + sku
             let currentPrice = priceAttrLists[index]
 
-            return ({
-                link: link,
-                sku: pid,
-                currentPrice: currentPrice,
-                name: name
-            });
+            let itemObj = {
+                link,
+                sku,
+                currentPrice,
+                name
+            }
+            return itemObj;
         })
+        return itemsArray
     }
     /* 
         @param: page:Puppeteer<page>
         @param: url: string
-        @return: Item<{
-                    [link:string]: link:url,
-                    [sku:string]: [sku:string],
-                    [currentPrice:string]: currentPrice:number,
-                    [name:string]: name:string
-        }>
+        @return: Array<Item>
     */
     async getPageItems(page, url) {
         await page.goto(url)
