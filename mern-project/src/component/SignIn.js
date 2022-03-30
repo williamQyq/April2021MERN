@@ -58,6 +58,7 @@ class SignIn extends React.Component {
 
     onFinish = (values) => {
         const { email, password } = values;
+
         const user = {
             email,
             password
@@ -68,6 +69,10 @@ class SignIn extends React.Component {
     }
     onFinishFailed = (errorInfo) => {
         message.error("Sign in failed!")
+    }
+
+    normalize = (value) => {
+        return value.replace(/^\s+|\s+$/g, "")
     }
 
     render() {
@@ -95,9 +100,8 @@ class SignIn extends React.Component {
 
         return (
             <Layout className="login-layout">
-                <Sider {...siderLayout}>
-                    {/* <Image  {...imageProps}></Image> */}
-                </Sider>
+                <Sider {...siderLayout} />
+                {/* <Image  {...imageProps}></Image> */}
                 <Content className="login-content">
                     <Form
                         className="login-form"
@@ -117,6 +121,7 @@ class SignIn extends React.Component {
                                     message: 'Email or Username is required.'
                                 },
                             ]}
+                            normalize={this.normalize}
                         >
                             <Input prefix={<UserOutlined />} />
                         </Form.Item>
