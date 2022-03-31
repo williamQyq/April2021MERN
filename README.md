@@ -76,7 +76,8 @@ This project has access to the mongo database of the warehouse and the Amazon Se
 ## Deploy to AWS EC2:
 - scp -i MY_AWS_RSA_KEY.pem ubuntu@DNS.compute-1.amazonaws.com
 - sudo apt-get install (nodejs, nginx, pm2)
-- scp -i MY_AWS_RSA_KEY.pem -r <PATH>\client\build\* ubuntu@DNS.compute-1.amazonaws.com:~/client/deploy
+- scp -i PATH\rockystone.pem -r <PATH>\mern-project\build\* ubuntu@DNS.compute-1.amazonaws.com:~/client/deploy
+- scp -i PATH\rockystone.pem -r ./server\* ubuntu@DNS.compute-1.amazonaws.com:~/server/server
 
 After installed nginx, edit below files.
 

@@ -12,6 +12,7 @@
     "client": "cd ./mern-project && npm start",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "prod": "concurrently \"npm run start\" \"npm run client\"",
+    "deploy": "cd ./deploy && node cmd.js",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false cd mern-project && npm install && npm run build"
   },
   "author": "William Q",

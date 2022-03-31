@@ -21,7 +21,7 @@ const OperationMenu = (props) => {
     }
 
     const setContent = (expandedKeys, { expanded, node }) => {
-        console.log(expandedKeys,'expanded')
+        console.log(node)
     }
     const treeData = [
         {
