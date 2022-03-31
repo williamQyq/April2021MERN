@@ -22,13 +22,13 @@ export const amazonScheduler = async () => {
     @param: prods: Array<ProductAsinsMapping>
 
 */
-export const getSellingPartnerProdPricing = async (prods) => {
+export const getSellingPartnerProdPricing = (prods) => {
     let sp = new ProdPricing();
     prods.forEach(prod => {
         let tasks = sp.createTasks(prod)    //list of tasks, each task contain upc and maximum 20 asins mapping.
         bucket.addTasks(tasks)
     })
-    await bucket.start()
+    bucket.start()
         .then(taskResults => updateProdPricingOffers(taskResults))
 }
 
@@ -38,18 +38,19 @@ export const getSellingPartnerProdPricing = async (prods) => {
     @return: void
 */
 const updateProdPricingOffers = async (taskResults) => {
-    const validTaskResults = taskResults.filter(res => res.upc != undefined)
+    const validTaskResults = taskResults.filter(res => res.upc != undefined && res.sellingPartnerResponse != undefined)
 
     validTaskResults.forEach(result => {
-        let upc = result.upc;
+        let { upc, sellingPartnerResponse } = result;
 
         //jump to next ProdPricing offer if contains undefined
-        result.sellingPartnerResponse.forEach(skuOffer => {
+        sellingPartnerResponse.forEach(skuOffer => {
             let asin = skuOffer.ASIN;
             let offers = skuOffer.Product.Offers;
 
-            if (upc === undefined || asin === undefined || offers === undefined)
+            if (upc === undefined || asin === undefined || offers === undefined) {
                 return;
+            }
 
             updateProdPricingOffer(upc, asin, offers)
                 .then(res => console.log(`[Amazon SP] UPC:${res.upc} updated #[${asin}]# asin succeed.`))

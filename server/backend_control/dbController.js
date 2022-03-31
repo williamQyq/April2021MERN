@@ -14,7 +14,7 @@ const DB= "DB";
         // const testdb = client.db("Product_Info")
 
         const query = {
-            "identifiers":{$exists:false}
+            "upc":{$exists:true}
         }
 
         const doc = await db.collection(collection.amzProdPricing).deleteMany(query)

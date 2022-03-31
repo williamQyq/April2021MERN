@@ -1,10 +1,9 @@
 import cron from 'node-cron';
 import config from 'config';
 import { performance } from 'perf_hooks';
-
 import SellingPartnerAPI from 'amazon-sp-api';
 
-export const amazonSellingPartner = () => {
+export const sellingPartner = () => {
     const CREDENTIALS = config.get('AMZ_CREDENTIALS');
     const IAM = config.get('AMZ_IAM');
     const REGION = config.get('REGION')
@@ -76,6 +75,7 @@ class LeakyBucket {
      */
     addTasks(tasks) {
         tasks.forEach(task => {
+            // task.then(res=>console.log(res))
             this.#enqueue(task);
         })
     }
@@ -108,7 +108,7 @@ class LeakyBucket {
                     continue;
                 }
                 results.push(result)
-                // await this.delayIfReachedLimit(i, spResult)
+                await this.delayIfReachedLimit(i, result)
             }
         }
 
@@ -120,12 +120,14 @@ class LeakyBucket {
         let ratePerSec = task.limit.ratePerSec;
         let reqRateIsReached = (index + 1) % ratePerSec == 0 ? true : false;
 
-        if (reqRateIsReached && this.#performance >= 1000) {
-            console.log(`Req Rate Limit Reached, delay 1 sec`)
-            await this.#delay(1000);
-        }
+        if (reqRateIsReached) {
+            if (this.#performance >= 1000) {
+                console.log(`Req Rate Limit Reached, delay 1 sec`)
+                await this.#delay(1000);
+            }
+            this.#clearTimer();
 
-        this.#clearTimer();
+        }
     }
 
 }

@@ -1,5 +1,4 @@
-import { amazonSellingPartner } from '../RateLimiter.js';
-
+import { sellingPartner } from '../RateLimiter.js';
 const PRODUCT_PRICING = "PROD_PRICING";
 const RATE_PER_SEC = 10;
 const ASINS_LIMIT = 20;
@@ -55,26 +54,41 @@ export default class ProdPricing {
 
     // create upc asins prodpricing task
     createTasks(prod) {
-        let queue = [];
+        let queue = new Array();
 
-        const taskPromise = async (upc, asins) => {
-            let param = { ...this.reqJSON };
-            param.query.Asins = asins;
-            try {
-                let sp = amazonSellingPartner();
-                let sellingPartnerResponse = await sp.callAPI(param)
-                return { upc, sellingPartnerResponse, limit: ProdPricing.limit }
-            } catch (e) {
-                console.error(`***[ERR] ProductPricing task - upc:${upc}, asins:${asins}\n msg:${e}\n\n`)
-            }
-        }
 
         let upcAsinsMap = this.#createProdAsinsMapping(prod);
-        for (let [upc, asins] of upcAsinsMap) {
-            queue.push(taskPromise(upc, asins))
+        for (const [upc, asins] of upcAsinsMap) {
+            queue.push(this.#taskPromise(upc, asins))
         }
 
+        // queue.forEach(task => {
+        //     task.then(res => console.log(res))
+        // })
+
+
         return queue;
+    }
+
+    #taskPromise(upc, asins) {
+        return new Promise((resolve, reject) => {
+            let sp = sellingPartner();
+            let param = { ...this.reqJSON, query: { ...this.reqJSON.query } };  //make deep copy of apiParam
+            param.query.Asins = asins;
+            sp.callAPI(param)
+                .then(sellingPartnerResponse => {
+                    let taskResult = {
+                        upc,
+                        sellingPartnerResponse,
+                        limit: ProdPricing.limit
+                    }
+                    resolve(taskResult)
+                })
+                .catch(e => {
+                    console.error(`***[ERR] ProductPricing task - upc:${upc}, asins:${asins}\n msg:${e}\n\n`)
+                    throw e
+                })
+        })
     }
 
 }

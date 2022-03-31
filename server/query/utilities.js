@@ -139,7 +139,7 @@ export const findAllProdPricing = () => {
         "upc": { $exists: true },
         "identifiers": { $exists: true }
     }
-    return AmzProdPricing.find()
+    return AmzProdPricing.find(query)
 }
 //@AmzProdPricing
 export const findProdPricingOnUpc = (upc) => {
