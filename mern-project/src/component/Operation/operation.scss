@@ -1,17 +1,6 @@
 @import "antd/dist/antd.min.css";
 
-.ant-upload {
-    width: 100%;
-    .ant-upload-drag {
-        height: 180px;
-    }
-}
-
 .ant-tree {
-    .ant-tree-treenode {
-        width: 100%;
-    }
-    
     .ant-tree-node-content-wrapper {
         background-color: transparent;
         &:hover {
@@ -22,8 +11,5 @@
             /* background-color: #bae7ff; */
             background-color: transparent;
         }
-    }
-    .ant-tree-node-content-wrapper-normal{
-        width:100%;
     }
 }
