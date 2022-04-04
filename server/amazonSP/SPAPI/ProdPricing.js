@@ -12,7 +12,7 @@ export default class ProdPricing {
     };
 
     constructor() {
-        this.reqJSON = {
+        this.getPricingParam = {
             operation: "getPricing",
             endpoint: "productPricing",
             query: {
@@ -62,18 +62,13 @@ export default class ProdPricing {
             queue.push(this.#taskPromise(upc, asins))
         }
 
-        // queue.forEach(task => {
-        //     task.then(res => console.log(res))
-        // })
-
-
         return queue;
     }
 
     #taskPromise(upc, asins) {
         return new Promise((resolve, reject) => {
             let sp = sellingPartner();
-            let param = { ...this.reqJSON, query: { ...this.reqJSON.query } };  //make deep copy of apiParam
+            let param = { ...this.getPricingParam, query: { ...this.getPricingParam.query } };  //make deep copy of apiParam
             param.query.Asins = asins;
             sp.callAPI(param)
                 .then(sellingPartnerResponse => {

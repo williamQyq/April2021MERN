@@ -4,19 +4,18 @@ import { bucket } from '../RateLimiter.js';
 /* 
 @desc: Product Pricing API: getPricing
 @param: prods:Array<AmzProdPricing>
-@return:
+@return: Void
 */
-export const getCatalogItems = (prods) => {
+export const getCatalogItems = async (prods) => {
     let res;
     let sp = new ProdPricing();
 
     //create tasks for each prod
     prods.forEach(prod => {
         let tasks = sp.createTasks(prod);
-        tasks.forEach(task => bucket.addTask(task))
+        bucket.addTasks(tasks)
     });
-    res = bucket.doTaskQueue();
+    await bucket.start().then(taskResults =>updateProdPricingOffers(taskResults));
 
     // console.log(JSON.stringify(res, null, 4));
-    return res;
 }

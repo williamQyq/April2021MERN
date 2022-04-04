@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import itemReducer from './itemReducer';
 import itemBBReducer from './itemBBReducer';
 import itemMSReducer from './itemMSReducer';
+import itemWMReducer from './itemWMReducer'
 // import itemCCReducer from './itemCCReducer';
 import errorReducer from './errorReducer';
 import authReducer from './authReducer';
@@ -26,6 +27,7 @@ const appReducers = combineReducers({
     item: itemReducer,
     bestbuy: itemBBReducer,
     microsoft: itemMSReducer,
+    walmart:itemWMReducer,
     error: errorReducer,
     auth: authReducer,
     keepa: keepaReducer,

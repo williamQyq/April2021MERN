@@ -1,11 +1,12 @@
 import express from 'express';
-import bbItemsRouter from './routes/api/bb_items.js'
-import msItemsRouter from './routes/api/ms_items.js'
-import itemsRouter from './routes/api/items.js'
-import usersRouter from './routes/api/users.js'
-import authRouter from './routes/api/auth.js'
-import wmsRouter from './routes/api/wms.js'
-import operationRouter from './routes/api/operation.js'
+import bbItemsRouter from './routes/api/bb_items.js';
+import msItemsRouter from './routes/api/ms_items.js';
+import wmItemsRouter from './routes/api/wm_items.js';
+import itemsRouter from './routes/api/items.js';
+import usersRouter from './routes/api/users.js';
+import authRouter from './routes/api/auth.js';
+import wmsRouter from './routes/api/wms.js';
+import operationRouter from './routes/api/operation.js';
 
 
 
@@ -22,6 +23,7 @@ const server = app.listen(port, () => {
 //@routes; direct axios request from client
 app.use('/api/bb_items', bbItemsRouter);
 app.use('/api/ms_items', msItemsRouter);
+app.use('/api/wm_items', wmItemsRouter);
 // app.use('/api/cc_items', require('./routes/api/cc_items'));
 app.use('/api/items', itemsRouter);
 app.use('/api/users', usersRouter);
