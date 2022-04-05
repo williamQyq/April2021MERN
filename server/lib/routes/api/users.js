@@ -1,10 +1,11 @@
 import express from 'express';
-const router = express.Router();
 import bcrypt from 'bcryptjs';
 import config from 'config';
 import jwt from 'jsonwebtoken';
-import auth from '../../middleware/auth.js'
-import User from '../../models/User.js'; //User Model
+import auth from '#middleware/auth.js'
+import User from '#models/User.js'; //User Model
+const router = express.Router();
+
 
 // @route POST api/users
 // @desc Register new Users

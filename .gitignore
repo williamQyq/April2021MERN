@@ -1,6 +1,7 @@
 *.exe
 node_modules/
 __pycache__/
-server/config/*
-server/script_packages/*
+server/bin/*
 server/unit_test.js
+.env
+server/lib/config/*

@@ -1,5 +1,5 @@
 import express from 'express';
-import ItemCC from '../../models/CCItem';
+import ItemCC from '#models/CCItem';
 const router = express.Router();
 
 // @route GET api/items

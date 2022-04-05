@@ -1,6 +1,6 @@
 import tunnel from 'tunnel-ssh';
 import mongodb from 'mongodb';
-import wmsConfig from '../config/wmsConfig.js';
+import wmsConfig from '#config/wmsConfig.js';
 
 const { MongoClient } = mongodb;
 //when modules/instance being required in nodejs, it will only load once.

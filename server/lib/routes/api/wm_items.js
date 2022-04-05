@@ -1,7 +1,7 @@
 import express from 'express';
-import Walmart from '../../script_packages/WM.js';
-import Model from '../../models/WMItem.js';
-import { getItemConfiguration } from '../../script_packages/scraper.js';
+import Walmart from '#bin/helper/WM.js';
+import Model from '#models/WMItem.js';
+import { getItemConfiguration } from '#bin/scraper.js';
 import { saveItemConfiguration, getStoreItemDetailById, getStoreItems, findItemConfig } from '../../query/utilities.js';
 
 const router = express.Router();

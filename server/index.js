@@ -1,14 +1,15 @@
 import express from 'express';
-import bbItemsRouter from './routes/api/bb_items.js';
-import msItemsRouter from './routes/api/ms_items.js';
-import wmItemsRouter from './routes/api/wm_items.js';
-import itemsRouter from './routes/api/items.js';
-import usersRouter from './routes/api/users.js';
-import authRouter from './routes/api/auth.js';
-import wmsRouter from './routes/api/wms.js';
-import operationRouter from './routes/api/operation.js';
+import bbItemsRouter from '#routes/api/bb_items.js';
+import msItemsRouter from '#routes/api/ms_items.js';
+import wmItemsRouter from '#routes/api/wm_items.js';
+import itemsRouter from '#routes/api/items.js';
+import usersRouter from '#routes/api/users.js';
+import authRouter from '#routes/api/auth.js';
+import wmsRouter from '#routes/api/wms.js';
+import operationRouter from '#routes/api/operation.js';
 
-
+import dotenv from 'dotenv'
+dotenv.config();
 
 //@Bodyparser Middleware
 const app = express();

@@ -1,8 +1,13 @@
 import express from 'express';
-import Bestbuy from '../../script_packages/BB.js';
-import Model from '../../models/BBItem.js';
-import { getItemConfiguration } from '../../script_packages/scraper.js';
-import { saveItemConfiguration, getStoreItemDetailById, getStoreItems, findItemConfig } from '../../query/utilities.js';
+import Bestbuy from '#bin/helper/BB.js';
+import Model from '#models/BBItem.js';
+import { getItemConfiguration } from '#bin/scraper.js';
+import {
+    saveItemConfiguration,
+    getStoreItemDetailById,
+    getStoreItems,
+    findItemConfig
+} from '#query/utilities.js';
 
 const router = express.Router();
 

@@ -3,12 +3,12 @@ const router = express.Router();
 import mongoose from 'mongoose';
 const ObjectId = mongoose.Types.ObjectId;
 
-import ItemMS from '../../models/MsItem.js'; //Item Model
+import ItemMS from '#models/MsItem.js'; //Item Model
 import {
     PROJ_ITEM,
     PROJ_ITEM_DETAIL,
     SORT_ON_CAPTURE_DATE
-} from '../../query/aggregate.js';
+} from '#query/aggregate.js';
 
 // @route GET api/items
 router.get('/', (req, res) => {

@@ -1,6 +1,6 @@
 import express from 'express';
-import auth from '../../middleware/auth.js';
-import Item from '../../models/WatchListItem.js';
+import auth from '#middleware/auth.js';
+import Item from '#models/WatchListItem.js';
 const router = express.Router();
 
 // @route GET api/items

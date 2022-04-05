@@ -50,7 +50,7 @@ This project has access to the mongo database of the warehouse and the Amazon Se
 
 ## To build
 
->1. ~~download & save lastest *chromedriver.exe* to: ***server/script_packages/mypackage/***~~
+>1. ~~download & save lastest *chromedriver.exe* to: ***server/bin/mypackage/***~~
 (`no longer needed, already switched to puppeteer.`)  
 >2. `npm run server-install` & `npm run client-install` to install required dependency
 >3. `npm run dev`

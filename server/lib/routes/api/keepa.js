@@ -1,6 +1,6 @@
 import express from 'express';
 import auth from '../../middleware/auth.js';
-import { getKeepaStat } from '../../script_packages/keepa.js';
+import { getKeepaStat } from '../../bin/keepa.js';
 const router = express.Router();
 
 // @route GET api/items
