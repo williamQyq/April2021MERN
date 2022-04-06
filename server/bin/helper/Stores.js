@@ -1,7 +1,5 @@
 import puppeteer from 'puppeteer';
-import config from 'config';
-
-const { agent } = config;
+import { USER_AGENT } from '#root/config.js'
 
 /* 
 declare class Stores{
@@ -34,7 +32,7 @@ export default class Stores {
     async initBrowser() {
         const browser = await puppeteer.launch({
             // headless: true,
-            headless:false,
+            headless: false,
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
@@ -45,16 +43,16 @@ export default class Stores {
     }
     async initPage(browser) {
         const page = await browser.newPage();
-        await page.setViewport({width: 1920,height: 1080})   //set view port to 1920x1080
-        await page.setUserAgent(agent.USER_AGENT);
+        // await page.setViewport({ width: 1920, height: 1080 })   //set view port to 1920x1080
+        await page.setUserAgent(USER_AGENT);
         await page.setRequestInterception(true);
-        // page.on('request', (req) => {
-        //     if (req.resourceType() === 'image') {
-        //         req.abort();
-        //     } else {
-        //         req.continue();
-        //     }
-        // });
+        page.on('request', (req) => {
+            if (req.resourceType() === 'image') {
+                req.abort();
+            } else {
+                req.continue();
+            }
+        });
         return page
     }
     //@param: puppeter page, xpath expression
