@@ -18,7 +18,6 @@
   "imports": {
     "#root/*": "./server/*",
     "#bin/*": "./server/bin/*",
-    "#config/*": "./server/lib/config/*",
     "#models/*": "./server/lib/models/*",
     "#routes/*": "./server/lib/routes/*",
     "#query/*": "./server/lib/query/*",

@@ -1,16 +1,15 @@
-import config from 'config';
 import jwt from 'jsonwebtoken';
+import { JWT_SECRET } from '#root/config.js';
 
 const auth = (req, res, next) => {
     const token = req.header('x-auth-token');
-
 
     if (!token)
         return res.status(401).json({ msg: "authorization denied." })
 
     try {
         //Verify token
-        const decoded = jwt.verify(token, config.get('jwtSecret'));
+        const decoded = jwt.verify(token, JWT_SECRET);
         //Add user from payload
         req.user = decoded;
         next();

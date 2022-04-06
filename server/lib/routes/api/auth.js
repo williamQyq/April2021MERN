@@ -4,6 +4,7 @@ import config from 'config';
 import jwt from 'jsonwebtoken';
 import User from '#models/User.js';
 import auth from '#middleware/auth.js'
+import { JWT_SECRET } from '#root/config.js';
 const router = express.Router();
 
 
@@ -28,7 +29,7 @@ router.post('/', (req, res) => {
 
                     jwt.sign(
                         { id: user.id },
-                        config.get('jwtSecret'),
+                        JWT_SECRET,
                         // {expiresIn: 3600},
                         (err, token) => {
                             if (err) throw err;

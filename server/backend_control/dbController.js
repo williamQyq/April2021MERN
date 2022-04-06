@@ -1,23 +1,32 @@
 import pkg from 'mongodb';
 const {MongoClient} = pkg;
-import config from 'config';
 
-const mongoURI = config.get("mongoURI");
-const collection = config.get('collection');
+import dotenv from 'dotenv'
+import path from 'path';
+import {fileURLToPath} from 'url';
 
-const DB= "DB";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({path:__dirname+"/./.env"});   //secrete keys in environment
+
+
+const mongoURI = process.env.DB_URI
+const COL_BESTBUY = process.env.DB_COLLECTION_BESTBUY
+const COL_AMZ_PROD_PRICING = process.env.DB_COLLECTION_AMZ_PROD_PRICING
+const COL_ITEMSPEC = process.env.DB_COLLECTION_ITEMSPEC
+
 (async ()=>{
     const client = new MongoClient(mongoURI, {useUnifiedTopology: true, useNewUrlParser: true});
     try {
         await client.connect();
-        const db = client.db(DB);
+        const db = client.db("DB");
         // const testdb = client.db("Product_Info")
 
         const query = {
             "upc":{$exists:true}
         }
 
-        const doc = await db.collection(collection.amzProdPricing).deleteMany(query)
+        const doc = await db.collection(COL_AMZ_PROD_PRICING).deleteMany(query)
         // const doc = await testdb.collection("Pc_info").findOneAndUpdate(query,update)
         console.log(JSON.stringify(doc,null,4))
 

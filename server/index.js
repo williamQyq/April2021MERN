@@ -8,9 +8,6 @@ import authRouter from '#routes/api/auth.js';
 import wmsRouter from '#routes/api/wms.js';
 import operationRouter from '#routes/api/operation.js';
 
-import dotenv from 'dotenv'
-dotenv.config();
-
 //@Bodyparser Middleware
 const app = express();
 app.use(express.json());
