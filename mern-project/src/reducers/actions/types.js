@@ -12,18 +12,31 @@ export const MICROSOFT = 'MICROSOFT';
 export const BESTBUY = 'BESTBUY';
 export const COSTCO = 'COSTCO';
 
-// BB STATUS
+/* 
+@BB STATUS
+*/
 export const GET_BB_ITEMS = 'GET_BB_ITEMS';
 export const GET_BB_ITEM_DETAIL = 'GET_BB_ITEM_DETAIL';
 export const ADD_BB_ITEM_SPEC = 'GET_BB_ITEM_SPEC';
 
-// CC STATUS
+/* 
+@CC STATUS 
+*/
 export const GET_CC_ITEMS = 'GET_BB_ITEMS';
 
-// MS STATUS
+/* 
+@MS STATUS 
+*/
 export const GET_MS_ITEMS = 'GET_MS_ITEMS';
 export const GET_MS_ITEM_DETAIL = 'GET_MS_ITEM_DETAIL';
 export const ADD_MS_ITEM_SPEC = 'GET_BB_ITEM_SPEC';
+
+/* 
+@WM STATUS
+*/
+export const GET_WM_ITEMS = 'GET_WM_ITEMS';
+export const GET_WM_ITEM_DETAIL = 'GET_WM_ITEM_DETAIL';
+export const ADD_WM_ITEM_SPEC = 'GET_WM_ITEM_SPEC';
 
 // @AUTHENTICATE STATUS
 export const USER_LOADING = 'USER_LOADING';

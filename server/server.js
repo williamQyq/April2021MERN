@@ -1,28 +1,13 @@
 import mongoose from 'mongoose';
-import config from 'config';
 import { Server } from "socket.io";
 import app from './index.js';
-
 import wms from "./wms/wmsDatabase.js";    // @local wms server connection
-import scrapeScheduler from './script_packages/scrapeScheduler.js';    //scripts scheduler, node-cron
-import { amazonScheduler } from './amazonSP/amazonSchedule.js';
-
-import unitTest from './unit_test.js'
-
+import scrapeScheduler from './bin/scrapeScheduler.js';    //scripts scheduler, node-cron
+// import { amazonScheduler } from './amazonSP/amazonSchedule.js';
+import unitTest from './unit_test.js'   //For testing functionalities
 
 // @CREATE WMS CONNECTION
 wms.startService();
-
-//@Mongoose connection; Connect to Mongo.
-const mongoURI = config.get('mongoURI');
-mongoose.connect(mongoURI, {
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-    useCreateIndex: true
-})
-    .then(() => console.log('Atlas MongoDB Connected...'))
-    .catch(err => console.log(err));
-
 
 const io = new Server(app, { 'pingTimeout': 7000, 'pingInterval': 3000 });
 io.on("connection", (socket) => {
@@ -32,13 +17,25 @@ io.on("connection", (socket) => {
     })
 })
 
+//@Mongoose connection; Connect to Mongo.
+const mongoURI = process.env.DB_URI;
+mongoose.connect(mongoURI, {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+    useCreateIndex: true
+})
+    .then(() => console.log('Atlas MongoDB Connected...'))
+    .catch(err => console.log(err));
+
 const db = mongoose.connection;  //set up mongoose connection
 db.once('open', () => {
-    const collection = config.get("collection");
+    const COL_BESTBUY = process.env.DB_COLLECTION_BESTBUY
+    const COL_AMZ_PROD_PRICING = process.env.DB_COLLECTION_AMZ_PROD_PRICING
+    const COL_ITEMSPEC = process.env.DB_COLLECTION_ITEMSPEC
 
-    const bbStoreListings = db.collection(collection.bestbuy).watch();
-    const amzProdPricing = db.collection(collection.amzProdPricing).watch();
-    const itemSpec = db.collection(collection.itemSpec).watch();
+    const bbStoreListings = db.collection(COL_BESTBUY).watch();
+    const amzProdPricing = db.collection(COL_AMZ_PROD_PRICING).watch();
+    const itemSpec = db.collection(COL_ITEMSPEC).watch();
 
     bbStoreListings.on('change', (change) => {
         // const doc = change.fullDocument;

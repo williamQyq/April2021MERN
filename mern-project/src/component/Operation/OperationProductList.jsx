@@ -1,5 +1,5 @@
 import React from 'react';
-import 'antd/dist/antd.min.css';
+import './Operation.scss';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Table, Form, Typography, Input, Button, Space } from 'antd';

@@ -21,7 +21,15 @@ export const mainColumnGroup = (actions) => {
                 title: 'WMS Quantity',
                 dataIndex: 'wmsQuantity',
                 editable: false,
-                sorter: (a, b) => a.wmsQuantity - b.wmsQuantity,
+                sorter: (a, b) => {
+                    if (a.wmsQuantity === undefined) {
+                        return -1;
+                    } else if (b.wmsQuantity === undefined) {
+                        return 1;
+                    }
+                    return a.wmsQuantity - b.wmsQuantity
+                }
+                ,
                 ...getColumnSearchProps('wmsQuantity'),
                 // defaultSortOrder: setTableState.wmsQuantity,
                 sortDirections: ['descend', 'ascend', 'descend']

@@ -51,6 +51,9 @@ const HomeSider = (props) => {
                     <Menu.Item key="microsoft-list" icon={<ShoppingOutlined />}>
                         <Link to={`${path}/microsoft-list`}>Microsoft</Link>
                     </Menu.Item>
+                    <Menu.Item key="walmart-list" icon={<ShoppingOutlined />}>
+                        <Link to={`${path}/walmart-list`}>Walmart</Link>
+                    </Menu.Item>
                     <Menu.Item key="price-alert" disabled icon={<MonitorOutlined />}>
                         <Link to={`${path}/price-alert`}>Price Alert</Link>
                     </Menu.Item>
