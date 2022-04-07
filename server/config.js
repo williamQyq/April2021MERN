@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 import path from 'path';
 import { fileURLToPath } from 'url';
-import fs from 'fs'
+// import fs from 'fs'
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -33,3 +33,5 @@ export const REGION = process.env.REGION
 
 export const JWT_SECRET = process.env.JWT_SECRET
 export const USER_AGENT = process.env.USER_AGENT
+
+export const WM_RSA_PASS_PHASE = process.env.WM_RSA_PASS_PHASE 
