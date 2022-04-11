@@ -8,7 +8,7 @@ let key = pem.toString('ascii')
 let privatekey = crypto.createPrivateKey({
     'key': key,
     'format': 'pem',
-    'passphrase': WM_RSA_PASS_PHASE
+    'passphrase': 'william'
 })
 
 const sign = (identifier) => {
@@ -18,8 +18,13 @@ const sign = (identifier) => {
     return signature;
 }
 
+const keyData = {
+    consumerId: "1527766b-750f-487d-a2a4-b9f95c39da8b",
+    keyVer: 1,
+}
+
 const generateWalmartHeaders = () => {
-    const { privateKey, consumerId, keyVer } = keyData;
+    const {consumerId, keyVer } = keyData;
     const hashList = {
         "WM_CONSUMER.ID": consumerId,
         "WM_CONSUMER.INTIMESTAMP": Date.now().toString(),
@@ -45,6 +50,10 @@ export const getProductById = async (productId) => {
 
     const res = await fetch(
         `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/items/${productId}?publisherId=${keyData.impactId}`,
+        // `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/paginated/items?category=3944_3951_1089430_1230091_1094888&count=200&brand=Hp`,
+        // `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/taxonomy`,
+        // `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/&categoryId=3944&available=true`,
+
         options
     );
 
@@ -53,7 +62,7 @@ export const getProductById = async (productId) => {
     return detail
 };
 
-getProductById(4837473)
+getProductById(514027934)
 
 // let a = Buffer.from(fs.readFileSync('./wm_rsa_key_pair')).toString();
 // console.log(fs.readFileSync('./wm_rsa_key_pair'))

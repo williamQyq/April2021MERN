@@ -34,4 +34,7 @@ export const REGION = process.env.REGION
 export const JWT_SECRET = process.env.JWT_SECRET
 export const USER_AGENT = process.env.USER_AGENT
 
+//@Walmart
 export const WM_RSA_PASS_PHASE = process.env.WM_RSA_PASS_PHASE 
+//@Bestbuy
+export const BESTBUY_API_KEY = process.env.BESTBUY_API_KEY

@@ -16,6 +16,7 @@ const socket = io('/', {
     'reconnectionDelay': 500,
     'reconnectionAttempts': 5
 });
+socket.emit(`Amz`, `AmzRoom`);
 
 const { Title } = Typography;
 

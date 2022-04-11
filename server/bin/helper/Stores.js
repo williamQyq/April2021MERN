@@ -31,8 +31,8 @@ export default class Stores {
     }
     async initBrowser() {
         const browser = await puppeteer.launch({
-            // headless: true,
-            headless: false,
+            headless: true,
+            // headless: false,
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',

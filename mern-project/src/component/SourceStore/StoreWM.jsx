@@ -11,6 +11,7 @@ const socket = io('/', {
     'reconnectionDelay': 500,
     'reconnectionAttempts': 5
 });
+socket.emit(`Store`, `StoreListingRoom`);
 
 class WM extends React.Component {
     constructor(props) {
@@ -22,7 +23,7 @@ class WM extends React.Component {
 
     componentDidMount() {
         // this.props.getItems();
-        // socket.on('itemSpec', () => {
+        // socket.on('WM Store Listings Update', () => {
         //     this.props.getItems()
         // })
     }

@@ -3,7 +3,7 @@
 ## If you found this project is helpful, please star me. Thank you! 💙
 
 *status*: under development...  
-*latest update: 4/7/2022*  
+*latest update: 4/11/2022*  
 
 author: Yuqing (William) Qiao  
 description: MERN stack project
@@ -275,6 +275,43 @@ Redux store maintains a global state that all components can access via ***Conne
         import ...from...  
         const {...} = require('.../')
 ```
+
+**Socket.io Room Join & Emit**
+```c 
+//server side
+const io = new Server(app, { 'pingTimeout': 7000, 'pingInterval': 3000 });
+io.on("connection", (socket) => {
+    //new store socket join to room    
+    socket.on(`Store`, (room) => {
+        socket.join(room);
+        socketRoomMap.set(socket.id, room)
+        console.log(`A user Connected: ${socket.id}. Joined Room: ${socketRoomMap.get(socket.id)}`)
+    })
+
+
+    //on disconnect
+    socket.on(`disconnect`, () => {
+        console.log(`USER DISCONNECTED. Quit Room：${socketRoomMap.get(socket.id)}`);
+        socketRoomMap.delete(socket.id)
+    })
+})
+
+
+//client side
+import { io } from 'socket.io-client';
+const socket = io('/', {
+    'reconnection': true,
+    'reconnectionDelay': 500,
+    'reconnectionAttempts': 5
+});
+socket.emit(`Store`, `StoreListingRoom`);
+
+socket.on('BB Store Listings Update', () => {
+        //...do something
+})
+
+```
+
 ---
 ## Amazon Selling Partner API
 **setup**

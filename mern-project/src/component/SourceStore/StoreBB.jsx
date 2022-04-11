@@ -11,6 +11,7 @@ const socket = io('/', {
     'reconnectionDelay': 500,
     'reconnectionAttempts': 5
 });
+socket.emit(`Store`, `StoreListingRoom`);
 
 class BB extends React.Component {
     constructor(props) {
@@ -22,7 +23,7 @@ class BB extends React.Component {
 
     componentDidMount() {
         this.props.getBBItems();
-        socket.on('itemSpec', () => {
+        socket.on('BB Store Listings Update', () => {
             this.props.getBBItems()
         })
     }

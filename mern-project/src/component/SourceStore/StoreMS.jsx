@@ -5,6 +5,14 @@ import { getMSItems } from 'reducers/actions/itemMSActions';
 import PropTypes from 'prop-types';
 import StoreTable from 'component/SourceStore/StoreTable';
 
+import { io } from 'socket.io-client';
+const socket = io('/', {
+    'reconnection': true,
+    'reconnectionDelay': 500,
+    'reconnectionAttempts': 5
+});
+socket.emit(`Store`, `StoreListingRoom`);
+
 class MS extends React.Component {
     constructor(props) {
         super(props);
@@ -16,6 +24,9 @@ class MS extends React.Component {
 
     componentDidMount() {
         this.props.getMSItems();
+        socket.on('MS Store Listings Update', () => {
+            this.props.getMSItems()
+        })
     }
     render() {
         const { store } = this.state;

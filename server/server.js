@@ -9,11 +9,22 @@ import unitTest from './unit_test.js'   //For testing functionalities
 // @CREATE WMS CONNECTION
 wms.startService();
 
+// @Socket IO listner
+const socketRoomMap = new Map();
 const io = new Server(app, { 'pingTimeout': 7000, 'pingInterval': 3000 });
 io.on("connection", (socket) => {
-    console.log(`A user Connected: ${socket.id}`)
+
+    socket.on(`Store`, (room) => {
+        socket.join(room);
+        socketRoomMap.set(socket.id, room)
+        console.log(`A user Connected: ${socket.id}. Joined Room: ${socketRoomMap.get(socket.id)}`)
+    })
+
+
+
     socket.on(`disconnect`, () => {
-        console.log(`USER DISCONNECTED`);
+        console.log(`USER DISCONNECTED. Quit Room：${socketRoomMap.get(socket.id)}`);
+        socketRoomMap.delete(socket.id)
     })
 })
 
@@ -30,10 +41,12 @@ mongoose.connect(mongoURI, {
 const db = mongoose.connection;  //set up mongoose connection
 db.once('open', () => {
     const COL_BESTBUY = process.env.DB_COLLECTION_BESTBUY
+    const COL_MICROSOFT = process.env.DB_COLLECTION_MICROSOFT
     const COL_AMZ_PROD_PRICING = process.env.DB_COLLECTION_AMZ_PROD_PRICING
     const COL_ITEMSPEC = process.env.DB_COLLECTION_ITEMSPEC
 
     const bbStoreListings = db.collection(COL_BESTBUY).watch();
+    const msStoreListings = db.collection(COL_MICROSOFT).watch();
     const amzProdPricing = db.collection(COL_AMZ_PROD_PRICING).watch();
     const itemSpec = db.collection(COL_ITEMSPEC).watch();
 
@@ -41,17 +54,24 @@ db.once('open', () => {
         // const doc = change.fullDocument;
         // console.log(`change fulldocument:=====`, JSON.stringify(change.fullDocument, null, 4))
         if (change.operationType === 'insert' || change.operationType === 'update' || change.operationType === 'delete') {
-            io.sockets.emit(`bbStoreListings`, null)
+            io.sockets.in(`StoreListingRoom`).emit(`BB Store Listings Update`, null)
         }
     })
+
+    msStoreListings.on('change', (change) => {
+        if (change.operationType === 'insert' || change.operationType === 'update' || change.operationType === 'delete') {
+            io.sockets.in(`StoreListingRoom`).emit(`MS Store Listings Update`, null)
+        }
+    })
+
     amzProdPricing.on('change', (change) => {
         if (change.operationType === 'insert' || change.operationType === 'update' || change.operationType === 'delete') {
-            io.sockets.emit(`amzProdPricing`, null)
+            io.sockets.in(`AmzRoom`).emit(`Amz Prod Pricing Update`, null)
         }
     })
     itemSpec.on('change', (change) => {
         if (change.operationType === 'insert' || change.operationType === 'update' || change.operationType === 'delete') {
-            io.sockets.emit(`itemSpec`, null)
+            io.sockets.in(`StoreListingRoom`).emit(`BB Store Listings Update`, null)
         }
     })
 
