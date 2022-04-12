@@ -45,17 +45,18 @@ export const tableColumns = (getColumnSearchProps, storeName) => {
                 dataIndex: 'name',
                 key: 'name',
                 width: '30%',
-                ...getColumnSearchProps('name'),
+                ...getColumnSearchProps(['name']),
                 // sorter: (a, b) => a.name.length - b.name.length,
                 // sortDirections: ['descend', 'ascend'],
             },
             {
-                title: 'UPC',
+                title: 'UPC | SKU',
                 dataIndex: 'upc',
                 key: 'upc',
                 width: '15%',
-                ...getColumnSearchProps('upc'),
+                ...getColumnSearchProps(['upc','sku']),
             },
+
             {
                 title: 'Price Diff',
                 dataIndex: 'priceDiff',
