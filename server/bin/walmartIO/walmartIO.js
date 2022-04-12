@@ -24,7 +24,7 @@ const keyData = {
 }
 
 const generateWalmartHeaders = () => {
-    const {consumerId, keyVer } = keyData;
+    const { consumerId, keyVer } = keyData;
     const hashList = {
         "WM_CONSUMER.ID": consumerId,
         "WM_CONSUMER.INTIMESTAMP": Date.now().toString(),
@@ -49,10 +49,11 @@ export const getProductById = async (productId) => {
     };
 
     const res = await fetch(
-        `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/items/${productId}?publisherId=${keyData.impactId}`,
-        // `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/paginated/items?category=3944_3951_1089430_1230091_1094888&count=200&brand=Hp`,
+        // `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/items/${productId}?publisherId=${keyData.impactId}`,
+        // `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/paginated/items?category=3944_3951_1089430_1230091_1094888&count=200&brand=Hp`, //suggestion url
         // `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/taxonomy`,
-        // `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/&categoryId=3944&available=true`,
+        // `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/search?query=laptop`,
+        `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/paginated/items?category=3944_3951_1089430&count=10&brand=Asus&soldByWmt=true&available=true`,
 
         options
     );

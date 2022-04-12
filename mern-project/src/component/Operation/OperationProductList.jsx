@@ -36,7 +36,7 @@ class OperationProductList extends React.Component {
 
     componentDidMount() {
         this.props.getProductPricing()
-        socket.on(`amzProdPricing`, () => {
+        socket.on(`Amz Prod Pricing Update`, () => {
             this.props.getProductPricing();
         })
     }

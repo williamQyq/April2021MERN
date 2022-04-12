@@ -7,16 +7,16 @@ import {fileURLToPath} from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-dotenv.config({path:__dirname+"/./.env"});   //secrete keys in environment
+dotenv.config({path:__dirname+"/../.env"});   //secrete keys in environment
+
+// console.log('env===',process.env)
 
 
-const mongoURI = process.env.DB_URI
-const COL_BESTBUY = process.env.DB_COLLECTION_BESTBUY
-const COL_AMZ_PROD_PRICING = process.env.DB_COLLECTION_AMZ_PROD_PRICING
-const COL_ITEMSPEC = process.env.DB_COLLECTION_ITEMSPEC
+// const COL_BESTBUY = process.env.DB_COLLECTION_BESTBUY
+// const COL_ITEMSPEC = process.env.DB_COLLECTION_ITEMSPEC
 
 (async ()=>{
-    const client = new MongoClient(mongoURI, {useUnifiedTopology: true, useNewUrlParser: true});
+    const client = new MongoClient(process.env.DB_URI, {useUnifiedTopology: true, useNewUrlParser: true});
     try {
         await client.connect();
         const db = client.db("DB");
@@ -26,7 +26,7 @@ const COL_ITEMSPEC = process.env.DB_COLLECTION_ITEMSPEC
             "upc":{$exists:true}
         }
 
-        const doc = await db.collection(COL_AMZ_PROD_PRICING).deleteMany(query)
+        const doc = await db.collection(process.env.DB_COLLECTION_AMZ_PROD_PRICING).deleteMany(query)
         // const doc = await testdb.collection("Pc_info").findOneAndUpdate(query,update)
         console.log(JSON.stringify(doc,null,4))
 

@@ -20,6 +20,12 @@ io.on("connection", (socket) => {
         console.log(`A user Connected: ${socket.id}. Joined Room: ${socketRoomMap.get(socket.id)}`)
     })
 
+    socket.on(`Amz`,(room)=>{
+        socket.join(room);
+        socketRoomMap.set(socket.id, room)
+        console.log(`A user Connected: ${socket.id}. Joined Room: ${socketRoomMap.get(socket.id)}`)
+    })
+
 
 
     socket.on(`disconnect`, () => {
