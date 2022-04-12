@@ -12,12 +12,19 @@ import {
 export const getProductPricing = () => dispatch => {
     dispatch(setResLoading());
     axios.get('/api/operation').then(res => {
+        //dispatch mongo atlas prod pricing collection ducuments first, then wms quantity.
+        dispatch({
+            type: GET_AMZ_PROD_PRICING,
+            payload: res.data
+        })
+
         getWmsProdQty(res.data).then(data => {
             dispatch({
                 type: GET_AMZ_PROD_PRICING,
                 payload: data
             })
         });
+
     })
 
 }
@@ -29,10 +36,11 @@ export const getWmsProdQty = async (prods) => {
         }
     };
 
-    const upcs = prods.map(prod => prod.upc)
+    let upcArr = prods.map(prod => prod.upc)
 
-    let res = await axios.post(`/api/wms/quantity/all`, { upcs }, config)
+    let res = await axios.post(`/api/wms/quantity/all`, { upcArr }, config)
     let prodsQtyMap = new Map(res.data)
+
     prods.forEach(prod => {
         prod.wmsQuantity = prodsQtyMap.get(prod.upc)
     });

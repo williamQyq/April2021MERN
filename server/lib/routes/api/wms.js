@@ -13,15 +13,15 @@ router.get('/quantity/:upc', (req, res) => {
 });
 
 router.post('/quantity/all', async (req, res) => {
-    const { upcs } = req.body;
-    let quantityMapArray = []
+    const { upcArr } = req.body;
+    let upcWmsQtyMap = [];
 
     const collection = wms.getDatabase().collection('sellerInv')
-    await collection.find({ '_id.UPC': { $in: upcs }, '_id.org': "M" }).forEach(doc => {
-        quantityMapArray.push([doc._id.UPC, doc.qty])
+    await collection.find({ '_id.UPC': { $in: upcArr }, '_id.org': "M" }).forEach(doc => {
+        upcWmsQtyMap.push([doc._id.UPC, doc.qty])
     })
 
-    res.json(quantityMapArray)
+    res.json(upcWmsQtyMap)
 
 })
 
