@@ -40,7 +40,7 @@ export const EditableCell = ({
  * @usage: Main Table
  * @desc: Columns of parent table
  */
-export const mergedColumns = (columns, actions) => {
+const mergedColumns = (columns, actions) => {
 
     return columns.map((col) => {
         if (!col.editable) {

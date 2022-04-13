@@ -1,50 +1,29 @@
 import { Space, Typography, Dropdown, Menu } from "antd";
 import { DownOutlined } from '@ant-design/icons';
 
-const { Link } = Typography;
+const { Link, Text } = Typography;
 
 const ActionMenu = ({ actions, record }) => {
     const editable = actions.isEditing(record);
+
     return editable ? (
-        <Space size="middle">
-            <Link
-                onClick={(e) => {
-                    e.stopPropagation();
-                    actions.save(record.key)
-                }}
-            >
-                Save
-            </Link>
-            <Link
-                onClick={(e) => {
-                    e.stopPropagation();
-                    actions.cancel();
-                }}
-            >
-                Cancel
-            </Link>
-        </Space>) : (
-        <Space size="middle">
+        <OnEditingActionMenu onClick={(e) => { e.stopPropagation() }} actions={actions} record={record} />
+    ) : (
+        <Space size="middle" onClick={(e) => { e.stopPropagation() }}>
             <Link
                 disabled
-                onClick={(e) => {
-                    e.stopPropagation();
-                    actions.publish(record)
-                }}
-            >Publish</Link>
+                onClick={() => { actions.publish(record) }}
+            >
+                Publish
+            </Link>
             <Link
                 disabled={actions.editingKey !== ""}
-                onClick={(e) => {
-                    e.stopPropagation();
-                    actions.edit(record)
-                }}
+                onClick={() => { actions.edit(record) }}
             >
                 Edit
             </Link>
-            <Dropdown overlay={menu}>
-                <Link onClick={(e) => { e.stopPropagation(); }}>
-                    More <DownOutlined />
-                </Link>
+            <Dropdown trigger={["click"]} overlay={MoreActionMenu}>
+                <Link>More <DownOutlined /></Link>
             </Dropdown>
         </Space>
     )
@@ -53,11 +32,29 @@ const ActionMenu = ({ actions, record }) => {
 /* 
  * @usage: main table and nested child tables action  
  */
-const menu = (
-    <Menu disabled>
-        <Menu.Item key='action1'>Action 1</Menu.Item>
-        <Menu.Item key='action2'>Action 2</Menu.Item>
-    </Menu>
-)
+const MoreActionMenu = () => {
+    const handleDelete = () => {
+    }
+
+
+    return (
+        <Menu>
+            <Menu.Item key='action1' disabled>Action 1</Menu.Item>
+            <Menu.Item key='delete' onClick={() => handleDelete()}>
+                <Text type='danger'>Delete</Text>
+            </Menu.Item>
+        </Menu >
+    );
+}
+
+const OnEditingActionMenu = ({ actions, record }) => {
+    return (
+        <Space size="middle" onClick={(e) => { e.stopPropagation() }}>
+            <Link onClick={(e) => { actions.save(record.key) }}>Save</Link>
+            <Link onClick={(e) => { actions.cancel(); }}>Cancel</Link>
+        </Space >
+    );
+}
+
 
 export default ActionMenu;

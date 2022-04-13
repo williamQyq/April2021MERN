@@ -1,7 +1,7 @@
 import ActionMenu from "component/Operation/OperationAction";
 import { StatusBadge } from "component/Operation/OperationStatusBadge";
 
-
+//main upc,qty,unit cost, status, action columns
 export const mainColumnGroup = (actions) => {
     const { getColumnSearchProps } = actions;
     return (
@@ -63,6 +63,7 @@ export const mainColumnGroup = (actions) => {
     );
 }
 
+//nested asin sku table columns
 export const nestedColumnGroup = (actions) => [
     {
         title: 'Asin',
