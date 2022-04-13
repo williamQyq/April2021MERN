@@ -11,7 +11,6 @@ const socket = io('/', {
     'reconnectionDelay': 500,
     'reconnectionAttempts': 5
 });
-socket.emit(`Store`, `StoreListingRoom`);
 
 class MS extends React.Component {
     constructor(props) {
@@ -21,13 +20,19 @@ class MS extends React.Component {
         };
 
     }
-
     componentDidMount() {
+        socket.emit(`subscribe`, `StoreListingRoom`);
+
         this.props.getMSItems();
         socket.on('MS Store Listings Update', () => {
             this.props.getMSItems()
         })
     }
+    componentWillUnmount() {
+        socket.emit(`unsubscribe`,`StoreListingRoom`)
+        socket.disconnect()
+    }
+
     render() {
         const { store } = this.state;
         return (

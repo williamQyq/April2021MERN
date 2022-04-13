@@ -1,10 +1,15 @@
-import { Space, Typography, Dropdown, Menu } from "antd";
+import { Space, Typography, Dropdown, Menu, Button } from "antd";
 import { DownOutlined } from '@ant-design/icons';
 
 const { Link, Text } = Typography;
 
 const ActionMenu = ({ actions, record }) => {
     const editable = actions.isEditing(record);
+
+    const saveAction = () => {
+
+    }
+
 
     return editable ? (
         <OnEditingActionMenu onClick={(e) => { e.stopPropagation() }} actions={actions} record={record} />
@@ -34,6 +39,7 @@ const ActionMenu = ({ actions, record }) => {
  */
 const MoreActionMenu = () => {
     const handleDelete = () => {
+
     }
 
 
@@ -41,7 +47,7 @@ const MoreActionMenu = () => {
         <Menu>
             <Menu.Item key='action1' disabled>Action 1</Menu.Item>
             <Menu.Item key='delete' onClick={() => handleDelete()}>
-                <Text type='danger'>Delete</Text>
+                <Button type='danger'>Delete</Button>
             </Menu.Item>
         </Menu >
     );

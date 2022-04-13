@@ -16,29 +16,36 @@ const socket = io('/', {
     'reconnectionDelay': 500,
     'reconnectionAttempts': 5
 });
-socket.emit(`Amz`, `AmzRoom`);
+
 
 const { Title } = Typography;
+const ROOM_NAME = `Operation`
 
 class OperationProductList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             ...defaultSettings,
+            data: this.props.sellingPartner,
             searchText: '',
             searchedRowId: '',
             searchedColumn: '',
             editingKey: '',
         };
+        this.formRef = React.createRef()
     }
 
-    formRef = React.createRef();
 
     componentDidMount() {
+        socket.emit(`subscribe`, ROOM_NAME);
         this.props.getProductPricing()
         socket.on(`Amz Prod Pricing Update`, () => {
             this.props.getProductPricing();
         })
+    }
+    componentWillUnmount() {
+        socket.emit(`unsubscribe`, ROOM_NAME)
+        socket.disconnect()
     }
     isLoading = () => {
         const { loading } = this.props;
@@ -241,8 +248,7 @@ class OperationProductList extends React.Component {
 
 
     render() {
-        const { xScroll, yScroll, top, bottom, ...state } = this.state;
-        const { sellingPartner } = this.props;
+        const { xScroll, yScroll, top, bottom, data, ...state } = this.state;
 
         const actions = {
             isEditing: this.isEditing,
@@ -273,7 +279,7 @@ class OperationProductList extends React.Component {
                         }}
                         pagination={{ position: [top, bottom] }}
                         columns={columns}
-                        dataSource={state.hasData ? sellingPartner : null}
+                        dataSource={state.hasData ? data : null}
                         scroll={state.scroll}
                     />
                 </Form>

@@ -1,4 +1,16 @@
-import { Menu, Button, Typography, Tooltip, Space, Dropdown, Row, Col, message, Alert, Divider } from "antd";
+import {
+    Menu,
+    Button,
+    Typography,
+    Tooltip,
+    Space,
+    Dropdown,
+    Row,
+    Col,
+    message,
+    Alert,
+    Divider,
+} from "antd";
 import {
     SearchOutlined,
     ShoppingCartOutlined,
@@ -13,6 +25,7 @@ import { clearErrors } from "reducers/actions/errorActions";
 import { setTableState } from "reducers/actions/itemActions";
 
 const { Text, Title } = Typography;
+const TypoLink = Typography.Link;
 
 export const locateSearchedItem = (items, searchId) => {
     if (searchId) {
@@ -54,7 +67,7 @@ export const tableColumns = (getColumnSearchProps, storeName) => {
                 dataIndex: 'upc',
                 key: 'upc',
                 width: '15%',
-                ...getColumnSearchProps(['upc','sku']),
+                ...getColumnSearchProps(['upc', 'sku']),
             },
 
             {
@@ -109,9 +122,9 @@ export const tableColumns = (getColumnSearchProps, storeName) => {
                                 ActionMenu({ record, storeName })
                             }
                             placement="bottomCenter">
-                            <a href="# " className="ant-dropdown-link" >
+                            <TypoLink  >
                                 More Actions <DownOutlined />
-                            </a>
+                            </TypoLink>
                         </Dropdown>
                     </Space>
                 ),

@@ -10,27 +10,29 @@ import unitTest from './unit_test.js'   //For testing functionalities
 wms.startService();
 
 // @Socket IO listner
-const socketRoomMap = new Map();
 const io = new Server(app, { 'pingTimeout': 7000, 'pingInterval': 3000 });
 io.on("connection", (socket) => {
-
-    socket.on(`Store`, (room) => {
-        socket.join(room);
-        socketRoomMap.set(socket.id, room)
-        console.log(`A user Connected: ${socket.id}. Joined Room: ${socketRoomMap.get(socket.id)}`)
+    socket.on(`subscribe`, (room) => {
+        try {
+            socket.join(room);
+            console.log(`A user Connected: ${socket.id}. Joined Room: ${room}`)
+        } catch (e) {
+            console.error(`[Socket Error] join room error`, e)
+        }
     })
 
-    socket.on(`Amz`,(room)=>{
-        socket.join(room);
-        socketRoomMap.set(socket.id, room)
-        console.log(`A user Connected: ${socket.id}. Joined Room: ${socketRoomMap.get(socket.id)}`)
+    socket.on(`unsubscribe`, (room) => {
+        try {
+            // const rooms = io.sockets.adapter.sids[socket.id]
+            socket.leave(room)
+            console.log(`A user ${socket.id} leaved room: ${room}`)
+        } catch (e) {
+            console.error(`[Socket Error] leave room error`, e)
+        }
     })
-
-
 
     socket.on(`disconnect`, () => {
-        console.log(`USER DISCONNECTED. Quit Room：${socketRoomMap.get(socket.id)}`);
-        socketRoomMap.delete(socket.id)
+        console.log(`USER DISCONNECTED: ${socket.id}`);
     })
 })
 
