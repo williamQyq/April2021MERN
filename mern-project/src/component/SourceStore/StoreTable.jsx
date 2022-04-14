@@ -23,7 +23,7 @@ export default class StoreTable extends React.Component {
     componentDidMount() {
         this.handleScrollPosition(this.props.items, this.props.tableState);
     }
-
+    
     handleScrollPosition = (items, clickHistory) => {
         if (clickHistory) {
             let itemHistory = locateSearchedItem(items, clickHistory.clickedId)
@@ -138,7 +138,6 @@ export default class StoreTable extends React.Component {
     render() {
         const { items, store } = this.props
         const { loading } = this.state;
-
         const columns = tableColumns(this.getColumnSearchProps, store);
         const scroll = { y: "calc(100vh - 335px)" };
 

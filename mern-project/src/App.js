@@ -15,7 +15,8 @@ import Proptypes from 'prop-types';
 import store from 'store.js';
 import Home from 'component/Home/Home.jsx';
 import HomeMobile from 'component/Home/HomeMobile.jsx';
-import { BrowserView, MobileView } from 'react-device-detect';
+import { isBrowser } from 'react-device-detect';
+import { SocketProvider } from 'component/socket/socketContext';
 
 class App extends React.Component {
 
@@ -25,8 +26,6 @@ class App extends React.Component {
 
   componentDidMount() {
     store.dispatch(loadUser());
-    // store.dispatch(loadSocket());
-
   }
 
   render() {
@@ -34,12 +33,12 @@ class App extends React.Component {
       <Switch>
         <Route exact path="/" component={SignIn} />
         <PrivateRoute path="/app" isAuthenticated={this.props.isAuthenticated} >
-          <BrowserView>
-            <Home />
-          </BrowserView>
-          <MobileView>
-            <HomeMobile />
-          </MobileView>
+          {isBrowser ?
+            <SocketProvider>
+              <Home />
+            </SocketProvider>
+            :
+            <HomeMobile />}
         </PrivateRoute>
         <Route component={ErrorPage} />
       </Switch>

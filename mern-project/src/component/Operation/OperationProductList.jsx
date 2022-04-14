@@ -9,17 +9,9 @@ import { getProductPricing } from 'reducers/actions/operationActions.js';
 import OperationMenu from 'component/Operation/OperationMenu';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
-import { io } from 'socket.io-client';
-
-const socket = io('/', {
-    'reconnection': true,
-    'reconnectionDelay': 500,
-    'reconnectionAttempts': 5
-});
-
+import { socket } from 'component/socket/socketContext';
 
 const { Title } = Typography;
-const ROOM_NAME = `Operation`
 
 class OperationProductList extends React.Component {
     constructor(props) {
@@ -37,15 +29,15 @@ class OperationProductList extends React.Component {
 
 
     componentDidMount() {
-        socket.emit(`subscribe`, ROOM_NAME);
+        socket.emit(`subscribe`, `OperationRoom`);
         this.props.getProductPricing()
-        socket.on(`Amz Prod Pricing Update`, () => {
+        socket.on(`Prod Pricing Update`, () => {
             this.props.getProductPricing();
         })
     }
     componentWillUnmount() {
-        socket.emit(`unsubscribe`, ROOM_NAME)
-        socket.disconnect()
+        socket.emit(`unsubscribe`, `OperationRoom`)
+        // socket.disconnect()
     }
     isLoading = () => {
         const { loading } = this.props;
@@ -271,7 +263,7 @@ class OperationProductList extends React.Component {
                 <Form ref={this.formRef} component={false}>
                     <Table
                         {...this.state}
-                        loading={this.isLoading}
+                        // loading={this.isLoading}
                         components={{
                             body: {
                                 cell: EditableCell,

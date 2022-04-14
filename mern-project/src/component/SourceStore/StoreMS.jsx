@@ -4,13 +4,7 @@ import { connect } from 'react-redux';
 import { getMSItems } from 'reducers/actions/itemMSActions';
 import PropTypes from 'prop-types';
 import StoreTable from 'component/SourceStore/StoreTable';
-
-import { io } from 'socket.io-client';
-const socket = io('/', {
-    'reconnection': true,
-    'reconnectionDelay': 500,
-    'reconnectionAttempts': 5
-});
+import { socket } from 'component/socket/socketContext';
 
 class MS extends React.Component {
     constructor(props) {
@@ -22,15 +16,13 @@ class MS extends React.Component {
     }
     componentDidMount() {
         socket.emit(`subscribe`, `StoreListingRoom`);
-
         this.props.getMSItems();
-        socket.on('MS Store Listings Update', () => {
+        socket.on('Store Listings Update', () => {
             this.props.getMSItems()
         })
     }
     componentWillUnmount() {
-        socket.emit(`unsubscribe`,`StoreListingRoom`)
-        socket.disconnect()
+        socket.emit(`unsubscribe`, `StoreListingRoom`)
     }
 
     render() {

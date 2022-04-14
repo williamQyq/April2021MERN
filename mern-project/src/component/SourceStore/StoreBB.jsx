@@ -1,16 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import 'component/SourceStore/Store.scss';
 import { connect } from 'react-redux';
 import { getBBItems } from 'reducers/actions/itemBBActions';
 import PropTypes from 'prop-types';
 import StoreTable from 'component/SourceStore/StoreTable';
+import { socket } from 'component/socket/socketContext';
 
-import { io } from 'socket.io-client';
-const socket = io('/', {
-    'reconnection': true,
-    'reconnectionDelay': 500,
-    'reconnectionAttempts': 5
-});
 
 class BB extends React.Component {
     constructor(props) {
@@ -22,15 +17,13 @@ class BB extends React.Component {
 
     componentDidMount() {
         socket.emit(`subscribe`, `StoreListingRoom`);
-
         this.props.getBBItems();
-        socket.on('BB Store Listings Update', () => {
+        socket.on('Store Listings Update', () => {
             this.props.getBBItems()
         })
     }
     componentWillUnmount() {
         socket.emit(`unsubscribe`, `StoreListingRoom`)
-        socket.disconnect()
     }
 
     render() {

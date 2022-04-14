@@ -7,6 +7,7 @@ import usersRouter from '#routes/api/users.js';
 import authRouter from '#routes/api/auth.js';
 import wmsRouter from '#routes/api/wms.js';
 import operationRouter from '#routes/api/operation.js';
+import { Server } from 'socket.io';
 
 //@Bodyparser Middleware
 const app = express();
@@ -38,4 +39,32 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
-export default server;
+// @Socket IO listner
+const io = new Server(server, { 'pingTimeout': 7000, 'pingInterval': 3000 });
+io.on("connection", (socket) => {
+    socket.on(`subscribe`, (room) => {
+        try {
+            socket.join(room);
+            console.log(`A user Connected: ${socket.id}. Joined Room: ${room}`)
+        } catch (e) {
+            console.error(`[Socket Error] join room error`, e)
+        }
+    })
+
+    socket.on(`unsubscribe`, (room) => {
+        try {
+            // const rooms = io.sockets.adapter.sids[socket.id]
+            socket.leave(room)
+            console.log(`A user ${socket.id} leaved room: ${room}`)
+        } catch (e) {
+            console.error(`[Socket Error] leave room error`, e)
+        }
+    })
+
+    socket.on(`disconnect`, () => {
+        console.log(`USER DISCONNECTED: ${socket.id}`);
+    })
+})
+
+
+export default io;

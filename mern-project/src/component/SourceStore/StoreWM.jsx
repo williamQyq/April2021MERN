@@ -4,13 +4,7 @@ import { connect } from 'react-redux';
 import { getWMItems as getItems } from 'reducers/actions/itemWMActions';
 import PropTypes from 'prop-types';
 import StoreTable from 'component/SourceStore/StoreTable';
-
-import { io } from 'socket.io-client';
-const socket = io('/', {
-    'reconnection': true,
-    'reconnectionDelay': 500,
-    'reconnectionAttempts': 5
-});
+import { socket } from 'component/socket/socketContext';
 
 class WM extends React.Component {
     constructor(props) {
@@ -21,7 +15,7 @@ class WM extends React.Component {
     }
 
     componentDidMount() {
-        socket.emit(`Store`, `StoreListingRoom`);
+        socket.emit(`subscribe`, `StoreListingRoom`);
 
         // this.props.getItems();
         // socket.on('WM Store Listings Update', () => {
@@ -30,7 +24,7 @@ class WM extends React.Component {
     }
     componentWillUnmount() {
         socket.emit(`unsubscribe`, `StoreListingRoom`)
-        socket.disconnect()
+        // socket.disconnect()
     }
 
     render() {

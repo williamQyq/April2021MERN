@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
-import { Server } from "socket.io";
-import app from './index.js';
+import io from './index.js';
 import wms from "./wms/wmsDatabase.js";    // @local wms server connection
 import scrapeScheduler from './bin/scrapeScheduler.js';    //scripts scheduler, node-cron
 // import { amazonScheduler } from './amazonSP/amazonSchedule.js';
@@ -8,33 +7,6 @@ import unitTest from './unit_test.js'   //For testing functionalities
 
 // @CREATE WMS CONNECTION
 wms.startService();
-
-// @Socket IO listner
-const io = new Server(app, { 'pingTimeout': 7000, 'pingInterval': 3000 });
-io.on("connection", (socket) => {
-    socket.on(`subscribe`, (room) => {
-        try {
-            socket.join(room);
-            console.log(`A user Connected: ${socket.id}. Joined Room: ${room}`)
-        } catch (e) {
-            console.error(`[Socket Error] join room error`, e)
-        }
-    })
-
-    socket.on(`unsubscribe`, (room) => {
-        try {
-            // const rooms = io.sockets.adapter.sids[socket.id]
-            socket.leave(room)
-            console.log(`A user ${socket.id} leaved room: ${room}`)
-        } catch (e) {
-            console.error(`[Socket Error] leave room error`, e)
-        }
-    })
-
-    socket.on(`disconnect`, () => {
-        console.log(`USER DISCONNECTED: ${socket.id}`);
-    })
-})
 
 //@Mongoose connection; Connect to Mongo.
 const mongoURI = process.env.DB_URI;
@@ -62,24 +34,24 @@ db.once('open', () => {
         // const doc = change.fullDocument;
         // console.log(`change fulldocument:=====`, JSON.stringify(change.fullDocument, null, 4))
         if (change.operationType === 'insert' || change.operationType === 'update' || change.operationType === 'delete') {
-            io.sockets.in(`StoreListingRoom`).emit(`BB Store Listings Update`, null)
+            io.sockets.in(`StoreListingRoom`).emit(`Store Listings Update`, null)
         }
     })
 
     msStoreListings.on('change', (change) => {
         if (change.operationType === 'insert' || change.operationType === 'update' || change.operationType === 'delete') {
-            io.sockets.in(`StoreListingRoom`).emit(`MS Store Listings Update`, null)
+            io.sockets.in(`StoreListingRoom`).emit(`Store Listings Update`, null)
         }
     })
 
     amzProdPricing.on('change', (change) => {
         if (change.operationType === 'insert' || change.operationType === 'update' || change.operationType === 'delete') {
-            io.sockets.in(`AmzRoom`).emit(`Amz Prod Pricing Update`, null)
+            io.sockets.in(`OperationRoom`).emit(`Prod Pricing Update`, null)
         }
     })
     itemSpec.on('change', (change) => {
         if (change.operationType === 'insert' || change.operationType === 'update' || change.operationType === 'delete') {
-            io.sockets.in(`StoreListingRoom`).emit(`BB Store Listings Update`, null)
+            io.sockets.in(`StoreListingRoom`).emit(`Store Listings Update`, null)
         }
     })
 
