@@ -1,13 +1,13 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import 'component/SourceStore/Store.scss';
 import { connect } from 'react-redux';
 import { getBBItems } from 'reducers/actions/itemBBActions';
 import PropTypes from 'prop-types';
 import StoreTable from 'component/SourceStore/StoreTable';
-import { socket } from 'component/socket/socketContext';
-
+import { SocketContext } from 'component/socket/socketContext';
 
 class BB extends React.Component {
+    static contextType = SocketContext  //This part is important to access context values which are socket
     constructor(props) {
         super(props);
         this.state = {
@@ -16,6 +16,7 @@ class BB extends React.Component {
     }
 
     componentDidMount() {
+        let socket = this.context;
         socket.emit(`subscribe`, `StoreListingRoom`);
         this.props.getBBItems();
         socket.on('Store Listings Update', () => {
@@ -23,6 +24,7 @@ class BB extends React.Component {
         })
     }
     componentWillUnmount() {
+        let socket = this.context;
         socket.emit(`unsubscribe`, `StoreListingRoom`)
     }
 

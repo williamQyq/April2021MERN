@@ -9,11 +9,12 @@ import { getProductPricing } from 'reducers/actions/operationActions.js';
 import OperationMenu from 'component/Operation/OperationMenu';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
-import { socket } from 'component/socket/socketContext';
+import { SocketContext } from 'component/socket/socketContext';
 
 const { Title } = Typography;
 
 class OperationProductList extends React.Component {
+    static contextType = SocketContext //This part is important to access context values which are socket
     constructor(props) {
         super(props);
         this.state = {
@@ -24,11 +25,11 @@ class OperationProductList extends React.Component {
             searchedColumn: '',
             editingKey: '',
         };
-        this.formRef = React.createRef()
     }
-
+    formRef = React.createRef()
 
     componentDidMount() {
+        let socket = this.context
         socket.emit(`subscribe`, `OperationRoom`);
         this.props.getProductPricing()
         socket.on(`Prod Pricing Update`, () => {
@@ -36,8 +37,8 @@ class OperationProductList extends React.Component {
         })
     }
     componentWillUnmount() {
+        let socket = this.context
         socket.emit(`unsubscribe`, `OperationRoom`)
-        // socket.disconnect()
     }
     isLoading = () => {
         const { loading } = this.props;

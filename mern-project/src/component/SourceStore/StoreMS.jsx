@@ -4,9 +4,10 @@ import { connect } from 'react-redux';
 import { getMSItems } from 'reducers/actions/itemMSActions';
 import PropTypes from 'prop-types';
 import StoreTable from 'component/SourceStore/StoreTable';
-import { socket } from 'component/socket/socketContext';
+import { SocketContext } from 'component/socket/socketContext';
 
 class MS extends React.Component {
+    static contextType = SocketContext
     constructor(props) {
         super(props);
         this.state = {
@@ -14,7 +15,9 @@ class MS extends React.Component {
         };
 
     }
+
     componentDidMount() {
+        let socket = this.context;
         socket.emit(`subscribe`, `StoreListingRoom`);
         this.props.getMSItems();
         socket.on('Store Listings Update', () => {
@@ -22,6 +25,7 @@ class MS extends React.Component {
         })
     }
     componentWillUnmount() {
+        let socket = this.context;
         socket.emit(`unsubscribe`, `StoreListingRoom`)
     }
 

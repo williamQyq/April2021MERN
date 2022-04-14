@@ -1,21 +1,21 @@
-import { createContext, useState } from "react";
+import { createContext} from "react";
 import { io } from "socket.io-client";
 
-export const SocketContext = createContext();
 
 //client socket
-export const socket = io('/', {
+const socket = io('/', {
     'reconnection': true,
     'reconnectionDelay': 500,
     'reconnectionAttempts': 5
 });
+export const SocketContext = createContext();
 
 export const SocketProvider = (props) => {
-    const [value, setValue] = useState('')
+    // const [value, setValue] = useState('')
 
-    
+
     return (
-        <SocketContext.Provider value={value}>
+        <SocketContext.Provider value={socket}>
             {props.children}
         </SocketContext.Provider>
     );

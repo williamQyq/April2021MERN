@@ -4,9 +4,10 @@ import { connect } from 'react-redux';
 import { getWMItems as getItems } from 'reducers/actions/itemWMActions';
 import PropTypes from 'prop-types';
 import StoreTable from 'component/SourceStore/StoreTable';
-import { socket } from 'component/socket/socketContext';
+import { SocketContext } from 'component/socket/socketContext';
 
 class WM extends React.Component {
+    static contextType = SocketContext //This part is important to access context values which are socket
     constructor(props) {
         super(props);
         this.state = {
@@ -15,6 +16,7 @@ class WM extends React.Component {
     }
 
     componentDidMount() {
+        let socket = this.context;
         socket.emit(`subscribe`, `StoreListingRoom`);
 
         // this.props.getItems();
@@ -23,6 +25,7 @@ class WM extends React.Component {
         // })
     }
     componentWillUnmount() {
+        let socket = this.context;
         socket.emit(`unsubscribe`, `StoreListingRoom`)
         // socket.disconnect()
     }
