@@ -12,9 +12,10 @@ import { connect } from 'react-redux';
 import HomeContent from 'component/Home/HomeContent.jsx';
 import HomeHeader from 'component/Home/HomeHeader.jsx';
 import HomeSider from 'component/Home/HomeSider.jsx';
+import { SocketContext } from 'component/socket/socketContext';
 
 class Home extends React.Component {
-
+  static contextType = SocketContext
   constructor(props) {
     super(props)
     this.state = {
@@ -28,6 +29,8 @@ class Home extends React.Component {
 
   handleLogOut = () => {
     this.props.logout();
+    let socket = this.context;
+    socket.disconnect()
   }
 
   toggle = (collapsed) => {
