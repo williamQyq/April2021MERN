@@ -284,33 +284,52 @@ io.on("connection", (socket) => {
     //new store socket join to room    
     socket.on(`Store`, (room) => {
         socket.join(room);
-        socketRoomMap.set(socket.id, room)
         console.log(`A user Connected: ${socket.id}. Joined Room: ${socketRoomMap.get(socket.id)}`)
     })
-
 
     //on disconnect
     socket.on(`disconnect`, () => {
         console.log(`USER DISCONNECTED. Quit Room：${socketRoomMap.get(socket.id)}`);
-        socketRoomMap.delete(socket.id)
     })
 })
 
 
 //client side
-import { io } from 'socket.io-client';
-const socket = io('/', {
-    'reconnection': true,
-    'reconnectionDelay': 500,
-    'reconnectionAttempts': 5
-});
-socket.emit(`Store`, `StoreListingRoom`);
+//socketContext.js
+export socketContext = React.createContext()
+export const SocketProvider = (props) => {
+    //client socket
+    const socket = io('/', {
+        'reconnection': true,
+        'reconnectionDelay': 500,
+        'reconnectionAttempts': 5
+    });
 
-socket.on('BB Store Listings Update', () => {
-        //...do something
-})
+    return (
+        <SocketContext.Provider value={socket}>
+            {props.children}
+        </SocketContext.Provider>
+    );
+}
+//wrap component
+//App.js
+<SocketProvider> <Home/> </SocketProvider>
 
+//Home.js
+import {socketContext} from 'socketContext.js'
+class Home extends React.Component{
+        static contextType = SocketContext
+
+        componentDidMount(){
+                let socket = this.context;
+                socket.emit(`Store`, `StoreListingRoom`);
+                socket.on('Store Listings Update', () => {
+                        //...do something
+                })
+        }
+}
 ```
+For more information of using React Context with Socket.io, refer to [alex hays blog](https://alexboots.medium.com/using-react-context-with-socket-io-3b7205c86a6d)
 
 ---
 ## Amazon Selling Partner API

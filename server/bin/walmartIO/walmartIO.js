@@ -47,13 +47,15 @@ export const getProductById = async (productId) => {
         method: "GET",
         headers: generateWalmartHeaders(),
     };
-
+    // [relevance, price, title, bestseller, customerRating, new]
     const res = await fetch(
         // `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/items/${productId}?publisherId=${keyData.impactId}`,
         // `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/paginated/items?category=3944_3951_1089430_1230091_1094888&count=200&brand=Hp`, //suggestion url
         // `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/taxonomy`,
-        // `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/search?query=laptop`,
-        `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/paginated/items?category=3944_3951_1089430&count=10&brand=Asus&soldByWmt=true&available=true`,
+        `https://sandbox.walmartapis.com/v3/insights/items/trending`,
+        // `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/search?query=laptop&sort=bestseller`,
+        // `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/paginated/items?category=3944_3951_1089430&count=10&brand=Asus&soldByWmt=true&available=true`,
+        // `https://developer.api.walmart.com/api-proxy/service/affil/product/v2/trends?&category=3944`,
 
         options
     );
