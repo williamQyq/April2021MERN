@@ -17,7 +17,6 @@ export const getMicrosoftLaptops = async () => {
     let page = await store.initPage(browser);
     let storeUrl = store.initURL(skipItemsNum)
     let { pagesNum, numPerPage } = await store.getPagesNum(page, storeUrl)    //puppeteer script get web footer contains page numbers.
-
     //for each page, get items and save to database
     for (let i = 0; i < pagesNum; i++) {
         let pageUrl = store.initURL(skipItemsNum)
