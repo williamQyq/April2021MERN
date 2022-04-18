@@ -1,9 +1,8 @@
 import express from 'express';
 const router = express.Router();
 import auth from '#middleware/auth.js';
-import { getSellingPartnerProdPricing } from '#amz/amazonSchedule.js';
-import { findAllProdPricing, upsertProdPricingNewAsin } from '#query/utilities.js';
-
+import { upsertProdPricingNewAsin } from '#query/utilities.js';
+import { updateProdPricingCatalogItems } from '#amz/SPAPI/SP.js';
 // @route GET api/amazonSP
 // @desc: get all amazon seller central sync product pricing offers 
 router.get('/', (req, res) => {
@@ -16,11 +15,8 @@ router.post('/upload/asins-mapping', (req, res) => {
     const { uploadFile } = req.body
     console.log(`=======received file:======\n${JSON.stringify(uploadFile)}\n\n`)
     processMappingFile(uploadFile)
-        .then(() => res.json('success'))
-        .then(() => findAllProdPricing())
-        .then(prods => {
-            getSellingPartnerProdPricing(prods)
-        })
+        .then(() => { res.json('success') })
+        .then(() => updateProdPricingCatalogItems())
         .catch(e => {
             console.log(`error:`, e)
             res.status(400).json({ msg: 'Upload File contains Invalid Input' })
