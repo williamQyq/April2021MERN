@@ -1,5 +1,4 @@
 import React from 'react';
-import 'component/SourceStore/Store.scss';
 import { connect } from 'react-redux';
 import { getBBItems } from 'reducers/actions/itemBBActions';
 import PropTypes from 'prop-types';

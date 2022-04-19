@@ -1,5 +1,4 @@
 import React from 'react';
-import 'component/SourceStore/Store.scss';
 import { connect } from 'react-redux';
 import { getMSItems } from 'reducers/actions/itemMSActions';
 import PropTypes from 'prop-types';
