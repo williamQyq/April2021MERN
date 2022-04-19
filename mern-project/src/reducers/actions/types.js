@@ -18,7 +18,7 @@ export const COSTCO = 'COSTCO';
 export const GET_BB_ITEMS = 'GET_BB_ITEMS';
 export const GET_BB_ITEM_DETAIL = 'GET_BB_ITEM_DETAIL';
 export const ADD_BB_ITEM_SPEC = 'GET_BB_ITEM_SPEC';
-
+export const ITEMS_LOADING_BB = 'ITEMS_LOADING_BB';
 /* 
 @CC STATUS 
 */
@@ -30,6 +30,7 @@ export const GET_CC_ITEMS = 'GET_BB_ITEMS';
 export const GET_MS_ITEMS = 'GET_MS_ITEMS';
 export const GET_MS_ITEM_DETAIL = 'GET_MS_ITEM_DETAIL';
 export const ADD_MS_ITEM_SPEC = 'GET_BB_ITEM_SPEC';
+export const ITEMS_LOADING_MS= 'ITEMS_LOADING_MS';
 
 /* 
 @WM STATUS
@@ -37,6 +38,7 @@ export const ADD_MS_ITEM_SPEC = 'GET_BB_ITEM_SPEC';
 export const GET_WM_ITEMS = 'GET_WM_ITEMS';
 export const GET_WM_ITEM_DETAIL = 'GET_WM_ITEM_DETAIL';
 export const ADD_WM_ITEM_SPEC = 'GET_WM_ITEM_SPEC';
+export const ITEMS_LOADING_WM='ITEMS_LOADING_WM';
 
 // @AUTHENTICATE STATUS
 export const USER_LOADING = 'USER_LOADING';
@@ -55,9 +57,10 @@ export const KEEPA_LOADING = 'KEEPA_LOADING';
 export const GET_KEEPA_STAT = 'GET_KEEPA_STAT';
 
 // @OPERATION: AMAZON
-export const RES_LOADING = 'RES_LOADING';
+export const PRODUCT_LIST_LOADING = 'RES_LOADING';
 export const RES_LOADED = 'RES_LOADED';
 export const GET_AMZ_PROD_PRICING = 'GET_AMZ_PROD_PRICING';
+
 
 // @OPERATION: UPLOAD
 export const UPLOAD_ASINS_MAPPING = 'UPLOAD_MAPPING';

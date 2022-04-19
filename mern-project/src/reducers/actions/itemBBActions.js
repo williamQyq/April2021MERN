@@ -3,9 +3,9 @@ import Moment from 'moment';
 import {
     GET_BB_ITEMS,
     GET_BB_ITEM_DETAIL,
-    ITEMS_LOADING,
     SET_TABLE_STATE,
     GET_ERRORS,
+    ITEMS_LOADING_BB,
 } from './types';
 
 export const getBBItems = () => dispatch => {
@@ -28,7 +28,7 @@ export const getBBItems = () => dispatch => {
 
 export const setItemsLoading = () => {
     return {
-        type: ITEMS_LOADING
+        type: ITEMS_LOADING_BB
     };
 };
 

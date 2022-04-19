@@ -2,8 +2,8 @@ import axios from 'axios';
 import Papa from "papaparse";
 import {
     GET_AMZ_PROD_PRICING,
-    RES_LOADING,
     UPLOAD_ASINS_MAPPING,
+    PRODUCT_LIST_LOADING
     // GET_ERRORS,
 } from './types';
 
@@ -72,6 +72,6 @@ export const uploadAsinsMapping = (file) => dispatch => {
 
 const setResLoading = () => {
     return {
-        type: RES_LOADING
+        type: PRODUCT_LIST_LOADING
     };
 }

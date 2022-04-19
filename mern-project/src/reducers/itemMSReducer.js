@@ -1,6 +1,6 @@
 import {
     GET_MS_ITEMS,
-    ITEMS_LOADING,
+    ITEMS_LOADING_MS,
 } from './actions/types';
 
 const initialState = {
@@ -16,7 +16,7 @@ export default function Reducer(state = initialState, action) {
                 items: action.payload,
                 loading: false
             };
-        case ITEMS_LOADING:
+        case ITEMS_LOADING_MS:
             return {
                 ...state,
                 loading: true

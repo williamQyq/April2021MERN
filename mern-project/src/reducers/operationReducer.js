@@ -1,7 +1,7 @@
 import {
     GET_AMZ_PROD_PRICING,
-    RES_LOADING,
     UPLOAD_ASINS_MAPPING,
+    PRODUCT_LIST_LOADING
     // GET_ITEM_SPEC,
 } from './actions/types';
 
@@ -19,7 +19,7 @@ export default function Reducer(state = initialState, action) {
                 loading: false
             };
 
-        case RES_LOADING:
+        case PRODUCT_LIST_LOADING:
             return {
                 ...state,
                 loading: true

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Moment from 'moment';
-import { GET_MS_ITEMS, GET_MS_ITEM_DETAIL, ITEMS_LOADING } from './types';
+import { GET_MS_ITEMS, GET_MS_ITEM_DETAIL, ITEMS_LOADING_MS } from './types';
 
 export const getMSItems = () => dispatch => {
     dispatch(setItemsLoading());
@@ -22,7 +22,7 @@ export const getMSItems = () => dispatch => {
 
 export const setItemsLoading = () => {
     return {
-        type: ITEMS_LOADING
+        type: ITEMS_LOADING_MS
     };
 };
 

@@ -3,7 +3,7 @@ import Moment from 'moment';
 import {
     GET_WM_ITEMS,
     GET_WM_ITEM_DETAIL,
-    ITEMS_LOADING,
+    ITEMS_LOADING_WM,
     SET_TABLE_STATE,
     GET_ERRORS,
 } from './types';
@@ -28,7 +28,7 @@ export const getWMItems = () => dispatch => {
 
 export const setItemsLoading = () => {
     return {
-        type: ITEMS_LOADING
+        type: ITEMS_LOADING_WM
     };
 };
 

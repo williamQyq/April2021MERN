@@ -1,6 +1,6 @@
 import {
     GET_WM_ITEMS,
-    ITEMS_LOADING,
+    ITEMS_LOADING_WM,
     ADD_WM_ITEM_SPEC,
 } from './actions/types';
 
@@ -18,7 +18,7 @@ export default function Reducer(state = initialState, action) {
                 loading: false
             };
 
-        case ITEMS_LOADING:
+        case ITEMS_LOADING_WM:
             return {
                 ...state,
                 loading: true
