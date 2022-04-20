@@ -3,8 +3,8 @@ import 'component/SourceStore/Store.scss';
 import { Table, Input, Button, Space } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined, } from '@ant-design/icons';
-import { locateSearchedItem, scrollToTableRow, StoreHeader } from 'component/SourceStore/StoreTableUtilities';
-import { tableColumns } from 'component/SourceStore/StoreTableUtilities';
+import { locateSearchedItem, scrollToTableRow, ContentHeader } from 'component/SourceStore/StoreTableUtilities';
+import { TableColumns } from 'component/SourceStore/StoreTableUtilities';
 
 
 export default class StoreTable extends React.Component {
@@ -23,7 +23,7 @@ export default class StoreTable extends React.Component {
     componentDidMount() {
         this.handleScrollPosition(this.props.items, this.props.tableState);
     }
-    
+
     handleScrollPosition = (items, clickHistory) => {
         if (clickHistory) {
             let itemHistory = locateSearchedItem(items, clickHistory.clickedId)
@@ -84,7 +84,7 @@ export default class StoreTable extends React.Component {
                     isValueIncluded = record[dataIndex]
                         ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
                         : ''
-                    if (isValueIncluded) {  
+                    if (isValueIncluded) {
                         return true;    //if value is includes in searched data Index multi, return true -- the row includes the value will be rendered
                     }
                 }
@@ -138,12 +138,12 @@ export default class StoreTable extends React.Component {
     render() {
         const { items, store } = this.props
         const { loading } = this.state;
-        const columns = tableColumns(this.getColumnSearchProps, store);
+        const columns = TableColumns(this.getColumnSearchProps, store);
         const scroll = { y: "calc(100vh - 335px)" };
 
         return (
             <>
-                <StoreHeader storeName={store} isLoading={loading} />
+                <ContentHeader title={store} isLoading={loading} />
                 <Table
                     showSorterTooltip={false}
                     columns={columns}

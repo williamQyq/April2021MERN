@@ -5,8 +5,8 @@ import {
   Switch,
   Route,
 } from "react-router-dom";
-import SignIn from 'component/SignIn.js';
-import ErrorPage from 'component/ErrorPage.js';
+import SignIn from 'component/auth/SignIn.js';
+import ErrorPage from 'component/utility/ErrorPage.js';
 import PrivateRoute from 'component/auth/PrivateRoute.js';
 import { loadUser } from 'reducers/actions/authActions.js';
 import { connect } from 'react-redux';

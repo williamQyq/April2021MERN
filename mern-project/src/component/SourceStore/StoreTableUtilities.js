@@ -49,8 +49,13 @@ export const scrollToTableRow = (document, row) => {
     v.scrollTop = tableRowHight * (row - 3);
 }
 
-export const tableColumns = (getColumnSearchProps, storeName) => {
+export const TableColumns = (getColumnSearchProps, storeName) => {
     //create columns data based on dataIndex
+    // const dispatch = useDispatch();
+    // const handleActionDropDownClicked = (storeName, recordId) => {
+    //     dispatch(setTableState(storeName, recordId))
+    // }
+
     return (
         [
             {
@@ -115,18 +120,15 @@ export const tableColumns = (getColumnSearchProps, storeName) => {
                 key: 'action',
                 width: '10%',
                 render: (text, record) => (
-                    <Space size="middle">
                         <Dropdown
                             trigger={["click"]}
                             overlay={
                                 ActionMenu({ record, storeName })
                             }
                             placement="bottomCenter">
-                            <TypoLink  >
-                                More Actions <DownOutlined />
-                            </TypoLink>
+                            <TypoLink >More Actions <DownOutlined /></TypoLink>
+
                         </Dropdown>
-                    </Space>
                 ),
             },
 
@@ -139,11 +141,26 @@ message.config = {
     maxCount: 3
 }
 
+// const MoreActions = (props) => {
+//     const { store, recordId } = props
+//     const dispatch = useDispatch();
+
+//     const handleActionsClick = () => {
+//         dispatch(setTableState(store, recordId))
+//     }
+
+//     return (
+//         <TypoLink onClick={handleActionsClick}>More Actions <DownOutlined /></TypoLink>
+
+//     )
+
+// }
+
 const ActionMenu = (props) => {
 
     const { record, storeName } = props
     const location = useLocation();
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
 
     const path = location.pathname;
 
@@ -169,22 +186,23 @@ const ActionMenu = (props) => {
 
                 </Button>
             </Menu.Item>
-            <Menu.Item key="GetItemDetail">
 
+            <Menu.Item key="GetItemDetail">
                 <Button {...buttonSetting} onClick={saveActionHistory}>
                     <Link to={`${path}/item-detail`} className="action-link">
                         <SearchOutlined />
                         Detail
                     </Link>
                 </Button>
-
             </Menu.Item>
+
             <Menu.Item key="AddToCart">
                 <Button disabled {...buttonSetting}>
                     <ShoppingCartOutlined />
                     Cart
                 </Button>
             </Menu.Item>
+
             <Menu.Item key="GetOnlineSpec">
                 <Button {...buttonSetting} onClick={() => {
                     saveActionHistory();
@@ -198,11 +216,11 @@ const ActionMenu = (props) => {
     );
 }
 
-export const StoreHeader = ({ storeName, isLoading }) => (
+export const ContentHeader = ({ title, isLoading }) => (
     <>
         <Row gutter={16} style={{ alignItems: 'center' }}>
             <Col>
-                <Title level={4}>{storeName}</Title>
+                <Title level={4}>{title}</Title>
             </Col>
             <Col>
                 <ErrorAlert />
@@ -216,6 +234,24 @@ export const StoreHeader = ({ storeName, isLoading }) => (
         <Divider />
     </>
 );
+
+export const SubContentHeader = ({ title, isLoading }) => {
+    return (
+        <>
+            <Row gutter={16} style={{ alignItems: 'center' }}>
+                <Col>
+                    <Title level={4}>{title}</Title>
+                </Col>
+                {/* <Col>
+                    <Button type="primary" disabled={isLoading} loading={isLoading}>
+                        Retrieve Now
+                    </Button>
+                </Col> */}
+            </Row>
+            <Divider />
+        </>
+    );
+}
 
 export const ErrorAlert = () => {
     const { status, msg } = useSelector((state) =>

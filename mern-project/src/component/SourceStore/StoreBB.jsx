@@ -2,15 +2,17 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { getBBItems } from 'reducers/actions/itemBBActions';
 import PropTypes from 'prop-types';
-import StoreTable from 'component/SourceStore/StoreTable';
-import { SocketContext } from 'component/socket/socketContext';
+import { SocketContext } from 'component/socket/socketContext.js';
+import StoreTable from 'component/SourceStore/StoreTable.jsx';
+import StoreAnalyticCards from 'component/SourceStore/StoreAnalyticCards.jsx'
+
 
 class BB extends React.Component {
     static contextType = SocketContext  //This part is important to access context values which are socket
     constructor(props) {
         super(props);
         this.state = {
-            store: "BESTBUY"
+            store: "BESTBUY",
         }
     }
 
@@ -30,7 +32,10 @@ class BB extends React.Component {
     render() {
         const { store } = this.state;
         return (
-            <StoreTable {...this.props} store={store} />
+            <>
+                <StoreTable {...this.props} store={store} />
+                <StoreAnalyticCards />
+            </>
         )
     }
 }
