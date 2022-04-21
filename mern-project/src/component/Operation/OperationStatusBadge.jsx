@@ -52,7 +52,7 @@ export const MainStatusBadge = ({ record }) => {
 
 }
 const SubStatusBadge = ({ record }) => {
-    return <Badge />
+    return <Badge status="processing"/>
 }
 
 

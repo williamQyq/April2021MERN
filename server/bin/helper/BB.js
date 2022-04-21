@@ -129,27 +129,28 @@ export default class Bestbuy extends Stores {
         const NAME_LIST_EXPR = SKU_LIST_EXPR + '//h4[@class="sku-header"]/a'
         const SKU_ATTRIBUTE_ID = "data-sku-id"
 
-        const siteLink = 'https://www.bestbuy.com/site/***sku***.p?skuId=***sku***'
-
         let skuAttrLists = await this.evaluateItemAttribute(page, SKU_LIST_EXPR, SKU_ATTRIBUTE_ID)
         let priceTextLists = await this.evaluateElementsText(page, PRICE_LIST_EXPR)
         let nameLists = await this.evaluateElementsText(page, NAME_LIST_EXPR)
 
         //Parsed Array<Item>
         let itemsArray = skuAttrLists.map((sku, index) => {
-            let link = siteLink.replace(/\*\*\*sku\*\*\*/g, sku)
+            let link = this.generateSiteLink(sku);
+            let currentPrice = this.validatePrice(priceTextLists[index])
             let name = nameLists[index]
-            let currentPrice = Number(priceTextLists[index].replace(/[\s|$|,]/g, ""))
-            let item = {
-                link,
-                sku,
-                currentPrice,
-                name
-            }
+
+            let item = { link, sku, currentPrice, name }
             return item;
         })
-        
+
         return itemsArray;
+    }
+
+    generateSiteLink(sku) {
+        return (`https://api.bestbuy.com/click/-/${sku}/pdp`)
+    }
+    validatePrice(priceText) {
+        return Number(priceText.replace(/[\s|$|,]/g, ""))
     }
 
     /* 
