@@ -32,7 +32,7 @@ export const mainColumnGroup = (actions) => {
                 ,
                 ...getColumnSearchProps('wmsQuantity'),
                 // defaultSortOrder: setTableState.wmsQuantity,
-                sortDirections: ['descend', 'ascend', 'descend']
+                // sortDirections: ['descend', 'ascend', 'descend']
             },
             {
                 title: 'Unit Cost',
@@ -84,7 +84,7 @@ export const nestedColumnGroup = (actions) => [
         editable: false,
         filters: [
             {
-                text: 'FBA',
+                text: 'Amazon',
                 value: 'AMAZON',
             },
             {
@@ -92,6 +92,8 @@ export const nestedColumnGroup = (actions) => [
                 value: 'MERCHANT',
             },
         ],
+        onFilter: (value, record) => record.FulfillmentChannel.includes(value)
+
     },
     {
         title: 'Amazon Regular Price',
