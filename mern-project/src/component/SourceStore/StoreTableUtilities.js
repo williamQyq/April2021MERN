@@ -3,7 +3,6 @@ import {
     Button,
     Typography,
     Tooltip,
-    Space,
     Dropdown,
     Row,
     Col,
@@ -48,6 +47,18 @@ export const scrollToTableRow = (document, row) => {
     let v = document.getElementsByClassName("ant-table-body")[0];
     v.scrollTop = tableRowHight * (row - 3);
 }
+
+export const defaultTableSettings = {
+    showSorterTooltip: false,
+    pagination: {
+        defaultPageSize: 100,
+        showSizeChanger: true,
+        pageSizeOptions: ['10', '20', '50', '100'],
+    },
+    scroll: { y: "calc(100vh - 335px)" }
+
+}
+
 
 export const TableColumns = (getColumnSearchProps, storeName) => {
     //create columns data based on dataIndex
@@ -120,15 +131,15 @@ export const TableColumns = (getColumnSearchProps, storeName) => {
                 key: 'action',
                 width: '10%',
                 render: (text, record) => (
-                        <Dropdown
-                            trigger={["click"]}
-                            overlay={
-                                ActionMenu({ record, storeName })
-                            }
-                            placement="bottomCenter">
-                            <TypoLink >More Actions <DownOutlined /></TypoLink>
+                    <Dropdown
+                        trigger={["click"]}
+                        overlay={
+                            ActionMenu({ record, storeName })
+                        }
+                        placement="bottomCenter">
+                        <TypoLink >More Actions <DownOutlined /></TypoLink>
 
-                        </Dropdown>
+                    </Dropdown>
                 ),
             },
 

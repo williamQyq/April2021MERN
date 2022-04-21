@@ -14,7 +14,7 @@ import {
     LAST_PRICE
 } from './aggregate.js';
 //@itemSpec
-export const saveItemConfiguration = (config, sku) => {
+export const saveItemConfiguration = async (config, sku) => {
 
     const query = { upc: config.UPC, sku: sku }
     const update = {
@@ -23,12 +23,13 @@ export const saveItemConfiguration = (config, sku) => {
         }
     }
     const option = { upsert: true, useFindAndModify: false }
-    return ItemSpec.findOneAndUpdate(query, update, option)
+    let res = await ItemSpec.findOneAndUpdate(query, update, option)
+    return res ? true : false
 }
 //@itemSpec
-export const findItemConfig = async (sku) => {
-    const res = await ItemSpec.findOne({ sku: sku })
-    return res ? res : false
+export const itemConfigHasDocument = async (sku) => {
+    let res = await ItemSpec.findOne({ sku: sku })
+    return res ? true : false
 }
 //@StoreListings -----------------------------
 export const saveStoreItemToDatabase = async (item, storeModel) => {

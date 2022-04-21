@@ -3,6 +3,7 @@ const router = express.Router();
 import auth from '#middleware/auth.js';
 import { upsertProdPricingNewAsin, findAllProdPricing } from '#query/utilities.js';
 import { updateProdPricingCatalogItems } from '#amz/SPAPI/SP.js';
+
 // @route GET api/amazonSP
 // @desc: get all amazon seller central sync product pricing offers 
 router.get('/', (req, res) => {
@@ -38,6 +39,5 @@ const processMappingFile = async (file) => {
     })
     )
 }
-
 
 export default router;

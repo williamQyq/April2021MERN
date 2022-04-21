@@ -3,7 +3,7 @@ import 'component/SourceStore/Store.scss';
 import { Table, Input, Button, Space } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined, } from '@ant-design/icons';
-import { locateSearchedItem, scrollToTableRow, ContentHeader } from 'component/SourceStore/StoreTableUtilities';
+import { locateSearchedItem, scrollToTableRow, ContentHeader, defaultTableSettings } from 'component/SourceStore/StoreTableUtilities';
 import { TableColumns } from 'component/SourceStore/StoreTableUtilities';
 
 
@@ -139,21 +139,13 @@ export default class StoreTable extends React.Component {
         const { items, store } = this.props
         const { loading } = this.state;
         const columns = TableColumns(this.getColumnSearchProps, store);
-        const scroll = { y: "calc(100vh - 335px)" };
-
         return (
             <>
                 <ContentHeader title={store} isLoading={loading} />
                 <Table
-                    showSorterTooltip={false}
+                    {...defaultTableSettings}
                     columns={columns}
                     dataSource={items}
-                    pagination={{
-                        defaultPageSize: 100,
-                        showSizeChanger: true,
-                        pageSizeOptions: ['10', '20', '50', '100']
-                    }}
-                    scroll={scroll}
                 />
             </>
         )

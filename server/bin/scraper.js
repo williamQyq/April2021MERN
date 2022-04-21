@@ -113,7 +113,7 @@ export const getItemConfiguration = async (store, url) => {
 
     await page.close();
     await browser.close();
-    console.log(`[getItemConfiguration]:\n${JSON.stringify(spec, null, 4)}`)
+    console.log(`[getItemConfiguration]:\n${JSON.stringify(spec, null, 4)}\n Finished`)
     return spec
 }
 

@@ -1,7 +1,10 @@
 import { Form, Radio, Switch } from 'antd';
 import OperationNestedTable from 'component/Operation/OperationProductListNestedTable.jsx';
+import { Typography } from 'antd';
 
-export const title = () => 'Upload your asins to view detail';
+const { Title } = Typography;
+
+export const title = () => <Title level={4}>All Products</Title>
 export const footer = () => 'Here is footer';
 
 export const expandable = {
@@ -20,7 +23,7 @@ export const defaultSettings = {
     top: 'topRight',
     bottom: 'bottomRight',
     rowKey: "_id",
-    tableLayout: undefined,
+    tableLayout: "fixed",
     title,
     footer,
     expandable,

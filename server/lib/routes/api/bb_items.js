@@ -6,8 +6,10 @@ import {
     saveItemConfiguration,
     getStoreItemDetailById,
     getStoreItems,
-    findItemConfig
+    itemConfigHasDocument
 } from '#query/utilities.js';
+import { getMostViewedOnCategoryId, getViewedUltimatelyBought } from '#bin/bestbuyIO/bestbuyIO.js';
+
 
 const router = express.Router();
 
@@ -26,41 +28,37 @@ router.get('/detail/:_id', (req, res) => {
         });
 });
 
-router.put('/itemSpec/add', async (req, res) => {
-    let message;
+router.put('/itemSpec/add', (req, res) => {
     const { link, sku } = req.body;
-    let bestbuy = new Bestbuy()
+    let bestbuy = new Bestbuy();
+    let message = { status: undefined, msg: undefined, id: undefined };
 
-    let doc = await findItemConfig(sku)
-    if (!doc) {
-        try {
-            let item = await getItemConfiguration(bestbuy, link)
-            console.log(`[${item.UPC}] Get item config request finished.`)
 
-            await saveItemConfiguration(item, sku)
-            message = {
-                status: "success",
-                msg: "Upsert item config finished.",
-                id: item.UPC
+    itemConfigHasDocument(sku)
+        .then(hasDoc => {
+            if (hasDoc) {
+                message = {
+                    status: "warning",
+                    msg: "Item config already exists.",
+                    id: doc.upc
+                }
+                throw message
             }
-        } catch (e) {
+        })
+        .then(() => getItemConfiguration(bestbuy, link).catch(e => {
             message = {
                 status: "error",
                 msg: "Get item spec failed.",
                 id: null
             }
-            console.error(`[getItemConfig] Get item config error ${sku}`)
-        }
-    } else {
-        console.log(`[itemSpec add req]Item config already exists: ${doc.upc}.`)
-        message = {
-            status: "warning",
-            msg: "Item config already exists.",
-            id: doc.upc
-        }
-    }
-
-    res.json(message)
+            throw message;
+        }))
+        .then((config) => saveItemConfiguration(config, sku).then(() => { return config.UPC }))
+        .then((upc) => res.json({ status: "success", msg: "Upsert item config finished.", id: upc }))
+        .catch(errorMsg => {
+            console.error(`[ERROR] Get item config error\n`, errorMsg)
+            res.json(errorMsg)
+        })
 })
 
 export default router;
