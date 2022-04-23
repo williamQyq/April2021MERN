@@ -6,6 +6,9 @@ import {
     SET_TABLE_STATE,
     GET_ERRORS,
     ITEMS_LOADING_BB,
+    MOST_VIEWED_ITEMS_LOADING,
+    GET_BB_MOST_VIEWED_ITEMS,
+    GET_BB_VIEWED_ULTIMATELY_BOUGHT_ITEMS
 } from './types';
 
 export const getBBItems = () => dispatch => {
@@ -26,7 +29,7 @@ export const getBBItems = () => dispatch => {
     )
 };
 
-export const setItemsLoading = () => {
+const setItemsLoading = () => {
     return {
         type: ITEMS_LOADING_BB
     };
@@ -59,3 +62,32 @@ export const setTableSettings = (store, clickedId) => dispatch => {
         }
     })
 }
+
+export const getMostViewedOnCategoryId = (categoryId) => dispatch => {
+    dispatch(setMostViewedItemsLoading());
+    axios.get(`/api/bb_items/mostViewed/${categoryId}`).then(res => {
+
+        dispatch({
+            type: GET_BB_MOST_VIEWED_ITEMS,
+            payload: res.data
+        })
+    })
+
+}
+
+export const getViewedUltimatelyBoughtOnSku = (sku) => dispatch => {
+    dispatch(setMostViewedItemsLoading());
+    axios.get(`/api/bb_items/viewedUltimatelyBought/${sku}`).then(res => {
+        dispatch({
+            type: GET_BB_VIEWED_ULTIMATELY_BOUGHT_ITEMS,
+            payload: res.data
+        })
+    })
+
+}
+
+const setMostViewedItemsLoading = () => {
+    return {
+        type: MOST_VIEWED_ITEMS_LOADING
+    };
+};

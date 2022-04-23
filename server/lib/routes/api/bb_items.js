@@ -61,4 +61,19 @@ router.put('/itemSpec/add', (req, res) => {
         })
 })
 
+router.get('/mostViewed/:categoryId', (req, res) => {
+    console.log(req.params.categoryId)
+    getMostViewedOnCategoryId(req.params.categoryId)
+        .then(result => {
+            res.json(result)
+        })
+});
+
+router.get('/viewedUltimatelyBought/:sku', (req, res) => {
+    getViewedUltimatelyBought(req.params.sku)
+        .then(result => {
+            res.json(result)
+        })
+})
+
 export default router;
