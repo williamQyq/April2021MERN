@@ -4,17 +4,18 @@ const DEFAULT_PAGE_SIZE = 50;
 
 export const getMostViewedOnCategoryId = async (categoryId, pageSize = DEFAULT_PAGE_SIZE) => {
 
-    let param = {
-        params: {
-            apiKey: BESTBUY_API_KEY,
-            format: 'json',
-            pageSize
-        }
+    let params = {
+        apiKey: BESTBUY_API_KEY,
+        format: 'json',
+        pageSize,
     }
 
+
     //axios GET request to retrieve mostViewed product
-    let mostViewedProducts = await axios.get(`https://api.bestbuy.com/v1/products/mostViewed(categoryId=${categoryId})`, param).then(res => {
+    let categoryUrl = `https://api.bestbuy.com/v1/products/mostViewed(categoryId=${categoryId})`;
+    let mostViewedProducts = await axios.get(categoryUrl, { params }).then(res => {
         let { results } = res.data;
+        console.log(results)
         let isEmptyResult = results.length == 0 ? true : false
 
         if (isEmptyResult) {

@@ -53,7 +53,9 @@ router.put('/itemSpec/add', (req, res) => {
             }
             throw message;
         }))
-        .then((config) => saveItemConfiguration(config, sku).then(() => { return config.UPC }))
+        .then((config) => saveItemConfiguration(config, sku).then(() => {
+            return config.UPC
+        }))
         .then((upc) => res.json({ status: "success", msg: "Upsert item config finished.", id: upc }))
         .catch(errorMsg => {
             console.error(`[ERROR] Get item config error\n`, errorMsg)
@@ -62,9 +64,9 @@ router.put('/itemSpec/add', (req, res) => {
 })
 
 router.get('/mostViewed/:categoryId', (req, res) => {
-    console.log(req.params.categoryId)
     getMostViewedOnCategoryId(req.params.categoryId)
         .then(result => {
+            console.log(result)
             res.json(result)
         })
 });
