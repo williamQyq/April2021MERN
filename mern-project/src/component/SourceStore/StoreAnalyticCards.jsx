@@ -45,7 +45,7 @@ class StoreAnalyticCards extends React.Component {
         const { mostViewedItems } = this.props
         return (
             <>
-                <SubContentHeader title="Most Viewed" />
+                <SubContentHeader title="Most Viewed Ultimately Bought" />
                 <Row gutter={[16, 16]}>
                     {
                         mostViewedItems.map((item, i) => {
