@@ -66,7 +66,6 @@ router.put('/itemSpec/add', (req, res) => {
 router.get('/mostViewed/:categoryId', (req, res) => {
     getMostViewedOnCategoryId(req.params.categoryId)
         .then(result => {
-            console.log(result)
             res.json(result)
         })
 });
