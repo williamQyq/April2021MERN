@@ -126,7 +126,7 @@ export default class Bestbuy extends Stores {
     async #parseItemsList(page) {
         const SKU_LIST_EXPR = '//li[@class="sku-item"]'
         const PRICE_LIST_EXPR = SKU_LIST_EXPR + '//div[@class="priceView-hero-price priceView-customer-price"]/span[@aria-hidden="true"]'
-        const NAME_LIST_EXPR = SKU_LIST_EXPR + '//h4[@class="sku-header"]/a'
+        const NAME_LIST_EXPR = SKU_LIST_EXPR + '//h4[@class="sku-title"]/a'
         const SKU_ATTRIBUTE_ID = "data-sku-id"
 
         let skuAttrLists = await this.evaluateItemAttribute(page, SKU_LIST_EXPR, SKU_ATTRIBUTE_ID)
@@ -164,9 +164,13 @@ export default class Bestbuy extends Stores {
         await page.waitForTimeout(10000);
         try {
             items = await this.#parseItemsList(page)
-        } catch {
-            await page.goto(url)
-            items = await this.retry(() => this.#parseItemsList(page), 2000)
+        } catch (e) {
+            await this.retry(async () => {
+                await page.goto(url)
+                items = await this.#parseItemsList(page)
+
+            }, 2000)
+
         }
         return items
     }

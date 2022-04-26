@@ -13,8 +13,8 @@ export const getMostViewedOnCategoryId = async (categoryId, pageSize = DEFAULT_P
 
     //axios GET request to retrieve mostViewed product
     // let categoryUrl = `https://api.bestbuy.com/v1/products/mostViewed(categoryId=${categoryId})`;
-    // let categoryUrl = `https://api.bestbuy.com/v1/products/6479084/viewedUltimatelyBought`
-    let categoryUrl = `https://api.bestbuy.com/v1/products/6479084/alsoBought`
+    // let categoryUrl = `https://api.bestbuy.com/v1/products/6455181/viewedUltimatelyBought`
+    let categoryUrl = `https://api.bestbuy.com/v1/products/6455181/alsoBought`
     let mostViewedProducts = await axios.get(categoryUrl, { params }).then(res => {
         let { results } = res.data;
         console.log(results)

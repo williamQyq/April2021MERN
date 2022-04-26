@@ -68,32 +68,30 @@ export const getBestbuyLaptops = async () => {
     let storeUrl = store.initURL(cp)
     const { pagesNum } = await store.getPagesNum(page, storeUrl)    //puppeteer script get web footer contains page numbers.
     //for each page, get items and save to database
-    for (let i = 0; i < pagesNum; i++) {
-        let pageUrl = store.initURL(i + 1)
+    try {
+        for (let i = 0; i < pagesNum; i++) {
+            let pageUrl = store.initURL(i + 1)
 
-        //get items on page#-> for each item saveDatabase-> printResult-> finished
-        await store.getPageItems(page, pageUrl)
-            .then(items => {
-                return Promise.all(items.map((item, index) =>
-                    saveStoreItemToDatabase(item, store.model).then(msg => {
-                        let msgMap = new Map([
-                            ["store", STORE_NAME],
-                            ["page", i],
-                            ["index", index],
-                            ["sku", item.sku],
-                            ["currentPrice", item.currentPrice],
-                            ["msg", msg]
-                        ])
-                        store.printMsg(msgMap);
-                    })
-                ))
-            })
-            .catch(e => {
-                console.error(`\nERROR:[Bestbuy] page ${i}\n Ended with exception.`)
-            })
-            .finally(() => {
+            //get items on page#-> for each item saveDatabase-> printResult-> finished
+            let items = await store.getPageItems(page, pageUrl)
+            await Promise.all(items.map((item, index) =>
+                saveStoreItemToDatabase(item, store.model).then(msg => {
+                    let msgMap = new Map([
+                        ["store", STORE_NAME],
+                        ["page", i],
+                        ["index", index],
+                        ["sku", item.sku],
+                        ["currentPrice", item.currentPrice],
+                        ["msg", msg]
+                    ])
+                    store.printMsg(msgMap);
+                })
+            )).finally(() => {
                 console.log(`[Bestbuy]===Page ${i} finished.===`)
             })
+        }
+    } catch (e) {
+        console.error(`\nERROR:[Bestbuy] Ended with exception.\n`, e)
     }
 
     await page.close()
