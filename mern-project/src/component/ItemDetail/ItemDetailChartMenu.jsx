@@ -4,6 +4,19 @@ import { Menu } from 'antd';
 
 import { LineChartOutlined, AreaChartOutlined } from '@ant-design/icons';
 
+
+const menuItems = [
+    {
+        icon: <LineChartOutlined />,
+        label: "Price History"
+    },
+    {
+        icon: <AreaChartOutlined />,
+        label: "OutBound WMS"
+    }
+]
+
+
 class ChartMenu extends React.Component {
     constructor(props) {
         super(props);
@@ -21,14 +34,12 @@ class ChartMenu extends React.Component {
     render() {
         const { current } = this.state;
         return (
-            <Menu onClick={this.handleClick} selectedKeys={[current]} mode="horizontal">
-                <Menu.Item key="Price History" icon={<LineChartOutlined />}>
-                    Price History
-                </Menu.Item>
-                <Menu.Item key="unknown" disabled icon={<AreaChartOutlined />}>
-                    OutBound WMS
-                </Menu.Item>
-            </Menu>
+            <Menu
+                onClick={this.handleClick}
+                selectedKeys={[current]}
+                mode="horizontal"
+                items={menuItems} />
+
         );
     }
 

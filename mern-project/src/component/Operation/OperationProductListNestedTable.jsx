@@ -93,7 +93,7 @@ export default class NestedTable extends React.Component {
                     columns={columns}
                     dataSource={data}
                     pagination={false}
-                // rowKey={"_id"}
+                    rowKey={"asin"}
                 />
             </Form>
         )

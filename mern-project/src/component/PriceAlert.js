@@ -61,20 +61,20 @@ class PriceAlert extends React.Component {
     render() {
 
         const data = this.props.item.items;
-        const menu = (
-            <Menu>
-                <Menu.Item disabled>
-                    <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
-                        <SearchOutlined />
-                    </a>
-                </Menu.Item>
-                <Menu.Item disabled>
-                    <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
-                        <ShoppingCartOutlined />
-                    </a>
-                </Menu.Item>
-            </Menu>
-        );
+        // const menu = (
+        //     <Menu>
+        //         <Menu.Item disabled>
+        //             <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
+        //                 <SearchOutlined />
+        //             </a>
+        //         </Menu.Item>
+        //         <Menu.Item disabled>
+        //             <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
+        //                 <ShoppingCartOutlined />
+        //             </a>
+        //         </Menu.Item>
+        //     </Menu>
+        // );
 
         return (
             <>
@@ -90,11 +90,11 @@ class PriceAlert extends React.Component {
                     renderItem={(item) => (
                         <List.Item className="list-item" actions={[
                             <Button danger type="link" onClick={this.onDeleteClick.bind(this, item._id)}> Delete </Button>,
-                            <Dropdown overlay={menu} placement="bottomCenter">
-                                <a href="# " className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-                                    Actions<DownOutlined />
-                                </a>
-                            </Dropdown>
+                            // <Dropdown overlay={menu} placement="bottomCenter">
+                            //     <a href="# " className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                            //         Actions<DownOutlined />
+                            //     </a>
+                            // </Dropdown>
                         ]}>
 
                             {/* <Link to='/item-detail' className="list-item-link"> */}

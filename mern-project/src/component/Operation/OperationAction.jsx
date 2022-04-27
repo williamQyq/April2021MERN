@@ -6,11 +6,6 @@ const { Link, Text } = Typography;
 const ActionMenu = ({ actions, record }) => {
     const editable = actions.isEditing(record);
 
-    const saveAction = () => {
-
-    }
-
-
     return editable ? (
         <OnEditingActionMenu onClick={(e) => { e.stopPropagation() }} actions={actions} record={record} />
     ) : (
@@ -27,7 +22,7 @@ const ActionMenu = ({ actions, record }) => {
             >
                 Edit
             </Link>
-            <Dropdown trigger={["click"]} overlay={MoreActionMenu}>
+            <Dropdown trigger={["click"]} overlay={DropDownMoreActionMenu}>
                 <Link>More <DownOutlined /></Link>
             </Dropdown>
         </Space>
@@ -37,19 +32,23 @@ const ActionMenu = ({ actions, record }) => {
 /* 
  * @usage: main table and nested child tables action  
  */
-const MoreActionMenu = () => {
+const DropDownMoreActionMenu = () => {
     const handleDelete = () => {
 
     }
-
+    const menuItems = [
+        {
+            key: 'action1',
+            label: (<Button type='default'>Action 1</Button>)
+        },
+        {
+            key: 'delete',
+            label: (<Button onclick={() => handleDelete()} type='danger'>Delete</Button>)
+        }
+    ]
 
     return (
-        <Menu>
-            <Menu.Item key='action1' disabled>Action 1</Menu.Item>
-            <Menu.Item key='delete' onClick={() => handleDelete()}>
-                <Button type='danger'>Delete</Button>
-            </Menu.Item>
-        </Menu >
+        <Menu items={menuItems} />
     );
 }
 

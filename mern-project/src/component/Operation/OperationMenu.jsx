@@ -6,8 +6,24 @@ import { LineChartOutlined, AreaChartOutlined, DownOutlined } from '@ant-design/
 import { Settings } from 'component/Operation/Settings'
 import Upload from 'component/Operation/AsinMappingUpload';
 
+
+
 const OperationMenu = (props) => {
     const [selectedMenuKey, setSelectedMenuKey] = useState("upload");
+
+    const menuItems = [
+        {
+            key: 'settings',
+            icon: <LineChartOutlined />,
+            label: 'Settings',
+        },
+        {
+            key: 'upload',
+            icon: <AreaChartOutlined />,
+            label: 'Upload'
+        }
+    ]
+
 
     const switchContent = (key) => {
         switch (key) {
@@ -32,14 +48,8 @@ const OperationMenu = (props) => {
                             onClick={e => setSelectedMenuKey(e.key)}
                             selectedKeys={[selectedMenuKey]}
                             mode="horizontal"
-                        >
-                            <Menu.Item key="settings" icon={<LineChartOutlined />}>
-                                Settings
-                            </Menu.Item>
-                            <Menu.Item key="upload" icon={<AreaChartOutlined />}>
-                                Upload
-                            </Menu.Item>
-                        </Menu >
+                            items={menuItems}
+                        />
                         {
                             switchContent(selectedMenuKey)
                         }

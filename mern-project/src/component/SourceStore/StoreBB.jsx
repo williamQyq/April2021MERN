@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { SocketContext } from 'component/socket/socketContext.js';
 import StoreTable from 'component/SourceStore/StoreTable.jsx';
 import StoreAnalyticCards from 'component/SourceStore/StoreAnalyticCards.jsx'
+import BackTopHelper from 'component/utility/BackTop.jsx';
 
 
 class BB extends React.Component {
@@ -20,7 +21,7 @@ class BB extends React.Component {
         let socket = this.context;
         socket.emit(`subscribe`, `StoreListingRoom`);
         this.props.getBBItems();
-        this.props.getMostViewedOnCategoryId(`pcmcat247400050000`)
+        // this.props.getMostViewedOnCategoryId(`pcmcat247400050000`)
         // this.props.getMostViewedOnCategoryId("pcmcat1513015098109");
         // this.props.getViewedUltimatelyBoughtOnSku("6481063")
         socket.on('Store Listings Update', () => {

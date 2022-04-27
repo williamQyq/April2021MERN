@@ -31,9 +31,13 @@ class WM extends React.Component {
     }
 
     render() {
-        const { store } = this.state;
+        const data = {
+            store: this.state.store,
+            items: this.props.items,
+            loading: this.props.loading
+        }
         return (
-            <StoreTable {...this.props} store={store} />
+            <StoreTable {...data} />
         )
     }
 }
@@ -41,12 +45,14 @@ class WM extends React.Component {
 WM.prototypes = {
     getItems: PropTypes.func.isRequired,
     items: PropTypes.array.isRequired,
-    tableState: PropTypes.object.isRequired
+    tableState: PropTypes.object.isRequired,
+    loading: PropTypes.bool.isRequired
 }
 
 const mapStateToProps = (state) => ({
     items: state.walmart.items,
-    tableState: state.item.tableState
+    tableState: state.item.tableState,
+    loading: state.walmart.loading
 })
 
 export default connect(mapStateToProps, { getItems })(WM);

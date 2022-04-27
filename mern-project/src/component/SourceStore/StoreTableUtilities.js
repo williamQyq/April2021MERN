@@ -54,7 +54,7 @@ export const defaultTableSettings = {
         defaultPageSize: 20,
         showSizeChanger: true,
         pageSizeOptions: ['10', '20', '50', '100'],
-        position:['topRight','bottomRight']
+        position: ['topRight', 'bottomRight']
     },
     // scroll: { y: "calc(100vh - 335px)" } //slow performance issue
 
@@ -62,11 +62,7 @@ export const defaultTableSettings = {
 
 
 export const TableColumns = (getColumnSearchProps, storeName) => {
-    //create columns data based on dataIndex
-    // const dispatch = useDispatch();
-    // const handleActionDropDownClicked = (storeName, recordId) => {
-    //     dispatch(setTableState(storeName, recordId))
-    // }
+
 
     return (
         [
@@ -134,15 +130,14 @@ export const TableColumns = (getColumnSearchProps, storeName) => {
                 render: (text, record) => (
                     <Dropdown
                         trigger={["click"]}
-                        overlay={
-                            ActionMenu({ record, storeName })
-                        }
-                        placement="bottomCenter">
+                        overlay={() => ActionMenu(record, storeName)}
+                        placement="bottom"
+                    >
                         <TypoLink >More Actions <DownOutlined /></TypoLink>
 
                     </Dropdown>
                 ),
-            },
+            }
 
         ]
     )
@@ -153,82 +148,72 @@ message.config = {
     maxCount: 3
 }
 
-// const MoreActions = (props) => {
-//     const { store, recordId } = props
-//     const dispatch = useDispatch();
-
-//     const handleActionsClick = () => {
-//         dispatch(setTableState(store, recordId))
-//     }
-
-//     return (
-//         <TypoLink onClick={handleActionsClick}>More Actions <DownOutlined /></TypoLink>
-
-//     )
-
-// }
-
 const ActionMenu = (props) => {
-
     const { record, storeName } = props
-    const location = useLocation();
     const dispatch = useDispatch();
+    const { pathname } = useLocation();
 
-    const path = location.pathname;
-
-    const addItemSpecification = () => {
+    const addItemSpecification = (record, storeName) => {
         dispatch(addItemSpec(record, storeName));
     }
 
-    const saveActionHistory = () => {
+    const saveActionHistory = (storeName, record) => {
         console.log(`clicked`, record._id)
         dispatch(setTableState(storeName, record._id));
-    };
+    }
 
     const buttonSetting = {
         block: true,
         size: "large",
         type: "link"
     }
-    return (
-        <Menu>
-            <Menu.Item key="AddToWatchList">
-                <Button disabled {...buttonSetting}>
-                    <PlusCircleOutlined />
 
-                </Button>
-            </Menu.Item>
-
-            <Menu.Item key="GetItemDetail">
-                <Button {...buttonSetting} onClick={saveActionHistory}>
-                    <Link to={`${path}/item-detail`} className="action-link">
-                        <SearchOutlined />
-                        Detail
+    const menuItems = [
+        {
+            label: (<Button disabled {...buttonSetting} icon={<PlusCircleOutlined />} />)
+        },
+        {
+            label: (
+                <Button
+                    {...buttonSetting}
+                    onClick={() => saveActionHistory(storeName, record)}
+                >
+                    <Link to={`${pathname}/item-detail`} className="action-link">
+                        <SearchOutlined />Detail
                     </Link>
                 </Button>
-            </Menu.Item>
-
-            <Menu.Item key="AddToCart">
+            )
+        },
+        {
+            label: (
                 <Button disabled {...buttonSetting}>
-                    <ShoppingCartOutlined />
-                    Cart
+                    <ShoppingCartOutlined />Cart
                 </Button>
-            </Menu.Item>
+            )
+        },
+        {
+            label: (
+                <Button
+                    {...buttonSetting}
+                    onClick={() => {
+                        saveActionHistory(storeName, record);
+                        addItemSpecification(record, storeName);
+                    }}
+                >
+                    <WindowsOutlined />Spec
+                </Button>
+            )
+        }
 
-            <Menu.Item key="GetOnlineSpec">
-                <Button {...buttonSetting} onClick={() => {
-                    saveActionHistory();
-                    addItemSpecification();
-                }}>
-                    <WindowsOutlined />
-                    Spec
-                </Button>
-            </Menu.Item>
-        </Menu >
+
+    ]
+
+    return (
+        <Menu items={menuItems} />
     );
 }
 
-export const ContentHeader = ({ title, isLoading }) => (
+export const ContentHeader = ({ title }) => (
     <>
         <Row gutter={16} style={{ alignItems: 'center' }}>
             <Col>
@@ -247,7 +232,7 @@ export const ContentHeader = ({ title, isLoading }) => (
     </>
 );
 
-export const SubContentHeader = ({ title, isLoading }) => {
+export const SubContentHeader = ({ title }) => {
     return (
         <>
             <Row gutter={16} style={{ alignItems: 'center' }}>
@@ -279,7 +264,7 @@ export const ErrorAlert = () => {
                 showIcon
                 banner
                 closable
-                afterClose={() => { dispatch(clearErrors()); }}
+                afterClose={() => dispatch(clearErrors)}
             />
         ) : null
 }
