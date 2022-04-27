@@ -150,16 +150,22 @@ message.config = {
 
 const ActionMenu = (props) => {
     const { record, storeName } = props
-    const dispatch = useDispatch();
-    const { pathname } = useLocation();
+    // const dispatch = useDispatch();
+    // const { pathname } = useLocation();
+    const pathname = 'bestbuy-list'
+    // const addItemSpecification = (record, storeName) => {
+    //     dispatch(addItemSpec(record, storeName));
+    // }
 
-    const addItemSpecification = (record, storeName) => {
-        dispatch(addItemSpec(record, storeName));
+    // const saveActionHistory = (storeName, record) => {
+    //     console.log(`clicked`, record._id)
+    //     dispatch(setTableState(storeName, record._id));
+    // }
+    const addItemSpecification=()=>{
+
     }
+    const saveActionHistory=()=>{
 
-    const saveActionHistory = (storeName, record) => {
-        console.log(`clicked`, record._id)
-        dispatch(setTableState(storeName, record._id));
     }
 
     const buttonSetting = {
