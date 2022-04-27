@@ -15,7 +15,6 @@ export default class StoreTable extends React.Component {
             searchText: '',
             searchedRowId: '',
             searchedColumn: '',
-            loading: true,
         };
 
     }
@@ -136,13 +135,13 @@ export default class StoreTable extends React.Component {
 
 
     render() {
-        const { items, store } = this.props
-        const { loading } = this.state;
+        const { items, store, loading } = this.props
         const columns = TableColumns(this.getColumnSearchProps, store);
         return (
             <>
                 <ContentHeader title={store} isLoading={loading} />
                 <Table
+                    loading={loading}
                     {...defaultTableSettings}
                     columns={columns}
                     dataSource={items}

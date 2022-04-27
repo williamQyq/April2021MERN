@@ -51,11 +51,12 @@ export const scrollToTableRow = (document, row) => {
 export const defaultTableSettings = {
     showSorterTooltip: false,
     pagination: {
-        defaultPageSize: 100,
+        defaultPageSize: 20,
         showSizeChanger: true,
         pageSizeOptions: ['10', '20', '50', '100'],
+        position:['topRight','bottomRight']
     },
-    scroll: { y: "calc(100vh - 335px)" }
+    // scroll: { y: "calc(100vh - 335px)" } //slow performance issue
 
 }
 

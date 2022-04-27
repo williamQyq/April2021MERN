@@ -19,7 +19,6 @@ class OperationProductList extends React.Component {
         super(props);
         this.state = {
             ...defaultSettings,
-            data: this.props.sellingPartner,
             searchText: '',
             searchedRowId: '',
             searchedColumn: '',
@@ -241,8 +240,9 @@ class OperationProductList extends React.Component {
 
 
     render() {
-        const { xScroll, yScroll, top, bottom, data, ...state } = this.state;
-
+        const { top, bottom, scroll, defaultSettings } = this.state;
+        const data = this.props.sellingPartner;
+        const { loading } = this.props;
         const actions = {
             isEditing: this.isEditing,
             edit: this.edit,
@@ -263,17 +263,17 @@ class OperationProductList extends React.Component {
 
                 <Form ref={this.formRef} component={false}>
                     <Table
-                        {...this.state}
-                        // loading={this.isLoading}
+                        {...defaultSettings}
                         components={{
                             body: {
                                 cell: EditableCell,
                             }
                         }}
-                        pagination={{ position: [top, bottom] }}
+                        loading={loading}
                         columns={columns}
-                        dataSource={state.hasData ? data : null}
-                        scroll={state.scroll}
+                        dataSource={data}
+                        pagination={{ position: [top, bottom] }}
+                        scroll={scroll}
                     />
                 </Form>
             </>
@@ -285,12 +285,10 @@ OperationProductList.prototypes = {
     getProductPricing: PropTypes.func.isRequired,
     sellingPartner: PropTypes.array.isRequired,
     loading: PropTypes.bool.isRequired,
-    // socket: PropTypes.object.isRequired
 }
 const mapStateToProps = (state) => ({
     sellingPartner: state.amazon.sellingPartner,
     loading: state.amazon.loading,
-    // socket: state.item.socket
 })
 
 export default connect(mapStateToProps, { getProductPricing })(OperationProductList);

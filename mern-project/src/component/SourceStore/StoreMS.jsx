@@ -29,9 +29,13 @@ class MS extends React.Component {
     }
 
     render() {
-        const { store } = this.state;
+        const data = {
+            store: this.state.store,
+            items: this.props.items,
+            loading: this.props.loading
+        }
         return (
-            <StoreTable {...this.props} store={store} />
+            <StoreTable {...data} />
         )
     }
 }
@@ -39,12 +43,14 @@ class MS extends React.Component {
 MS.prototypes = {
     getMSItems: PropTypes.func.isRequired,
     items: PropTypes.array.isRequired,
-    tableState: PropTypes.object.isRequired
+    tableState: PropTypes.object.isRequired,
+    loading: PropTypes.bool.isRequired
 }
 
 const mapStateToProps = (state) => ({
     items: state.microsoft.items,
-    tableState: state.item.tableState
+    tableState: state.item.tableState,
+    loading: state.microsoft.loading
 })
 
 export default connect(mapStateToProps, { getMSItems })(MS);
