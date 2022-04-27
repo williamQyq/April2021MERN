@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Card, Col, Row, Typography } from 'antd';
+import { Card, Col, Row, Skeleton, Typography } from 'antd';
 import { SubContentHeader } from './StoreTableUtilities';
 import './Store.scss';
 const { Text } = Typography;
@@ -32,7 +32,7 @@ class StoreAnalyticCards extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            mostViewedItems: []
+
         }
 
     }
@@ -42,35 +42,36 @@ class StoreAnalyticCards extends React.Component {
     }
 
     render() {
-        const { mostViewedItems } = this.props
+        const mostViewedItems = this.props.mostViewedItems ? this.props.mostViewedItems : []
         return (
             <>
                 <SubContentHeader title="Most Viewed Ultimately Bought" />
-                <Row gutter={[16, 16]}>
-                    {
-                        mostViewedItems.map((item, i) => {
-                            return (
-                                <Col span={6} key={i.toString()} >
-                                    <Card
-                                        className='most-viewed-cards'
-                                        hoverable
-                                        title={item.names.title}
-                                        cover={<img className="card-image" alt="laptop" src={item.images.standard}
-                                        />}>
-                                        <Card.Meta
-                                            className='card-content'
-                                            title={`rank - ${i + 1}`}
-                                            description={
-                                                <>
-                                                    <Text>Sku - {item.sku}</Text><br/>
-                                                    <Text>Regular - ${item.prices.regular}</Text><br/>
-                                                    <Text>Current - ${item.prices.current}</Text><br/>
-                                                    <Text>Score: {item.customerReviews.averageScore}    Count: {item.customerReviews.count}</Text>
-                                                </>
-                                            }
-                                        />
+                <Skeleton active loading={this.props.loading}>
+                    <Row gutter={[16, 16]}>
+                        {
+                            mostViewedItems.map((item, i) => {
+                                return (
+                                    <Col span={6} key={i.toString()} >
+                                        <Card
+                                            className='most-viewed-cards'
+                                            hoverable
+                                            title={item.names.title}
+                                            cover={<img className="card-image" alt="laptop" src={item.images.standard}
+                                            />}>
+                                            <Card.Meta
+                                                className='card-content'
+                                                title={`rank - ${i + 1}`}
+                                                description={
+                                                    <>
+                                                        <Text>Sku - {item.sku}</Text><br />
+                                                        <Text>Regular - ${item.prices.regular}</Text><br />
+                                                        <Text>Current - ${item.prices.current}</Text><br />
+                                                        <Text>Score: {item.customerReviews.averageScore}    Count: {item.customerReviews.count}</Text>
+                                                    </>
+                                                }
+                                            />
 
-                                        {/* {
+                                            {/* {
                                             mostViewedUltiBoughtProducts.map((product, j) => (
                                                 <Card.Grid
                                                     key={`${i}-${j}`}
@@ -83,13 +84,14 @@ class StoreAnalyticCards extends React.Component {
                                             ))
                                         } */}
 
-                                    </Card>
-                                </Col>
-                            )
-                        })
-                    }
+                                        </Card>
+                                    </Col>
+                                )
+                            })
+                        }
+                    </Row>
+                </Skeleton>
 
-                </Row>
             </>
         );
     }
