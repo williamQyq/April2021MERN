@@ -25,6 +25,10 @@ import { setTableState } from "reducers/actions/itemActions";
 
 const { Text, Title } = Typography;
 const TypoLink = Typography.Link;
+message.config = {
+    maxCount: 3
+}
+
 
 export const locateSearchedItem = (items, searchId) => {
     if (searchId) {
@@ -127,15 +131,8 @@ export const TableColumns = (getColumnSearchProps, storeName) => {
                 title: 'Action',
                 key: 'action',
                 width: '10%',
-                render: (text, record) => (
-                    <Dropdown
-                        trigger={["click"]}
-                        overlay={() => ActionMenu(record, storeName)}
-                        placement="bottom"
-                    >
-                        <TypoLink >More Actions <DownOutlined /></TypoLink>
-
-                    </Dropdown>
+                render: (_, record) => (
+                    <DropDownActions record={record} storeName={storeName} />
                 ),
             }
 
@@ -144,29 +141,37 @@ export const TableColumns = (getColumnSearchProps, storeName) => {
 
 }
 
-message.config = {
-    maxCount: 3
-}
-
-const ActionMenu = (props) => {
+const DropDownActions = (props) => {
     const { record, storeName } = props
-    // const dispatch = useDispatch();
-    // const { pathname } = useLocation();
-    const pathname = 'bestbuy-list'
-    // const addItemSpecification = (record, storeName) => {
-    //     dispatch(addItemSpec(record, storeName));
-    // }
+    const dispatch = useDispatch();
+    const { pathname } = useLocation();
 
-    // const saveActionHistory = (storeName, record) => {
-    //     console.log(`clicked`, record._id)
-    //     dispatch(setTableState(storeName, record._id));
-    // }
-    const addItemSpecification=()=>{
+    const actionHandler = {
+        addItemSpecification: () => {
+            console.log(`item spec added`, record._id);
+            dispatch(addItemSpec(record, storeName));
+        },
 
+        saveActionHistory: () => {
+            console.log(`clicked`, record._id)
+            dispatch(setTableState(storeName, record._id));
+        },
+        pathname
     }
-    const saveActionHistory=()=>{
 
-    }
+    return (
+        <Dropdown
+            trigger={["click"]}
+            overlay={ActionMenu({ ...actionHandler })}
+            placement="bottom"
+        >
+            <TypoLink >More Actions <DownOutlined /></TypoLink>
+        </Dropdown>
+    );
+
+}
+const ActionMenu = (props) => {
+    const { addItemSpecification, saveActionHistory, pathname } = props
 
     const buttonSetting = {
         block: true,
@@ -180,12 +185,10 @@ const ActionMenu = (props) => {
         },
         {
             label: (
-                <Button
-                    {...buttonSetting}
-                    onClick={() => saveActionHistory(storeName, record)}
-                >
+                <Button {...buttonSetting} onClick={() => saveActionHistory()}>
                     <Link to={`${pathname}/item-detail`} className="action-link">
-                        <SearchOutlined />Detail
+                        <SearchOutlined />
+                        Detail
                     </Link>
                 </Button>
             )
@@ -193,7 +196,8 @@ const ActionMenu = (props) => {
         {
             label: (
                 <Button disabled {...buttonSetting}>
-                    <ShoppingCartOutlined />Cart
+                    <ShoppingCartOutlined />
+                    Cart
                 </Button>
             )
         },
@@ -202,16 +206,15 @@ const ActionMenu = (props) => {
                 <Button
                     {...buttonSetting}
                     onClick={() => {
-                        saveActionHistory(storeName, record);
-                        addItemSpecification(record, storeName);
+                        saveActionHistory();
+                        addItemSpecification();
                     }}
                 >
-                    <WindowsOutlined />Spec
+                    <WindowsOutlined />
+                    Spec
                 </Button>
             )
         }
-
-
     ]
 
     return (
