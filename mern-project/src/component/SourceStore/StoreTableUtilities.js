@@ -165,13 +165,13 @@ const DropDownActions = (props) => {
             overlay={ActionMenu({ ...actionHandler })}
             placement="bottom"
         >
-            <TypoLink >More Actions <DownOutlined /></TypoLink>
+            <TypoLink onClick={() => actionHandler.saveActionHistory()}>More Actions <DownOutlined /></TypoLink>
         </Dropdown>
     );
 
 }
 const ActionMenu = (props) => {
-    const { addItemSpecification, saveActionHistory, pathname } = props
+    const { addItemSpecification, pathname } = props
 
     const buttonSetting = {
         block: true,
@@ -185,7 +185,7 @@ const ActionMenu = (props) => {
         },
         {
             label: (
-                <Button {...buttonSetting} onClick={() => saveActionHistory()}>
+                <Button {...buttonSetting}>
                     <Link to={`${pathname}/item-detail`} className="action-link">
                         <SearchOutlined />
                         Detail
@@ -205,10 +205,7 @@ const ActionMenu = (props) => {
             label: (
                 <Button
                     {...buttonSetting}
-                    onClick={() => {
-                        saveActionHistory();
-                        addItemSpecification();
-                    }}
+                    onClick={() => addItemSpecification()}
                 >
                     <WindowsOutlined />
                     Spec

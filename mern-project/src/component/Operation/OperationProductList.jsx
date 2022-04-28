@@ -19,11 +19,12 @@ class OperationProductList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            ...defaultSettings,
             searchText: '',
             searchedRowId: '',
             searchedColumn: '',
             editingKey: '',
+            data: props.sellingPartner,
+            defaultSettings: { ...defaultSettings },
         };
     }
     formRef = React.createRef()
@@ -241,8 +242,7 @@ class OperationProductList extends React.Component {
 
 
     render() {
-        const { top, bottom, scroll, defaultSettings } = this.state;
-        const data = this.props.sellingPartner;
+        const { data, defaultSettings } = this.state;
         const { loading } = this.props;
         const actions = {
             isEditing: this.isEditing,
@@ -256,29 +256,21 @@ class OperationProductList extends React.Component {
             handleReset: this.handleReset
         }
         const columns = mainColumns(actions)
-
         return (
             <>
                 <Title level={4}>Pricing Table</Title>
                 <OperationMenu handler={this.handler} {...this.state} />
-                    <Form ref={this.formRef} component={false}>
-                        <Table
-                            {...defaultSettings}
-                            components={{
-                                body: {
-                                    cell: EditableCell,
-                                }
-                            }}
-                            loading={loading}
-                            columns={columns}
-                            dataSource={data}
-                            pagination={{ position: [top, bottom] }}
-                            scroll={scroll}
-                        />
-                    </Form>
-                    {/* <BackTopHelper /> */}
+                <Form ref={this.formRef} component={false}>
+                    <Table
+                        {...defaultSettings}
+                        loading={loading}
+                        columns={columns}
+                        dataSource={data}
+                    />
+                </Form>
+                {/* <BackTopHelper /> */}
 
-                    {/* <BackTop target={()=>document.getElementsByClassName('ant-table-body')[0]}/> */}
+                {/* <BackTop target={()=>document.getElementsByClassName('ant-table-body')[0]}/> */}
             </>
 
         );

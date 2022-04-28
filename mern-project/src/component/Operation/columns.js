@@ -10,6 +10,7 @@ export const mainColumnGroup = (actions) => {
                 title: 'Upc',
                 dataIndex: 'upc',
                 editable: true,
+                width: '40%',
                 ...getColumnSearchProps('upc')
             },
             // {
@@ -21,6 +22,7 @@ export const mainColumnGroup = (actions) => {
                 title: 'WMS Quantity',
                 dataIndex: 'wmsQuantity',
                 editable: false,
+                width: '10%',
                 sorter: (a, b) => {
                     if (a.wmsQuantity === undefined) {
                         return -1;
@@ -38,6 +40,7 @@ export const mainColumnGroup = (actions) => {
                 title: 'Unit Cost',
                 dataIndex: 'unitCost',
                 editable: false,
+                width: '10%',
             },
             // {
             //     title: 'Settlement Rate Universal',
@@ -49,6 +52,7 @@ export const mainColumnGroup = (actions) => {
                 title: 'Status',
                 dataIndex: 'status',
                 key: 'state',
+                width: '20%',
                 ...getColumnSearchProps('status'),
                 render: (_, record) => {
                     return <StatusBadge record={record} />
@@ -57,6 +61,7 @@ export const mainColumnGroup = (actions) => {
             {
                 title: 'Action',
                 key: 'action',
+                width: '20%',
                 render: (_, record) => <ActionMenu actions={actions} record={record} />,
             },
         ]
@@ -69,19 +74,22 @@ export const nestedColumnGroup = (actions) => [
         title: 'Asin',
         dataIndex: 'asin',
         key: 'asin',
-        editable: false
+        editable: false,
+        width: '20%',
     },
     {
         title: 'Sku',
         dataIndex: 'SellerSKU',
         key: 'sku',
-        editable: false
+        editable: false,
+        width: '30%',
     },
     {
         title: 'Fulfillment Channel',
         dataIndex: 'FulfillmentChannel',
         key: 'fulfillmentChannel',
         editable: false,
+        width: '15%',
         filters: [
             {
                 text: 'Amazon',
@@ -99,7 +107,8 @@ export const nestedColumnGroup = (actions) => [
         title: 'Amazon Regular Price',
         dataIndex: ['RegularPrice', 'Amount'],
         key: 'amzRegularPrice',
-        editable: false
+        editable: false,
+        width: '15%',
     },
     // {
     //     title: 'Settlement Rate',
@@ -118,6 +127,7 @@ export const nestedColumnGroup = (actions) => [
         title: 'Status',
         dataIndex: 'status',
         key: 'state',
+        width:'5%',
         render: (_, record) => <StatusBadge record={record} />
 
     },
@@ -125,6 +135,7 @@ export const nestedColumnGroup = (actions) => [
         title: 'Operation',
         dataIndex: 'operation',
         key: 'operation',
+        width:'15%',
         render: (_, record) => <ActionMenu actions={actions} record={record} />
     }
 ];

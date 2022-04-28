@@ -5,6 +5,7 @@ const { Link, Text } = Typography;
 
 const ActionMenu = ({ actions, record }) => {
     const editable = actions.isEditing(record);
+    const isEditing = actions.editingKey == "" ? false : true;
 
     return editable ? (
         <OnEditingActionMenu onClick={(e) => { e.stopPropagation() }} actions={actions} record={record} />
@@ -17,7 +18,7 @@ const ActionMenu = ({ actions, record }) => {
                 Publish
             </Link>
             <Link
-                disabled={actions.editingKey !== ""}
+                disabled={isEditing}
                 onClick={() => { actions.edit(record) }}
             >
                 Edit
@@ -36,14 +37,19 @@ const DropDownMoreActionMenu = () => {
     const handleDelete = () => {
 
     }
+    const buttonSetting = {
+        block: true,
+        size: "large",
+        type: "primary",
+    }
     const menuItems = [
         {
             key: 'action1',
-            label: (<Button type='default'>Action 1</Button>)
+            label: (<Button {...buttonSetting}>Action 1</Button>)
         },
         {
             key: 'delete',
-            label: (<Button onclick={() => handleDelete()} type='danger'>Delete</Button>)
+            label: (<Button {...buttonSetting} danger onClick={() => handleDelete()} >Delete</Button>)
         }
     ]
 

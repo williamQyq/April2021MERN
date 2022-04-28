@@ -8,8 +8,7 @@ export default class NestedTable extends React.Component {
         super(props)
         this.state = {
             editingKey: "",
-            record: props.record,
-            data: []
+            data: [],
         }
     }
 
@@ -93,7 +92,6 @@ export default class NestedTable extends React.Component {
                     columns={columns}
                     dataSource={data}
                     pagination={false}
-                    rowKey={"asin"}
                 />
             </Form>
         )
