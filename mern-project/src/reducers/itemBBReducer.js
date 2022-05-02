@@ -39,7 +39,7 @@ export default function Reducer(state = initialState, action) {
         case GET_BB_MOST_VIEWED_ITEMS:
             return {
                 ...state,
-                mostViewedItems: action.payload,
+                mostViewedItems: [...action.payload],
                 mostViewedItemsLoading: false
             }
         case GET_BB_VIEWED_ULTIMATELY_BOUGHT_ITEMS:

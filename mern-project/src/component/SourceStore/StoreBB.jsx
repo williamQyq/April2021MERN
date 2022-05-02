@@ -11,7 +11,7 @@ import { SocketContext } from 'component/socket/socketContext.js';
 import StoreTable from 'component/SourceStore/StoreTable.jsx';
 import StoreAnalyticCards from 'component/SourceStore/StoreAnalyticCards.jsx'
 import BackTopHelper from 'component/utility/BackTop.jsx';
-
+import { categoryIdGroup } from './data.js'
 
 class BB extends React.Component {
     static contextType = SocketContext  //This part is important to access context values which are socket
@@ -31,7 +31,7 @@ class BB extends React.Component {
         const defaultMostViewedCategoryId = this.state.selectedMostViewedCategoryId;
         socket.emit(`subscribe`, `StoreListingRoom`);
         this.props.getBBItems();
-        this.props.getMostViewedOnCategoryId(defaultMostViewedCategoryId)
+        // this.props.getMostViewedOnCategoryId(defaultMostViewedCategoryId)
         socket.on('Store Listings Update', () => {
             this.props.getBBItems()
         })
@@ -44,22 +44,34 @@ class BB extends React.Component {
     switchContent = (key) => {
         switch (key) {
             case 'allLaptops':
-                this.setState({ selectedMostViewedCategoryId: 'pcmcat138500050001' })
+                this.setState({ selectedMostViewedCategoryId: categoryIdGroup.ALL_LAPTOPS });
+                this.props.getMostViewedOnCategoryId(categoryIdGroup.ALL_LAPTOPS);
+
                 break;
             case 'asusLaptops':
-                this.setState({ selectedMostViewedCategoryId: 'pcmcat190000050007' })
+                this.setState({ selectedMostViewedCategoryId: categoryIdGroup.ASUS_LAPTOPS });
+                this.props.getMostViewedOnCategoryId(categoryIdGroup.ASUS_LAPTOPS)
+
                 break;
             case 'dellLaptops':
-                this.setState({ selectedMostViewedCategoryId: 'pcmcat140500050010' })
+                this.setState({ selectedMostViewedCategoryId: categoryIdGroup.DELL_LAPTOPS });
+                this.props.getMostViewedOnCategoryId(categoryIdGroup.DELL_LAPTOPS)
+
                 break;
             case 'hpLaptops':
-                this.setState({ selectedMostViewedCategoryId: 'pcmcat1513015098109' })
+                this.setState({ selectedMostViewedCategoryId: categoryIdGroup.HP_LAPTOPS });
+                this.props.getMostViewedOnCategoryId(categoryIdGroup.HP_LAPTOPS)
+
                 break;
             case 'samsungLaptops':
-                this.setState({ selectedMostViewedCategoryId: 'pcmcat1496261338353' })
+                this.setState({ selectedMostViewedCategoryId: categoryIdGroup.SAMSUNG_LAPTOPS });
+                this.props.getMostViewedOnCategoryId(categoryIdGroup.SAMSUNG_LAPTOPS)
+
                 break;
             case 'microsoftSurfaceLaptops':
-                this.setState({ selectedMostViewedCategoryId: 'pcmcat1569442808449' })
+                this.setState({ selectedMostViewedCategoryId: categoryIdGroup.SURFACE });
+                this.props.getMostViewedOnCategoryId(categoryIdGroup.SURFACE)
+
                 break;
             case 'alsoBoughtOnSku':
                 return this.props.getAlsoBoughtOnSku();
@@ -67,8 +79,6 @@ class BB extends React.Component {
                 this.setState({ selectedMostViewedCategoryId: '' })
                 return;
         }
-        const { selectedMostViewedCategoryId } = this.state;
-        this.props.getMostViewedOnCategoryId(selectedMostViewedCategoryId)
     }
 
 

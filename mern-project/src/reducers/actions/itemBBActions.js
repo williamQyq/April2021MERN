@@ -66,8 +66,8 @@ export const setTableSettings = (store, clickedId) => dispatch => {
 
 export const getMostViewedOnCategoryId = (categoryId) => dispatch => {
     dispatch(setMostViewedItemsLoading());
+    console.log('Get most viewed request sent...')
     axios.get(`/api/bb_items/mostViewed/${categoryId}`).then(res => {
-        console.log(`result retreieved test...`)
         dispatch({
             type: GET_BB_MOST_VIEWED_ITEMS,
             payload: res.data
@@ -84,7 +84,7 @@ export const getViewedUltimatelyBoughtOnSku = (sku) => dispatch => {
     axios.get(`/api/bb_items/viewedUltimatelyBought/${sku}`).then(res => {
         dispatch({
             type: GET_BB_VIEWED_ULTIMATELY_BOUGHT_ITEMS,
-            payload: res.data
+            payload: [...res.data]
         })
     })
 
