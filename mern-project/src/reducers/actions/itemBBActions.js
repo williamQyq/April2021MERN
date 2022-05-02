@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Moment from 'moment';
+import { returnErrors } from './errorActions';
 import {
     GET_BB_ITEMS,
     GET_BB_ITEM_DETAIL,
@@ -66,11 +67,14 @@ export const setTableSettings = (store, clickedId) => dispatch => {
 export const getMostViewedOnCategoryId = (categoryId) => dispatch => {
     dispatch(setMostViewedItemsLoading());
     axios.get(`/api/bb_items/mostViewed/${categoryId}`).then(res => {
-
+        console.log(`result retreieved test...`)
         dispatch({
             type: GET_BB_MOST_VIEWED_ITEMS,
             payload: res.data
         })
+    }).catch(e => {
+        console.error('most viewed errors...')
+        dispatch(returnErrors(e.response.data, e.response.status))
     })
 
 }
@@ -83,6 +87,9 @@ export const getViewedUltimatelyBoughtOnSku = (sku) => dispatch => {
             payload: res.data
         })
     })
+
+}
+export const getAlsoBoughtOnSku = (sku) => dispatch => {
 
 }
 

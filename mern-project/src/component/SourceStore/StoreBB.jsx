@@ -1,6 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { getBBItems, getMostViewedOnCategoryId, getViewedUltimatelyBoughtOnSku } from 'reducers/actions/itemBBActions';
+import {
+    getBBItems,
+    getMostViewedOnCategoryId,
+    getViewedUltimatelyBoughtOnSku,
+    getAlsoBoughtOnSku
+} from 'reducers/actions/itemBBActions';
 import PropTypes from 'prop-types';
 import { SocketContext } from 'component/socket/socketContext.js';
 import StoreTable from 'component/SourceStore/StoreTable.jsx';
@@ -14,16 +19,19 @@ class BB extends React.Component {
         super(props);
         this.state = {
             store: "BESTBUY",
+            selectedMostViewedCategoryId: 'pcmcat138500050001',
+            selectedMostViewedSku: '',
+            selectedUltimatelyBoughtOnSku: '',
+            selectedAlsoBoughtSku: '',
         }
     }
 
     componentDidMount() {
         let socket = this.context;
+        const defaultMostViewedCategoryId = this.state.selectedMostViewedCategoryId;
         socket.emit(`subscribe`, `StoreListingRoom`);
         this.props.getBBItems();
-        // this.props.getMostViewedOnCategoryId(`pcmcat247400050000`)
-        // this.props.getMostViewedOnCategoryId("pcmcat1513015098109");
-        // this.props.getViewedUltimatelyBoughtOnSku("6481063")
+        this.props.getMostViewedOnCategoryId(defaultMostViewedCategoryId)
         socket.on('Store Listings Update', () => {
             this.props.getBBItems()
         })
@@ -33,16 +41,58 @@ class BB extends React.Component {
         socket.emit(`unsubscribe`, `StoreListingRoom`)
     }
 
+    switchContent = (key) => {
+        switch (key) {
+            case 'allLaptops':
+                this.setState({ selectedMostViewedCategoryId: 'pcmcat138500050001' })
+                break;
+            case 'asusLaptops':
+                this.setState({ selectedMostViewedCategoryId: 'pcmcat190000050007' })
+                break;
+            case 'dellLaptops':
+                this.setState({ selectedMostViewedCategoryId: 'pcmcat140500050010' })
+                break;
+            case 'hpLaptops':
+                this.setState({ selectedMostViewedCategoryId: 'pcmcat1513015098109' })
+                break;
+            case 'samsungLaptops':
+                this.setState({ selectedMostViewedCategoryId: 'pcmcat1496261338353' })
+                break;
+            case 'microsoftSurfaceLaptops':
+                this.setState({ selectedMostViewedCategoryId: 'pcmcat1569442808449' })
+                break;
+            case 'alsoBoughtOnSku':
+                return this.props.getAlsoBoughtOnSku();
+            default:
+                this.setState({ selectedMostViewedCategoryId: '' })
+                return;
+        }
+        const { selectedMostViewedCategoryId } = this.state;
+        this.props.getMostViewedOnCategoryId(selectedMostViewedCategoryId)
+    }
+
+
+
+
     render() {
         const data = {
             store: this.state.store,
             items: this.props.items,
             loading: this.props.loading
         }
+
+        const categoryProps = {
+            switchContent: this.switchContent,
+            selectedMostViewedCategoryId: this.state.selectedMostViewedCategoryId,
+            selectedMostViewedSku: this.state.selectedMostViewedSku,
+            mostViewedItems: this.props.mostViewedItems,
+            alsoBoughtItems: this.props.alsoBoughtItems,
+        }
+
         return (
             <>
                 <StoreTable {...data} />
-                <StoreAnalyticCards />
+                <StoreAnalyticCards {...categoryProps} />
             </>
         )
     }
@@ -50,6 +100,8 @@ class BB extends React.Component {
 
 BB.prototypes = {
     getBBItems: PropTypes.func.isRequired,
+    getMostViewedOnCategoryId: PropTypes.func.isRequired,
+    getAlsoBoughtOnSku: PropTypes.func.isRequired,
     items: PropTypes.array.isRequired,
     mostViewedItems: PropTypes.array.isRequired,
     tableState: PropTypes.object.isRequired,
@@ -63,4 +115,4 @@ const mapStateToProps = (state) => ({
     loading: state.bestbuy.loading
 })
 
-export default connect(mapStateToProps, { getBBItems, getMostViewedOnCategoryId, getViewedUltimatelyBoughtOnSku })(BB);
+export default connect(mapStateToProps, { getBBItems, getMostViewedOnCategoryId, getViewedUltimatelyBoughtOnSku, getAlsoBoughtOnSku })(BB);

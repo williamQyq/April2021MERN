@@ -29,13 +29,15 @@
 }
 
 .most-viewed-cards{
-  .card-image{
-    display: block;
-    max-width: 200px;
-    max-height: 150px;
-    width:auto;
-    height: auto;
-    margin: auto;
+  .card-cover{
+    height: 150px;
+    .card-image{
+      display: block;
+      max-width: 200px;
+      max-height: 150px;
+      margin: auto;
+      margin-bottom: 0;
+    }
   }
   .card-content{
     text-align: center;

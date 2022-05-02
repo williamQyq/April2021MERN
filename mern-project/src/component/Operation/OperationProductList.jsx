@@ -2,15 +2,15 @@ import React from 'react';
 import './Operation.scss';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Table, Form, Typography, Input, Button, Space, BackTop } from 'antd';
+import { Table, Form, Typography, Input, Button, Space } from 'antd';
 import { defaultSettings, title, footer } from 'component/Operation/Settings.js';
-import { EditableCell, mainColumns } from 'component/Operation/OperationEditableEle.js';
+import { mainColumns } from 'component/Operation/OperationEditableEle.js';
 import { getProductPricing } from 'reducers/actions/operationActions.js';
 import OperationMenu from 'component/Operation/OperationMenu';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import { SocketContext } from 'component/socket/socketContext';
-import BackTopHelper from 'component/utility/BackTop';
+import BackTopHelper from 'component/utility/BackTop.jsx';
 
 const { Title } = Typography;
 
@@ -269,8 +269,6 @@ class OperationProductList extends React.Component {
                     />
                 </Form>
                 {/* <BackTopHelper /> */}
-
-                {/* <BackTop target={()=>document.getElementsByClassName('ant-table-body')[0]}/> */}
             </>
 
         );

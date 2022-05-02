@@ -256,21 +256,18 @@ export const SubContentHeader = ({ title }) => {
     );
 }
 
-export const ErrorAlert = () => {
-    const { status, msg } = useSelector((state) =>
-        state.error
-    );
+const ErrorAlert = () => {
+    const { status, msg } = useSelector((state) => state.error);
     const dispatch = useDispatch();
-
     return status ?
         (
             <Alert
                 message={msg}
-                type={status}
+                type={"warning"}
                 showIcon
                 banner
                 closable
-                afterClose={() => dispatch(clearErrors)}
+                afterClose={() => dispatch(clearErrors())}
             />
         ) : null
 }

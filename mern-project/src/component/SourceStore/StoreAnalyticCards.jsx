@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Card, Col, Row, Skeleton, Typography } from 'antd';
+import { Card, Col, Row, Skeleton, Typography, Menu } from 'antd';
 import { SubContentHeader } from './StoreTableUtilities';
 import './Store.scss';
 const { Text } = Typography;
@@ -28,11 +28,38 @@ const mostViewedUltiBoughtProducts = new Array(10).fill({
     },
     rank: "1",
 })
+
+const menuItems = [
+    {
+        key: "allLaptops",
+        label: "All Laptops"
+    },
+    {
+        key: "asusLaptops",
+        label: "Asus Laptops"
+    },
+    {
+        key: "dellLaptops",
+        label: "Dell Laptops",
+    },
+    {
+        key: "hpLaptops",
+        label: "Hp Laptops"
+    },
+    {
+        key: "samsungLaptops",
+        label: "Samsung Laptops"
+    },
+    {
+        key: "microsoftSurfaceLaptops",
+        label: "Surface"
+    }
+]
 class StoreAnalyticCards extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-
+            selectedMenuKey: 'allLaptops'
         }
 
     }
@@ -40,12 +67,22 @@ class StoreAnalyticCards extends React.Component {
     handleCardGridClick = () => {
 
     }
-
+    handleSelectedMenuKeyChange = (key) => {
+        this.setState({ selectedMenuKey: key })
+        this.props.switchContent(key)
+    }
     render() {
         const mostViewedItems = this.props.mostViewedItems ? this.props.mostViewedItems : []
+        const { selectedMenuKey } = this.state;
         return (
             <>
                 <SubContentHeader title="Most Viewed Ultimately Bought" />
+                <Menu
+                    onClick={e => this.handleSelectedMenuKeyChange(e.key)}
+                    selectedKeys={[selectedMenuKey]}
+                    mode="horizontal"
+                    items={menuItems}
+                />
                 <Skeleton active loading={this.props.loading}>
                     <Row gutter={[16, 16]}>
                         {
@@ -56,8 +93,11 @@ class StoreAnalyticCards extends React.Component {
                                             className='most-viewed-cards'
                                             hoverable
                                             title={item.names.title}
-                                            cover={<img className="card-image" alt="laptop" src={item.images.standard}
-                                            />}>
+                                            cover={
+                                                <div className='card-cover'>
+                                                    <img className="card-image" alt="laptop" src={item.images.standard} />
+                                                </div>
+                                            }>
                                             <Card.Meta
                                                 className='card-content'
                                                 title={`rank - ${i + 1}`}

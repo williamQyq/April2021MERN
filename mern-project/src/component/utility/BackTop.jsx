@@ -20,7 +20,7 @@ const BackTopHelper = (props) => {
             <div>Scroll to bottom</div>
             <div>Scroll to bottom</div>
             <div>Scroll to bottom</div>
-            <BackTop>
+            <BackTop target={() => document.getElementsByClassName('ant-layout-content site-layout-content')}>
                 <div style={style}>UP</div>
             </BackTop>
         </div>
