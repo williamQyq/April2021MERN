@@ -23,7 +23,7 @@ class OperationProductList extends React.Component {
             searchedRowId: '',
             searchedColumn: '',
             editingKey: '',
-            data: props.sellingPartner,
+            data: [],
             defaultSettings: { ...defaultSettings },
         };
     }
@@ -36,7 +36,10 @@ class OperationProductList extends React.Component {
         socket.on(`Prod Pricing Update`, () => {
             this.props.getProductPricing();
         })
+        this.setState({ data: this.props.sellingPartner })
+
     }
+   
     componentWillUnmount() {
         let socket = this.context
         socket.emit(`unsubscribe`, `OperationRoom`)
@@ -243,7 +246,7 @@ class OperationProductList extends React.Component {
 
     render() {
         const { data, defaultSettings } = this.state;
-        const { loading } = this.props;
+        const { loading, sellingPartner } = this.props;
         const actions = {
             isEditing: this.isEditing,
             edit: this.edit,
