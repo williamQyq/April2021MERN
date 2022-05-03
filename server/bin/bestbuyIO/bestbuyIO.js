@@ -4,7 +4,7 @@ const DEFAULT_PAGE_SIZE = 50;
 
 export const getMostViewedOnCategoryId = async (categoryId, pageSize = DEFAULT_PAGE_SIZE) => {
 
-    let mostViewedProducts;
+    let mostViewedProducts = [];
 
     let params = {
         apiKey: BESTBUY_API_KEY,
@@ -15,9 +15,8 @@ export const getMostViewedOnCategoryId = async (categoryId, pageSize = DEFAULT_P
     //axios GET request to retrieve mostViewed product
     let categoryUrl = `https://api.bestbuy.com/v1/products/mostViewed(categoryId=${categoryId})`;
     // let categoryUrl = `https://api.bestbuy.com/v1/products/6455181/viewedUltimatelyBought`
-    // let categoryUrl = `https://api.bestbuy.com/v1/products/6457790/alsoBought`
     let res = await axios.get(categoryUrl, { params })
-    let { results } = res.data;
+    let { results } = res.data; //bestbuy api mostViewed products results array.
     let isEmptyResult = results.length == 0 ? true : false
 
     if (isEmptyResult) {
@@ -33,24 +32,46 @@ export const getMostViewedOnCategoryId = async (categoryId, pageSize = DEFAULT_P
 }
 
 export const getViewedUltimatelyBought = async (sku) => {
+    let viewedUltimatelyBoughtProducts = [];
     let param = {
         params: {
             apiKey: BESTBUY_API_KEY,
         }
     }
 
-    let viewedUltimatelyBoughtProducts = await axios.get(`https://api.bestbuy.com/v1/products/${sku}/viewedUltimatelyBought`, param).then(res => {
-        let { results } = res.data;
-        let isEmptyResult = results.length == 0 ? true : false
+    let res = await axios.get(`https://api.bestbuy.com/v1/products/${sku}/viewedUltimatelyBought`, param)
+    let { results } = res.data;
+    let isEmptyResult = results.length == 0 ? true : false
 
-        if (isEmptyResult) {
-            return ([]);
-        }
-        return results.map(prod => {
-            let validPropertiesProd = (({ sku, customerReviews, images, names, prices, rank }) => ({ sku, customerReviews, images, names, prices, rank }))(prod);
-            return validPropertiesProd;
-        })
+    if (isEmptyResult) {
+        return [];
+    }
+    viewedUltimatelyBoughtProducts = results.map(prod => {
+        let validPropertiesProd = (({ sku, customerReviews, images, names, prices, rank }) => ({ sku, customerReviews, images, names, prices, rank }))(prod); //???
+        return validPropertiesProd;
     })
 
     return viewedUltimatelyBoughtProducts;
+}
+export const getAlsoBoughtOnSku = async (sku) => {
+    let alsoBoughtProducts = [];
+    let param = {
+        params: {
+            apiKey: BESTBUY_API_KEY,
+        }
+    }
+
+    let res = await axios.get(`https://api.bestbuy.com/v1/products/${sku}/alsoBought`, param)
+    let { results } = res.data;
+    let isEmptyResult = results.length == 0 ? true : false
+
+    if (isEmptyResult) {
+        return [];
+    }
+    alsoBoughtProducts = results.map(prod => {
+        let validPropertiesProd = (({ sku, customerReviews, images, names, prices, rank }) => ({ sku, customerReviews, images, names, prices, rank }))(prod); //???
+        return validPropertiesProd;
+    })
+
+    return alsoBoughtProducts;
 }

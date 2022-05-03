@@ -61,8 +61,11 @@ io.on("connection", (socket) => {
         }
     })
 
-    socket.on(`disconnect`, () => {
-        console.log(`USER DISCONNECTED: ${socket.id}`);
+    socket.on(`disconnect`, (reason) => {
+        console.log(`\nUSER DISCONNECTED: ${socket.id}\n***REASON:${reason}***\n`);
+    })
+    socket.on('error', (reason) => {
+        console.error(`[Socket Error] ${reason}`)
     })
 })
 

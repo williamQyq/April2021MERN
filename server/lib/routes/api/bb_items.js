@@ -9,6 +9,7 @@ import {
     itemConfigHasDocument
 } from '#query/utilities.js';
 import { getMostViewedOnCategoryId, getViewedUltimatelyBought } from '#bin/bestbuyIO/bestbuyIO.js';
+import { getAlsoBoughtOnSku } from '#bin/bestbuyIO/bestbuyIO.js';
 
 
 const router = express.Router();
@@ -64,6 +65,7 @@ router.put('/itemSpec/add', (req, res) => {
 })
 
 router.get('/mostViewed/:categoryId', (req, res) => {
+    console.log(`\nbestbuy api most viewed request received...`)
     getMostViewedOnCategoryId(req.params.categoryId)
         .then(result => {
             res.json(result)
@@ -71,7 +73,16 @@ router.get('/mostViewed/:categoryId', (req, res) => {
 });
 
 router.get('/viewedUltimatelyBought/:sku', (req, res) => {
+    console.log(`\nbestbuy api ultimately bought request received...`)
     getViewedUltimatelyBought(req.params.sku)
+        .then(result => {
+            res.json(result)
+        })
+})
+
+router.get('/alsoBought/:sku', (req, res) => {
+    console.log(`\nbestbuy api also bought request received...`)
+    getAlsoBoughtOnSku(req.params.sku)
         .then(result => {
             res.json(result)
         })

@@ -4,7 +4,8 @@ import {
     ADD_BB_ITEM_SPEC,
     GET_BB_MOST_VIEWED_ITEMS,
     GET_BB_VIEWED_ULTIMATELY_BOUGHT_ITEMS,
-    MOST_VIEWED_ITEMS_LOADING
+    MOST_VIEWED_ITEMS_LOADING,
+    GET_BB_ALSO_BOUGHT_ITEMS,
 } from './actions/types';
 
 const initialState = {
@@ -45,7 +46,13 @@ export default function Reducer(state = initialState, action) {
         case GET_BB_VIEWED_ULTIMATELY_BOUGHT_ITEMS:
             return {
                 ...state,
-                ultimateBoughtItems: action.payload,
+                mostViewedItems: action.payload,
+                mostViewedItemsLoading: false
+            }
+        case GET_BB_ALSO_BOUGHT_ITEMS:
+            return {
+                ...state,
+                mostViewedItems: [...action.payload],
                 mostViewedItemsLoading: false
             }
         default:

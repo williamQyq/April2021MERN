@@ -29,8 +29,12 @@
 }
 
 .most-viewed-cards{
+  &.ant-card-hoverable{
+    cursor: auto;
+  }
   .card-cover{
     height: 150px;
+
     .card-image{
       display: block;
       max-width: 200px;

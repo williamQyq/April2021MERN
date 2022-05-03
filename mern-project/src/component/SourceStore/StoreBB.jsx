@@ -19,10 +19,7 @@ class BB extends React.Component {
         super(props);
         this.state = {
             store: "BESTBUY",
-            selectedMostViewedCategoryId: 'pcmcat138500050001',
-            selectedMostViewedSku: '',
-            selectedUltimatelyBoughtOnSku: '',
-            selectedAlsoBoughtSku: '',
+            selectedMostViewedCategoryId: categoryIdGroup.ALL_LAPTOPS,
         }
     }
 
@@ -73,10 +70,8 @@ class BB extends React.Component {
                 this.props.getMostViewedOnCategoryId(categoryIdGroup.SURFACE)
 
                 break;
-            case 'alsoBoughtOnSku':
-                return this.props.getAlsoBoughtOnSku();
             default:
-                this.setState({ selectedMostViewedCategoryId: '' })
+                // this.setState({ selectedMostViewedCategoryId: '' })
                 return;
         }
     }

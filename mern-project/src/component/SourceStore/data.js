@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 
 export const categoryIdGroup = {
-    ALL_LAPTOPS: 'pcmcat138500050001',
+    ALL_LAPTOPS: 'pcmcat247400050000',
     ASUS_LAPTOPS: 'pcmcat190000050007',
     DELL_LAPTOPS: 'pcmcat140500050010',
     HP_LAPTOPS: 'pcmcat1513015098109',

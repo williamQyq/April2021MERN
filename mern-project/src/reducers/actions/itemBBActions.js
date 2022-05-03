@@ -5,11 +5,11 @@ import {
     GET_BB_ITEMS,
     GET_BB_ITEM_DETAIL,
     SET_TABLE_STATE,
-    GET_ERRORS,
     ITEMS_LOADING_BB,
     MOST_VIEWED_ITEMS_LOADING,
     GET_BB_MOST_VIEWED_ITEMS,
-    GET_BB_VIEWED_ULTIMATELY_BOUGHT_ITEMS
+    GET_BB_VIEWED_ULTIMATELY_BOUGHT_ITEMS,
+    GET_BB_ALSO_BOUGHT_ITEMS
 } from './types';
 
 export const getBBItems = () => dispatch => {
@@ -84,13 +84,23 @@ export const getViewedUltimatelyBoughtOnSku = (sku) => dispatch => {
     axios.get(`/api/bb_items/viewedUltimatelyBought/${sku}`).then(res => {
         dispatch({
             type: GET_BB_VIEWED_ULTIMATELY_BOUGHT_ITEMS,
-            payload: [...res.data]
+            payload: res.data
         })
     })
 
 }
 export const getAlsoBoughtOnSku = (sku) => dispatch => {
-
+    dispatch(setMostViewedItemsLoading());
+    axios.get(`/api/bb_items/alsoBought/${sku}`).then(res => {
+        console.log(res.data)
+        dispatch({
+            type: GET_BB_ALSO_BOUGHT_ITEMS,
+            payload: res.data
+        })
+    }).catch(e => {
+        console.error('alsoBought errors...')
+        dispatch(returnErrors(e.response.data, e.response.status))
+    })
 }
 
 const setMostViewedItemsLoading = () => {

@@ -9,6 +9,7 @@ import {
     message,
     Alert,
     Divider,
+    Input
 } from "antd";
 import {
     SearchOutlined,
@@ -22,8 +23,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { addItemSpec } from "reducers/actions/itemActions";
 import { clearErrors } from "reducers/actions/errorActions";
 import { setTableState } from "reducers/actions/itemActions";
+import { getAlsoBoughtOnSku } from "reducers/actions/itemBBActions";
 
 const { Text, Title } = Typography;
+const { Search } = Input;
+
 const TypoLink = Typography.Link;
 message.config = {
     maxCount: 3
@@ -270,4 +274,22 @@ const ErrorAlert = () => {
                 afterClose={() => dispatch(clearErrors())}
             />
         ) : null
+}
+
+export const SearchBox = () => {
+    const dispatch = useDispatch();
+
+    const onSearch = (value) => {
+        dispatch(getAlsoBoughtOnSku(value))
+    }
+
+    return (
+        <Search
+            placeholder="Also Bought"
+            allowClear
+            enterButton="Search"
+            size="large"
+            onSearch={onSearch}
+        />
+    )
 }
