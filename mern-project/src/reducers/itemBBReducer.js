@@ -6,6 +6,7 @@ import {
     GET_BB_VIEWED_ULTIMATELY_BOUGHT_ITEMS,
     MOST_VIEWED_ITEMS_LOADING,
     GET_BB_ALSO_BOUGHT_ITEMS,
+    GET_BESTBUY_API_ERRORS,
 } from './actions/types';
 
 const initialState = {
@@ -52,8 +53,14 @@ export default function Reducer(state = initialState, action) {
         case GET_BB_ALSO_BOUGHT_ITEMS:
             return {
                 ...state,
-                mostViewedItems: [...action.payload],
+                mostViewedItems: action.payload,
                 mostViewedItemsLoading: false
+            }
+        case GET_BESTBUY_API_ERRORS:
+            return {
+                ...state,
+                mostViewedItems:[],
+                mostViewedItemsLoading:false
             }
         default:
             return state;

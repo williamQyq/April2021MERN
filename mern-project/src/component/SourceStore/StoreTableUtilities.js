@@ -24,6 +24,7 @@ import { addItemSpec } from "reducers/actions/itemActions";
 import { clearErrors } from "reducers/actions/errorActions";
 import { setTableState } from "reducers/actions/itemActions";
 import { getAlsoBoughtOnSku } from "reducers/actions/itemBBActions";
+import { useState } from "react";
 
 const { Text, Title } = Typography;
 const { Search } = Input;
@@ -249,11 +250,9 @@ export const SubContentHeader = ({ title }) => {
                 <Col>
                     <Title level={4}>{title}</Title>
                 </Col>
-                {/* <Col>
-                    <Button type="primary" disabled={isLoading} loading={isLoading}>
-                        Retrieve Now
-                    </Button>
-                </Col> */}
+                <Col>
+                    <ErrorAlert />
+                </Col>
             </Row>
             <Divider />
         </>
@@ -278,9 +277,16 @@ const ErrorAlert = () => {
 
 export const SearchBox = () => {
     const dispatch = useDispatch();
-
+    const { mostViewedItemsLoading } = useSelector((state) => state.bestbuy)
+    const [status, setStatus] = useState('')
     const onSearch = (value) => {
-        dispatch(getAlsoBoughtOnSku(value))
+        let isValid = /^\d{7}$/.test(value)
+        if (isValid) {
+            setStatus('')
+            dispatch(getAlsoBoughtOnSku(value))
+        } else {
+            setStatus('error')
+        }
     }
 
     return (
@@ -290,6 +296,8 @@ export const SearchBox = () => {
             enterButton="Search"
             size="large"
             onSearch={onSearch}
+            loading={mostViewedItemsLoading}
+            status={status}
         />
     )
 }

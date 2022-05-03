@@ -9,7 +9,8 @@ import {
     MOST_VIEWED_ITEMS_LOADING,
     GET_BB_MOST_VIEWED_ITEMS,
     GET_BB_VIEWED_ULTIMATELY_BOUGHT_ITEMS,
-    GET_BB_ALSO_BOUGHT_ITEMS
+    GET_BB_ALSO_BOUGHT_ITEMS,
+    GET_BESTBUY_API_ERRORS
 } from './types';
 
 export const getBBItems = () => dispatch => {
@@ -74,6 +75,7 @@ export const getMostViewedOnCategoryId = (categoryId) => dispatch => {
         })
     }).catch(e => {
         console.error('most viewed errors...')
+        dispatch(resetBestbuyApiMostViewedItems());
         dispatch(returnErrors(e.response.data, e.response.status))
     })
 
@@ -85,7 +87,11 @@ export const getViewedUltimatelyBoughtOnSku = (sku) => dispatch => {
         dispatch({
             type: GET_BB_VIEWED_ULTIMATELY_BOUGHT_ITEMS,
             payload: res.data
-        })
+        });
+    }).catch(e => {
+        console.error('ultimately bought on sku errors...')
+        dispatch(resetBestbuyApiMostViewedItems());
+        dispatch(returnErrors(e.response.data, e.response.status));
     })
 
 }
@@ -96,11 +102,12 @@ export const getAlsoBoughtOnSku = (sku) => dispatch => {
         dispatch({
             type: GET_BB_ALSO_BOUGHT_ITEMS,
             payload: res.data
-        })
+        });
     }).catch(e => {
         console.error('alsoBought errors...')
-        dispatch(returnErrors(e.response.data, e.response.status))
-    })
+        dispatch(resetBestbuyApiMostViewedItems());
+        dispatch(returnErrors(e.response.data, e.response.status));
+    });
 }
 
 const setMostViewedItemsLoading = () => {
@@ -108,3 +115,8 @@ const setMostViewedItemsLoading = () => {
         type: MOST_VIEWED_ITEMS_LOADING
     };
 };
+const resetBestbuyApiMostViewedItems = () => {
+    return {
+        type: GET_BESTBUY_API_ERRORS
+    }
+}
