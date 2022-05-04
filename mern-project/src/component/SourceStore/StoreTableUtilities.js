@@ -280,7 +280,10 @@ export const SearchBox = () => {
     const { mostViewedItemsLoading } = useSelector((state) => state.bestbuy)
     const [status, setStatus] = useState('')
     const onSearch = (value) => {
-        let isValid = /^\d{7}$/.test(value)
+        // let isValid = /^\d{7}$/.test(value) //regex way check valid
+        let output = value.split('').filter(ele => typeof (Number(ele)) === 'number');
+        console.log(output)
+        let isValid = output.length === 7
         if (isValid) {
             setStatus('')
             dispatch(getAlsoBoughtOnSku(value))

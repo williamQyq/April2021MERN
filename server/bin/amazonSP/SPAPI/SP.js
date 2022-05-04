@@ -18,6 +18,7 @@ export const updateProdPricingCatalogItems = async () => {
 
 */
 const getSellingPartnerProdPricing = (prods) => {
+    console.log('\n\n[Amazon SP] ProdPricing tasks are being created...')
     let sp = new ProdPricing();
     prods.forEach(prod => {
         sp.createAndAddTasksToBucket(bucket, prod)    //list of tasks, each task contain upc and maximum 20 asins mapping.

@@ -10,12 +10,12 @@ import {
 } from '#query/utilities.js';
 import { getMostViewedOnCategoryId, getViewedUltimatelyBought } from '#bin/bestbuyIO/bestbuyIO.js';
 import { getAlsoBoughtOnSku } from '#bin/bestbuyIO/bestbuyIO.js';
-
+import auth from '#middleware/auth.js';
 
 const router = express.Router();
 
 // @route GET api/items
-router.get('/', (req, res) => {
+router.get('/', auth, (req, res) => {
     getStoreItems(Model)
         .then(items => res.json(items));
 
@@ -84,6 +84,7 @@ router.get('/alsoBought/:sku', (req, res) => {
     console.log(`\nbestbuy api also bought request received...`)
     getAlsoBoughtOnSku(req.params.sku)
         .then(result => {
+            console.log(result)
             res.json(result)
         })
 })

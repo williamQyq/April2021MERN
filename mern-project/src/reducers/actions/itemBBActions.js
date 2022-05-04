@@ -12,10 +12,11 @@ import {
     GET_BB_ALSO_BOUGHT_ITEMS,
     GET_BESTBUY_API_ERRORS
 } from './types';
+import { tokenConfig } from './authActions.js';
 
-export const getBBItems = () => dispatch => {
+export const getBBItems = () => (dispatch, getState) => {
     dispatch(setItemsLoading());
-    axios.get('/api/bb_items').then(res => {
+    axios.get('/api/bb_items', tokenConfig(getState)).then(res => {
 
         //modify created date time format in res.data
         let items = Object.values(res.data);

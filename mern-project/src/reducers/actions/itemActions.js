@@ -1,9 +1,9 @@
 import axios from 'axios';
 import Moment from 'moment';
-import { getBBItems } from './itemBBActions';
-import { getMSItems } from './itemMSActions';
+import { getBBItems } from './itemBBActions.js';
+import { getMSItems } from './itemMSActions.js';
 import { message } from 'antd';
-import { returnErrors } from './errorActions'
+import { returnErrors } from './errorActions.js'
 
 import {
     // GET_ITEMS,
@@ -18,6 +18,7 @@ import {
     GET_BB_ITEM_DETAIL,
     ADD_BB_ITEM_SPEC
 } from './types';
+import { tokenConfig } from './authActions.js';
 
 // export const getItems = () => dispatch => {
 //     dispatch(setItemsLoading());

@@ -15,7 +15,7 @@ class HomeMobile extends React.Component {
 
     handleClick = (e) => {
         this.setState({ loading: true })
-        getInvReceive().then(res => {
+        this.props.getInvReceive().then(res => {
             message.success("get wrong adds success")
             this.setState({ loading: false })
         }).catch(e => {
@@ -33,5 +33,7 @@ class HomeMobile extends React.Component {
     }
 
 }
+
+
 
 export default connect(null, { getInvReceive })(HomeMobile);

@@ -32,6 +32,7 @@ class BB extends React.Component {
         socket.on('Store Listings Update', () => {
             this.props.getBBItems()
         })
+       
     }
     componentWillUnmount() {
         let socket = this.context;
