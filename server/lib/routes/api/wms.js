@@ -12,16 +12,21 @@ router.get('/quantity/:upc', (req, res) => {
         })
 });
 
-router.post('/quantity/all', async (req, res) => {
+router.post('/quantity/all', auth, (req, res) => {
     const { upcArr } = req.body;
     let upcWmsQtyMap = [];
 
     const collection = wms.getDatabase().collection('sellerInv')
-    await collection.find({ '_id.UPC': { $in: upcArr }, '_id.org': "M" }).forEach(doc => {
-        upcWmsQtyMap.push([doc._id.UPC, doc.qty])
-    })
-
-    res.json(upcWmsQtyMap)
+    collection.find({ '_id.UPC': { $in: upcArr }, '_id.org': "M" }).toArray()
+        .then(doc => {
+            doc.forEach(doc => {
+                upcWmsQtyMap.push([doc._id.UPC, doc.qty])
+            })
+            res.json(upcWmsQtyMap)
+        })
+        .catch(err => {
+            res.status(502).json({ msg: "WMS connection error" })
+        })
 
 })
 

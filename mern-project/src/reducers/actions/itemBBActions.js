@@ -28,8 +28,9 @@ export const getBBItems = () => (dispatch, getState) => {
             type: GET_BB_ITEMS,
             payload: items
         })
-    }
-    )
+    }).catch(err => {
+        dispatch(returnErrors(err.response.data.msg, err.response.status))
+    })
 };
 
 const setItemsLoading = () => {
@@ -74,10 +75,9 @@ export const getMostViewedOnCategoryId = (categoryId) => dispatch => {
             type: GET_BB_MOST_VIEWED_ITEMS,
             payload: res.data
         })
-    }).catch(e => {
-        console.error('most viewed errors...')
+    }).catch(err => {
         dispatch(resetBestbuyApiMostViewedItems());
-        dispatch(returnErrors(e.response.data, e.response.status))
+        dispatch(returnErrors(err.response.data.msg, err.response.status, categoryId))
     })
 
 }
@@ -89,25 +89,22 @@ export const getViewedUltimatelyBoughtOnSku = (sku) => dispatch => {
             type: GET_BB_VIEWED_ULTIMATELY_BOUGHT_ITEMS,
             payload: res.data
         });
-    }).catch(e => {
-        console.error('ultimately bought on sku errors...')
+    }).catch(err => {
         dispatch(resetBestbuyApiMostViewedItems());
-        dispatch(returnErrors(e.response.data, e.response.status));
+        dispatch(returnErrors(err.response.data.msg, err.response.status));
     })
 
 }
 export const getAlsoBoughtOnSku = (sku) => dispatch => {
     dispatch(setMostViewedItemsLoading());
     axios.get(`/api/bb_items/alsoBought/${sku}`).then(res => {
-        console.log(res.data)
         dispatch({
             type: GET_BB_ALSO_BOUGHT_ITEMS,
             payload: res.data
         });
-    }).catch(e => {
-        console.error('alsoBought errors...')
+    }).catch(err => {
         dispatch(resetBestbuyApiMostViewedItems());
-        dispatch(returnErrors(e.response.data, e.response.status));
+        dispatch(returnErrors(err.response.data.msg, err.response.status));
     });
 }
 

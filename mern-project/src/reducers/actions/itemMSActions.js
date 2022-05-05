@@ -32,7 +32,6 @@ export const getMSItemDetail = (_id) => dispatch => {
         item.price_timestamps.forEach(ts => {
             ts.date = Moment(ts.date).format("MMM Do YYYY HH:mm a");
         });
-        console.log(JSON.stringify(item))
         dispatch({
             type: GET_MS_ITEM_DETAIL,
             payload: item

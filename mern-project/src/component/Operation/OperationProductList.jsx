@@ -39,7 +39,7 @@ class OperationProductList extends React.Component {
         this.setState({ data: this.props.sellingPartner })
 
     }
-   
+
     componentWillUnmount() {
         let socket = this.context
         socket.emit(`unsubscribe`, `OperationRoom`)

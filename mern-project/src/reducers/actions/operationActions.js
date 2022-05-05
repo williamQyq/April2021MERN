@@ -1,51 +1,52 @@
 import axios from 'axios';
 import Papa from "papaparse";
+import { tokenConfig } from './authActions';
+import { returnErrors } from './errorActions';
 import {
     GET_AMZ_PROD_PRICING,
     UPLOAD_ASINS_MAPPING,
     PRODUCT_LIST_LOADING
     // GET_ERRORS,
 } from './types';
+import store from 'store.js'
 
 // GET Upc Asins Mapping Record from db, then get asin pricing info via SP API,
 // then get upc quantity info from wms. Finally, dispatch product pricing data.
-export const getProductPricing = () => dispatch => {
+export const getProductPricing = () => (dispatch, getState) => {
     dispatch(setResLoading());
-    axios.get('/api/operation').then(res => {
-        //dispatch mongo atlas prod pricing collection ducuments first, then wms quantity.
-        dispatch({
-            type: GET_AMZ_PROD_PRICING,
-            payload: res.data
-        })
-
-        getWmsProdQty(res.data).then(data => {
+    axios.get('/api/operation', tokenConfig(getState))
+        .then(res => {
+            //dispatch mongo atlas prod pricing collection ducuments first, then wms quantity.
             dispatch({
                 type: GET_AMZ_PROD_PRICING,
-                payload: data
+                payload: res.data
             })
-        });
-
-    })
-
+            return res.data
+        })
+        .then(prods => getWmsProdQty(prods))    //append warehouse qty to prod list.
+        .then(warehouseData => {
+            dispatch({
+                type: GET_AMZ_PROD_PRICING,
+                payload: warehouseData
+            })
+        })
+        .catch(err => {
+            dispatch(returnErrors(err.response.data.msg, err.response.status))
+        })
 }
 
-export const getWmsProdQty = async (prods) => {
-    const config = {
-        headers: {
-            "Content-type": "application/json"
-        }
-    };
-
+export const getWmsProdQty = (prods) => {
     let upcArr = prods.map(prod => prod.upc)
+    return axios.post(`/api/wms/quantity/all`, { upcArr }, tokenConfig(store.getState))
+        .then(res => {
+            let upcQtyMap = new Map(res.data)
+            let newProdsArr = [...prods];
+            newProdsArr.forEach(prod => {
+                prod.wmsQuantity = upcQtyMap.get(prod.upc)
+            });
+            return newProdsArr
+        })
 
-    let res = await axios.post(`/api/wms/quantity/all`, { upcArr }, config)
-    let prodsQtyMap = new Map(res.data)
-
-    prods.forEach(prod => {
-        prod.wmsQuantity = prodsQtyMap.get(prod.upc)
-    });
-
-    return prods;
 }
 
 export const uploadAsinsMapping = (file) => dispatch => {

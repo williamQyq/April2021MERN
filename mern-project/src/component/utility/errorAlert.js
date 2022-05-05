@@ -4,7 +4,6 @@ import { notification, Typography } from "antd";
 const { Text } = Typography;
 
 const openAlertNotification = (type, msg, action) => {
-
     notification[type]({
         message: <Text style={{ color: "#D8000C" }}>Oops! Error</Text>,
         description: <Text style={{ color: "#D8000C" }}>{msg}</Text>,

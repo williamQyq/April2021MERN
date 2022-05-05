@@ -14,7 +14,6 @@ import {
     BESTBUY,
     SET_TABLE_STATE,
     GET_MS_ITEM_DETAIL,
-    ADD_MS_ITEM_SPEC,
     GET_BB_ITEM_DETAIL,
     ADD_BB_ITEM_SPEC
 } from './types';
@@ -31,13 +30,14 @@ import { tokenConfig } from './authActions.js';
 // };
 
 export const deleteItem = (_id) => dispatch => {
-    axios.delete(`/api/items/${_id}`).then(res =>
+    axios.delete(`/api/items/${_id}`).then(res => {
         dispatch({
             type: DELETE_ITEM,
             payload: _id
         })
-
-    )
+    }).catch(err => {
+        dispatch(returnErrors(err.response.data.msg, err.response.status))
+    })
 };
 
 export const addItem = item => dispatch => {
@@ -46,7 +46,9 @@ export const addItem = item => dispatch => {
             type: ADD_ITEM,
             payload: res.data
         })
-    )
+    ).catch(err => {
+        dispatch(returnErrors(err.response.data.msg, err.response.status))
+    })
 };
 
 const setItemsLoading = () => {
@@ -91,6 +93,8 @@ export const getItemDetail = (store, _id) => dispatch => {
             type: type.GET_ITEM_DETAIL,
             payload: item
         })
+    }).catch(err => {
+        dispatch(returnErrors(err.response.data.msg, err.response.status))
     })
 }
 
@@ -124,25 +128,15 @@ export const setTableState = (store, clickedId) => dispatch => {
 export const addItemSpec = (record, store) => (dispatch, getState) => {
     dispatch(setItemsLoading);
     const { routes, type } = setRouteOnStore(store)
-    const config = {
-        headers: {
-            "Content-type": "application/json"
-        }
-    };
     axios.put(`/api/${routes}/itemSpec/add`, record, tokenConfig(getState))
         .then(res => {
-            if (res.data.status === 200) {
-                dispatch({
-                    type: type.ADD_ITEM_SPEC,
-                    payload: res.data
-                })
-                message.success(res.data.msg)
-            } else {
-                dispatch(returnErrors(res.data.msg, res.data.status))
-                message.warn(res.data.msg)
-            }
+            dispatch({
+                type: type.ADD_ITEM_SPEC,
+                payload: res.data
+            })
+            message.success(res.data.msg)
         })
         .catch(e => {
-            dispatch(returnErrors(e.response.data, e.response.status))
+            dispatch(returnErrors(e.response.data.msg, e.response.status))
         })
 }

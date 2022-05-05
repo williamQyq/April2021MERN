@@ -17,8 +17,8 @@ const router = express.Router();
 // @route GET api/items
 router.get('/', auth, (req, res) => {
     getStoreItems(Model)
-        .then(items => res.json(items));
-
+        .then(items => res.json(items))
+        .catch(err => res.status(503).json({ msg: "Service Unavailable" }));
 });
 
 // @route GET api/items
@@ -26,65 +26,62 @@ router.get('/detail/:_id', (req, res) => {
     getStoreItemDetailById(Model, req.params._id)
         .then(items => {
             res.json(items)
+        })
+        .catch(err => {
+            res.status(400).json({ msg: "Item detail not exists" })
         });
 });
 
 router.put('/itemSpec/add', auth, (req, res) => {
     const { link, sku } = req.body;
     let bestbuy = new Bestbuy();
-    let message = { status: undefined, msg: undefined, id: undefined };
-
 
     findItemConfigDocumentOnSku(sku)
         .then(doc => {
             if (doc) {
-                message = {
-                    status: 409,
-                    msg: "Item config already exists.",
-                    id: doc.upc
-                }
-                throw message
+                res.status(400).json({ msg: `${doc.upc}[upc] Item config already exists.` })
             }
         })
-        .then(() => getItemConfiguration(bestbuy, link)
-            .catch(e => {
-                message = {
-                    status: 502,
-                    msg: "Get item spec failed.",
-                    id: null
-                }
-                throw message;
-            }))
+        .then(() => getItemConfiguration(bestbuy, link))
         .then((itemConfig) => saveItemConfiguration(itemConfig, sku))
-        .then((doc) => res.json({ status: 200, msg: "Upsert item config finished.", id: doc.upc }))
+        .then((doc) => res.json({ msg: `Upsert ${doc.upc} item config finished.` }))
         .catch(errorMsg => {
             console.error(`[ERROR] Get item config error\n`, errorMsg)
-            res.json(errorMsg)
+            res.status(502).json({ msg: "Get item spec failed." })
         })
 })
 
 router.get('/mostViewed/:categoryId', (req, res) => {
-    console.log(`\nbestbuy api most viewed request received...`)
-    getMostViewedOnCategoryId(req.params.categoryId)
+    return getMostViewedOnCategoryId(req.params.categoryId)
         .then(result => {
+            console.log(`\nbestbuy api most viewed request received...`)
+            if (result === undefined) {
+                res.status(400).json({ msg: "Bestbuy api most viewed no available data" })
+            }
             res.json(result)
         })
 });
 
 router.get('/viewedUltimatelyBought/:sku', (req, res) => {
-    console.log(`\nbestbuy api ultimately bought request received...`)
-    getViewedUltimatelyBought(req.params.sku)
+    return getViewedUltimatelyBought(req.params.sku)
         .then(result => {
+            console.log(`\nbestbuy api ultimately bought request received...`)
+            if (result === undefined) {
+                res.status(400).json({ msg: "Bestbuy api ultimately bought no available data" })
+            }
             res.json(result)
         })
 })
 
-router.get('/alsoBought/:sku', (req, res) => {
-    console.log(`\nbestbuy api also bought request received...`)
+router.get('/alsoBought/:sku', (req, res) =>
     getAlsoBoughtOnSku(req.params.sku)
         .then(result => {
+            console.log(`\nbestbuy api also bought request received...`)
+            if (result === undefined) {
+                res.status(400).json({ msg: "Bestbuy api also bought no available data" })
+            }
             res.json(result)
         })
-})
+)
 
 export default router;

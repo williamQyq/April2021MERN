@@ -7,7 +7,8 @@ const router = express.Router();
 router.get('/', (req, res) => {
     Item.find()
         .sort({ created_date: -1 })
-        .then(items => res.json(items));
+        .then(items => res.json(items))
+        .catch(() => res.status(503).json({ msg: "Service Unavailable" }));
 });
 
 // @route POST api/items
@@ -18,14 +19,17 @@ router.post('/', (req, res) => {
         price_timestamps: req.body.price_timestamps
     })
 
-    newItem.save().then(item => res.json(item));
+    newItem.save()
+        .then(item => res.json(item))
+        .catch(() => res.status(503).json({ msg: "Service Unavailable" }));;
 });
 
 // @route DELETE api/items
 router.delete('/:id', (req, res) => {
     Item.findById(req.params.id)
-        .then(item => item.remove().then(() => res.json({ success: true })))
-        .catch(err => res.status(404).json({ success: false }));
+        .then(item => item.remove())
+        .then(() => res.json({ success: true }))
+        .catch(err => res.status(503).json({ success: false }));
 });
 
 // @route POST api/push_price/:_id
