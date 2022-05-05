@@ -7,7 +7,6 @@ import {
     Row,
     Col,
     message,
-    Alert,
     Divider,
     Input
 } from "antd";
@@ -21,10 +20,8 @@ import {
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import { addItemSpec } from "reducers/actions/itemActions";
-import { clearErrors } from "reducers/actions/errorActions";
 import { setTableState } from "reducers/actions/itemActions";
-import { getAlsoBoughtOnSku } from "reducers/actions/itemBBActions";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const { Text, Title } = Typography;
 const { Search } = Input;
@@ -230,14 +227,6 @@ export const ContentHeader = ({ title }) => (
             <Col>
                 <Title level={4}>{title}</Title>
             </Col>
-            <Col>
-                <ErrorAlert />
-            </Col>
-            {/* <Col>
-            <Button type="primary" disabled={isLoading} loading={isLoading}>
-                Retrieve Now
-            </Button>
-        </Col> */}
         </Row>
         <Divider />
     </>
@@ -250,30 +239,13 @@ export const SubContentHeader = ({ title }) => {
                 <Col>
                     <Title level={4}>{title}</Title>
                 </Col>
-                <Col>
-                    <ErrorAlert />
-                </Col>
             </Row>
             <Divider />
         </>
     );
 }
 
-const ErrorAlert = () => {
-    const { status, msg } = useSelector((state) => state.error);
-    const dispatch = useDispatch();
-    return status ?
-        (
-            <Alert
-                message={msg}
-                type={"warning"}
-                showIcon
-                banner
-                closable
-                afterClose={() => dispatch(clearErrors())}
-            />
-        ) : null
-}
+
 
 export const SearchBox = (props) => {
     const { name, reduxAction } = props;

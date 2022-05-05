@@ -38,7 +38,7 @@ class Home extends React.Component {
       collapsed: !collapsed,
     });
   };
-  
+
 
   render() {
     const { match: { path } } = this.props;
