@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Card, Col, Row, Skeleton, Typography, Menu } from 'antd';
 import { SubContentHeader, SearchBox } from './StoreTableUtilities';
 import './Store.scss';
+import { getAlsoBoughtOnSku, getViewedUltimatelyBoughtOnSku } from 'reducers/actions/itemBBActions';
 const { Text } = Typography;
 
 const menuItems = [
@@ -33,7 +34,11 @@ const menuItems = [
     },
     {
         key: "alsoBoughtOnSku",
-        label: <SearchBox />
+        label: <SearchBox name={'alsoBoughtOnSku'} reduxAction={getAlsoBoughtOnSku} />
+    },
+    {
+        key: "ultiBoughtOnSku",
+        label: <SearchBox name={'ultimatelyBoughtOnSku'} reduxAction={getViewedUltimatelyBoughtOnSku} />
     }
 ]
 

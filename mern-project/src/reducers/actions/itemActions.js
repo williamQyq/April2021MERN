@@ -55,7 +55,7 @@ const setItemsLoading = () => {
     };
 };
 
-const storeSwitch = (store) => {
+const setRouteOnStore = (store) => {
     switch (store) {
         case MICROSOFT:
             return {
@@ -81,7 +81,7 @@ const storeSwitch = (store) => {
 export const getItemDetail = (store, _id) => dispatch => {
 
     dispatch(setItemsLoading());
-    const { routes, type } = storeSwitch(store);
+    const { routes, type } = setRouteOnStore(store);
     axios.get(`/api/${routes}/detail/${_id}`).then(res => {
         let item = Object.values(res.data).pop();
         item.price_timestamps.forEach(ts => {
@@ -121,26 +121,28 @@ export const setTableState = (store, clickedId) => dispatch => {
 }
 
 
-export const addItemSpec = (record, store) => dispatch => {
+export const addItemSpec = (record, store) => (dispatch, getState) => {
     dispatch(setItemsLoading);
-    const config = { headers: { 'Content-Type': 'application/json' } }
-
-    const { routes, type } = storeSwitch(store)
-    axios.put(`/api/${routes}/itemSpec/add`, record, config)
+    const { routes, type } = setRouteOnStore(store)
+    const config = {
+        headers: {
+            "Content-type": "application/json"
+        }
+    };
+    axios.put(`/api/${routes}/itemSpec/add`, record, tokenConfig(getState))
         .then(res => {
-            if (res.data.status === "success") {
+            if (res.data.status === 200) {
                 dispatch({
                     type: type.ADD_ITEM_SPEC,
                     payload: res.data
                 })
                 message.success(res.data.msg)
             } else {
-                message.warn(res.data.msg)
                 dispatch(returnErrors(res.data.msg, res.data.status))
+                message.warn(res.data.msg)
             }
         })
         .catch(e => {
-            message.warn("addItemSpec failed.")
-            dispatch(returnErrors("addItemSpec failed.", "error"))
+            dispatch(returnErrors(e.response.data, e.response.status))
         })
 }

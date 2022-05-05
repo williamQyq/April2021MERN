@@ -24,7 +24,7 @@ import { addItemSpec } from "reducers/actions/itemActions";
 import { clearErrors } from "reducers/actions/errorActions";
 import { setTableState } from "reducers/actions/itemActions";
 import { getAlsoBoughtOnSku } from "reducers/actions/itemBBActions";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const { Text, Title } = Typography;
 const { Search } = Input;
@@ -275,18 +275,18 @@ const ErrorAlert = () => {
         ) : null
 }
 
-export const SearchBox = () => {
+export const SearchBox = (props) => {
+    const { name, reduxAction } = props;
     const dispatch = useDispatch();
     const { mostViewedItemsLoading } = useSelector((state) => state.bestbuy)
     const [status, setStatus] = useState('')
     const onSearch = (value) => {
         // let isValid = /^\d{7}$/.test(value) //regex way check valid
         let output = value.split('').filter(ele => typeof (Number(ele)) === 'number');
-        console.log(output)
         let isValid = output.length === 7
         if (isValid) {
             setStatus('')
-            dispatch(getAlsoBoughtOnSku(value))
+            dispatch(reduxAction(value))
         } else {
             setStatus('error')
         }
@@ -294,7 +294,7 @@ export const SearchBox = () => {
 
     return (
         <Search
-            placeholder="Also Bought"
+            placeholder={name}
             allowClear
             enterButton="Search"
             size="large"

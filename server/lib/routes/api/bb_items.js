@@ -6,7 +6,7 @@ import {
     saveItemConfiguration,
     getStoreItemDetailById,
     getStoreItems,
-    itemConfigHasDocument
+    findItemConfigDocumentOnSku
 } from '#query/utilities.js';
 import { getMostViewedOnCategoryId, getViewedUltimatelyBought } from '#bin/bestbuyIO/bestbuyIO.js';
 import { getAlsoBoughtOnSku } from '#bin/bestbuyIO/bestbuyIO.js';
@@ -29,35 +29,34 @@ router.get('/detail/:_id', (req, res) => {
         });
 });
 
-router.put('/itemSpec/add', (req, res) => {
+router.put('/itemSpec/add', auth, (req, res) => {
     const { link, sku } = req.body;
     let bestbuy = new Bestbuy();
     let message = { status: undefined, msg: undefined, id: undefined };
 
 
-    itemConfigHasDocument(sku)
-        .then(hasDoc => {
-            if (hasDoc) {
+    findItemConfigDocumentOnSku(sku)
+        .then(doc => {
+            if (doc) {
                 message = {
-                    status: "warning",
+                    status: 409,
                     msg: "Item config already exists.",
                     id: doc.upc
                 }
                 throw message
             }
         })
-        .then(() => getItemConfiguration(bestbuy, link).catch(e => {
-            message = {
-                status: "error",
-                msg: "Get item spec failed.",
-                id: null
-            }
-            throw message;
-        }))
-        .then((config) => saveItemConfiguration(config, sku).then(() => {
-            return config.UPC
-        }))
-        .then((upc) => res.json({ status: "success", msg: "Upsert item config finished.", id: upc }))
+        .then(() => getItemConfiguration(bestbuy, link)
+            .catch(e => {
+                message = {
+                    status: 502,
+                    msg: "Get item spec failed.",
+                    id: null
+                }
+                throw message;
+            }))
+        .then((itemConfig) => saveItemConfiguration(itemConfig, sku))
+        .then((doc) => res.json({ status: 200, msg: "Upsert item config finished.", id: doc.upc }))
         .catch(errorMsg => {
             console.error(`[ERROR] Get item config error\n`, errorMsg)
             res.json(errorMsg)
@@ -84,7 +83,6 @@ router.get('/alsoBought/:sku', (req, res) => {
     console.log(`\nbestbuy api also bought request received...`)
     getAlsoBoughtOnSku(req.params.sku)
         .then(result => {
-            console.log(result)
             res.json(result)
         })
 })

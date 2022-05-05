@@ -22,14 +22,14 @@ export const saveItemConfiguration = async (config, sku) => {
             spec: config
         }
     }
-    const option = { upsert: true, useFindAndModify: false }
-    let res = await ItemSpec.findOneAndUpdate(query, update, option)
-    return res ? true : false
+    const option = { upsert: true, new: true, useFindAndModify: false, }
+    let doc = await ItemSpec.findOneAndUpdate(query, update, option)
+    return doc;
 }
 //@itemSpec
-export const itemConfigHasDocument = async (sku) => {
-    let res = await ItemSpec.findOne({ sku: sku })
-    return res ? true : false
+export const findItemConfigDocumentOnSku = async (sku) => {
+    let doc = await ItemSpec.findOne({ sku: sku })
+    return doc;
 }
 //@StoreListings -----------------------------
 export const saveStoreItemToDatabase = async (item, storeModel) => {
