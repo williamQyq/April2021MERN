@@ -25,6 +25,10 @@ const menuItems = [
         label: "Hp Laptops"
     },
     {
+        key: "lenovoLaptops",
+        label: "Lenovo Laptops"
+    },
+    {
         key: "samsungLaptops",
         label: "Samsung Laptops"
     },

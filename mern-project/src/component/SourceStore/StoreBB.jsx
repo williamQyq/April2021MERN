@@ -61,6 +61,9 @@ class BB extends React.Component {
                 this.props.getMostViewedOnCategoryId(categoryIdGroup.HP_LAPTOPS)
 
                 break;
+            case 'lenovoLaptops':
+                this.setState({ selectedMostViewedCategoryId: categoryIdGroup.LENOVO_LAPTOPS });
+                this.props.getMostViewedOnCategoryId(categoryIdGroup.LENOVO_LAPTOPS)
             case 'samsungLaptops':
                 this.setState({ selectedMostViewedCategoryId: categoryIdGroup.SAMSUNG_LAPTOPS });
                 this.props.getMostViewedOnCategoryId(categoryIdGroup.SAMSUNG_LAPTOPS)
