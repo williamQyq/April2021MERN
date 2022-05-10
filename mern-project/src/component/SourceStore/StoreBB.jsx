@@ -32,7 +32,7 @@ class BB extends React.Component {
         socket.on('Store Listings Update', () => {
             this.props.getBBItems()
         })
-       
+
     }
     componentWillUnmount() {
         let socket = this.context;
@@ -63,7 +63,9 @@ class BB extends React.Component {
                 break;
             case 'lenovoLaptops':
                 this.setState({ selectedMostViewedCategoryId: categoryIdGroup.LENOVO_LAPTOPS });
-                this.props.getMostViewedOnCategoryId(categoryIdGroup.LENOVO_LAPTOPS)
+                this.props.getMostViewedOnCategoryId(categoryIdGroup.LENOVO_LAPTOPS);
+                
+                break;
             case 'samsungLaptops':
                 this.setState({ selectedMostViewedCategoryId: categoryIdGroup.SAMSUNG_LAPTOPS });
                 this.props.getMostViewedOnCategoryId(categoryIdGroup.SAMSUNG_LAPTOPS)
