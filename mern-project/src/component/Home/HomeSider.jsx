@@ -98,7 +98,7 @@ const HomeSider = (props) => {
                     label: (<Link to={`${path}/inbound`}>Inbound</Link>)
                 },
                 {
-                    disabled: true,
+                    // disabled: true,
                     key: 'outBound',
                     icon: <ScanOutlined />,
                     label: (<Link to={`${path}/outBound`}>OutBound</Link>)

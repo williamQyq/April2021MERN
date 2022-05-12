@@ -1,5 +1,5 @@
-import pkg from 'mongodb';
-const {MongoClient} = pkg;
+import mongodb from 'mongodb';
+const {MongoClient,ObjectID,} = mongodb;
 
 import dotenv from 'dotenv'
 import path from 'path';
@@ -8,7 +8,7 @@ import {fileURLToPath} from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({path:__dirname+"/../.env"});   //secrete keys in environment
-
+console.log('*********',__dirname);
 // console.log('env===',process.env)
 
 
@@ -25,8 +25,27 @@ dotenv.config({path:__dirname+"/../.env"});   //secrete keys in environment
         const query = {
             "upc":{$exists:true}
         }
+        // const query = {
+            // "price_timestamps.date":{
+            //     $gt:ISODate('2022-05-10')
+            // }
+            // _id: ObjectID('61a1286b9b530e8626d9ec8b'),
+            // "price_timestamps.date":{
+            //     $gte: new Date('2022-05-10')
+            // }
+        // }
+        
+        // const update = {
+        //     $pull:{
+        //         "price_timestamps":{
+        //             date:{
+        //                 $gte: new Date('2022-05-10')
+        //             }
+        //         }
+        //     }
+        // }
 
-        const doc = await db.collection(process.env.DB_COLLECTION_AMZ_PROD_PRICING).deleteMany(query)
+        const doc = await db.collection(process.env.DB_COLLECTION_MICROSOFT).findOne(query)
         // const doc = await testdb.collection("Pc_info").findOneAndUpdate(query,update)
         console.log(JSON.stringify(doc,null,4))
 

@@ -20,6 +20,12 @@ export const WMS_CONFIG = {
     keepAlive: true
 }
 
+export const WMS_COLLECTIONS = {
+    LOCATION_INV: "locationInv",
+    SELLER_INV: "sellerInv",
+    SHIPMENT: "shipment"
+}
+
 export const AMZ_CREDENTIALS = {
     SELLING_PARTNER_APP_CLIENT_ID: process.env.AMZ_SELLING_PARTNER_APP_CLIENT_ID,
     SELLING_PARTNER_APP_CLIENT_SECRET: process.env.AMZ_SELLING_PARTNER_APP_CLIENT_SECRET,
@@ -35,6 +41,6 @@ export const JWT_SECRET = process.env.JWT_SECRET
 export const USER_AGENT = process.env.USER_AGENT
 
 //@Walmart
-export const WM_RSA_PASS_PHASE = process.env.WM_RSA_PASS_PHASE 
+export const WM_RSA_PASS_PHASE = process.env.WM_RSA_PASS_PHASE
 //@Bestbuy
 export const BESTBUY_API_KEY = process.env.BESTBUY_API_KEY

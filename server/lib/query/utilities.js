@@ -175,3 +175,11 @@ export const upsertProdPricingNewAsin = (upc, asin) => {
         })
 
 }
+
+export class Outbound {
+    constructor(){
+
+    }
+    
+
+}

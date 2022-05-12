@@ -1,6 +1,7 @@
 import tunnel from 'tunnel-ssh';
 import mongodb from 'mongodb';
-import {WMS_CONFIG} from '#root/config.js';
+import mongoose from 'mongoose';
+import { WMS_CONFIG, WMS_COLLECTIONS } from '#root/config.js';
 
 const { MongoClient } = mongodb;
 //when modules/instance being required in nodejs, it will only load once.
@@ -31,16 +32,15 @@ const close = () => {
     console.log(`wms connection closed...`);
 }
 
-const startService = () => {
-   
-    connect(WMS_CONFIG, () => {
-        console.log(`WMS Database Connected...`);
-    });
+const getCollections = () => {
+    return WMS_COLLECTIONS
 }
 
 const wms = {
-    startService,
+    connect,
     close,
-    getDatabase
+    getDatabase,
+    getCollections,
+    config: WMS_CONFIG
 }
 export default wms;

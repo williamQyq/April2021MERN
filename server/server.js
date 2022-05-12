@@ -1,12 +1,12 @@
 import mongoose from 'mongoose';
-import io from './index.js';
+import io from './index.js';    //socket io
 import wms from "./wms/wmsDatabase.js";    // @local wms server connection
 import scrapeScheduler from './bin/scrapeScheduler.js';    //scripts scheduler, node-cron
 import { amazonScheduler } from '#amz/amazonSchedule.js';
 import unitTest from './unit_test.js'   //For testing functionalities
 
 // @CREATE WMS CONNECTION
-wms.startService();
+wms.connect(wms.config, () => console.log(`WMS Database Connected...`));
 
 //@Mongoose connection; Connect to Mongo.
 const mongoURI = process.env.DB_URI;

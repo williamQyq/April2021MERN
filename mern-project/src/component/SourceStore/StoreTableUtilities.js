@@ -240,7 +240,7 @@ export const SubContentHeader = ({ title }) => {
                     <Title level={4}>{title}</Title>
                 </Col>
             </Row>
-            <Divider />
+            {/* <Divider /> */}
         </>
     );
 }
