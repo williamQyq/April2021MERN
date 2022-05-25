@@ -13,11 +13,6 @@ const OperationMenu = (props) => {
 
     const menuItems = [
         {
-            key: 'settings',
-            icon: <LineChartOutlined />,
-            label: 'Settings',
-        },
-        {
             key: 'upload',
             icon: <AreaChartOutlined />,
             label: 'Upload'
@@ -27,8 +22,6 @@ const OperationMenu = (props) => {
 
     const switchContent = (key) => {
         switch (key) {
-            case 'settings':
-                return <Settings {...props} />
             case 'upload':
                 return <Upload />
             default:

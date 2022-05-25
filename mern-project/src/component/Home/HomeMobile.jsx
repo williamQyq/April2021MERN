@@ -1,15 +1,20 @@
-import { Button, message, Row } from 'antd';
+import { Button, message, Result, Row } from 'antd';
 import { Content } from 'antd/lib/layout/layout';
 import React from 'react';
 import { connect } from 'react-redux';
 import './HomeMobile.scss';
 import { getInvReceive } from 'reducers/actions/inboundActions.js';
+import { logout } from 'reducers/actions/authActions.js';
+
+// import { SocketContext } from 'component/socket/socketContext.js';
+
 
 class HomeMobile extends React.Component {
+    // static contextType = SocketContext
     constructor(props) {
         super(props)
         this.state = {
-            loading: false
+            loading: false,
         }
     }
 
@@ -23,11 +28,21 @@ class HomeMobile extends React.Component {
             this.setState({ loading: false });
         })
     }
+
+    handleLogOut = () => {
+        this.props.logout();
+    }
+    onNewScanResult = (decodedText, decodedResult) => {
+        this.setState({ data: decodedText })
+        console.log(decodedText, decodedResult)
+    }
+
     render() {
-        const { loading } = this.state
+        const { loading, data } = this.state
         return (
             <Content className='home'>
                 <Button loading={loading} size='large' onClick={e => this.handleClick(e)}>Get Wrong Adds</Button>
+                <Button size='large' onClick={e => this.handleLogOut(e)}>Log Out</Button>
             </Content>
         );
     }
@@ -36,4 +51,4 @@ class HomeMobile extends React.Component {
 
 
 
-export default connect(null, { getInvReceive })(HomeMobile);
+export default connect(null, { getInvReceive, logout })(HomeMobile);

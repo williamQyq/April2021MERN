@@ -165,6 +165,7 @@ export default class Bestbuy extends Stores {
         try {
             items = await this.#parseItemsList(page)
         } catch (e) {
+            console.log(`getPageItems err... retrying...\n\n${e}`)
             await this.retry(async () => {
                 await page.goto(url)
                 items = await this.#parseItemsList(page)

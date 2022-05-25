@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 import io from './index.js';    //socket io
 import wms from "./wms/wmsDatabase.js";    // @local wms server connection
-import scrapeScheduler from './bin/scrapeScheduler.js';    //scripts scheduler, node-cron
-import { amazonScheduler } from '#amz/amazonSchedule.js';
+import startScrapeScheduler from './bin/scrapeScheduler.js';    //scripts scheduler, node-cron
+import startAmazonScheduler from '#amz/amazonSchedule.js';
 import unitTest from './unit_test.js'   //For testing functionalities
 
 // @CREATE WMS CONNECTION
@@ -56,9 +56,9 @@ db.once('open', () => {
     })
 
     unitTest();
-    scrapeScheduler.start();
+    // startScrapeScheduler.start();
     // @AMAZON SP UPDATE
-    amazonScheduler.start();
+    // startamazonScheduler.start();
     // amazonScheduler()
 
 });

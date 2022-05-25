@@ -12,8 +12,7 @@
     "debug": "cd ./server && node ./server/backend_control/server.js",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "prod": "concurrently \"npm run start\" \"npm run client\"",
-    "deploy": "cd ./deploy && node cmd.js",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false cd mern-project && npm install && npm run build"
+    "deploy": "cd ./deploy && node cmd.js"
   },
   "imports": {
     "#root/*": "./server/*",

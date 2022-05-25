@@ -7,5 +7,5 @@ export const categoryIdGroup = {
     HP_LAPTOPS: 'pcmcat1513015098109',
     LENOVO_LAPTOPS:'pcmcat230600050000',
     SAMSUNG_LAPTOPS: 'pcmcat1496261338353',
-    SURFACE: 'pcmcat1569442808449'
+    SURFACE: 'pcmcat1492808199261'
 }

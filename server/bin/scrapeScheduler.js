@@ -3,10 +3,11 @@ import moment from 'moment';
 import { getBestbuyLaptops, getMicrosoftLaptops } from './scraper.js';
 
 //cron scheduler starts everyday
-const scrapeScheduler = cron.schedule("00 00 05 * * *", () => {
-    scrapeStores();
-
-});
+const startScrapeScheduler = () => {
+    cron.schedule("00 00 05 * * *", () => {
+        scrapeStores();
+    });
+}
 
 //scrape Stores after random delay minutes
 const scrapeStores = () => {
@@ -19,12 +20,12 @@ const scrapeStores = () => {
     }, 1000);
 
     //run scraper in an hour, random time.
-    setTimeout(() => {
+    setTimeout(async () => {
         clearInterval(interval);
         console.log(`[Script] start`)
 
         // scrappers: bestbuy,microsoft
-        Promise.allSettled([getMicrosoftLaptops(), getBestbuyLaptops()])
+        await Promise.allSettled([getMicrosoftLaptops(), getBestbuyLaptops()])
             .then(results => {
                 results.forEach((result) => {
                     console.log(`Result:${result.status} - ${moment().format('MMMM Do YYYY, h:mm:ss a')}`)
@@ -38,4 +39,4 @@ const getRandomMiliSec = (milisec) => {
     return Math.floor(Math.random() * milisec);
 }
 
-export default scrapeScheduler;
+export default startScrapeScheduler;
