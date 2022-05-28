@@ -1,7 +1,9 @@
 import {
     GET_AMZ_PROD_PRICING,
     UPLOAD_ASINS_MAPPING,
-    PRODUCT_LIST_LOADING
+    PRODUCT_LIST_LOADING,
+    GET_WAREHOUSE_QTY,
+    RES_LOADED
     // GET_ITEM_SPEC,
 } from './actions/types';
 
@@ -16,7 +18,6 @@ export default function Reducer(state = initialState, action) {
             return {
                 ...state,
                 sellingPartner: [...action.payload],
-                loading: false
             };
 
         case PRODUCT_LIST_LOADING:
@@ -25,6 +26,16 @@ export default function Reducer(state = initialState, action) {
                 loading: true
             }
         case UPLOAD_ASINS_MAPPING:
+            return {
+                ...state,
+                loading: false
+            }
+        case GET_WAREHOUSE_QTY:
+            return {
+                ...state,
+                sellingPartner: [...action.payload],
+            }
+        case RES_LOADED:
             return {
                 ...state,
                 loading: false

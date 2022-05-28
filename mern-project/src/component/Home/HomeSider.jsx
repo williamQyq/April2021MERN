@@ -81,6 +81,7 @@ const HomeSider = (props) => {
                     label: (<Link to={`${path}/operation-products-list`}>Product List</Link>)
                 },
                 {
+                    disabled:true,
                     key: 'configuration',
                     icon: <DesktopOutlined />,
                     label: (<Link to={`${path}/configuration`}>Configuration</Link>)
@@ -93,6 +94,7 @@ const HomeSider = (props) => {
             label: "Warehouse",
             children: [
                 {
+                    disabled:true,
                     key: "inbound",
                     icon: <ScanOutlined />,
                     label: (<Link to={`${path}/inbound`}>Inbound</Link>)

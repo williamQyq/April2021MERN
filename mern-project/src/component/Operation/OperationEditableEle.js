@@ -25,6 +25,7 @@ export const EditableCell = ({
                             message: `Please Input ${title}!`,
                         },
                     ]}
+                    style={{"marginBottom":0}}
                     onClick={(e) => { e.stopPropagation() }}
                 >
                     {inputNode}

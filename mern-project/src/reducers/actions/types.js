@@ -74,4 +74,5 @@ export const GET_UPC_ASIN_MAPPING = 'GET_UPC_ASIN_MAPPING';
 export const ADD_ITEM_SPEC = 'ADD_ITEM_SPEC';
 // export const GET_ITEM_SPEC = 'GET_ITEM_SPEC';
 
-
+//@WMS
+export const GET_WAREHOUSE_QTY = "GET_WAREHOUSE_QTY";

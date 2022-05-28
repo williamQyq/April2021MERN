@@ -11,6 +11,7 @@ import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import { SocketContext } from 'component/socket/socketContext';
 import BackTopHelper from 'component/utility/BackTop.jsx';
+import { ContentHeader } from 'component/SourceStore/StoreTableUtilities';
 
 const { Title } = Typography;
 
@@ -36,14 +37,18 @@ class OperationProductList extends React.Component {
         socket.on(`Prod Pricing Update`, () => {
             this.props.getProductPricing();
         })
-        this.setState({ data: this.props.sellingPartner })
-
     }
-
+    componentDidUpdate(prevProps, nextProps) {
+        const dataSource = this.props.sellingPartner
+        if (prevProps !== this.props && dataSource.length > 0) {    //amazon redux state updated, copy redux state to component state for ease use of local state editing(editable cell)
+            this.setState({ data: dataSource })
+        }
+    }
     componentWillUnmount() {
         let socket = this.context
         socket.emit(`unsubscribe`, `OperationRoom`)
     }
+
     isLoading = () => {
         const { loading } = this.props;
         return loading;
@@ -66,7 +71,7 @@ class OperationProductList extends React.Component {
     save = async (key) => {
         try {
             const row = await this.formRef.current.validateFields();
-            const newData = [...this.state.data];
+            const newData = [...this.props.sellingPartner];
             const index = newData.findIndex((item) => key === item.key);
 
             if (index > -1) {
@@ -246,7 +251,8 @@ class OperationProductList extends React.Component {
 
     render() {
         const { data, defaultSettings } = this.state;
-        const { loading, sellingPartner } = this.props;
+        // let loading = true
+        const { loading } = this.props;
         const actions = {
             isEditing: this.isEditing,
             edit: this.edit,
@@ -261,7 +267,7 @@ class OperationProductList extends React.Component {
         const columns = mainColumns(actions)
         return (
             <>
-                <Title level={4}>Pricing Table</Title>
+                <ContentHeader title="Pricing Table" />
                 <OperationMenu handler={this.handler} {...this.state} />
                 <Form ref={this.formRef} component={false}>
                     <Table

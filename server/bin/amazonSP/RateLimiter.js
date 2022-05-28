@@ -3,7 +3,7 @@ import { performance } from 'perf_hooks';
 import SellingPartnerAPI from 'amazon-sp-api';
 import { AMZ_CREDENTIALS, AMZ_REFRESH_TOKEN, REGION } from '#root/config.js';
 
-export const sellingPartner = new SellingPartnerAPI({
+export const sellingPartner = () => new SellingPartnerAPI({
     region: REGION,
     credentials: AMZ_CREDENTIALS,
     refresh_token: AMZ_REFRESH_TOKEN

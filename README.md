@@ -103,7 +103,7 @@ To extract public key from the generated private key:
 >4. setup Nginx proxing config(for front-end web and proxying request to server)  
 >5. $sudo pm2 start ***server.js***  
 > commands might be helpful:
->- $scp -i MY_AWS_RSA_KEY.pem ubuntu@DNS.compute-1.amazonaws.com
+>- $ssh -i MY_AWS_RSA_KEY.pem ubuntu@DNS.compute-1.amazonaws.com
 >- $sudo apt-get install (nodejs, nginx, pm2)
 >- $scp -i PATH\rockystone.pem -r <PATH>\mern-project\build\* ubuntu@DNS.compute-1.amazonaws.com:~/client/deploy
 >- $scp -i PATH\rockystone.pem -r ./server\* ubuntu@DNS.compute-1.amazonaws.com:~/server/server

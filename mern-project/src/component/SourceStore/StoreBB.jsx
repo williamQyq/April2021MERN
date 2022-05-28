@@ -19,16 +19,14 @@ class BB extends React.Component {
         super(props);
         this.state = {
             store: "BESTBUY",
-            selectedMostViewedCategoryId: categoryIdGroup.ALL_LAPTOPS,
+            selectedMostViewedCategoryId: "",
         }
     }
 
     componentDidMount() {
         let socket = this.context;
-        const defaultMostViewedCategoryId = this.state.selectedMostViewedCategoryId;
         socket.emit(`subscribe`, `StoreListingRoom`);
         this.props.getBBItems();
-        // this.props.getMostViewedOnCategoryId(defaultMostViewedCategoryId)
         socket.on('Store Listings Update', () => {
             this.props.getBBItems()
         })

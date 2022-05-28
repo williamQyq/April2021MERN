@@ -33,8 +33,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "tsc",
-    "buildJs": "react-scripts build",
+    "buildTs": "tsc",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

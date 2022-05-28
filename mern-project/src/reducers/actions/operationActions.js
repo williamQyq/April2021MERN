@@ -5,7 +5,9 @@ import { returnErrors } from './errorActions';
 import {
     GET_AMZ_PROD_PRICING,
     UPLOAD_ASINS_MAPPING,
-    PRODUCT_LIST_LOADING
+    PRODUCT_LIST_LOADING,
+    GET_WAREHOUSE_QTY,
+    RES_LOADED
     // GET_ERRORS,
 } from './types';
 import store from 'store.js'
@@ -23,21 +25,26 @@ export const getProductPricing = () => (dispatch, getState) => {
             })
             return res.data
         })
-        .then(prods => getWmsProdQty(prods))    //append warehouse qty to prod list.
+        .then(prods =>
+            getWmsProdQty(prods)    //append warehouse qty to prod list.
+        )
         .then(warehouseData => {
             dispatch({
-                type: GET_AMZ_PROD_PRICING,
+                type: GET_WAREHOUSE_QTY,
                 payload: warehouseData
             })
+        })
+        .then(() => {
+            dispatch(setResLoaded())  //process finished
         })
         .catch(err => {
             dispatch(returnErrors(err.response.data.msg, err.response.status))
         })
 }
 
-export const getWmsProdQty = (prods) => {
+export const getWmsProdQty = async (prods) => {
     let upcArr = prods.map(prod => prod.upc)
-    return axios.post(`/api/wms/quantity/all`, { upcArr }, tokenConfig(store.getState))
+    let appendedQtyProducts = await axios.post(`/api/wms/quantity/all`, { upcArr }, tokenConfig(store.getState))
         .then(res => {
             let upcQtyMap = new Map(res.data)
             let newProdsArr = [...prods];
@@ -46,6 +53,8 @@ export const getWmsProdQty = (prods) => {
             });
             return newProdsArr
         })
+
+    return appendedQtyProducts
 
 }
 
@@ -74,5 +83,11 @@ export const uploadAsinsMapping = (file) => dispatch => {
 const setResLoading = () => {
     return {
         type: PRODUCT_LIST_LOADING
+    };
+}
+
+const setResLoaded = () => {
+    return {
+        type: RES_LOADED
     };
 }

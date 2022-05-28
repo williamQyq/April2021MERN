@@ -8,7 +8,8 @@ import {
     Col,
     message,
     Divider,
-    Input
+    Input,
+    Tree
 } from "antd";
 import {
     SearchOutlined,
@@ -275,4 +276,61 @@ export const SearchBox = (props) => {
             status={status}
         />
     )
+}
+
+export const StoreOperationMenu = (props) => {
+    const [selectedMenuKey, setSelectedMenuKey] = useState("upload");
+
+    const menuItems = [
+        {
+            key: 'retrieve',
+            // icon: <AreaChartOutlined />,
+            label: 'Upload'
+        }
+    ]
+
+
+    // const switchContent = (key) => {
+    //     switch (key) {
+    //         case 'upload':
+    //             return <Upload />
+    //         default:
+    //             break;
+    //     }
+    // }
+
+    const treeData = [
+        {
+            title: 'Controller',
+            key: 'controller',
+            children: [
+                {
+                    key: 'menu',
+                    title: <>
+                        <Menu
+                            onClick={e => setSelectedMenuKey(e.key)}
+                            selectedKeys={[selectedMenuKey]}
+                            mode="horizontal"
+                            items={menuItems}
+                        />
+                        {
+                            // switchContent(selectedMenuKey)
+                        }
+                    </>
+                }
+            ]
+        }
+    ]
+
+    return (
+        <Tree
+            showIcon
+            blockNode
+            defaultSelectedKeys={['controller']}
+            switcherIcon={< DownOutlined />}
+            treeData={treeData}
+        />
+
+    );
+
 }

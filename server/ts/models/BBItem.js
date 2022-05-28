@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-import mongoose_1 from "mongoose";
+const mongoose_1 = require("mongoose");
 const BBItemSchema = new mongoose_1.Schema({
     link: {
         type: String,

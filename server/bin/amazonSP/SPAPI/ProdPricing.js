@@ -63,7 +63,7 @@ export default class ProdPricing {
 
     #taskPromise(upc, asins) {
         return new Promise((resolve, reject) => {
-            let sp = sellingPartner;
+            let sp = sellingPartner();
             let param = { ...this.getPricingParam, query: { ...this.getPricingParam.query } };  //make deep copy of apiParam
             param.query.Asins = asins;
             sp.callAPI(param)

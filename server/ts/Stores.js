@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BestBuy = exports.Stores = void 0;
 const puppeteer_1 = __importDefault(require("puppeteer"));
-import config_json_1 from "./config/config.json";
+const config_json_1 = require("./config/config.json");
 class Stores {
     constructor() {
     }
@@ -15,6 +15,7 @@ class Stores {
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
+                '--window-size=1920,1080'
             ],
         });
         return browser;
