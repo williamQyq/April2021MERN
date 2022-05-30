@@ -2,6 +2,7 @@ import ProdPricing from './ProdPricing.js';
 import { bucket } from '../RateLimiter.js';
 import { updateProdPricingOffer, findAllProdPricing } from '#query/utilities.js'
 import moment from 'moment'
+
 /* 
 @desc: Product Pricing API: getPricing
 @param: prods:Array<AmzProdPricing>
@@ -23,7 +24,7 @@ const getSellingPartnerProdPricing = (prods) => {
     prods.forEach(prod => {
         sp.createAndAddTasksToBucket(bucket, prod)    //list of tasks, each task contain upc and maximum 20 asins mapping.
     })
-    return bucket.start()
+    return bucket.start()   //return the task response retrieved from SP-Api endpoints
 }
 
 /* 

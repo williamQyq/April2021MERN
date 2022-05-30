@@ -21,6 +21,8 @@ export default class ProdPricing {
                 ItemType: "Asin"
             }
         }
+
+        this.sellingPartner = sellingPartner()
     }
 
     /* 
@@ -53,27 +55,26 @@ export default class ProdPricing {
     }
 
     // create upc asins prodpricing task and push to bucket
-    createAndAddTasksToBucket(bucket,prod) {
+    createAndAddTasksToBucket(bucket, prod) {
         let upcAsinsMap = this.#createProdAsinsMapping(prod);
         for (const [upc, asins] of upcAsinsMap) {
-            bucket.addTask(()=>this.#taskPromise(upc, asins))
+            bucket.addTask(() => this.#taskPromise(upc, asins))
         }
 
     }
 
     #taskPromise(upc, asins) {
         return new Promise((resolve, reject) => {
-            let sp = sellingPartner();
             let param = { ...this.getPricingParam, query: { ...this.getPricingParam.query } };  //make deep copy of apiParam
             param.query.Asins = asins;
-            sp.callAPI(param)
+            this.sellingPartner.callAPI(param)
                 .then(sellingPartnerResponse => {
                     let taskResult = {
                         upc,
                         sellingPartnerResponse,
                         limit: ProdPricing.limit
                     }
-                    resolve(taskResult)
+                    resolve(taskResult) //resolve productPricing endpoint response 
                 })
                 .catch(e => {
                     console.error(`***[ERR] ProductPricing task - upc:${upc}, asins:${asins}\n msg:${e}\n\n`)

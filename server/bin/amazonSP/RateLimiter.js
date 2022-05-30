@@ -53,12 +53,11 @@ class LeakyBucket {
     async #measureAndResolvePromise(index, task) {
         let onPromiseDone = () => performance.now() - start;
         let start = performance.now();
-        return task().then(async (result) => {
-            let timeCost = onPromiseDone();
-            const { limit } = result
-            await this.delayIfReachedLimit(index, limit, timeCost)
-            return result
-        });
+        let taskResponse = await task();
+        let timeCost = onPromiseDone();
+        const { limit } = taskResponse;
+        await this.delayIfReachedLimit(index, limit, timeCost)
+        return taskResponse;
     }
 
     //start
@@ -98,14 +97,18 @@ class LeakyBucket {
         let isQueueEmpty = this.isQueueEmpty()
         let queueLength = this.getQueueLength();
         if (!isQueueEmpty) {
-            for (let i = 0; i < queueLength; i++) {
-                let task = this.#dequeue()
-                let result = await this.#measureAndResolvePromise(i, task)
-                if (result === undefined) {
-                    console.log(``)
-                    continue;
+            try {
+                for (let i = 0; i < queueLength; i++) {
+                    let task = this.#dequeue()
+                    let result = await this.#measureAndResolvePromise(i, task)
+                    if (result === undefined) {
+                        console.log(``)
+                        continue;
+                    }
+                    results.push(result)
                 }
-                results.push(result)
+            } catch (e) {
+                console.error('bucket error:\n', e)
             }
         }
 
