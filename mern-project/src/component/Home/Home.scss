@@ -20,14 +20,11 @@
         display: flex;
         height: 64px;
         background: rgba(255, 255, 255,0.2);
-        // margin: 16px;
         align-items: center;
     }
 
     .site-layout {
-        // background-color: #ffff;
         .header {
-            // background: #f5f5f7;
             background:#ffff;
         }
         .site-layout-content {
@@ -35,7 +32,6 @@
                 width: 4px;
                 display:block;
               }
-            // background: #f5f5f7;
             background: #ffff;
             margin: 24px 16px 0px 16px;
             padding: 24px;
