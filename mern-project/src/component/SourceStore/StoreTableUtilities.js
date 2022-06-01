@@ -7,7 +7,6 @@ import {
     Row,
     Col,
     message,
-    Divider,
     Input,
     Tree
 } from "antd";
@@ -17,12 +16,15 @@ import {
     DownOutlined,
     PlusCircleOutlined,
     WindowsOutlined,
+    ImportOutlined,
 } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
-import { addItemSpec } from "reducers/actions/itemActions";
-import { setTableState } from "reducers/actions/itemActions";
+import { addItemSpec } from "reducers/actions/itemActions.js";
+import { setTableState } from "reducers/actions/itemActions.js";
 import { useState } from "react";
+
+import { ContentHeader } from "component/utility/Layout.jsx";
 
 const { Text, Title } = Typography;
 const { Search } = Input;
@@ -222,33 +224,8 @@ const ActionMenu = (props) => {
     );
 }
 
-export const ContentHeader = ({ title }) => (
-    <>
-        <Row gutter={16} style={{ alignItems: 'center' }}>
-            <Col>
-                <Title level={4}>{title}</Title>
-            </Col>
-        </Row>
-        <Divider />
-    </>
-);
 
-export const SubContentHeader = ({ title }) => {
-    return (
-        <>
-            <Row gutter={16} style={{ alignItems: 'center' }}>
-                <Col>
-                    <Title level={4}>{title}</Title>
-                </Col>
-            </Row>
-            {/* <Divider /> */}
-        </>
-    );
-}
-
-
-
-export const SearchBox = (props) => {
+export const MostViewedSearchBox = (props) => {
     const { name, reduxAction } = props;
     const dispatch = useDispatch();
     const { mostViewedItemsLoading } = useSelector((state) => state.bestbuy)
@@ -280,35 +257,33 @@ export const SearchBox = (props) => {
 
 export const StoreOperationMenu = (props) => {
     const [selectedMenuKey, setSelectedMenuKey] = useState("upload");
+    const { store } = props;
 
     const menuItems = [
         {
             key: 'retrieve',
-            // icon: <AreaChartOutlined />,
-            label: 'Upload'
+            icon: <ImportOutlined />,
+            label: 'Click Me to Retrieve '
         }
     ]
 
 
-    // const switchContent = (key) => {
-    //     switch (key) {
-    //         case 'upload':
-    //             return <Upload />
-    //         default:
-    //             break;
-    //     }
-    // }
+    const onClickRetrieval = (key) => {
+        setSelectedMenuKey(key)
+        console.log("retrival Clicked")
+
+    }
 
     const treeData = [
         {
-            title: 'Controller',
+            title: <ContentHeader title={store} />,
             key: 'controller',
             children: [
                 {
-                    key: 'menu',
+                    key: 'retrieve',
                     title: <>
                         <Menu
-                            onClick={e => setSelectedMenuKey(e.key)}
+                            onClick={e => onClickRetrieval(e.key)}
                             selectedKeys={[selectedMenuKey]}
                             mode="horizontal"
                             items={menuItems}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ContentHeader, SubContentHeader } from 'component/SourceStore/StoreTableUtilities.js';
+import { ContentHeader, SubContentHeader } from 'component/utility/Layout.jsx';
 import { Card, Col, Row } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 

@@ -7,7 +7,7 @@ import OutBoundMenu from 'component/Operation/OperationMenu';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import { SocketContext } from 'component/socket/socketContext';
-import { ContentHeader } from 'component/SourceStore/StoreTableUtilities';
+import { ContentHeader } from 'component/utility/Layout.jsx';
 
 class NeedToShipUpload extends React.Component {
     static contextType = SocketContext //This part is important to access context values which are socket

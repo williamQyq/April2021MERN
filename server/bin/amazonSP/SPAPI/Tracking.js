@@ -14,8 +14,13 @@ export default class Tracking {
             operation: "getTrackingInformation",
             endpoint: "shipping",
             path: {
-                trackingId: "1Z575RW12996766775"
+                trackingId:"1Z575RW12990360508"
             }
+            // operation: "getOrderItems",
+            // endpoint: "orders",
+            // path: {
+            //     orderId: "112-3035584-3554646",
+            // }
 
             // operation: "getOrders",
             // endpoint: "orders",
@@ -23,12 +28,60 @@ export default class Tracking {
             //     CreatedAfter: "2022-05-29T00:00:00-07:00",
             //     MarketplaceIds: ["ATVPDKIKX0DER"]
             // }
-
-            // operation: "getPackingSlip",
-            // endpoint: "vendorDirectFulfillmentShipping",
+            // operation: "getOrder",
+            // endpoint: "orders",
             // path: {
-            //     purchaseOrderNumber: "111-5860917-2807429"
-            // }
+            //     orderId:"112-2180120-3002633"
+            // },
+
+            // operation:"getTracking",
+            // endpoint:"shipping",
+            // query:{
+            //     trackingId:"1Z575RW11399084697",
+            //     // carrierId:
+            // },
+
+            // operation: "getRates",
+            // endpoint: "shipping",
+            // body: {
+            //     shipTo: {
+            //         name: "customer2",
+            //         addressLine1: "92 dracut st",
+            //         stateOrRegion: "MA",
+            //         city: "Lowell",
+            //         countryCode: "01",
+            //         postalCode: "01854"
+            //     },
+            //     shipFrom: {
+            //         name: "rockystone",
+            //         addressLine1: "#123 26 clinton dr",
+            //         stateOrRegion: "NH",
+            //         city: "Hollis",
+            //         countryCode: "01",
+            //         postalCode: "03049"
+            //     },
+            //     serviceTypes: ["Amazon Shipping Ground", "Amazon Shipping Standard", "Amazon Shipping Premium"],
+            //     containerSpecifications: [
+            //         {
+            //             dimensions: {
+            //                 length: 18,
+            //                 width: 13,
+            //                 height: 3,
+            //                 unit: "IN"
+            //             },
+            //             weight: {
+            //                 unit: "lb",
+            //                 value: 6
+            //             }
+            //         }
+            //     ]
+            // },
+
+            // operation: "getOrderRegulatedInfo",
+            // endpoint: "orders",
+            // path: {
+            //     orderId: "111-2650958-0317831"
+            // },
 
             // operation: "getScheduledPackage",
             // endpoint: "easyShip",
@@ -44,13 +97,11 @@ export default class Tracking {
             //     interval:"2022-05-28T00:00:00-07:00--2022-05-30T00:00:00-07:00",
             //     granularity:"Day"
             // },
-            // options:{
-            //     version:'v1'
+            // options: {
+            //     version: 'v1'
             // }
             // operation:"getAccount",
             // endpoint:"shipping",
-
-
         }
         this.sellingPartner = sellingPartner();
     }

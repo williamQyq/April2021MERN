@@ -11,7 +11,6 @@ import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import { SocketContext } from 'component/socket/socketContext';
 import BackTopHelper from 'component/utility/BackTop.jsx';
-import { ContentHeader } from 'component/SourceStore/StoreTableUtilities';
 
 const { Title } = Typography;
 
@@ -267,8 +266,7 @@ class OperationProductList extends React.Component {
         const columns = mainColumns(actions)
         return (
             <>
-                <ContentHeader title="Pricing Table" />
-                <OperationMenu handler={this.handler} {...this.state} />
+                <OperationMenu handler={this.handler} {...this.state} title="Pricing Table" />
                 <Form ref={this.formRef} component={false}>
                     <Table
                         {...defaultSettings}

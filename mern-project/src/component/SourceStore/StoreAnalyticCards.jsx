@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Card, Col, Row, Skeleton, Typography, Menu } from 'antd';
-import { SubContentHeader, SearchBox } from './StoreTableUtilities';
+import { MostViewedSearchBox } from './StoreTableUtilities.js';
+import { SubContentHeader } from 'component/utility/Layout.jsx';
 import './Store.scss';
 import { getAlsoBoughtOnSku, getViewedUltimatelyBoughtOnSku } from 'reducers/actions/itemBBActions';
 const { Text } = Typography;
@@ -38,11 +39,11 @@ const menuItems = [
     },
     {
         key: "alsoBoughtOnSku",
-        label: <SearchBox name={'alsoBoughtOnSku'} reduxAction={getAlsoBoughtOnSku} />
+        label: <MostViewedSearchBox name={'alsoBoughtOnSku'} reduxAction={getAlsoBoughtOnSku} />
     },
     {
         key: "ultiBoughtOnSku",
-        label: <SearchBox name={'ultimatelyBoughtOnSku'} reduxAction={getViewedUltimatelyBoughtOnSku} />
+        label: <MostViewedSearchBox name={'ultimatelyBoughtOnSku'} reduxAction={getViewedUltimatelyBoughtOnSku} />
     }
 ]
 

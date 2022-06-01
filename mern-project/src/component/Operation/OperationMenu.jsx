@@ -4,12 +4,14 @@ import { useState } from 'react';
 import { Menu, Tree } from 'antd';
 import { LineChartOutlined, AreaChartOutlined, DownOutlined } from '@ant-design/icons';
 import { Settings } from 'component/Operation/Settings'
-import Upload from 'component/Operation/AsinMappingUpload';
+import Upload from 'component/Operation/AsinMappingUpload.jsx';
+import { ContentHeader } from 'component/utility/Layout.jsx';
 
 
 
 const OperationMenu = (props) => {
     const [selectedMenuKey, setSelectedMenuKey] = useState("upload");
+    const { title } = props;
 
     const menuItems = [
         {
@@ -31,7 +33,7 @@ const OperationMenu = (props) => {
 
     const treeData = [
         {
-            title: 'Controller',
+            title: <ContentHeader title={title} />,
             key: 'controller',
             children: [
                 {

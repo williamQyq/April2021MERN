@@ -1,10 +1,16 @@
 import React from 'react';
 import 'component/SourceStore/Store.scss';
-import { Table, Input, Button, Space} from 'antd';
+import { Table, Input, Button, Space } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined, } from '@ant-design/icons';
-import { locateSearchedItem, scrollToTableRow, ContentHeader, defaultTableSettings } from 'component/SourceStore/StoreTableUtilities';
-import { TableColumns } from 'component/SourceStore/StoreTableUtilities';
+import {
+    locateSearchedItem,
+    scrollToTableRow,
+    ContentHeader,
+    defaultTableSettings,
+    StoreOperationMenu,
+    TableColumns
+} from 'component/SourceStore/StoreTableUtilities';
 // import BackTopHelper from 'component/utility/BackTop';
 
 
@@ -139,7 +145,7 @@ export default class StoreTable extends React.Component {
         const columns = TableColumns(this.getColumnSearchProps, store);
         return (
             <>
-                <ContentHeader title={store}/>
+                <StoreOperationMenu store={store} />
                 <Table
                     loading={loading}
                     {...defaultTableSettings}
