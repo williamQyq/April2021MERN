@@ -6,9 +6,7 @@ import {
     SET_TABLE_STATE,
     GET_MS_ITEM_DETAIL,
     GET_BB_ITEM_DETAIL,
-    GET_BB_ITEMS_ONLINE_PRICE,
     GET_MS_ITEMS_ONLINE_PRICE,
-    ITEMS_ONLINE_PRICE_LOADING
 } from './actions/types';
 
 const initialState = {
@@ -39,11 +37,6 @@ export default function Reducer(state = initialState, action) {
                 ...state,
                 loading: true
             };
-        case ITEMS_ONLINE_PRICE_LOADING:
-            return {
-                ...state,
-                onlinePriceLoading: true
-            }
         case SET_TABLE_STATE:
             return {
                 ...state,
@@ -62,11 +55,7 @@ export default function Reducer(state = initialState, action) {
                 itemDetail: action.payload,
                 loading: false
             };
-        case GET_BB_ITEMS_ONLINE_PRICE:
-            return {
-                ...state,
-                onlinePriceLoading: false
-            }
+
         case GET_MS_ITEMS_ONLINE_PRICE:
             return {
                 ...state,

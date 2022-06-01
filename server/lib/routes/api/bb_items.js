@@ -11,6 +11,7 @@ import {
 import { getMostViewedOnCategoryId, getViewedUltimatelyBought } from '#bin/bestbuyIO/bestbuyIO.js';
 import { getAlsoBoughtOnSku } from '#bin/bestbuyIO/bestbuyIO.js';
 import auth from '#middleware/auth.js';
+import { getBestbuyLaptops } from '#bin/scraper.js';
 
 const router = express.Router();
 
@@ -56,7 +57,7 @@ router.put('/itemSpec/add', auth, (req, res) => {
 
 // @access private
 router.get('/mostViewed/:categoryId', auth, (req, res) => {
-    return getMostViewedOnCategoryId(req.params.categoryId)
+    getMostViewedOnCategoryId(req.params.categoryId)
         .then(result => {
             console.log(`\nbestbuy api most viewed request received...`)
             if (result === undefined) {
@@ -68,7 +69,7 @@ router.get('/mostViewed/:categoryId', auth, (req, res) => {
 
 // @access private
 router.get('/viewedUltimatelyBought/:sku', auth, (req, res) => {
-    return getViewedUltimatelyBought(req.params.sku)
+    getViewedUltimatelyBought(req.params.sku)
         .then(result => {
             console.log(`\nbestbuy api ultimately bought request received...`)
             if (result === undefined) {
@@ -79,7 +80,7 @@ router.get('/viewedUltimatelyBought/:sku', auth, (req, res) => {
 })
 
 // @access private
-router.get('/alsoBought/:sku', auth, (req, res) =>
+router.get('/alsoBought/:sku', auth, (req, res) => {
     getAlsoBoughtOnSku(req.params.sku)
         .then(result => {
             console.log(`\nbestbuy api also bought request received...`)
@@ -88,6 +89,12 @@ router.get('/alsoBought/:sku', auth, (req, res) =>
             }
             res.json(result)
         })
-)
+})
+
+router.get('/onlinePrice', auth, (req, res) => {
+    getBestbuyLaptops()
+        .then(() => res.json("success"))
+        .catch(err => res.status(500).json({ msg: "Fail to retrive Bestbuy Laptop Price " }))
+})
 
 export default router;

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Moment from 'moment';
-import { getBBItems, getBBItemsPrice } from './itemBBActions.js';
-import { getMSItems, getMSItemsPrice } from './itemMSActions.js';
+import { getBBItems } from './itemBBActions.js';
+import { getMSItems } from './itemMSActions.js';
 import { message } from 'antd';
 import { returnErrors } from './errorActions.js'
 
@@ -18,7 +18,8 @@ import {
     ADD_BB_ITEM_SPEC,
     GET_MS_ITEMS_ONLINE_PRICE,
     GET_BB_ITEMS_ONLINE_PRICE,
-    ITEMS_ONLINE_PRICE_LOADING
+    MS_ITEMS_ONLINE_PRICE_LOADING,
+    BB_ITEMS_ONLINE_PRICE_LOADING
 } from './types';
 import { tokenConfig } from './authActions.js';
 
@@ -59,9 +60,9 @@ const setItemsLoading = () => {
         type: ITEMS_LOADING
     };
 };
-const setItemsOnlinePriceLoading = () => {
+const setItemsOnlinePriceLoading = (loadingType) => {
     return {
-        type: ITEMS_ONLINE_PRICE_LOADING
+        type: loadingType
     }
 }
 
@@ -73,6 +74,7 @@ const setRouteOnStore = (store) => {
                 type: {
                     GET_ITEM_DETAIL: GET_MS_ITEM_DETAIL,
                     GET_ITEM_ONLINE_PRICE: GET_MS_ITEMS_ONLINE_PRICE,
+                    ITEMS_ONLINE_PRICE_LOADING: MS_ITEMS_ONLINE_PRICE_LOADING
                     // ADD_ITEM_SPEC: ADD_MS_ITEM_SPEC,
                 }
             }
@@ -83,16 +85,21 @@ const setRouteOnStore = (store) => {
                     GET_ITEM_DETAIL: GET_BB_ITEM_DETAIL,
                     GET_ITEM_ONLINE_PRICE: GET_BB_ITEMS_ONLINE_PRICE,
                     ADD_ITEM_SPEC: ADD_BB_ITEM_SPEC,
+                    ITEMS_ONLINE_PRICE_LOADING: BB_ITEMS_ONLINE_PRICE_LOADING
                 }
             }
         default:
             console.error(`[ERROR] storeSwitch did not receive store name`);
     }
 }
-export const getItemsOnlinePrice = (store) => dispatch => {
-    const { routes, type } = setRouteOnStore(store);
-    dispatch(setItemsOnlinePriceLoading());
-    axios.get(`/api/${routes}/onlinePrice`).then(() => {
+
+
+export const getItemsOnlinePrice = (store) => (dispatch, getState) => {
+    const { routes, type } = setRouteOnStore(store);    //get routes and action types on store selection
+
+    dispatch(setItemsOnlinePriceLoading(type.ITEMS_ONLINE_PRICE_LOADING));
+
+    axios.get(`/api/${routes}/onlinePrice`, tokenConfig(getState)).then((res) => {
         dispatch({
             type: type.GET_ITEM_ONLINE_PRICE
         })
@@ -105,7 +112,7 @@ export const getItemsOnlinePrice = (store) => dispatch => {
 export const getItemDetail = (store, _id) => dispatch => {
 
     dispatch(setItemsLoading());
-    const { routes, type } = setRouteOnStore(store);
+    const { routes, type } = setRouteOnStore(store);    //get routes and action types on store selection
     axios.get(`/api/${routes}/detail/${_id}`).then(res => {
         let item = Object.values(res.data).pop();
         item.price_timestamps.forEach(ts => {

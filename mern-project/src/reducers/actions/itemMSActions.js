@@ -22,32 +22,8 @@ export const getMSItems = () => dispatch => {
     )
 };
 
-export const getMSItemsPrice = () => (dispatch, getState) => {
-    dispatch(setItemsLoading());
-    axios.get('/api/ms_items/itemsPrice', tokenConfig(getState)).then(res => {
-
-    }).catch(err => {
-        dispatch(returnErrors(err.response.data.msg, err.response.status))
-    })
-}
-
-
 export const setItemsLoading = () => {
     return {
         type: ITEMS_LOADING_MS
     };
 };
-
-export const getMSItemDetail = (_id) => dispatch => {
-    axios.get(`/api/ms_items/detail/${_id}`).then(res => {
-        let item = Object.values(res.data).pop();
-        item.price_timestamps.forEach(ts => {
-            ts.date = Moment(ts.date).format("MMM Do YYYY HH:mm a");
-        });
-        dispatch({
-            type: GET_MS_ITEM_DETAIL,
-            payload: item
-        })
-    })
-};
-

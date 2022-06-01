@@ -1,14 +1,16 @@
 import express from 'express';
-const router = express.Router();
 import mongoose from 'mongoose';
-const ObjectId = mongoose.Types.ObjectId;
-
 import ItemMS from '#models/MsItem.js'; //Item Model
 import {
     PROJ_ITEM,
     PROJ_ITEM_DETAIL,
     SORT_ON_CAPTURE_DATE
 } from '#query/aggregate.js';
+import auth from '#middleware/auth.js';
+import { getMicrosoftLaptops } from '#bin/scraper.js';
+
+const ObjectId = mongoose.Types.ObjectId;
+const router = express.Router();
 
 // @route GET api/items
 router.get('/', (req, res) => {
@@ -45,5 +47,11 @@ router.get('/detail/:_id', (req, res) => {
 //         }
 //     }, { useFindAndModify: false }).then(item => res.json({ success: true }));
 // });
+
+router.get('/onlinePrice', auth, (req, res) => {
+    getMicrosoftLaptops()
+        .then(() => res.json("success"))
+        .catch(err => res.status(500).json({ msg: "Fail to retrive Microsoft Laptop Price " }))
+})
 
 export default router;

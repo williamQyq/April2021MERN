@@ -17,36 +17,35 @@ export const getMicrosoftLaptops = async () => {
     let page = await store.initPage(browser);
     let storeUrl = store.initURL(skipItemsNum)
     let { pagesNum, numPerPage } = await store.getPagesNum(page, storeUrl)    //puppeteer script get web footer contains page numbers.
+
     //for each page, get items and save to database
-    for (let i = 0; i < pagesNum; i++) {
-        let pageUrl = store.initURL(skipItemsNum)
-        skipItemsNum += numPerPage;
+    try {
+        for (let i = 0; i < pagesNum; i++) {
+            let pageUrl = store.initURL(skipItemsNum)
+            skipItemsNum += numPerPage;
 
-        await store.getPageItems(page, pageUrl)
-            .then(items => {
-                return Promise.all(items.map((item, index) =>
-                    saveStoreItemToDatabase(item, store.model)
-                        .then(msg => {
-                            let msgMap = new Map([
-                                ["store", STORE_NAME],
-                                ["page", i],
-                                ["index", index],
-                                ["sku", item.sku],
-                                ["currentPrice", item.currentPrice],
-                                ["msg", msg]
-                            ])
-                            store.printMsg(msgMap)
+            let items = await store.getPageItems(page, pageUrl)
+            await Promise.all(items.map((item, index) =>
+                saveStoreItemToDatabase(item, store.model).then(msg => {
+                    let msgMap = new Map([
+                        ["store", STORE_NAME],
+                        ["page", i],
+                        ["index", index],
+                        ["sku", item.sku],
+                        ["currentPrice", item.currentPrice],
+                        ["msg", msg]
+                    ])
+                    store.printMsg(msgMap)
 
-                        })
-                        .catch(e => console.error(`ERROR: page ${i} # ${index}: ${item.sku} ${item.name}\n`, e))
-                ))
-            })
-            .catch(e => {
-                console.error(`\nERROR:[${STORE_NAME}] page ${i} Ended with exception\n${e}`)
-            })
-            .finally(() => {
+                })
+                    .catch(e => console.error(`ERROR: page ${i} # ${index}: ${item.sku} ${item.name}\n`, e))
+            )).finally(() => {
                 console.log(`[${STORE_NAME}]===Page ${i} finished.===`)
             })
+        }
+    } catch (e) {
+        console.error(`\nERROR:[${STORE_NAME}]Ended with exception\n${e}`)
+        throw e
     }
 
     await page.close()
@@ -67,6 +66,7 @@ export const getBestbuyLaptops = async () => {
 
     let storeUrl = store.initURL(cp)
     const { pagesNum } = await store.getPagesNum(page, storeUrl)    //puppeteer script get web footer contains page numbers.
+
     //for each page, get items and save to database
     try {
         for (let i = 0; i < pagesNum; i++) {
@@ -87,11 +87,12 @@ export const getBestbuyLaptops = async () => {
                     store.printMsg(msgMap);
                 })
             )).finally(() => {
-                console.log(`[Bestbuy]===Page ${i} finished.===`)
+                console.log(`[${STORE_NAME}]===Page ${i} finished.===`)
             })
         }
     } catch (e) {
-        console.error(`\nERROR:[Bestbuy] Ended with exception.\n`, e)
+        console.error(`\nERROR:[${STORE_NAME}] Ended with exception.\n`, e)
+        throw e
     }
 
     await page.close()

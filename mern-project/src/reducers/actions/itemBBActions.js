@@ -40,22 +40,6 @@ const setItemsLoading = () => {
     };
 };
 
-export const getBBItemDetail = (_id) => dispatch => {
-    dispatch(setItemsLoading());
-    axios.get(`/api/bb_items/detail/${_id}`).then(res => {
-        let item = Object.values(res.data).pop();
-        // console.log(` Action called: \n${JSON.stringify(item)}`);
-        item.price_timestamps.forEach(ts => {
-            ts.date = Moment(ts.date).format("MMM Do YYYY HH:mm a");
-        });
-
-        dispatch({
-            type: GET_BB_ITEM_DETAIL,
-            payload: item
-        })
-    })
-};
-
 export const setTableSettings = (store, clickedId) => dispatch => {
     dispatch(setItemsLoading());
 

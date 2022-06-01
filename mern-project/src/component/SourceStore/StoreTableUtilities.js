@@ -15,6 +15,7 @@ import {
     PlusCircleOutlined,
     WindowsOutlined,
     ImportOutlined,
+    LoadingOutlined,
 } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
@@ -23,6 +24,7 @@ import { setTableState } from "reducers/actions/itemActions.js";
 import { useState } from "react";
 
 import { ContentHeader } from "component/utility/Layout.jsx";
+import { STORE } from "./data.js";
 
 const { Text } = Typography;
 const { Search } = Input;
@@ -258,11 +260,22 @@ export const StoreOperationMenu = (props) => {
     const { store } = props;
 
     const dispatch = useDispatch()
+    const bestbuyOnlinePriceRetriving = useSelector((state) => state.bestbuy.onlinePriceLoading)
+    const microsoftOnlinePriceRetriving = useSelector((state) => state.microsoft.onlinePriceLoading)
 
+    //if puppeteer is retrieving online price on store return true else false
+    const isOnlinePriceRetrieving = (store) => {
+        switch (store) {
+            case STORE.BESTBUY:
+                return bestbuyOnlinePriceRetriving
+            case STORE.MICROSOFT:
+                return microsoftOnlinePriceRetriving
+        }
+    }
     const menuItems = [
         {
-            key: 'retrieve',
-            icon: <ImportOutlined />,
+            key: 'retrieveOnlinePrice',
+            icon: isOnlinePriceRetrieving(store) ? <LoadingOutlined /> : <ImportOutlined />,
             label: 'Click Me to Retrieve '
         }
     ]
