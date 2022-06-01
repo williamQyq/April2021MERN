@@ -11,14 +11,14 @@ import { SocketContext } from 'component/socket/socketContext.js';
 import StoreTable from 'component/SourceStore/StoreTable.jsx';
 import StoreAnalyticCards from 'component/SourceStore/StoreAnalyticCards.jsx'
 import BackTopHelper from 'component/utility/BackTop.jsx';
-import { categoryIdGroup } from './data.js'
+import { categoryIdGroup, STORE } from './data.js'
 
 class BB extends React.Component {
     static contextType = SocketContext  //This part is important to access context values which are socket
     constructor(props) {
         super(props);
         this.state = {
-            store: "BESTBUY",
+            store: STORE.BESTBUY,
             selectedMostViewedCategoryId: "",
         }
     }
@@ -62,7 +62,7 @@ class BB extends React.Component {
             case 'lenovoLaptops':
                 this.setState({ selectedMostViewedCategoryId: categoryIdGroup.LENOVO_LAPTOPS });
                 this.props.getMostViewedOnCategoryId(categoryIdGroup.LENOVO_LAPTOPS);
-                
+
                 break;
             case 'samsungLaptops':
                 this.setState({ selectedMostViewedCategoryId: categoryIdGroup.SAMSUNG_LAPTOPS });

@@ -4,8 +4,6 @@ import {
     Typography,
     Tooltip,
     Dropdown,
-    Row,
-    Col,
     message,
     Input,
     Tree
@@ -20,13 +18,13 @@ import {
 } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
-import { addItemSpec } from "reducers/actions/itemActions.js";
+import { addItemSpec, getItemsOnlinePrice } from "reducers/actions/itemActions.js";
 import { setTableState } from "reducers/actions/itemActions.js";
 import { useState } from "react";
 
 import { ContentHeader } from "component/utility/Layout.jsx";
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 const { Search } = Input;
 
 const TypoLink = Typography.Link;
@@ -259,6 +257,8 @@ export const StoreOperationMenu = (props) => {
     const [selectedMenuKey, setSelectedMenuKey] = useState("upload");
     const { store } = props;
 
+    const dispatch = useDispatch()
+
     const menuItems = [
         {
             key: 'retrieve',
@@ -270,8 +270,7 @@ export const StoreOperationMenu = (props) => {
 
     const onClickRetrieval = (key) => {
         setSelectedMenuKey(key)
-        console.log("retrival Clicked")
-
+        dispatch(getItemsOnlinePrice(store))
     }
 
     const treeData = [

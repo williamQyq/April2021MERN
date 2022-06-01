@@ -3,6 +3,7 @@ export const GET_ITEMS = 'GET_ITEMS';
 export const ADD_ITEM = 'ADD_ITEM';
 export const DELETE_ITEM = 'DELETE_ITEM';
 export const ITEMS_LOADING = 'ITEMS_LOADING';
+export const ITEMS_ONLINE_PRICE_LOADING = 'ITEMS_ONLINE_PRICE_LOADING';
 // *deprecate soon*
 export const SET_TABLE_STATE = 'SET_TABLE_STATE';
 export const SET_TABLE_SETTINGS = 'SET_TABLE_SETTINGS';
@@ -11,11 +12,13 @@ export const SET_TABLE_SETTINGS = 'SET_TABLE_SETTINGS';
 export const MICROSOFT = 'MICROSOFT';
 export const BESTBUY = 'BESTBUY';
 export const COSTCO = 'COSTCO';
+export const WALMART = 'WALMART';
 
 /* 
 @BB STATUS
 */
 export const GET_BB_ITEMS = 'GET_BB_ITEMS';
+export const GET_BB_ITEMS_ONLINE_PRICE = 'GET_BB_ITEMS_ONLINE_PRICE';
 export const GET_BB_ITEM_DETAIL = 'GET_BB_ITEM_DETAIL';
 export const ADD_BB_ITEM_SPEC = 'GET_BB_ITEM_SPEC';
 export const ITEMS_LOADING_BB = 'ITEMS_LOADING_BB';
@@ -34,6 +37,7 @@ export const GET_CC_ITEMS = 'GET_BB_ITEMS';
 @MS STATUS 
 */
 export const GET_MS_ITEMS = 'GET_MS_ITEMS';
+export const GET_MS_ITEMS_ONLINE_PRICE = 'GET_MS_ITEMS_ONLINE_PRICE';
 export const GET_MS_ITEM_DETAIL = 'GET_MS_ITEM_DETAIL';
 export const ADD_MS_ITEM_SPEC = 'GET_BB_ITEM_SPEC';
 export const ITEMS_LOADING_MS = 'ITEMS_LOADING_MS';

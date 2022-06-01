@@ -1,6 +1,8 @@
 import axios from 'axios';
 import Moment from 'moment';
 import { GET_MS_ITEMS, GET_MS_ITEM_DETAIL, ITEMS_LOADING_MS } from './types';
+import { tokenConfig } from './authActions.js';
+import { returnErrors } from './errorActions.js';
 
 export const getMSItems = () => dispatch => {
     dispatch(setItemsLoading());
@@ -19,6 +21,16 @@ export const getMSItems = () => dispatch => {
     }
     )
 };
+
+export const getMSItemsPrice = () => (dispatch, getState) => {
+    dispatch(setItemsLoading());
+    axios.get('/api/ms_items/itemsPrice', tokenConfig(getState)).then(res => {
+
+    }).catch(err => {
+        dispatch(returnErrors(err.response.data.msg, err.response.status))
+    })
+}
+
 
 export const setItemsLoading = () => {
     return {

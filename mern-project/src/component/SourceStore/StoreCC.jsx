@@ -5,7 +5,8 @@ import PropTypes from 'prop-types';
 import { Table, Input, Button, Space, Typography, Row, Menu, Dropdown } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined, DownOutlined, PlusCircleOutlined, ShoppingCartOutlined } from '@ant-design/icons';
-import StoreTable from './StoreTable';
+import StoreTable from './StoreTable.jsx';
+import { STORE } from './data.js';
 
 const { Title } = Typography;
 
@@ -14,7 +15,7 @@ class CC extends React.Component {
         super(props);
 
         this.state = {
-
+            store: STORE.COSTCO
         };
 
     }

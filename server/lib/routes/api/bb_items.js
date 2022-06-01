@@ -15,6 +15,7 @@ import auth from '#middleware/auth.js';
 const router = express.Router();
 
 // @route GET api/items
+// @access private
 router.get('/', auth, (req, res) => {
     getStoreItems(Model)
         .then(items => res.json(items))
@@ -22,6 +23,7 @@ router.get('/', auth, (req, res) => {
 });
 
 // @route GET api/items
+// @access public
 router.get('/detail/:_id', (req, res) => {
     getStoreItemDetailById(Model, req.params._id)
         .then(items => {
@@ -32,6 +34,7 @@ router.get('/detail/:_id', (req, res) => {
         });
 });
 
+// @access private
 router.put('/itemSpec/add', auth, (req, res) => {
     const { link, sku } = req.body;
     let bestbuy = new Bestbuy();
@@ -51,7 +54,8 @@ router.put('/itemSpec/add', auth, (req, res) => {
         })
 })
 
-router.get('/mostViewed/:categoryId', (req, res) => {
+// @access private
+router.get('/mostViewed/:categoryId', auth, (req, res) => {
     return getMostViewedOnCategoryId(req.params.categoryId)
         .then(result => {
             console.log(`\nbestbuy api most viewed request received...`)
@@ -62,7 +66,8 @@ router.get('/mostViewed/:categoryId', (req, res) => {
         })
 });
 
-router.get('/viewedUltimatelyBought/:sku', (req, res) => {
+// @access private
+router.get('/viewedUltimatelyBought/:sku', auth, (req, res) => {
     return getViewedUltimatelyBought(req.params.sku)
         .then(result => {
             console.log(`\nbestbuy api ultimately bought request received...`)
@@ -73,7 +78,8 @@ router.get('/viewedUltimatelyBought/:sku', (req, res) => {
         })
 })
 
-router.get('/alsoBought/:sku', (req, res) =>
+// @access private
+router.get('/alsoBought/:sku', auth, (req, res) =>
     getAlsoBoughtOnSku(req.params.sku)
         .then(result => {
             console.log(`\nbestbuy api also bought request received...`)

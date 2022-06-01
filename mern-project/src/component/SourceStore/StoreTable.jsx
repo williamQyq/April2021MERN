@@ -6,11 +6,10 @@ import { SearchOutlined, } from '@ant-design/icons';
 import {
     locateSearchedItem,
     scrollToTableRow,
-    ContentHeader,
     defaultTableSettings,
     StoreOperationMenu,
     TableColumns
-} from 'component/SourceStore/StoreTableUtilities';
+} from 'component/SourceStore/StoreTableUtilities.js';
 // import BackTopHelper from 'component/utility/BackTop';
 
 

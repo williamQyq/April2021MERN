@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Moment from 'moment';
-import { getBBItems } from './itemBBActions.js';
-import { getMSItems } from './itemMSActions.js';
+import { getBBItems, getBBItemsPrice } from './itemBBActions.js';
+import { getMSItems, getMSItemsPrice } from './itemMSActions.js';
 import { message } from 'antd';
 import { returnErrors } from './errorActions.js'
 
@@ -15,7 +15,10 @@ import {
     SET_TABLE_STATE,
     GET_MS_ITEM_DETAIL,
     GET_BB_ITEM_DETAIL,
-    ADD_BB_ITEM_SPEC
+    ADD_BB_ITEM_SPEC,
+    GET_MS_ITEMS_ONLINE_PRICE,
+    GET_BB_ITEMS_ONLINE_PRICE,
+    ITEMS_ONLINE_PRICE_LOADING
 } from './types';
 import { tokenConfig } from './authActions.js';
 
@@ -56,6 +59,11 @@ const setItemsLoading = () => {
         type: ITEMS_LOADING
     };
 };
+const setItemsOnlinePriceLoading = () => {
+    return {
+        type: ITEMS_ONLINE_PRICE_LOADING
+    }
+}
 
 const setRouteOnStore = (store) => {
     switch (store) {
@@ -64,6 +72,7 @@ const setRouteOnStore = (store) => {
                 routes: 'ms_items',
                 type: {
                     GET_ITEM_DETAIL: GET_MS_ITEM_DETAIL,
+                    GET_ITEM_ONLINE_PRICE: GET_MS_ITEMS_ONLINE_PRICE,
                     // ADD_ITEM_SPEC: ADD_MS_ITEM_SPEC,
                 }
             }
@@ -72,6 +81,7 @@ const setRouteOnStore = (store) => {
                 routes: 'bb_items',
                 type: {
                     GET_ITEM_DETAIL: GET_BB_ITEM_DETAIL,
+                    GET_ITEM_ONLINE_PRICE: GET_BB_ITEMS_ONLINE_PRICE,
                     ADD_ITEM_SPEC: ADD_BB_ITEM_SPEC,
                 }
             }
@@ -79,6 +89,18 @@ const setRouteOnStore = (store) => {
             console.error(`[ERROR] storeSwitch did not receive store name`);
     }
 }
+export const getItemsOnlinePrice = (store) => dispatch => {
+    const { routes, type } = setRouteOnStore(store);
+    dispatch(setItemsOnlinePriceLoading());
+    axios.get(`/api/${routes}/onlinePrice`).then(() => {
+        dispatch({
+            type: type.GET_ITEM_ONLINE_PRICE
+        })
+    }).catch(err => {
+        dispatch(returnErrors(err.response.data.msg, err.response.status))
+    })
+}
+
 
 export const getItemDetail = (store, _id) => dispatch => {
 
@@ -107,7 +129,8 @@ export const getItems = (store) => dispatch => {
             getBBItems();
             break;
         default:
-            console.error(`[ERROR] getItems did not receive store name`);
+            let errorMsg = `[ERROR] getItems invalid ${store}`
+            dispatch(returnErrors(errorMsg, 404));
     }
 }
 

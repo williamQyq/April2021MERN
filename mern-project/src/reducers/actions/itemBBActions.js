@@ -1,6 +1,5 @@
 import axios from 'axios';
 import Moment from 'moment';
-import { returnErrors } from './errorActions';
 import {
     GET_BB_ITEMS,
     GET_BB_ITEM_DETAIL,
@@ -13,6 +12,8 @@ import {
     GET_BESTBUY_API_ERRORS
 } from './types';
 import { tokenConfig } from './authActions.js';
+import { returnErrors } from './errorActions';
+
 
 export const getBBItems = () => (dispatch, getState) => {
     dispatch(setItemsLoading());
@@ -67,10 +68,10 @@ export const setTableSettings = (store, clickedId) => dispatch => {
     })
 }
 
-export const getMostViewedOnCategoryId = (categoryId) => dispatch => {
+export const getMostViewedOnCategoryId = (categoryId) => (dispatch, getState) => {
     dispatch(setMostViewedItemsLoading());
     console.log('Get most viewed request sent...')
-    axios.get(`/api/bb_items/mostViewed/${categoryId}`).then(res => {
+    axios.get(`/api/bb_items/mostViewed/${categoryId}`, tokenConfig(getState)).then(res => {
         dispatch({
             type: GET_BB_MOST_VIEWED_ITEMS,
             payload: res.data
@@ -82,9 +83,9 @@ export const getMostViewedOnCategoryId = (categoryId) => dispatch => {
 
 }
 
-export const getViewedUltimatelyBoughtOnSku = (sku) => dispatch => {
+export const getViewedUltimatelyBoughtOnSku = (sku) => (dispatch, getState) => {
     dispatch(setMostViewedItemsLoading());
-    axios.get(`/api/bb_items/viewedUltimatelyBought/${sku}`).then(res => {
+    axios.get(`/api/bb_items/viewedUltimatelyBought/${sku}`, tokenConfig(getState)).then(res => {
         dispatch({
             type: GET_BB_VIEWED_ULTIMATELY_BOUGHT_ITEMS,
             payload: res.data
@@ -95,9 +96,9 @@ export const getViewedUltimatelyBoughtOnSku = (sku) => dispatch => {
     })
 
 }
-export const getAlsoBoughtOnSku = (sku) => dispatch => {
+export const getAlsoBoughtOnSku = (sku) => (dispatch, getState) => {
     dispatch(setMostViewedItemsLoading());
-    axios.get(`/api/bb_items/alsoBought/${sku}`).then(res => {
+    axios.get(`/api/bb_items/alsoBought/${sku}`, tokenConfig(getState)).then(res => {
         dispatch({
             type: GET_BB_ALSO_BOUGHT_ITEMS,
             payload: res.data
