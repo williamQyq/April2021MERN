@@ -20,28 +20,23 @@ export const defaultSettings = {
     }
 }
 
-export const needToShipColumns = (props) => {
-    const { getColumnSearchProps } = props;
-    return (
-        [
-            {
-                title: "orderId",
-                dataIndex: "orderId",
-                editable: true,
-                width: "10%",
-                ...getColumnSearchProps('orderId')
-            },
-            {
-                title: "trackingNo",
-                dataIndex: "trackingNo",
-                editable: true,
-                width: "10%",
-                ...getColumnSearchProps('trackingNo')
-            }
-        ]
-    );
-
-}
+export const needToShipColumns =
+    [
+        {
+            title: "orderId",
+            dataIndex: "orderId",
+            editable: true,
+            searchable: true,
+            width: "10%",
+        },
+        {
+            title: "trackingNo",
+            dataIndex: "trackingNo",
+            editable: true,
+            searchable: true,
+            width: "10%"
+        }
+    ]
 
 export const inventoryReceivedColumns = [
     {

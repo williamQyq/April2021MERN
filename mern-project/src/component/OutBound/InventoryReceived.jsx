@@ -83,7 +83,7 @@ class InventoryReceived extends React.Component {
         // }
         const loading = false;
         const data = [];
-
+        const columns = inventoryReceivedColumns;
         return (
             <>
                 <InventoryReceivedMenu />
@@ -91,7 +91,7 @@ class InventoryReceived extends React.Component {
                     <FormTable
                         loading={loading}
                         data={data}
-                        columns={inventoryReceivedColumns}
+                        columns={columns}
                         tableSettings={defaultSettings}
                     />
                 </Form>
@@ -102,12 +102,9 @@ class InventoryReceived extends React.Component {
 }
 
 InventoryReceived.prototypes = {
-    // getProductPricing: PropTypes.func.isRequired,
-    // sellingPartner: PropTypes.array.isRequired,
     // loading: PropTypes.bool.isRequired,
 }
 const mapStateToProps = (state) => ({
-    // sellingPartner: state.amazon.sellingPartner,
     // loading: state.amazon.loading,
 })
 

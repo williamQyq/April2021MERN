@@ -12,9 +12,9 @@ export const getInvReceive = () => (dispatch, getState) => (
         })
 )
 
-export const uploadInventoryReceived = (file) => (dispatch, getState) => {
-
+export const uploadInventoryReceived = (file, onSuccess, onError) => (dispatch, getState) => {
+    onError("err")
 }
-export const uploadNeedToShip = (file) => (dispatch, getState) => {
-
+export const uploadNeedToShip = (file, onSuccess, onError) => (dispatch, getState) => {
+    onError("err")
 }

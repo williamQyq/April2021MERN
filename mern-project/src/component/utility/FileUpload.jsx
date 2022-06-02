@@ -12,23 +12,18 @@ const FileUpload = ({ customizedUpload }) => {
         multiple: true,
         accept: ".txt, .csv",
         onChange(info) {
-            const { status } = info.file;
+            const { status, response, error } = info.file;
             if (status !== 'uploading') {
                 console.log(info.file, info.fileList);
             }
             if (status === 'done') {
-                message.success(`${info.file.name} file uploaded successfully.`);
+                message.success(`${info.file.name} upload successful.\n${response}`);
             } else if (status === 'error') {
-                message.error(`${info.file.name} file upload failed.`);
+                message.error(`${info.file.name} upload failed.\n${error}`);
             }
         },
         customRequest: ({ file, onSuccess, onError }) => {
-            dispatch(customizedUpload(file))
-            // .then(res => {
-            //     res.data === 'success' ? onSuccess("OK") : onError("Err")
-            // }).catch(e => {
-            //     onError("Upload File Error")
-            // })
+            dispatch(customizedUpload(file, onSuccess, onError))
         },
         onDrop(e) {
             console.log('Dropped files', e.dataTransfer.files);
