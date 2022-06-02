@@ -2,14 +2,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Table, Form, Typography, Input, Button, Space } from 'antd';
-import { defaultSettings, needToShipColumns } from 'component/OutBound/utilities.js';
+import { defaultSettings, inventoryReceivedColumns } from 'component/OutBound/utilities.js';
 import OutBoundMenu from 'component/Operation/OperationMenu';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import { SocketContext } from 'component/socket/socketContext';
 import { ContentHeader } from 'component/utility/Layout.jsx';
 
-class NeedToShipUpload extends React.Component {
+class InventoryReceived extends React.Component {
     // static contextType = SocketContext //This part is important to access context values which are socket
     constructor(props) {
         super(props);
@@ -185,11 +185,10 @@ class NeedToShipUpload extends React.Component {
             handleSearch: this.handleSearch,
             handleReset: this.handleReset
         }
-        const columns = needToShipColumns(actions);
+        const columns = inventoryReceivedColumns(actions);
         return (
             <>
-                <ContentHeader title="Need To Ship" />
-                <OutBoundMenu {...this.state} />
+                <OutBoundMenu {...this.state} title="Inventory Received" />
                 <Form ref={this.formRef} component={false}>
                     <Table
                         {...defaultSettings}
@@ -205,7 +204,7 @@ class NeedToShipUpload extends React.Component {
     }
 }
 
-NeedToShipUpload.prototypes = {
+InventoryReceived.prototypes = {
     // getProductPricing: PropTypes.func.isRequired,
     // sellingPartner: PropTypes.array.isRequired,
     // loading: PropTypes.bool.isRequired,
@@ -215,4 +214,4 @@ const mapStateToProps = (state) => ({
     // loading: state.amazon.loading,
 })
 
-export default connect(mapStateToProps, {})(NeedToShipUpload);
+export default connect(mapStateToProps, {})(InventoryReceived);

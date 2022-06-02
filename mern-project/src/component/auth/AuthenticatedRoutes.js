@@ -52,6 +52,11 @@ const routes = [
     exact: true
   },
   {
+    path: 'app/outbound/inventoryReceived',
+    component: lazy(() => import('component/OutBound/InventoryReceived.jsx')),
+    exact: true
+  },
+  {
     path: 'app/configuration',
     component: lazy(() => import('component/Operation/Configuration')),
     exact: true

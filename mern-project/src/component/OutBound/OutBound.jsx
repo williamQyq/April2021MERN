@@ -4,11 +4,16 @@ import { Card, Col, Row } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 
 
-const outboundFeatures = [
+const outboundMenuFeatures = [
     {
-        title: "need to ship",
+        key: "needToShipUpload",
+        title: "Need to Ship",
         description: "Update Seller Inventory Quantity",
-        link: ''
+    },
+    {
+        key: "inventoryReceived",
+        title: "Inventory Receive",
+        description: "Manage received Inventory"
     }
 ]
 
@@ -26,18 +31,19 @@ class Outbound extends React.Component {
         return (
             <>
                 <ContentHeader title="Outbound" />
-                <SubContentHeader title="What do you want to do💩¿¿¿" />
-                <Row gutter={[16, 16]}>
+                <SubContentHeader title="Wut you want💩¿¿¿" />
+                <Row gutter={[24, 16]}>
                     {
-                        outboundFeatures.map((feature, i) => {
+                        outboundMenuFeatures.map((feature, i) => {
                             return (
-                                <Col>
-                                    <Link to={`${path}/needToShipUpload`}>
-                                        <Card hoverable title={feature.title}>
-                                            <Card.Meta
-                                                title={i}
-                                                description={feature.description}
-                                            />
+                                <Col xs={16} xl={8}>
+                                    <Link to={`${path}/${feature.key}`}>
+                                        <Card
+                                            hoverable
+                                            key={i}
+                                            title={feature.title}
+                                        >
+                                            <Card.Meta description={feature.description} />
                                         </Card>
                                     </Link>
                                 </Col>
