@@ -1,26 +1,18 @@
 import React from 'react';
 import { useState } from 'react';
 import { Menu, Tree } from 'antd';
-import { LineChartOutlined, AreaChartOutlined, DownOutlined } from '@ant-design/icons';
-import Upload from 'component/Operation/AsinMappingUpload';
+import { DownOutlined } from '@ant-design/icons';
+import FileUpload from 'component/utility/FileUpload.jsx';
+import { ContentHeader } from 'component/utility/Layout.jsx';
 
-
-const OutBoundMenu = (props) => {
+const MenuBar = (props) => {
     const [selectedMenuKey, setSelectedMenuKey] = useState("upload");
-
-    const menuItems = [
-        {
-            key: 'upload',
-            icon: <AreaChartOutlined />,
-            label: 'Upload'
-        }
-    ]
-
+    const { customizedUpload, menuItems, title } = props
 
     const switchContent = (key) => {
         switch (key) {
             case 'upload':
-                return <Upload />
+                return <FileUpload customizedUpload={customizedUpload} />
             default:
                 break;
         }
@@ -28,7 +20,7 @@ const OutBoundMenu = (props) => {
 
     const treeData = [
         {
-            title: 'Controller',
+            title: <ContentHeader title={title} />,
             key: 'controller',
             children: [
                 {
@@ -62,4 +54,4 @@ const OutBoundMenu = (props) => {
 
 }
 
-export default OutBoundMenu;
+export default MenuBar;

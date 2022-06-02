@@ -11,3 +11,10 @@ export const getInvReceive = () => (dispatch, getState) => (
             dispatch(returnErrors(err.response.data.msg, err.response.status))
         })
 )
+
+export const uploadInventoryReceived = (file) => (dispatch, getState) => {
+
+}
+export const uploadNeedToShip = (file) => (dispatch, getState) => {
+
+}

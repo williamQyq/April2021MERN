@@ -43,47 +43,40 @@ export const needToShipColumns = (props) => {
 
 }
 
-export const inventoryReceivedColumns = (props) => {
-    const { getColumnSearchProps } = props;
-    return (
-        [
-            {
-                title: "Created Time",
-                dataIndex: "crtTm",
-                editable: false,
-                width: "20%",
-                ...getColumnSearchProps('crtTm')
-            },
-            {
-                title: "Organization Name",
-                dataIndex: "orgNm",
-                editable: true,
-                width: "20%",
-                ...getColumnSearchProps('orgNm')
-            },
-            {
-                title: "UPC",
-                dataIndex: "upc",
-                editable: true,
-                width: "20%",
-                ...getColumnSearchProps('upc')
-            },
-            {
-                title: "Tracking ID",
-                dataIndex: "trackingId",
-                editable: true,
-                width: "20%",
-                ...getColumnSearchProps('trackingId')
-            },
-            {
-                title: "Quantity",
-                dataIndex: "qty",
-                editable: true,
-                width: "20%",
-                ...getColumnSearchProps('qty')
-            }
-            
-        ]
-    );
+export const inventoryReceivedColumns = [
+    {
+        title: "Created Time",
+        dataIndex: "crtTm",
+        editable: false,
+        searchable: true,
+        width: "20%",
+    },
+    {
+        title: "Organization Name",
+        dataIndex: "orgNm",
+        editable: true,
+        searchable: true,
+        width: "20%",
+    },
+    {
+        title: "UPC",
+        dataIndex: "upc",
+        editable: true,
+        searchable: true,
+        width: "20%",
+    },
+    {
+        title: "Tracking ID",
+        dataIndex: "trackingId",
+        editable: true,
+        searchable: true,
+        width: "20%",
+    },
+    {
+        title: "Quantity",
+        dataIndex: "qty",
+        editable: true,
+        width: "20%",
+    }
 
-} 
+]

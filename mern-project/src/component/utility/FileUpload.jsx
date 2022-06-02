@@ -1,10 +1,11 @@
 import { Upload, message } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 const { Dragger } = Upload;
 
 
-const FileUpload = ({ startCustomizedUpload }) => {
+const FileUpload = ({ customizedUpload }) => {
+    const dispatch = useDispatch()
 
     const draggerProps = {
         name: 'file',
@@ -22,12 +23,12 @@ const FileUpload = ({ startCustomizedUpload }) => {
             }
         },
         customRequest: ({ file, onSuccess, onError }) => {
-            startCustomizedUpload(file)
-                .then(res => {
-                    res.data === 'success' ? onSuccess("OK") : onError("Err")
-                }).catch(e => {
-                    onError("Upload File Error")
-                })
+            dispatch(customizedUpload(file))
+            // .then(res => {
+            //     res.data === 'success' ? onSuccess("OK") : onError("Err")
+            // }).catch(e => {
+            //     onError("Upload File Error")
+            // })
         },
         onDrop(e) {
             console.log('Dropped files', e.dataTransfer.files);

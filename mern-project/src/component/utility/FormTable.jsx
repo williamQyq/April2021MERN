@@ -1,19 +1,25 @@
 import React from 'react';
-import 'component/SourceStore/Store.scss';
 import { Table, Input, Button, Space } from 'antd';
 import Highlighter from 'react-highlight-words';
-import { SearchOutlined, } from '@ant-design/icons';
-import {
-    locateSearchedItem,
-    scrollToTableRow,
-    defaultTableSettings,
-    StoreOperationMenu,
-    TableColumns
-} from 'component/SourceStore/StoreTableUtilities.js';
-// import BackTopHelper from 'component/utility/BackTop';
+import { SearchOutlined } from '@ant-design/icons';
+
+const addSearchPropsToColumns = (columns, getColumnSearchProps) => {
+    return columns.map(col => {
+        if (col.searchable) {
+            return {
+                ...col,
+                ...getColumnSearchProps(col.dataIndex)
+            }
+        }
+
+        return {
+            ...col,
+        }
+    })
+}
 
 
-export default class StoreTable extends React.Component {
+export default class FormTable extends React.Component {
     constructor(props) {
         super(props);
 
@@ -31,14 +37,37 @@ export default class StoreTable extends React.Component {
 
     handleScrollPosition = (items, clickHistory) => {
         if (clickHistory) {
-            let itemHistory = locateSearchedItem(items, clickHistory.clickedId)
-            this.setState({ searchedRowId: itemHistory._id })
-            scrollToTableRow(document, itemHistory.index)
+            let clickedItem = this.locateSearchedItem(items, clickHistory.clickedId)
+            this.setState({ searchedRowId: clickedItem._id })
+            this.scrollToTableRow(document, clickedItem.index)
         }
     }
 
-    getColumnSearchProps = dataIndexMulti => {
-        const dataIndex = dataIndexMulti[0];    //support multi cateria search, set first column index as default
+    locateSearchedItem = (items, searchId) => {
+        let searchItem = {
+            index: 0,
+            _id: ""
+        }
+        if (searchId) {
+            for (let index = 0; index < items.length; index++) {
+                let currentItemId = items[index]._id;
+                if (currentItemId == searchId) {
+                    searchItem.index = index;
+                    searchItem._id = currentItemId;
+                    return searchItem;  //return found item
+                }
+            }
+        }
+        return searchItem;  //return default first index item.
+    }
+
+    scrollToTableRow = (document, row) => {
+        const tableRowHight = 75.31;
+        let v = document.getElementsByClassName("ant-table-body")[0];
+        v.scrollTop = tableRowHight * (row - 3);
+    }
+
+    getColumnSearchProps = dataIndex => {
         return {
             filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
                 <div style={{ padding: 8 }}>
@@ -83,16 +112,9 @@ export default class StoreTable extends React.Component {
             ),
             filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
             onFilter: (value, record) => {
-                let isValueIncluded = false;
-
-                for (let dataIndex of dataIndexMulti) {
-                    isValueIncluded = record[dataIndex]
-                        ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
-                        : ''
-                    if (isValueIncluded) {
-                        return true;    //if value is includes in searched data Index multi, return true -- the row includes the value will be rendered
-                    }
-                }
+                let isValueIncluded = record[dataIndex]
+                    ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
+                    : '';
                 return isValueIncluded
             },
             onFilterDropdownVisibleChange: visible => {
@@ -139,19 +161,17 @@ export default class StoreTable extends React.Component {
         this.setState({ searchText: '' });
     };
 
+
     render() {
-        const { items, store, loading } = this.props
-        const columns = TableColumns(this.getColumnSearchProps, store);
+        const { data, loading, columns, tableSettings } = this.props
+        const searchPropsColumns = addSearchPropsToColumns(columns, this.getColumnSearchProps);
         return (
-            <>
-                <StoreOperationMenu store={store} />
-                <Table
-                    loading={loading}
-                    {...defaultTableSettings}
-                    columns={columns}
-                    dataSource={items}
-                />
-            </>
+            <Table
+                loading={loading}
+                {...tableSettings}
+                columns={searchPropsColumns}
+                dataSource={data}
+            />
         )
     }
 }

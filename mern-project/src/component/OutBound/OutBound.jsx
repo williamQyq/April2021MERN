@@ -36,11 +36,10 @@ class Outbound extends React.Component {
                     {
                         outboundMenuFeatures.map((feature, i) => {
                             return (
-                                <Col xs={16} xl={8}>
+                                <Col key={i} xs={16} xl={8}>
                                     <Link to={`${path}/${feature.key}`}>
                                         <Card
                                             hoverable
-                                            key={i}
                                             title={feature.title}
                                         >
                                             <Card.Meta description={feature.description} />

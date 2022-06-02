@@ -8,6 +8,8 @@ import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import { SocketContext } from 'component/socket/socketContext';
 import { ContentHeader } from 'component/utility/Layout.jsx';
+import { NeedToShipMenu } from 'component/OutBound/Menus.jsx';
+
 
 class NeedToShipUpload extends React.Component {
     // static contextType = SocketContext //This part is important to access context values which are socket
@@ -188,8 +190,7 @@ class NeedToShipUpload extends React.Component {
         const columns = needToShipColumns(actions);
         return (
             <>
-                <ContentHeader title="Need To Ship" />
-                <OutBoundMenu {...this.state} />
+                <NeedToShipMenu />
                 <Form ref={this.formRef} component={false}>
                     <Table
                         {...defaultSettings}
