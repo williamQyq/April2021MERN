@@ -295,6 +295,7 @@ export const StoreOperationMenu = (props) => {
                     key: 'retrieve',
                     title: <>
                         <Menu
+                            disabled={isOnlinePriceRetrieving(store)}
                             onClick={e => onClickRetrieval(e.key)}
                             selectedKeys={[selectedMenuKey]}
                             mode="horizontal"

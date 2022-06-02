@@ -1,4 +1,5 @@
 import {
+    CLEAR_MICROSOFT_ERRORS,
     GET_MS_ITEMS,
     GET_MS_ITEMS_ONLINE_PRICE,
     ITEMS_LOADING_MS,
@@ -32,6 +33,13 @@ export default function Reducer(state = initialState, action) {
             return {
                 ...state,
                 onlinePriceLoading: false
+            }
+        case CLEAR_MICROSOFT_ERRORS:
+            return {
+                ...state,
+                loading:false,
+                mostViewedItemsLoading:false,
+                onlinePriceLoading:false
             }
         default:
             return state;

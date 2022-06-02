@@ -19,7 +19,9 @@ import {
     GET_MS_ITEMS_ONLINE_PRICE,
     GET_BB_ITEMS_ONLINE_PRICE,
     MS_ITEMS_ONLINE_PRICE_LOADING,
-    BB_ITEMS_ONLINE_PRICE_LOADING
+    BB_ITEMS_ONLINE_PRICE_LOADING,
+    CLEAR_MICROSOFT_ERRORS,
+    CLEAR_BESTBUY_ERRORS
 } from './types';
 import { tokenConfig } from './authActions.js';
 
@@ -74,7 +76,8 @@ const setRouteOnStore = (store) => {
                 type: {
                     GET_ITEM_DETAIL: GET_MS_ITEM_DETAIL,
                     GET_ITEM_ONLINE_PRICE: GET_MS_ITEMS_ONLINE_PRICE,
-                    ITEMS_ONLINE_PRICE_LOADING: MS_ITEMS_ONLINE_PRICE_LOADING
+                    ITEMS_ONLINE_PRICE_LOADING: MS_ITEMS_ONLINE_PRICE_LOADING,
+                    CLEAR_ERRORS: CLEAR_MICROSOFT_ERRORS
                     // ADD_ITEM_SPEC: ADD_MS_ITEM_SPEC,
                 }
             }
@@ -85,7 +88,8 @@ const setRouteOnStore = (store) => {
                     GET_ITEM_DETAIL: GET_BB_ITEM_DETAIL,
                     GET_ITEM_ONLINE_PRICE: GET_BB_ITEMS_ONLINE_PRICE,
                     ADD_ITEM_SPEC: ADD_BB_ITEM_SPEC,
-                    ITEMS_ONLINE_PRICE_LOADING: BB_ITEMS_ONLINE_PRICE_LOADING
+                    ITEMS_ONLINE_PRICE_LOADING: BB_ITEMS_ONLINE_PRICE_LOADING,
+                    CLEAR_ERRORS: CLEAR_BESTBUY_ERRORS
                 }
             }
         default:
@@ -104,7 +108,9 @@ export const getItemsOnlinePrice = (store) => (dispatch, getState) => {
             type: type.GET_ITEM_ONLINE_PRICE
         })
     }).catch(err => {
+        dispatch(clearErrors(type.CLEAR_ERRORS))
         dispatch(returnErrors(err.response.data.msg, err.response.status))
+
     })
 }
 
@@ -169,4 +175,10 @@ export const addItemSpec = (record, store) => (dispatch, getState) => {
         .catch(e => {
             dispatch(returnErrors(e.response.data.msg, e.response.status))
         })
+}
+
+const clearErrors = (ERROR_TYPE) => {
+    return {
+        type: ERROR_TYPE
+    }
 }
