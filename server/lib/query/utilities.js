@@ -197,10 +197,13 @@ export class WMSDatabase {
 }
 
 export class Gsheet {
-    static forUploadSpreadSheet = {
-        id: "1xvMFkK3dvNwhHHXqRnJPLko_ouTZ5llyA3jYauxWPBM",
-        range: "Sheet2!C:D"
+    constructor() {
+        this.forUploadSpreadSheet = {
+            id: "1xvMFkK3dvNwhHHXqRnJPLko_ouTZ5llyA3jYauxWPBM",
+            range: "Sheet2!C:D"
+        }
     }
+
     async updateSheet(SpreadSheet, aoa) {
         const spreadsheetId = SpreadSheet.id;
         const range = SpreadSheet.range;

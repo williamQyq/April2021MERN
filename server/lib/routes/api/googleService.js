@@ -1,6 +1,6 @@
 import express from 'express';
 import auth from '#middleware/auth.js';
-import { WMSDatabase,Gsheet } from '#query/utilities.js';
+import { WMSDatabase, Gsheet } from '#query/utilities.js';
 const router = express.Router();
 
 router.get('/googleService/getAndUpdateInventoryReceived', auth, (req, res) => {
@@ -11,7 +11,7 @@ router.get('/googleService/getAndUpdateInventoryReceived', auth, (req, res) => {
         .then((inventoryReceivedRecord) => {
             return [[]];
         })
-        .then((arrayOfArrayRecord) => gsheetUtil.updateSheet(Gsheet.forUploadSpreadSheet, arrayOfArrayRecord))
+        .then((arrayOfArrayRecord) => gsheetUtil.updateSheet(gsheetUtil.forUploadSpreadSheet, arrayOfArrayRecord))
         .then(() => res.json("success"))
         .catch(() => res.status(500).json("Fail to get Inventory Received or Update Gsheet"))
 })

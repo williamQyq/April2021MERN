@@ -1,8 +1,10 @@
 import { google } from 'googleapis';
+import {gCredentials} from '#root/config.js';
 
 export const auth = new google.auth.GoogleAuth({
-    keyFile: "./bin/gsheet/credentials.json",
+    // keyFile: "./bin/gsheet/credentials.json",
     scopes: "https://www.googleapis.com/auth/spreadsheets",
+    credentials:gCredentials
 })
 
 const authClientObject = await auth.getClient();
