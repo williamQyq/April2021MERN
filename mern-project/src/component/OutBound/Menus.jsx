@@ -1,5 +1,5 @@
 import React from 'react';
-import { AreaChartOutlined } from '@ant-design/icons';
+import { AreaChartOutlined, CloudSyncOutlined } from '@ant-design/icons';
 import {
     uploadInventoryReceived,
     uploadNeedToShip
@@ -31,10 +31,21 @@ export const InventoryReceivedMenu = () => {
             key: 'upload',
             icon: <AreaChartOutlined />,
             label: 'Upload'
+        },
+        {
+            key: 'syncInventoryReceived',
+            icon: <CloudSyncOutlined />,
+            label: "Sync Inventory Received"
         }
     ]
+
+    const handleClick = (key) => {
+
+    }
+
     return (
         <MenuBar
+            handleClick={handleClick}
             customizedUpload={uploadInventoryReceived}
             menuItems={inventoryReceivedMenuItems}
             title="Inventory Received"

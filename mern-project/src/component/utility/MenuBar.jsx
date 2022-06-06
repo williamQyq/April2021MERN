@@ -7,7 +7,7 @@ import { ContentHeader } from 'component/utility/Layout.jsx';
 
 const MenuBar = (props) => {
     const [selectedMenuKey, setSelectedMenuKey] = useState("upload");
-    const { customizedUpload, menuItems, title } = props
+    const { customizedUpload, handleClick, menuItems, title } = props
 
     const switchContent = (key) => {
         switch (key) {
@@ -27,7 +27,10 @@ const MenuBar = (props) => {
                     key: 'menu',
                     title: <>
                         <Menu
-                            onClick={e => setSelectedMenuKey(e.key)}
+                            onClick={e => {
+                                handleClick(e.key);
+                                setSelectedMenuKey(e.key);
+                            }}
                             selectedKeys={[selectedMenuKey]}
                             mode="horizontal"
                             items={menuItems}
