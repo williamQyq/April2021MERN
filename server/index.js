@@ -7,6 +7,7 @@ import usersRouter from '#routes/api/users.js';
 import authRouter from '#routes/api/auth.js';
 import wmsRouter from '#routes/api/wms.js';
 import operationRouter from '#routes/api/operation.js';
+import googleServiceRouter from '#routes/api/googleService.js';
 
 import { Server } from 'socket.io';
 
@@ -32,6 +33,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/wms', wmsRouter);
 app.use('/api/operation', operationRouter);
 // app.use('/api/inbound', require('./routes/api/inbound'));
+app.use('/api/googleService', googleServiceRouter);
 
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, '../mern-project/build')));

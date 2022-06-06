@@ -1,8 +1,10 @@
-import BBItem from '../models/BBItem.js'
-import MsItem from '../models/MsItem.js'
-import ItemSpec from '../models/Spec.js'
-import { AmzProdPricing, AmzIdentifier } from '../models/Amz.js'
+import BBItem from '../models/BBItem.js';
+import MsItem from '../models/MsItem.js';
+import ItemSpec from '../models/Spec.js';
+import { AmzProdPricing, AmzIdentifier } from '../models/Amz.js';
+import wms from '#wms/wmsDatabase.js';
 import mongoose from 'mongoose';
+
 
 const { ObjectId } = mongoose.Types;
 import {
@@ -11,8 +13,11 @@ import {
     SORT_ON_CAPTURE_DATE,
     UNWIND_ITEM_SPEC_AND_PRESERVE_ORIGIN,
     LOOKUP_ITEM_SPEC,
-    LAST_PRICE
+    LAST_PRICE,
+    GET_INVENTORY_RECEIVED_BY_TODAY
 } from './aggregate.js';
+import { sheet, auth } from '#bin/gsheet/gsheet.js';
+
 //@itemSpec
 export const saveItemConfiguration = async (config, sku) => {
 
@@ -176,10 +181,51 @@ export const upsertProdPricingNewAsin = (upc, asin) => {
 
 }
 
-export class Outbound {
-    constructor(){
-
+export class WMSDatabase {
+    static collection = {
+        sellerInv: "sellerInv",
+        inventoryReceive: "inventoryReceive"
     }
-    
+    constructor() {
+        this.db = wms.getDatabase();
+    }
+    async getInventoryReceive() {
+        const collection = db.collection(WMSDatabase.collection.sellerInv)
+        return collection.aggregate(GET_INVENTORY_RECEIVED_BY_TODAY)
+    }
 
+}
+
+export class Gsheet {
+    static forUploadSpreadSheet = {
+        id: "1xvMFkK3dvNwhHHXqRnJPLko_ouTZ5llyA3jYauxWPBM",
+        range: "Sheet2!C:D"
+    }
+    async updateSheet(SpreadSheet, aoa) {
+        const spreadsheetId = SpreadSheet.id;
+        const range = SpreadSheet.range;
+
+        await sheet.values.clear({ auth, spreadsheetId, range })
+        let response = await sheet.values.update(
+            {
+                auth,
+                spreadsheetId,
+                range,
+                valueInputOption: "USER_ENTERED",
+                requestBody: { "values": aoa }
+            }).data;
+
+        return response;
+    }
+
+    async readSheet(SpreadSheet, range) {
+        const spreadsheetId = SpreadSheet.id;
+        let readData = await sheet.values.get({
+            auth,
+            spreadsheetId,
+            range
+        }).data
+
+        return readData
+    }
 }

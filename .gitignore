@@ -6,3 +6,4 @@ server/unit_test.js
 *.env
 *.pem
 *.crt
+credentials.json

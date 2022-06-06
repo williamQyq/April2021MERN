@@ -71,3 +71,34 @@ export const UNWIND_ITEM_SPEC_AND_PRESERVE_ORIGIN = {
         preserveNullAndEmptyArrays: true
     }
 }
+
+export const GET_INVENTORY_RECEIVED_BY_TODAY = [
+    {
+        '$unwind': {
+            'path': '$rcIts'
+        }
+    }, {
+        '$project': {
+            '_id': 0,
+            'mdfTm': 1,
+            'mdfDate': {
+                '$dateToString': {
+                    'format': '%Y-%m-%d',
+                    'date': {
+                        '$toDate': '$mdfTm'
+                    }
+                }
+            },
+            'orgNm': 1,
+            'UPC': '$rcIts.UPC',
+            'trNo': 1,
+            'qty': '$rcIts.qn'
+        }
+    }, {
+        '$match': {
+            'mdfDate': {
+                '$gte': new Date()
+            }
+        }
+    }
+]

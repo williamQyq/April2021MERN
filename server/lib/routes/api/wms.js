@@ -2,9 +2,6 @@ import express from 'express';
 const router = express.Router();
 import auth from '#middleware/auth.js';
 import wms from '#wms/wmsDatabase.js';
-const db = wms.getDatabase();
-const collections = wms.getCollections();
-
 //@route GET api/wms
 router.get('/quantity/:upc', (req, res) => {
     let upc = req.params.upc;
