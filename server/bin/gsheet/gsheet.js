@@ -1,14 +1,25 @@
 import { google } from 'googleapis';
-import {gCredentials} from '#root/config.js';
+import { gCredentials } from '#root/config.js';
 
-export const auth = new google.auth.GoogleAuth({
-    // keyFile: "./bin/gsheet/credentials.json",
-    scopes: "https://www.googleapis.com/auth/spreadsheets",
-    credentials:gCredentials
-})
+export default class GenerateGSheetApis {
+    constructor() {
+        this._scopes = "https://www.googleapis.com/auth/spreadsheets";
+        this._credentials = gCredentials;
+    }
+    async _getSheet() {
+        const auth = new google.auth.GoogleAuth({
+            // keyFile: "./bin/gsheet/credentials.json",
+            scopes: this._scopes,
+            credentials: this._credentials
+        })
+        
+        const authClientObject = await auth.getClient();
+        const googleSheetsInstance = google.sheets({ version: "v4", auth: authClientObject });
+        const sheet = googleSheetsInstance.spreadsheets;
 
-const authClientObject = await auth.getClient();
+        return sheet;
+    }
 
-const googleSheetsInstance = google.sheets({ version: "v4", auth: authClientObject });
+}
 
-export const sheet = googleSheetsInstance.spreadsheets;
+

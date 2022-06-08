@@ -1,10 +1,13 @@
 import React from 'react';
-import { AreaChartOutlined, CloudSyncOutlined } from '@ant-design/icons';
+import { AreaChartOutlined, CloudSyncOutlined, LoadingOutlined } from '@ant-design/icons';
 import {
     uploadInventoryReceived,
     uploadNeedToShip
 } from 'reducers/actions/inboundActions.js';
 import MenuBar from 'component/utility/MenuBar.jsx';
+import { useDispatch, useSelector } from 'react-redux';
+import { returnErrors } from 'reducers/actions/errorActions';
+import { syncInventoryReceivedWithGsheet } from 'reducers/actions/outboundActions.js';
 
 export const NeedToShipMenu = () => {
     const needToShipMenuItems = [
@@ -25,6 +28,8 @@ export const NeedToShipMenu = () => {
 
 
 export const InventoryReceivedMenu = () => {
+    const dispatch = useDispatch();
+    const isInventoryReceivedLoading = useSelector((state) => state.warehouse.inventoryReceivedLoading);
 
     const inventoryReceivedMenuItems = [
         {
@@ -34,13 +39,22 @@ export const InventoryReceivedMenu = () => {
         },
         {
             key: 'syncInventoryReceived',
-            icon: <CloudSyncOutlined />,
+            icon: isInventoryReceivedLoading ? <LoadingOutlined /> : <CloudSyncOutlined />,
             label: "Sync Inventory Received"
         }
     ]
 
     const handleClick = (key) => {
-
+        switch (key) {
+            case "syncInventoryReceived":
+                dispatch(syncInventoryReceivedWithGsheet());
+                break;
+            default:
+                let msg = `${key} failed.`
+                let status = 400;
+                dispatch(returnErrors(msg, status))
+                break;
+        }
     }
 
     return (

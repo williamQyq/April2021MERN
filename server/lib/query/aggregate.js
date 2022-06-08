@@ -1,4 +1,5 @@
 // @get aggregate query
+import moment from "moment";
 
 export const LAST_PRICE = {
     $arrayElemAt: [
@@ -74,31 +75,43 @@ export const UNWIND_ITEM_SPEC_AND_PRESERVE_ORIGIN = {
 
 export const GET_INVENTORY_RECEIVED_BY_TODAY = [
     {
-        '$unwind': {
-            'path': '$rcIts'
+        $unwind: {
+            path: '$rcIts'
         }
     }, {
-        '$project': {
-            '_id': 0,
-            'mdfTm': 1,
-            'mdfDate': {
+        $project: {
+            _id: 0,
+            mdfTmEst: '$mdfTm',
+            mdfDate: {
                 '$dateToString': {
-                    'format': '%Y-%m-%d',
                     'date': {
                         '$toDate': '$mdfTm'
                     }
                 }
             },
-            'orgNm': 1,
-            'UPC': '$rcIts.UPC',
-            'trNo': 1,
-            'qty': '$rcIts.qn'
+            orgNm: 1,
+            UPC: '$rcIts.UPC',
+            trNo: 1,
+            qty: '$rcIts.qn'
         }
     }, {
-        '$match': {
-            'mdfDate': {
-                '$gte': new Date()
+        $match: {
+            mdfDate: {
+                '$gte': '2022-05-08T00:00:00-04:00'
             }
         }
     }
 ]
+
+export function getOneMonthAgoDateInSec() {
+    let d = new Date();
+    let m = d.getMonth();
+    d.setMonth(m - 1);
+
+    if (d.getMonth() == m) d.setDate(0);
+
+    d.setHours(0, 0, 0, 0);
+
+    return moment(d).format();
+
+}

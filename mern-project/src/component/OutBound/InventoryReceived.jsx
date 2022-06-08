@@ -81,8 +81,7 @@ class InventoryReceived extends React.Component {
         //     publish: this.publish,
         //     editingKey: this.state.editingKey,
         // }
-        const loading = false;
-        const data = [];
+        const { loading, inventoryReceivedItems } = this.props;
         const columns = inventoryReceivedColumns;
         return (
             <>
@@ -90,7 +89,7 @@ class InventoryReceived extends React.Component {
                 <Form ref={this.formRef} component={false}>
                     <FormTable
                         loading={loading}
-                        data={data}
+                        data={inventoryReceivedItems}
                         columns={columns}
                         tableSettings={defaultSettings}
                     />
@@ -102,10 +101,12 @@ class InventoryReceived extends React.Component {
 }
 
 InventoryReceived.prototypes = {
-    // loading: PropTypes.bool.isRequired,
+    loading: PropTypes.bool.isRequired,
+    inventoryReceivedItems: PropTypes.array.isRequired
 }
 const mapStateToProps = (state) => ({
-    // loading: state.amazon.loading,
+    loading: state.warehouse.inventoryReceivedLoading,
+    inventoryReceivedItems: state.warehouse.inventoryReceivedItems
 })
 
 export default connect(mapStateToProps, {})(InventoryReceived);

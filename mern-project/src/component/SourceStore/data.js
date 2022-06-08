@@ -1,4 +1,3 @@
-import { useSelector } from "react-redux";
 import { BESTBUY, MICROSOFT, COSTCO, WALMART } from "reducers/actions/types";
 
 export const categoryIdGroup = {

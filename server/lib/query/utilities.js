@@ -1,5 +1,3 @@
-import BBItem from '../models/BBItem.js';
-import MsItem from '../models/MsItem.js';
 import ItemSpec from '../models/Spec.js';
 import { AmzProdPricing, AmzIdentifier } from '../models/Amz.js';
 import wms from '#wms/wmsDatabase.js';
@@ -16,7 +14,7 @@ import {
     LAST_PRICE,
     GET_INVENTORY_RECEIVED_BY_TODAY
 } from './aggregate.js';
-import { sheet, auth } from '#bin/gsheet/gsheet.js';
+import GenerateGSheetApis from '../../bin/gsheet/gsheet.js';
 
 //@itemSpec
 export const saveItemConfiguration = async (config, sku) => {
@@ -181,8 +179,8 @@ export const upsertProdPricingNewAsin = (upc, asin) => {
 
 }
 
-export class WMSDatabase {
-    static collection = {
+export class WMSDatabaseApis {
+    static _collection = {
         sellerInv: "sellerInv",
         inventoryReceive: "inventoryReceive"
     }
@@ -190,23 +188,27 @@ export class WMSDatabase {
         this.db = wms.getDatabase();
     }
     async getInventoryReceive() {
-        const collection = db.collection(WMSDatabase.collection.sellerInv)
-        return collection.aggregate(GET_INVENTORY_RECEIVED_BY_TODAY)
+        const collection = this.db.collection(WMSDatabaseApis._collection.inventoryReceive);
+        let invRecItemsOneMonthAgoFromToday = await collection.aggregate(GET_INVENTORY_RECEIVED_BY_TODAY).toArray();
+        return invRecItemsOneMonthAgoFromToday;
     }
 
 }
 
-export class Gsheet {
-    constructor() {
-        this.forUploadSpreadSheet = {
-            id: "1xvMFkK3dvNwhHHXqRnJPLko_ouTZ5llyA3jYauxWPBM",
-            range: "Sheet2!C:D"
-        }
+export class GsheetApis extends GenerateGSheetApis {
+    static _forUploadSpreadSheet = {
+        id: "1xvMFkK3dvNwhHHXqRnJPLko_ouTZ5llyA3jYauxWPBM",
+        range: "Sheet2!C:D"
+    }
+    constructor(id, range) {
+        super();
+        this.sheet = this._getSheet()
     }
 
     async updateSheet(SpreadSheet, aoa) {
         const spreadsheetId = SpreadSheet.id;
         const range = SpreadSheet.range;
+        const sheet = this.sheet;
 
         await sheet.values.clear({ auth, spreadsheetId, range })
         let response = await sheet.values.update(
@@ -222,7 +224,9 @@ export class Gsheet {
     }
 
     async readSheet(SpreadSheet, range) {
-        const spreadsheetId = SpreadSheet.id;
+        const spreadsheetId = this.SpreadSheet.id;
+        const sheet = this.SpreadSheet.sheet;
+
         let readData = await sheet.values.get({
             auth,
             spreadsheetId,
