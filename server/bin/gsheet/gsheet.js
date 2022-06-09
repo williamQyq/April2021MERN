@@ -5,19 +5,19 @@ export default class GenerateGSheetApis {
     constructor() {
         this._scopes = "https://www.googleapis.com/auth/spreadsheets";
         this._credentials = gCredentials;
+        this.auth = undefined;
     }
-    async _getSheet() {
-        const auth = new google.auth.GoogleAuth({
-            // keyFile: "./bin/gsheet/credentials.json",
+    async _getSpreadSheet() {
+        this.auth = new google.auth.GoogleAuth({
+            keyFile: "./bin/gsheet/credentials.json",
             scopes: this._scopes,
-            credentials: this._credentials
+            // credentials: this._credentials
         })
-        
-        const authClientObject = await auth.getClient();
+        const authClientObject = await this.auth.getClient();
         const googleSheetsInstance = google.sheets({ version: "v4", auth: authClientObject });
-        const sheet = googleSheetsInstance.spreadsheets;
+        const spreadSheet = googleSheetsInstance.spreadsheets;
 
-        return sheet;
+        return spreadSheet;
     }
 
 }

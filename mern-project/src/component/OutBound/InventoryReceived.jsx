@@ -6,6 +6,7 @@ import { defaultSettings, inventoryReceivedColumns } from 'component/OutBound/ut
 import { SocketContext } from 'component/socket/socketContext';
 import { InventoryReceivedMenu } from './Menus.jsx';
 import FormTable from 'component/utility/FormTable.jsx';
+import { getInventoryReceived } from 'reducers/actions/outboundActions.js';
 
 class InventoryReceived extends React.Component {
     // static contextType = SocketContext //This part is important to access context values which are socket
@@ -20,7 +21,7 @@ class InventoryReceived extends React.Component {
     componentDidMount() {
         // let socket = this.context
         // socket.emit(`subscribe`, `OutboundRoom`);
-
+        this.props.getInventoryReceived()
     }
 
     componentWillUnmount() {
@@ -101,6 +102,7 @@ class InventoryReceived extends React.Component {
 }
 
 InventoryReceived.prototypes = {
+    getInventoryReceived: PropTypes.func.isRequired,
     loading: PropTypes.bool.isRequired,
     inventoryReceivedItems: PropTypes.array.isRequired
 }
@@ -109,4 +111,4 @@ const mapStateToProps = (state) => ({
     inventoryReceivedItems: state.warehouse.inventoryReceivedItems
 })
 
-export default connect(mapStateToProps, {})(InventoryReceived);
+export default connect(mapStateToProps, { getInventoryReceived })(InventoryReceived);

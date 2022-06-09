@@ -73,7 +73,7 @@ export const UNWIND_ITEM_SPEC_AND_PRESERVE_ORIGIN = {
     }
 }
 
-export const GET_INVENTORY_RECEIVED_BY_TODAY = [
+export const GET_INVENTORY_RECEIVED_HALF_MONTH_AGO = [
     {
         $unwind: {
             path: '$rcIts'
@@ -97,18 +97,26 @@ export const GET_INVENTORY_RECEIVED_BY_TODAY = [
     }, {
         $match: {
             mdfDate: {
-                '$gte': '2022-05-08T00:00:00-04:00'
+                '$gte': getDateHalfMonthAgo()
             }
+        }
+    }, {
+        $project: {
+            mdfTmEst: 1,
+            orgNm: 1,
+            UPC: 1,
+            trNo: 1,
+            qty: 1
         }
     }
 ]
 
-export function getOneMonthAgoDateInSec() {
+export function getDateHalfMonthAgo() {
     let d = new Date();
-    let m = d.getMonth();
-    d.setMonth(m - 1);
+    let day = d.getDate();
+    d.setDate(day - 14);
 
-    if (d.getMonth() == m) d.setDate(0);
+    // if (d.getMonth() == m) d.setDate(0);
 
     d.setHours(0, 0, 0, 0);
 

@@ -12,9 +12,10 @@ import {
     UNWIND_ITEM_SPEC_AND_PRESERVE_ORIGIN,
     LOOKUP_ITEM_SPEC,
     LAST_PRICE,
-    GET_INVENTORY_RECEIVED_BY_TODAY
+    GET_INVENTORY_RECEIVED_HALF_MONTH_AGO
 } from './aggregate.js';
 import GenerateGSheetApis from '../../bin/gsheet/gsheet.js';
+import moment from 'moment';
 
 //@itemSpec
 export const saveItemConfiguration = async (config, sku) => {
@@ -189,29 +190,37 @@ export class WMSDatabaseApis {
     }
     async getInventoryReceive() {
         const collection = this.db.collection(WMSDatabaseApis._collection.inventoryReceive);
-        let invRecItemsOneMonthAgoFromToday = await collection.aggregate(GET_INVENTORY_RECEIVED_BY_TODAY).toArray();
-        return invRecItemsOneMonthAgoFromToday;
+        let invRecItemsHalfMonthAgo = await collection.aggregate(GET_INVENTORY_RECEIVED_HALF_MONTH_AGO).toArray();
+        return invRecItemsHalfMonthAgo;
     }
+
 
 }
 
 export class GsheetApis extends GenerateGSheetApis {
     static _forUploadSpreadSheet = {
-        id: "1xvMFkK3dvNwhHHXqRnJPLko_ouTZ5llyA3jYauxWPBM",
-        range: "Sheet2!C:D"
+        spreadsheetId: "1xvMFkK3dvNwhHHXqRnJPLko_ouTZ5llyA3jYauxWPBM",
+        range: "Sheet2!B:F",
+        order: {
+            mdfTmEst: null,
+            orgNm: null,
+            UPC: null,
+            trNo: null,
+            qty: null
+        }
     }
-    constructor(id, range) {
+    constructor() {
         super();
-        this.sheet = this._getSheet()
     }
 
-    async updateSheet(SpreadSheet, aoa) {
-        const spreadsheetId = SpreadSheet.id;
-        const range = SpreadSheet.range;
-        const sheet = this.sheet;
+    async updateSheet(spreadSheetDetail, aoa) {
+        const { spreadsheetId, range } = spreadSheetDetail;
 
-        await sheet.values.clear({ auth, spreadsheetId, range })
-        let response = await sheet.values.update(
+        const spreadSheet = await this._getSpreadSheet(); //await for googleSheets instance
+        const auth = this.auth;
+
+        await spreadSheet.values.clear({ auth, spreadsheetId, range });
+        await spreadSheet.values.update(
             {
                 auth,
                 spreadsheetId,
@@ -220,19 +229,47 @@ export class GsheetApis extends GenerateGSheetApis {
                 requestBody: { "values": aoa }
             }).data;
 
-        return response;
     }
 
-    async readSheet(SpreadSheet, range) {
-        const spreadsheetId = this.SpreadSheet.id;
-        const sheet = this.SpreadSheet.sheet;
+    async readSheet(spreadSheetDetail, range) {
+        const { spreadsheetId } = spreadSheetDetail;
+        const spreadSheet = await this._getSpreadSheet();
 
-        let readData = await sheet.values.get({
+        let readData = await spreadSheet.values.get({
             auth,
             spreadsheetId,
             range
         }).data
 
         return readData
+    }
+    createArrayOfArrayFromDocumentsInOrder(spreadSheetDetail, docs) {
+        let aoa;
+        let keys;
+        let order = spreadSheetDetail.order;
+        let now = moment().format();
+
+        keys = this._getInOrderKeys(order, docs);
+        if (keys !== undefined) {
+            aoa = this._getInOrderValues(order, docs);
+            aoa.unshift(keys, new Array(now))
+        }
+        return aoa;
+    }
+
+    _getInOrderKeys(sheetOrder, docs) {
+        let keys;
+        if (docs.length > 0) {
+            // let firstDoc = docs[0];
+            keys = Object.keys(sheetOrder);
+        }
+        return keys;
+    }
+    _getInOrderValues(sheetOrder, docs) {
+        let values = docs.map(doc => {
+            let inOrderDoc = Object.assign(sheetOrder, doc)
+            return Object.values(inOrderDoc)
+        })
+        return values;
     }
 }

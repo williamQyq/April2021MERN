@@ -40,8 +40,8 @@ export const needToShipColumns =
 
 export const inventoryReceivedColumns = [
     {
-        title: "Created Time",
-        dataIndex: "crtTm",
+        title: "Lastest Modified Time",
+        dataIndex: "mdfTmEst",
         editable: false,
         searchable: true,
         width: "20%",
@@ -55,14 +55,14 @@ export const inventoryReceivedColumns = [
     },
     {
         title: "UPC",
-        dataIndex: "upc",
+        dataIndex: "UPC",
         editable: true,
         searchable: true,
         width: "20%",
     },
     {
         title: "Tracking ID",
-        dataIndex: "trackingId",
+        dataIndex: "trNo",
         editable: true,
         searchable: true,
         width: "20%",

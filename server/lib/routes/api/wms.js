@@ -44,6 +44,15 @@ router.post('/sellerInv/subtractQty', auth, (req, res) => {
     res.status(503).json({ msg: "Update WMS Service Unavailable" })
 })
 
+router.get('/inventoryReceived', auth, (req, res) => {
+    let wms = new WMSDatabaseApis();
+    wms.getInventoryReceive()
+    .then(receivedItems=>{res.json(receivedItems)})
+    .catch(err=>{
+        res.status(500).json({msg:"Fail to get Inventory Received"})
+    })
+})
+
 //@route get api/wms
 //@desc sync warehouse inventory Received with ForUpload Gsheet
 router.get('/inventoryReceived/syncGsheet', auth, (req, res) => {
@@ -51,16 +60,12 @@ router.get('/inventoryReceived/syncGsheet', auth, (req, res) => {
     let gsheet = new GsheetApis();
 
     wms.getInventoryReceive()
-        .then(receivedItems => {
-            //convert receivedItems to array of array for gsheet
-            let aoa = [[]];
-            return aoa
+        .then(receivedItems => gsheet.createArrayOfArrayFromDocumentsInOrder(GsheetApis._forUploadSpreadSheet, receivedItems))
+        .then(values => gsheet.updateSheet(GsheetApis._forUploadSpreadSheet, values))
+        .then(() => { res.json("success")})
+        .catch(err => {
+            res.status(500).json({ msg: "Fail to get Inventory Received or Update Gsheet" })
         })
-        .then(aoa => gsheet.updateSheet(GsheetApis._forUploadSpreadSheet, aoa))
-        .then(() => { res.json("update gsheet success") })
-    // .catch(err => {
-    //     res.status(500).json("Fail to get Inventory Received or Update Gsheet")
-    // })
 
 })
 
