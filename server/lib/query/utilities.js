@@ -129,13 +129,12 @@ export class AlertApi extends OpenApi {
         ])
         if (priceChangedItems.length === 0) return false;
 
-        await Promise.all(
+        return Promise.all(
             priceChangedItems.map(needUpdateItem =>
-                () => this._pushUpdatedPrice(needUpdateItem, currentItemDetail, storeModel)
+                this._pushUpdatedPrice(needUpdateItem, currentItemDetail, storeModel)
             )
         )
 
-        return true;
     }
 
     async _pushUpdatedPrice(needUpdateItem, item, storeModel) {
