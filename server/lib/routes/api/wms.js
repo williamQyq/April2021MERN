@@ -44,7 +44,7 @@ router.post('/sellerInv/subtractQty', auth, (req, res) => {
     res.status(503).json({ msg: "Update WMS Service Unavailable" })
 })
 
-router.get('/inventoryReceived', auth, (req, res) => {
+router.get('/inventoryReceivedItems', auth, (req, res) => {
     let wms = new WMSDatabaseApis();
     wms.getInventoryReceive()
     .then(receivedItems=>{res.json(receivedItems)})

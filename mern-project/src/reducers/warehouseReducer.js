@@ -1,12 +1,12 @@
 import {
-    GET_INVENTORY_RECEIVED,
+    GET_INVENTORY_RECEIVED_ITEMS,
     INVENTORY_RECEIVED_LOADING,
     SYNC_INVENTORY_RECEIVED_WITH_GSHEET
     // GET_ITEM_SPEC,
 } from './actions/types';
 
 const initialState = {
-    inventoryReceived: [],
+    inventoryReceivedItems: [],
     inventoryReceivedLoading: false
 }
 
@@ -17,10 +17,10 @@ export default function Reducer(state = initialState, action) {
                 ...state,
                 inventoryReceivedLoading: false,
             };
-        case GET_INVENTORY_RECEIVED:
+        case GET_INVENTORY_RECEIVED_ITEMS:
             return {
                 ...state,
-                inventoryReceived: action.payload,
+                inventoryReceivedItems: action.payload,
                 inventoryReceivedLoading: false
             }
         case INVENTORY_RECEIVED_LOADING:

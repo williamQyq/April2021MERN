@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { tokenConfig } from './authActions.js';
 import { returnErrors } from './errorActions.js';
-import { GET_INVENTORY_RECEIVED, INVENTORY_RECEIVED_LOADING, SYNC_INVENTORY_RECEIVED_WITH_GSHEET } from './types.js';
+import { GET_INVENTORY_RECEIVED, GET_INVENTORY_RECEIVED_ITEMS, INVENTORY_RECEIVED_LOADING, SYNC_INVENTORY_RECEIVED_WITH_GSHEET } from './types.js';
 
 export const syncInventoryReceivedWithGsheet = () => (dispatch, getState) => {
     dispatch(setInventoryReceivedLoading())
@@ -19,10 +19,10 @@ export const syncInventoryReceivedWithGsheet = () => (dispatch, getState) => {
 
 export const getInventoryReceived = () => (dispatch, getState) => {
     dispatch(setInventoryReceivedLoading())
-    axios.get(`/api/wms/inventoryReceived`, tokenConfig(getState))
+    axios.get(`/api/wms/inventoryReceivedItems`, tokenConfig(getState))
         .then(receivedItems => {
             dispatch({
-                type: GET_INVENTORY_RECEIVED,
+                type: GET_INVENTORY_RECEIVED_ITEMS,
                 payload: receivedItems.data
             });
         })
