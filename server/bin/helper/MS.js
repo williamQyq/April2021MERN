@@ -1,4 +1,3 @@
-import MSItem from '#models/MsItem.js';
 import Stores from './Stores.js';
 
 /*
@@ -39,7 +38,6 @@ interface PageNumFooter{
 */
 
 export default class Microsoft extends Stores {
-    model = MSItem
     constructor() {
         super();
         this.url = 'https://www.microsoft.com/en-us/store/b/shop-all-pcs?categories=2+in+1||Laptops||Desktops||PC+Gaming&s=store&skipitems=';

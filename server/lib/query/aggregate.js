@@ -80,7 +80,7 @@ export const GET_INVENTORY_RECEIVED_HALF_MONTH_AGO = [
         }
     }, {
         $project: {
-            _id: 0,
+            _id: 1,
             mdfTmEst: '$mdfTm',
             mdfDate: {
                 '$dateToString': {
@@ -102,6 +102,7 @@ export const GET_INVENTORY_RECEIVED_HALF_MONTH_AGO = [
         }
     }, {
         $project: {
+            _id: 1,
             mdfTmEst: 1,
             orgNm: 1,
             UPC: 1,

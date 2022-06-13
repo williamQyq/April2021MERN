@@ -1,4 +1,3 @@
-import BBItem from '#models/BBItem.js';
 import Stores from './Stores.js';
 /*
 declare class Bestbuy {
@@ -38,7 +37,6 @@ interface PageNumFooter{
 */
 
 export default class Bestbuy extends Stores {
-    model = BBItem
     constructor() {
         super();
         this.url = 'https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&browsedCategory=pcmcat138500050001&cp=1&id=pcat17071&iht=n&ks=960&list=y&qp=condition_facet%3DCondition~New&sc=Global&st=categoryid%24pcmcat138500050001&type=page&usc=All%20Categories'
