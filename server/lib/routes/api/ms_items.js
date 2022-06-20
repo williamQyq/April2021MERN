@@ -24,7 +24,7 @@ router.get('/detail/:_id', (req, res) => {
         .catch(err => res.status(503).json({ msg: err }));
 });
 
-router.get('/onlinePrice', auth, (req, res) => {
+router.get('/getOnlinePrice', auth, (req, res) => {
     getMicrosoftLaptops()
         .then(() => res.json("success"))
         .catch(err => res.status(500).json({ msg: "Fail to retrive Microsoft Laptop Price " }))

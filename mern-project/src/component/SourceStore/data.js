@@ -1,4 +1,11 @@
-import { BESTBUY, MICROSOFT, COSTCO, WALMART } from "reducers/actions/types";
+import {
+    BESTBUY,
+    MICROSOFT,
+    COSTCO,
+    WALMART,
+    ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE,
+    ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE
+} from "reducers/actions/types.js";
 
 export const categoryIdGroup = {
     ALL_LAPTOPS: 'pcmcat247400050000',
@@ -15,4 +22,9 @@ export const STORE = {
     MICROSOFT,
     COSTCO,
     WALMART
+}
+
+export const SocketType = {
+    ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE,
+    ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE
 }

@@ -19,12 +19,13 @@ import {
 } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
-import { addItemSpec, getItemsOnlinePrice } from "reducers/actions/itemActions.js";
+import { addItemSpec, getItemsOnlinePrice, onRetrievedItemsOnlinePrice } from "reducers/actions/itemActions.js";
 import { setTableState } from "reducers/actions/itemActions.js";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { ContentHeader } from "component/utility/Layout.jsx";
-import { STORE } from "./data.js";
+import { SocketType, STORE } from "./data.js";
+import { SocketContext } from "component/socket/socketContext.js";
 
 const { Text } = Typography;
 const { Search } = Input;
@@ -262,6 +263,15 @@ export const StoreOperationMenu = (props) => {
     const dispatch = useDispatch()
     const bestbuyOnlinePriceRetriving = useSelector((state) => state.bestbuy.onlinePriceLoading)
     const microsoftOnlinePriceRetriving = useSelector((state) => state.microsoft.onlinePriceLoading)
+    // const socket = useContext(SocketContext);
+    // useEffect(() => {
+    //     socket.on(SocketType.ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE, () => {
+    //         dispatch(onRetrievedItemsOnlinePrice(store));
+    //     })
+    //     socket.on(SocketType.ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE, () => {
+    //         dispatch(onRetrievedItemsOnlinePrice(store));
+    //     })
+    // })
 
     //if puppeteer is retrieving online price on store return true else false
     const isOnlinePriceRetrieving = (store) => {

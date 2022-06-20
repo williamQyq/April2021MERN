@@ -21,7 +21,9 @@ import {
     MS_ITEMS_ONLINE_PRICE_LOADING,
     BB_ITEMS_ONLINE_PRICE_LOADING,
     CLEAR_MICROSOFT_ERRORS,
-    CLEAR_BESTBUY_ERRORS
+    CLEAR_BESTBUY_ERRORS,
+    ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE,
+    ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE
 } from './types';
 import { tokenConfig } from './authActions.js';
 
@@ -77,7 +79,8 @@ const setRouteOnStore = (store) => {
                     GET_ITEM_DETAIL: GET_MS_ITEM_DETAIL,
                     GET_ITEM_ONLINE_PRICE: GET_MS_ITEMS_ONLINE_PRICE,
                     ITEMS_ONLINE_PRICE_LOADING: MS_ITEMS_ONLINE_PRICE_LOADING,
-                    CLEAR_ERRORS: CLEAR_MICROSOFT_ERRORS
+                    CLEAR_ERRORS: CLEAR_MICROSOFT_ERRORS,
+                    ON_RETRIEVED_ONLINE_PRICE: ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE,
                     // ADD_ITEM_SPEC: ADD_MS_ITEM_SPEC,
                 }
             }
@@ -89,7 +92,8 @@ const setRouteOnStore = (store) => {
                     GET_ITEM_ONLINE_PRICE: GET_BB_ITEMS_ONLINE_PRICE,
                     ADD_ITEM_SPEC: ADD_BB_ITEM_SPEC,
                     ITEMS_ONLINE_PRICE_LOADING: BB_ITEMS_ONLINE_PRICE_LOADING,
-                    CLEAR_ERRORS: CLEAR_BESTBUY_ERRORS
+                    CLEAR_ERRORS: CLEAR_BESTBUY_ERRORS,
+                    ON_RETRIEVED_ONLINE_PRICE: ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE,
                 }
             }
         default:
@@ -103,7 +107,7 @@ export const getItemsOnlinePrice = (store) => (dispatch, getState) => {
 
     dispatch(setItemsOnlinePriceLoading(type.ITEMS_ONLINE_PRICE_LOADING));
 
-    axios.get(`/api/${routes}/onlinePrice`, tokenConfig(getState)).then((res) => {
+    axios.get(`/api/${routes}/getOnlinePrice`, tokenConfig(getState)).then((res) => {
         dispatch({
             type: type.GET_ITEM_ONLINE_PRICE
         })
@@ -114,6 +118,12 @@ export const getItemsOnlinePrice = (store) => (dispatch, getState) => {
     })
 }
 
+export const onRetrievedItemsOnlinePrice = (store) => (dispatch, getState) => {
+    const { routes, type } = setRouteOnStore(store);    //get routes and action types on store selection
+    dispatch({
+        type: type.ON_RETRIEVED_ONLINE_PRICE
+    });
+}
 
 export const getItemDetail = (store, _id) => dispatch => {
 

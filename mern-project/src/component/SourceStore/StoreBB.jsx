@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { SocketContext } from 'component/socket/socketContext.js';
 import StoreTable from 'component/SourceStore/StoreTable.jsx';
 import StoreAnalyticCards from 'component/SourceStore/StoreAnalyticCards.jsx'
-import BackTopHelper from 'component/utility/BackTop.jsx';
+// import BackTopHelper from 'component/utility/BackTop.jsx';
 import { categoryIdGroup, STORE } from './data.js'
 
 class BB extends React.Component {

@@ -71,7 +71,7 @@ export class AlertApi extends OpenApi {
 
     async saveStoreItemToDatabase(item, storeModel) {
         let msg = '';
-        let isUpserted = this._setStoreItemPriceOnInsert(item, storeModel)    //insert if no document
+        let isUpserted = await this._setStoreItemPriceOnInsert(item, storeModel)    //insert if no document
 
         if (!isUpserted) {
             //push updated price to priceTimestamps field

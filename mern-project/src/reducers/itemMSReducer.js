@@ -4,6 +4,7 @@ import {
     GET_MS_ITEMS_ONLINE_PRICE,
     ITEMS_LOADING_MS,
     MS_ITEMS_ONLINE_PRICE_LOADING,
+    ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE,
 } from './actions/types';
 
 const initialState = {
@@ -32,14 +33,19 @@ export default function Reducer(state = initialState, action) {
         case GET_MS_ITEMS_ONLINE_PRICE:
             return {
                 ...state,
+                // onlinePriceLoading: false
+            }
+        case ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE:
+            return {
+                ...state,
                 onlinePriceLoading: false
             }
         case CLEAR_MICROSOFT_ERRORS:
             return {
                 ...state,
-                loading:false,
-                mostViewedItemsLoading:false,
-                onlinePriceLoading:false
+                loading: false,
+                mostViewedItemsLoading: false,
+                onlinePriceLoading: false
             }
         default:
             return state;

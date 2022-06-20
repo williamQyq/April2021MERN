@@ -6,6 +6,7 @@ import { getAlsoBoughtOnSku } from '#bin/bestbuyIO/bestbuyIO.js';
 import auth from '#middleware/auth.js';
 import { getBestbuyLaptops } from '#bin/scraper.js';
 import { AlertApi } from '../../query/utilities.js';
+import io from '../../../index.js';
 
 const router = express.Router();
 
@@ -92,9 +93,12 @@ router.get('/alsoBought/:sku', auth, (req, res) => {
         })
 })
 
-router.get('/onlinePrice', auth, (req, res) => {
+router.get('/getOnlinePrice', auth, (req, res) => {
     getBestbuyLaptops()
-        .then(() => res.json("success"))
+        .then(() => {
+            res.json("success");
+            // io.sockets.emit("ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE")
+        })
         .catch(err => res.status(500).json({ msg: "Fail to retrive Bestbuy Laptop Price " }))
 })
 

@@ -9,7 +9,8 @@ import {
     GET_BB_ALSO_BOUGHT_ITEMS,
     GET_BESTBUY_API_ERRORS,
     GET_BB_ITEMS_ONLINE_PRICE,
-    CLEAR_BESTBUY_ERRORS
+    CLEAR_BESTBUY_ERRORS,
+    ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE
 } from './actions/types';
 
 const initialState = {
@@ -71,6 +72,11 @@ export default function Reducer(state = initialState, action) {
                 mostViewedItemsLoading: false
             }
         case GET_BB_ITEMS_ONLINE_PRICE:
+            return {
+                ...state,
+                onlinePriceLoading: false
+            }
+        case ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE:
             return {
                 ...state,
                 onlinePriceLoading: false
