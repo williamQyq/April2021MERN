@@ -1,24 +1,21 @@
 import express from 'express';
 import Bestbuy from '#bin/helper/BB.js';
-import Model from '#models/BBItem.js';
 import { getItemConfiguration } from '#bin/scraper.js';
-import {
-    saveItemConfiguration,
-    getStoreItemDetailById,
-    getStoreItems,
-    findItemConfigDocumentOnSku
-} from '#query/utilities.js';
 import { getMostViewedOnCategoryId, getViewedUltimatelyBought } from '#bin/bestbuyIO/bestbuyIO.js';
 import { getAlsoBoughtOnSku } from '#bin/bestbuyIO/bestbuyIO.js';
 import auth from '#middleware/auth.js';
 import { getBestbuyLaptops } from '#bin/scraper.js';
+import { AlertApi } from '../../query/utilities.js';
 
 const router = express.Router();
 
 // @route GET api/items
 // @access private
 router.get('/', auth, (req, res) => {
-    getStoreItems(Model)
+    let alertApi = new AlertApi();
+    let model = alertApi.getBestbuyAlertModel();
+
+    alertApi.getStoreItems(model)
         .then(items => res.json(items))
         .catch(err => res.status(503).json({ msg: "Service Unavailable" }));
 });
@@ -26,7 +23,9 @@ router.get('/', auth, (req, res) => {
 // @route GET api/items
 // @access public
 router.get('/detail/:_id', (req, res) => {
-    getStoreItemDetailById(Model, req.params._id)
+    let alertApi = new AlertApi();
+    let model = alertApi.getBestbuyAlertModel();
+    alertApi.getStoreItemDetailById(model, req.params._id)
         .then(items => {
             res.json(items)
         })
@@ -39,15 +38,17 @@ router.get('/detail/:_id', (req, res) => {
 router.put('/itemSpec/add', auth, (req, res) => {
     const { link, sku } = req.body;
     let bestbuy = new Bestbuy();
+    let alertApi = new AlertApi();
+    let model = alertApi.getBestbuyAlertModel();
 
-    findItemConfigDocumentOnSku(sku)
+    alertApi.findItemConfigDocumentOnSku(sku)
         .then(doc => {
             if (doc) {
                 res.status(400).json({ msg: `${doc.upc}[upc] Item config already exists.` })
             }
         })
         .then(() => getItemConfiguration(bestbuy, link))
-        .then((itemConfig) => saveItemConfiguration(itemConfig, sku))
+        .then((itemConfig) => alertApi.saveItemConfiguration(itemConfig, sku))
         .then((doc) => res.json({ msg: `Upsert ${doc.upc} item config finished.` }))
         .catch(errorMsg => {
             console.error(`[ERROR] Get item config error\n`, errorMsg)

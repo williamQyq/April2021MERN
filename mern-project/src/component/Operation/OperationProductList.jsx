@@ -26,8 +26,8 @@ class OperationProductList extends React.Component {
             data: [],
             defaultSettings: { ...defaultSettings },
         };
+        this.formRef = React.createRef();
     }
-    formRef = React.createRef()
 
     componentDidMount() {
         let socket = this.context

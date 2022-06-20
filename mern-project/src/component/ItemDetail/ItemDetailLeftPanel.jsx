@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import KeyStatistics from 'component/ItemDetail/ItemDetailStat.js';
 import PriceHistoryChart from 'component/ItemDetail/ItemDetailChart.jsx';
 import KeepaStatistics from 'component/KeepaStatistics.js';
+import { ContentHeader } from 'component/utility/Layout';
 
 const { Title } = Typography;
 const antIcon = <SyncOutlined spin />;
@@ -26,7 +27,7 @@ class LeftPanel extends React.Component {
         const item = this.props.itemDetail;
         return (
             <Skeleton loading={this.props.loading}>
-                <Title level={4}>{item.name}</Title>
+                <ContentHeader title={item.name} />
                 <Row className="price-row">
                     <Title level={5} className="price-row-price">${item.currentPrice}</Title>
                     <Spin indicator={antIcon} style={{ fontSize: 0, color: 'black' }} />

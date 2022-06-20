@@ -1,7 +1,8 @@
-import { saveStoreItemToDatabase } from '#query/utilities.js';
+// import { saveStoreItemToDatabase } from '#query/utilities.js';
 import Bestbuy from '#bin/helper/BB.js'
 import Microsoft from '#bin/helper/MS.js';
 import Walmart from '#bin/helper/WM.js';
+import { AlertApi } from '../lib/query/utilities.js';
 
 /* 
 @desc: Get and save ms item price to db
@@ -10,7 +11,8 @@ export const getMicrosoftLaptops = async () => {
 
     const STORE_NAME = "Microsoft";
     let store = new Microsoft();
-
+    let erpApi = new AlertApi();
+    let databaseModel = erpApi.getMicrosoftAlertModel();
 
     let skipItemsNum = 0
     let browser = await store.initBrowser();
@@ -26,7 +28,7 @@ export const getMicrosoftLaptops = async () => {
 
             let items = await store.getPageItems(page, pageUrl)
             await Promise.all(items.map((item, index) =>
-                saveStoreItemToDatabase(item, store.model).then(msg => {
+                erpApi.saveStoreItemToDatabase(item, databaseModel).then(msg => {
                     let msgMap = new Map([
                         ["store", STORE_NAME],
                         ["page", i],
@@ -59,6 +61,9 @@ export const getMicrosoftLaptops = async () => {
 export const getBestbuyLaptops = async () => {
     const STORE_NAME = 'Bestbuy';
     let store = new Bestbuy();
+    let erpApi = new AlertApi();
+    let databaseModel = erpApi.getBestbuyAlertModel();
+
 
     let cp = 1
     let browser = await store.initBrowser();
@@ -75,7 +80,7 @@ export const getBestbuyLaptops = async () => {
             //get items on page#-> for each item saveDatabase-> printResult-> finished
             let items = await store.getPageItems(page, pageUrl)
             await Promise.all(items.map((item, index) =>
-                saveStoreItemToDatabase(item, store.model).then(msg => {
+                erpApi.saveStoreItemToDatabase(item, databaseModel).then(msg => {
                     let msgMap = new Map([
                         ["store", STORE_NAME],
                         ["page", i],

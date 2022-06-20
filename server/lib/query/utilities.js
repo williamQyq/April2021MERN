@@ -178,6 +178,18 @@ export class AlertApi extends OpenApi {
         return storeItemDetail;
 
     }
+    async saveItemConfiguration(config, sku) {
+        let itemSpecModel = this.getItemSpecModel();
+        const query = { upc: config.UPC, sku: sku }
+        const update = {
+            $setOnInsert: {
+                spec: config
+            }
+        }
+        const option = { upsert: true, new: true, useFindAndModify: false, }
+        let doc = await itemSpecModel.findOneAndUpdate(query, update, option)
+        return doc;
+    }
 
 
 }
