@@ -33,7 +33,7 @@ export default function Reducer(state = initialState, action) {
         case GET_MS_ITEMS_ONLINE_PRICE:
             return {
                 ...state,
-                // onlinePriceLoading: false
+                onlinePriceLoading: false
             }
         case ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE:
             return {
