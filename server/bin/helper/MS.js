@@ -1,3 +1,4 @@
+import { AlertApi } from '../../lib/query/utilities.js';
 import Stores from './Stores.js';
 
 /*
@@ -41,6 +42,50 @@ export default class Microsoft extends Stores {
     constructor() {
         super();
         this.url = 'https://www.microsoft.com/en-us/store/b/shop-all-pcs?categories=2+in+1||Laptops||Desktops||PC+Gaming&s=store&skipitems=';
+    }
+
+    async getAndSaveMicrosoftLaptopsPrice() {
+        let erpApi = new AlertApi();
+        let databaseModel = erpApi.getMicrosoftAlertModel();
+        let storeUrl = this.initURL(0); //this. url + skipItemsNum
+
+        let browser = await this.initBrowser();
+        let page = await this.initPage(browser);
+        await page.setDefaultNavigationTimeout(30000);
+
+        let { pagesNum, numPerPage } = await this.getPagesNum(page, storeUrl);
+        console.log('total pages num: ', pagesNum);
+        try {
+            for (let i = 0; i < pagesNum; i++) {
+                let pageUrl = this.initURL(i * numPerPage);
+                let items = await this.getPageItems(page, pageUrl); //ItemType { link, sku, currentPrice, name }
+                await Promise.all(items.map((item, index) =>
+                    erpApi.saveStoreItemToDatabase(item, databaseModel).then((result) =>
+                        this.printMsg(new Map(
+                            Object.entries({
+                                store: Microsoft.name,
+                                page: i,
+                                index: index,
+                                sku: item.sku,
+                                currentPrice: item.currentPrice,
+                                result: result
+                            })  //printMsg received a Map of msgObj
+                        ))
+                    )
+                ))
+                    .finally(() => {
+                        console.log(`[${Microsoft.name}]===Page ${i} finished.===`)
+                    })
+            }
+            await page.close();
+            await browser.close();
+        } catch (e) {
+            await page.close();
+            await browser.close()
+            console.error(`\nERROR:[${Microsoft.name}] Ended with exception.\n`, e.message)
+            throw new Error(e.message);
+        }
+
     }
 
     initURL(skipItemsNum) {
@@ -129,7 +174,7 @@ export default class Microsoft extends Stores {
     */
     async getPageItems(page, url) {
         await page.goto(url)
-        await page.waitForTimeout(10000);
+        // await page.waitForTimeout(10000);
 
         let items = await this.#parseItemsList(page)
         return items

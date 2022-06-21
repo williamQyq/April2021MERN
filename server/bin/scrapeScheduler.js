@@ -1,6 +1,7 @@
 import cron from 'node-cron';
 import moment from 'moment';
-import { getBestbuyLaptops, getMicrosoftLaptops } from './scraper.js';
+import Microsoft from './helper/MS.js';
+import Bestbuy from './helper/BB.js';
 
 //cron scheduler starts everyday
 const startScrapeScheduler = () => {
@@ -11,7 +12,8 @@ const startScrapeScheduler = () => {
 
 //scrape Stores after random delay minutes
 const scrapeStores = () => {
-
+    let msPPteer = new Microsoft();
+    let bbPPteer = new Bestbuy();
     let rand = getRandomMiliSec(10000)
     let count = 0
     let interval = setInterval(() => {
@@ -25,7 +27,7 @@ const scrapeStores = () => {
         console.log(`[Script] start`)
 
         // scrappers: bestbuy,microsoft
-        await Promise.allSettled([getMicrosoftLaptops(), getBestbuyLaptops()])
+        await Promise.allSettled([msPPteer.getAndSaveMicrosoftLaptopsPrice(), bbPPteer.getAndSaveBestbuyLaptopsPrice()])
             .then(results => {
                 results.forEach((result) => {
                     console.log(`Result:${result.status} - ${moment().format('MMMM Do YYYY, h:mm:ss a')}`)

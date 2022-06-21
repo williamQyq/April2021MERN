@@ -1,8 +1,8 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import auth from '#middleware/auth.js';
-import { getMicrosoftLaptops } from '#bin/scraper.js';
 import { AlertApi } from '../../query/utilities.js';
+import Microsoft from '../../../bin/helper/MS.js';
 
 const ObjectId = mongoose.Types.ObjectId;
 const router = express.Router();
@@ -25,7 +25,8 @@ router.get('/detail/:_id', (req, res) => {
 });
 
 router.get('/getOnlinePrice', auth, (req, res) => {
-    getMicrosoftLaptops()
+    let puppeteer = new Microsoft();
+    puppeteer.getAndSaveMicrosoftLaptopsPrice()
         .then(() => res.json("success"))
         .catch(err => res.status(500).json({ msg: "Fail to retrive Microsoft Laptop Price " }))
 })

@@ -1,12 +1,9 @@
 import express from 'express';
-import Bestbuy from '#bin/helper/BB.js';
-import { getItemConfiguration } from '#bin/scraper.js';
-import { getMostViewedOnCategoryId, getViewedUltimatelyBought } from '#bin/bestbuyIO/bestbuyIO.js';
-import { getAlsoBoughtOnSku } from '#bin/bestbuyIO/bestbuyIO.js';
+import { getMostViewedOnCategoryId, getViewedUltimatelyBought, getAlsoBoughtOnSku } from '#bin/bestbuyIO/bestbuyIO.js';
 import auth from '#middleware/auth.js';
-import { getBestbuyLaptops } from '#bin/scraper.js';
 import { AlertApi } from '../../query/utilities.js';
 import io from '../../../index.js';
+import Bestbuy from '../../../bin/helper/BB.js';
 
 const router = express.Router();
 
@@ -48,7 +45,7 @@ router.put('/itemSpec/add', auth, (req, res) => {
                 res.status(400).json({ msg: `${doc.upc}[upc] Item config already exists.` })
             }
         })
-        .then(() => getItemConfiguration(bestbuy, link))
+        .then(() => bestbuy.getAndSaveItemConfiguration(link))
         .then((itemConfig) => alertApi.saveItemConfiguration(itemConfig, sku))
         .then((doc) => res.json({ msg: `Upsert ${doc.upc} item config finished.` }))
         .catch(errorMsg => {
@@ -94,7 +91,8 @@ router.get('/alsoBought/:sku', auth, (req, res) => {
 })
 
 router.get('/getOnlinePrice', auth, (req, res) => {
-    getBestbuyLaptops()
+    const pupeteer = new Bestbuy();
+    pupeteer.getAndSaveBestbuyLaptopsPrice()
         .then(() => {
             res.json("success");
             // io.sockets.emit("ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE")

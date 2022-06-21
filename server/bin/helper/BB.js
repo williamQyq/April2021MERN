@@ -1,3 +1,4 @@
+import { AlertApi } from '../../lib/query/utilities.js';
 import Stores from './Stores.js';
 /*
 declare class Bestbuy {
@@ -40,7 +41,67 @@ export default class Bestbuy extends Stores {
     constructor() {
         super();
         this.url = 'https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&browsedCategory=pcmcat138500050001&cp=1&id=pcat17071&iht=n&ks=960&list=y&qp=condition_facet%3DCondition~New&sc=Global&st=categoryid%24pcmcat138500050001&type=page&usc=All%20Categories'
+
     }
+
+    async getAndSaveBestbuyLaptopsPrice() {
+        let erpApi = new AlertApi();
+        let databaseModel = erpApi.getBestbuyAlertModel();
+        let storeUrl = this.initURL(1);
+
+        let browser = await this.initBrowser();
+        let page = await this.initPage(browser);
+        await page.setDefaultNavigationTimeout(30000);
+
+        let { pagesNum } = await this.getPagesNum(page, storeUrl);
+        console.log('total pages num: ', pagesNum);
+
+        try {
+            for (let i = 0; i < pagesNum; i++) {
+                let pageUrl = this.initURL(i + 1);
+                let items = await this.getPageItems(page, pageUrl); //ItemType { link, sku, currentPrice, name }
+                await Promise.all(items.map((item, index) =>
+                    erpApi.saveStoreItemToDatabase(item, databaseModel).then((result) =>
+                        this.printMsg(new Map(
+                            Object.entries({
+                                store: Bestbuy.name,
+                                page: i,
+                                index: index,
+                                sku: item.sku,
+                                currentPrice: item.currentPrice,
+                                result: result
+                            })  //printMsg received a Map of msgObj
+                        ))
+                    )
+                ))
+                    .finally(() => {
+                        console.log(`[${Bestbuy.name}]===Page ${i} finished.===`)
+                    })
+            }
+        } catch (e) {
+            await page.close();
+            await browser.close();
+            console.error(`\nERROR:[${Bestbuy.name}] Ended with exception.\n`, e.message)
+            throw new Error(e.message);
+        }
+
+        await page.close();
+        await browser.close();
+    }
+
+    async getAndSaveItemConfiguration(url) {
+        console.log(`[getItemConfig] starting...`)
+        let browser = await this.initBrowser();
+        let page = await this.initPage(browser);
+        let spec = await this.getItemSpec(page, url)
+
+        await page.close();
+        await browser.close();
+        console.log(`[getItemConfiguration]:\n${JSON.stringify(spec, null, 4)}`)
+        return spec
+
+    }
+
     initURL(cp) {
         return this.url.replace(/(&cp=)(\d+)/, "$1" + cp)
     }
@@ -160,7 +221,7 @@ export default class Bestbuy extends Stores {
         let items;
         try {
             await page.goto(url)
-            await page.waitForTimeout(10000);
+            // await page.waitForTimeout(10000);
             items = await this.#parseItemsList(page)
             return items;
         } catch (e) {

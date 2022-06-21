@@ -20,12 +20,20 @@ declare class Stores{
 
 export default class Stores {
     constructor() {
+        this.msgObj = {
+            store: undefined,
+            page: undefined,
+            index: undefined,
+            sku: undefined,
+            currentPrice: undefined,
+            result: undefined
+        }
     }
 
     printMsg(msgMap) {
         // `[Bestbuy]page ${i} # ${index}: ${item.sku} - $${item.currentPrice} get item finished. <State: ${msg}>`
         console.log(
-            `[${msgMap.get("store")}]page ${msgMap.get("page")} # ${msgMap.get("index")}: ${msgMap.get("sku")} - $${msgMap.get("currentPrice")} get item finished. <State: ${msgMap.get("msg")}>`
+            `[${msgMap.get("store")}]page ${msgMap.get("page")} # ${msgMap.get("index")}: ${msgMap.get("sku")} - $${msgMap.get("currentPrice")} get item finished. <State: ${msgMap.get("result")}>`
         )
 
     }
@@ -36,14 +44,14 @@ export default class Stores {
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
-                // '--window-size=1920,1080'
+                '--window-size=1920,1080'
             ],
         });
         return browser;
     }
     async initPage(browser) {
         const page = await browser.newPage();
-        // await page.setViewport({ width: 1920, height: 1080 })   //set view port to 1920x1080
+        await page.setViewport({ width: 1920, height: 1080 })   //set view port to 1920x1080
         await page.setUserAgent(USER_AGENT);
         await page.setRequestInterception(true);
         page.on('request', (req) => {
