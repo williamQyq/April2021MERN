@@ -42,7 +42,10 @@ export default class Stores {
             headless: true,
             // headless: false,
             args: [
+                '--single-process',
+                '--no-zygote',
                 '--no-sandbox',
+                '--disable-web-security',
                 '--disable-setuid-sandbox',
                 '--window-size=1920,1080'
             ],
@@ -52,6 +55,7 @@ export default class Stores {
     async initPage(browser) {
         const page = await browser.newPage();
         await page.setViewport({ width: 1920, height: 1080 })   //set view port to 1920x1080
+        // await page.setDefaultNavigationTimeout(0);
         await page.setUserAgent(USER_AGENT);
         await page.setRequestInterception(true);
         page.on('request', (req) => {

@@ -51,13 +51,13 @@ export default class Bestbuy extends Stores {
 
         let browser = await this.initBrowser();
         let page = await this.initPage(browser);
-        await page.setDefaultNavigationTimeout(30000);
 
         let { pagesNum } = await this.getPagesNum(page, storeUrl);
         console.log('total pages num: ', pagesNum);
-
+        // await page.close();
         try {
             for (let i = 0; i < pagesNum; i++) {
+                // page = await this.initPage(browser);
                 let pageUrl = this.initURL(i + 1);
                 let items = await this.getPageItems(page, pageUrl); //ItemType { link, sku, currentPrice, name }
                 await Promise.all(items.map((item, index) =>
@@ -73,10 +73,11 @@ export default class Bestbuy extends Stores {
                             })  //printMsg received a Map of msgObj
                         ))
                     )
-                ))
-                    .finally(() => {
-                        console.log(`[${Bestbuy.name}]===Page ${i} finished.===`)
-                    })
+                )).finally(() => {
+                    console.log(`[${Bestbuy.name}]===Page ${i} finished.===`)
+                });
+
+                // await page.close();
             }
         } catch (e) {
             await page.close();
