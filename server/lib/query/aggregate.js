@@ -132,7 +132,8 @@ export function getTodayDate() {
 export const GET_NEED_TO_SHIP_ITEMS_BY_TODAY = [
     {
         '$project': {
-            '_id': 1,
+            '_id': 0,
+            'tracking': "$_id",
             'orderID': 1,
             'orgNm': 1,
             'rcIts': 1,
@@ -140,7 +141,7 @@ export const GET_NEED_TO_SHIP_ITEMS_BY_TODAY = [
             'shipBy': 1,
             'crtTm': {
                 '$dateToString': {
-                    'format': '%Y-%m-%d T %HH%MM%SS',
+                    // 'format': '%Y-%m-%d T %HH%MM%SS',
                     'timezone': 'America/New_York',
                     'date': {
                         '$toDate': '$crtStmp'

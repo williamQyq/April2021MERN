@@ -48,10 +48,12 @@ export default function Reducer(state = initialState, action) {
                 ...state,
                 needToShip: {
                     ...state.needToShip,
-                    itemsLoading: false
+                    itemsLoading: true
                 }
             }
         default:
-            return state;
+            return Object.assign({}, state, {
+                needToShip: Object.assign({}, state.needToShip)
+            });
     }
 }

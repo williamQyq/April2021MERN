@@ -38,7 +38,7 @@ export const getInventoryReceived = () => (dispatch, getState) => {
         })
 }
 export const getNeedToShipFromShipment = () => (dispatch, getState) => {
-    dispatch(setShipmentItemsLoading);
+    dispatch(setShipmentItemsLoading());
     axios.get(`/api/wms/getNeedToShipItems`, tokenConfig(getState))
         .then(res => {
             dispatch({

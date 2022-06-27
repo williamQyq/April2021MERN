@@ -72,7 +72,9 @@ router.get('/inventoryReceived/syncGsheet', auth, (req, res) => {
 router.get('/getNeedToShipItems', auth, (req, res) => {
     let wms = new WMSDatabaseApis();
     wms.getNeedToshipFromShipment()
-        .then(needToshipItems => { res.json(needToshipItems) })
+        .then(needToshipItems => {
+            res.json(needToshipItems)
+        })
         .catch((err => {
             res.status(500).json({ msg: "Fail to get Shipment" })
         }))

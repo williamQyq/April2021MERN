@@ -261,7 +261,7 @@ export class WMSDatabaseApis {
 
     async getNeedToshipFromShipment() {
         const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
-        let needToshipItemsByToday = await collection.aggregate(GET_NEED_TO_SHIP_ITEMS_BY_TODAY)
+        let needToshipItemsByToday = await collection.aggregate(GET_NEED_TO_SHIP_ITEMS_BY_TODAY).toArray();
         return needToshipItemsByToday;
     }
 
