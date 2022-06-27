@@ -1,27 +1,43 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Form } from 'antd';
-import { defaultSettings, needToShipColumns } from 'component/OutBound/utilities.js';
+import { List } from 'antd';
 import { SocketContext } from 'component/socket/socketContext';
 import { NeedToShipMenu } from 'component/OutBound/Menus.jsx';
-import FormTable from 'component/utility/FormTable';
+import DescriptionCard from 'component/utility/DescriptionCard.jsx';
+import { getNeedToShipFromShipment } from 'reducers/actions/outboundActions.js';
+
+
+const data = [
+    {
+        _id: "1ZA813770292991910",
+        orderID: "2022627-202202-M07084-Upgrade-111-7031300-5425820",
+        orgNm: "M",
+        rcIts: [{ UPC: "123", qty: 1 }],
+        crtTm: "2022-06-27 T 09H19M59S"
+    },
+    {
+        _id: "1ZA813770292991910",
+        orderID: "2022627-202202-M07084-Upgrade-111-7031300-5425820",
+        orgNm: "M",
+        rcIts: [{ UPC: "123", qty: 1 }],
+        crtTm: "2022-06-27 T 09H19M59S"
+    }
+
+]
+
 
 class NeedToShipUpload extends React.Component {
     // static contextType = SocketContext //This part is important to access context values which are socket
     constructor(props) {
         super(props);
         this.state = {
-            searchText: '',
-            searchedRowId: '',
-            searchedColumn: '',
-            editingKey: '',
-            data: []
+
         };
     }
-    formRef = React.createRef()
 
     componentDidMount() {
+        this.props.getNeedToShipFromShipment();
         // let socket = this.context
         // socket.emit(`subscribe`, `OutboundRoom`);
 
@@ -31,77 +47,19 @@ class NeedToShipUpload extends React.Component {
         // let socket = this.context
         // socket.emit(`unsubscribe`, `OutboundRoom`)
     }
-    isLoading = () => {
-        const { loading } = this.props;
-        return loading;
-    }
-    isEditing = (record) => record._id === this.state.editingKey
-
-    edit = (record) => {
-        this.formRef.current.setFieldsValue({
-            ...record
-        })
-        this.setState({
-            editingKey: record._id
-        })
-    }
-    cancel = () => {
-        this.setState({
-            editingKey: ""
-        })
-    }
-    save = async (key) => {
-        try {
-            const row = await this.formRef.current.validateFields();
-            const newData = [...this.state.data];
-            const index = newData.findIndex((item) => key === item.key);
-
-            if (index > -1) {
-                const item = newData[index];
-                newData.splice(index, 1, { ...item, ...row });
-                this.setState({ data: newData });
-                this.setState({ editingKey: "" });
-            } else {
-                newData.push(row);
-                this.setState({ newData });
-                this.setState({ editingKey: "" });
-            }
-        } catch (err) {
-            console.log("Validate Failed:", err);
-        }
-    }
-
-    publish = (record) => {
-        //publish record to amazon seller central...
-
-    }
 
     render() {
-        const actions = {
-            isEditing: this.isEditing,
-            edit: this.edit,
-            cancel: this.cancel,
-            save: this.save,
-            publish: this.publish,
-            editingKey: this.state.editingKey,
-            getColumnSearchProps: this.getColumnSearchProps,
-            handleSearch: this.handleSearch,
-            handleReset: this.handleReset
-        }
-        const { loading } = this.props;
-        const columns = needToShipColumns;
-        const { data } = this.state;
+
         return (
             <>
                 <NeedToShipMenu />
-                <Form ref={this.formRef} component={false}>
-                    <FormTable
-                        tableSettings={defaultSettings}
-                        loading={loading}
-                        columns={columns}
-                        dataSource={data}
-                    />
-                </Form>
+                <List
+                    size="small"
+                    dataSource={data}
+                    renderItem={item =>
+                        <List.Item> <DescriptionCard detail={item} /></List.Item>
+                    }
+                />
             </>
 
         );
@@ -109,10 +67,13 @@ class NeedToShipUpload extends React.Component {
 }
 
 NeedToShipUpload.prototypes = {
-    // loading: PropTypes.bool.isRequired,
+    needToShipItems: PropTypes.array.isRequired,
+    needToShipItemsLoading: PropTypes.bool.isRequired,
+    getNeedToShipFromShipment: PropTypes.func.isRequired,
 }
 const mapStateToProps = (state) => ({
-    // loading: state.amazon.loading,
+    // needToShipItems: state.needToShip.items,
+    // needToshipItemsLoading: state.needToShip.itemsLoading
 })
 
-export default connect(mapStateToProps, {})(NeedToShipUpload);
+export default connect(mapStateToProps, { getNeedToShipFromShipment })(NeedToShipUpload);

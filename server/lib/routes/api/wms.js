@@ -47,10 +47,10 @@ router.post('/sellerInv/subtractQty', auth, (req, res) => {
 router.get('/inventoryReceivedItems', auth, (req, res) => {
     let wms = new WMSDatabaseApis();
     wms.getInventoryReceive()
-    .then(receivedItems=>{res.json(receivedItems)})
-    .catch(err=>{
-        res.status(500).json({msg:"Fail to get Inventory Received"})
-    })
+        .then(receivedItems => { res.json(receivedItems) })
+        .catch(err => {
+            res.status(500).json({ msg: "Fail to get Inventory Received" })
+        })
 })
 
 //@route get api/wms
@@ -62,11 +62,20 @@ router.get('/inventoryReceived/syncGsheet', auth, (req, res) => {
     wms.getInventoryReceive()
         .then(receivedItems => gsheet.createArrayOfArrayFromDocumentsInOrder(GsheetApis._forUploadSpreadSheet, receivedItems))
         .then(values => gsheet.updateSheet(GsheetApis._forUploadSpreadSheet, values))
-        .then(() => { res.json("success")})
+        .then(() => { res.json("success") })
         .catch(err => {
             res.status(500).json({ msg: "Fail to get Inventory Received or Update Gsheet" })
         })
 
+})
+
+router.get('/getNeedToShipItems', auth, (req, res) => {
+    let wms = new WMSDatabaseApis();
+    wms.getNeedToshipFromShipment()
+        .then(needToshipItems => { res.json(needToshipItems) })
+        .catch((err => {
+            res.status(500).json({ msg: "Fail to get Shipment" })
+        }))
 })
 
 

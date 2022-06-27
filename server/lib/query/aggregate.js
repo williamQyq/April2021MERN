@@ -124,3 +124,35 @@ export function getDateHalfMonthAgo() {
     return moment(d).format();
 
 }
+export function getTodayDate() {
+    let d = new Date()
+    d.setHours(0, 0, 0, 0);
+    return moment(d).format();
+}
+export const GET_NEED_TO_SHIP_ITEMS_BY_TODAY = [
+    {
+        '$project': {
+            '_id': 1,
+            'orderID': 1,
+            'orgNm': 1,
+            'rcIts': 1,
+            'UserID': 1,
+            'shipBy': 1,
+            'crtTm': {
+                '$dateToString': {
+                    'format': '%Y-%m-%d T %HH%MM%SS',
+                    'timezone': 'America/New_York',
+                    'date': {
+                        '$toDate': '$crtStmp'
+                    }
+                }
+            }
+        }
+    }, {
+        '$match': {
+            'crtTm': {
+                '$gte': getTodayDate()
+            }
+        }
+    }
+]

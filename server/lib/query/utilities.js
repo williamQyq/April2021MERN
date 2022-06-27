@@ -14,7 +14,8 @@ import {
     UNWIND_ITEM_SPEC_AND_PRESERVE_ORIGIN,
     LOOKUP_ITEM_SPEC,
     LAST_PRICE,
-    GET_INVENTORY_RECEIVED_HALF_MONTH_AGO
+    GET_INVENTORY_RECEIVED_HALF_MONTH_AGO,
+    GET_NEED_TO_SHIP_ITEMS_BY_TODAY
 } from './aggregate.js';
 import GenerateGSheetApis from '../../bin/gsheet/gsheet.js';
 import moment from 'moment';
@@ -246,7 +247,8 @@ export class OperationApi extends OpenApi {
 export class WMSDatabaseApis {
     static _collection = {
         sellerInv: "sellerInv",
-        inventoryReceive: "inventoryReceive"
+        inventoryReceive: "inventoryReceive",
+        shipment: "shipment",
     }
     constructor() {
         this.db = wms.getDatabase();
@@ -257,6 +259,11 @@ export class WMSDatabaseApis {
         return invRecItemsHalfMonthAgo;
     }
 
+    async getNeedToshipFromShipment() {
+        const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
+        let needToshipItemsByToday = await collection.aggregate(GET_NEED_TO_SHIP_ITEMS_BY_TODAY)
+        return needToshipItemsByToday;
+    }
 
 }
 
