@@ -12,7 +12,8 @@
     "debug": "cd ./server && node ./server/backend_control/server.js",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "prod": "concurrently \"npm run start\" \"npm run client\"",
-    "deploy": "cd ./deploy && node cmd.js"
+    "deploy": "cd ./deploy && node cmd.js",
+    "compile": "tsc"
   },
   "imports": {
     "#root/*": "./server/*",

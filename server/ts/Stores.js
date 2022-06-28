@@ -1,16 +1,11 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.BestBuy = exports.Stores = void 0;
-const puppeteer_1 = __importDefault(require("puppeteer"));
-const config_json_1 = require("./config/config.json");
-class Stores {
+import puppeteer from 'puppeteer';
+// import MSItem from '../models/MsItem';
+const USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.0 Safari/537.36";
+export class Stores {
     constructor() {
     }
     async initBrowser() {
-        const browser = await puppeteer_1.default.launch({
+        const browser = await puppeteer.launch({
             headless: true,
             args: [
                 '--no-sandbox',
@@ -22,7 +17,7 @@ class Stores {
     }
     async initPage(browser) {
         const page = await browser.newPage();
-        await page.setUserAgent(config_json_1.USER_AGENT);
+        await page.setUserAgent(USER_AGENT);
         await page.setRequestInterception(true);
         page.on('request', (req) => {
             if (req.resourceType() === 'image') {
@@ -35,7 +30,6 @@ class Stores {
         return page;
     }
 }
-exports.Stores = Stores;
 class Microsoft extends Stores {
     // private model: typeof MsItem;
     url;
@@ -64,7 +58,7 @@ class Microsoft extends Stores {
         return {};
     }
 }
-class BestBuy extends Stores {
+export class BestBuy extends Stores {
     // private model: typeof BBItem
     url;
     constructor() {
@@ -92,4 +86,3 @@ class BestBuy extends Stores {
         console.log(`typescript test`);
     }
 }
-exports.BestBuy = BestBuy;

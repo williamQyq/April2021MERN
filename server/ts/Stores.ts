@@ -1,9 +1,10 @@
 import { Model } from 'mongoose';
 import puppeteer, { Browser, Page } from 'puppeteer';
-import {USER_AGENT} from './config/config.json'
+// import {USER_AGENT} from './config/config.json'
 import BBItem from './models/BBItem';
 // import MSItem from '../models/MsItem';
 
+const USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.0 Safari/537.36";
 type PageContext = {
     pageNumber: number
     itemNumEachPage: number

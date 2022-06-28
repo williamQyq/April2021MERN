@@ -1,7 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = require("mongoose");
-const BBItemSchema = new mongoose_1.Schema({
+import { model, Schema } from "mongoose";
+const BBItemSchema = new Schema({
     link: {
         type: String,
         require: true
@@ -28,4 +26,4 @@ const BBItemSchema = new mongoose_1.Schema({
         default: Date.now
     }
 }, { collection: 'bbStoreListings' });
-exports.default = (0, mongoose_1.model)("BBItem", BBItemSchema);
+export default model("BBItem", BBItemSchema);
