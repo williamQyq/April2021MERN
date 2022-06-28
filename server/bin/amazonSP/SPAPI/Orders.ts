@@ -8,6 +8,7 @@ type DeepReadOnly<T> = {
 interface GetOrdersQuery {
     MarketplaceIds: string[],
     LastUpdatedAfter?: string,
+    LastUpdatedBefore?: string,
     CreatedAfter?: string,
     OrderStatuses?: string[],
 }
@@ -40,6 +41,7 @@ export class Orders {
             query: {
                 MarketplaceIds: ["ATVPDKIKX0DER"],
                 LastUpdatedAfter: "",
+                LastUpdatedBefore: "",
                 OrderStatuses: ["Unshipped", "Shipped"]
             }
         }
@@ -62,7 +64,8 @@ export class Orders {
                 ...this.getOrdersParam,
                 query: {
                     ...this.getOrdersParam.query,
-                    LastUpdatedAfter: moment("2022-06-28T00:00:00Z").toISOString()
+                    LastUpdatedAfter: moment("2022-06-28T00:00:00Z").toISOString(),
+                    LastUpdatedBefore: moment("2022-06-28T00:00:00Z").toISOString()
                 }
             };
             // let param = this.getOrdersParam;
