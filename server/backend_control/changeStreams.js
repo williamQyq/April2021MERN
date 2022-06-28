@@ -1,10 +1,10 @@
 import keys from "../config/keys";
-import db from '../config/keys'.mongoURI;
+import db from '../config/keys';
 import { MongoClient } from 'mongodb';
 
-async function main (){
+async function main() {
 
-    const client = new MongoClient(db, {useUnifiedTopology:true});
+    const client = new MongoClient(db, { useUnifiedTopology: true });
 
     try {
         await client.connect();
@@ -24,7 +24,7 @@ async function monitorListingsUsingHasNext(client, timeInMs = 60000, pipeline = 
     const changeStream = collection.watch(pipeline);
 
     closeChangeStream(timeInMs, changeStream);
-    try{
+    try {
         while (await changeStream.hasNext()) {
             console.log(await changeStream.next());
         }
@@ -41,7 +41,7 @@ async function monitorListingsUsingEventEmitter(client, timeInMs = 60000, pipeli
     const collection = client.db(keys.DB).collection(keys.Collections.ProductsPriceListings);
 
     const changeStream = collection.watch();
-    
+
     changeStream.on('change', (next) => {
         console.log(next.fullDocument);
     });

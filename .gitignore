@@ -7,3 +7,4 @@ server/unit_test.js
 *.pem
 *.crt
 credentials.json
+server/buildTS/*
