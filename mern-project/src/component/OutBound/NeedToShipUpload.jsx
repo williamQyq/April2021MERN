@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { List } from 'antd';
-import VirtualList from 'rc-virtual-list';
 import { SocketContext } from 'component/socket/socketContext';
 import { NeedToShipMenu } from 'component/OutBound/Menus.jsx';
 import DescriptionCard from 'component/utility/DescriptionCard.jsx';
@@ -34,19 +33,13 @@ class NeedToShipUpload extends React.Component {
         return (
             <>
                 <NeedToShipMenu />
-                <List>
-                    <VirtualList
-                        data={needToShipItems}
-                        // height={"70vh"}
-                        itemHeight={30}
-                        itemKey="orderIDs"
-                    >
-                        {(item) => (
-                            <List.Item key={item.orderID}> <DescriptionCard detail={item} /></List.Item>
-                        )}
-                    </VirtualList>
-                </List>
-
+                <List
+                    dataSource={needToShipItems}
+                    size="default"
+                    renderItem={(item) => (
+                        <List.Item key={item.orderID}> <DescriptionCard detail={item} /></List.Item>
+                    )}
+                />
             </>
 
         );
