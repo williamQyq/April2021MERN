@@ -81,7 +81,7 @@ const HomeSider = (props) => {
                     label: (<Link to={`${path}/operation-products-list`}>Product List</Link>)
                 },
                 {
-                    disabled:true,
+                    disabled: true,
                     key: 'configuration',
                     icon: <DesktopOutlined />,
                     label: (<Link to={`${path}/configuration`}>Configuration</Link>)
@@ -94,7 +94,7 @@ const HomeSider = (props) => {
             label: "Warehouse",
             children: [
                 {
-                    disabled:true,
+                    disabled: true,
                     key: "inbound",
                     icon: <ScanOutlined />,
                     label: (<Link to={`${path}/inbound`}>Inbound</Link>)
@@ -119,7 +119,13 @@ const HomeSider = (props) => {
 
 
     return (
-        <Sider trigger={null} collapsible collapsed={collapsed}>
+        <Sider
+            // trigger={null}
+            collapsible
+            // collapsed={collapsed}
+            breakpoint="lg"
+            collapsedWidth="0"
+        >
             <div className="logo">
                 <TrademarkOutlined style={{ margin: "auto", fontSize: "48px" }} />
             </div>

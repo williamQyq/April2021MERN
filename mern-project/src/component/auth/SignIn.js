@@ -1,10 +1,9 @@
 import React from 'react';
-import { Layout, Form, Input, Button, Typography, message } from 'antd';
+import { Layout, Form, Input, Button, Typography, message, Image } from 'antd';
 import 'antd/dist/antd.min.css';
 import 'styles/login.scss';
 import { Link, withRouter } from "react-router-dom";
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-// import mainImage from "styles/assets/imageLogin.jpg";
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { login } from 'reducers/actions/authActions.js';
@@ -16,6 +15,27 @@ const { Text, Title } = Typography;
 message.config({
     maxCount: 3,
 })
+
+const siderLayout = {
+    width: "50%",
+    collapsble: true,
+    breakpoint: "lg",
+    collapsedWidth: "0",
+    // zeroWidthTriggerStyle: {}
+}
+
+const formLayout = {
+    labelCol: {
+        span: 8,
+    },
+    wrapperCol: {
+        span: 14
+    },
+    layout: "vertical",
+    initialValues: {
+        remember: true
+    }
+}
 
 class SignIn extends React.Component {
 
@@ -76,32 +96,10 @@ class SignIn extends React.Component {
     }
 
     render() {
-        const siderLayout = {
-            width: "50%"
-        }
-        // const imageProps = {
-        //     preview: false,
-        //     src: mainImage,
-        //     height:"100%",
-        // }
-
-        const formLayout = {
-            labelCol: {
-                span: 8,
-            },
-            wrapperCol: {
-                span: 14
-            },
-            layout: "vertical",
-            initialValues: {
-                remember: true
-            }
-        }
 
         return (
             <Layout className="login-layout">
                 <Sider {...siderLayout} />
-                {/* <Image  {...imageProps}></Image> */}
                 <Content className="login-content">
                     <Form
                         className="login-form"

@@ -1,9 +1,8 @@
 .login-layout {
-    height: 100vh;
+    min-height: 100vh;
     .login-content {
-        height: 400px;
-        min-width: 920px;
-
+        min-height: 400px;
+        min-width: 1000px;
         margin: auto;
     }
     .login-form {
@@ -19,5 +18,10 @@
         height: 50%;
         object-fit: cover;
         overflow: hidden;
+    }
+    .ant-layout-sider {
+        background-image: url("assets/background.png");
+        background-size: auto 100%;
+        background-repeat: repeat-x;
     }
 }
