@@ -2,7 +2,6 @@ import axios from 'axios';
 import Moment from 'moment';
 import { getBBItems } from './itemBBActions.js';
 import { getMSItems } from './itemMSActions.js';
-import { message } from 'antd';
 import { returnErrors } from './errorActions.js'
 
 import {
@@ -26,6 +25,7 @@ import {
     ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE
 } from './types';
 import { tokenConfig } from './authActions.js';
+import { clearMessages, returnMessages } from './messageActions.js';
 
 // export const getItems = () => dispatch => {
 //     dispatch(setItemsLoading());
@@ -107,23 +107,26 @@ export const getItemsOnlinePrice = (store) => (dispatch, getState) => {
 
     dispatch(setItemsOnlinePriceLoading(type.ITEMS_ONLINE_PRICE_LOADING));
 
-    axios.get(`/api/${routes}/getOnlinePrice`, tokenConfig(getState)).then((res) => {
-        dispatch({
-            type: type.GET_ITEM_ONLINE_PRICE
+    axios.get(`/api/${routes}/getOnlinePrice`, tokenConfig(getState))
+        .then((res) => {
+            dispatch({
+                type: type.GET_ITEM_ONLINE_PRICE
+            })
+            dispatch(clearMessages())
+            dispatch(returnMessages(res.data.msg, res.status))
+        }).catch(err => {
+            dispatch(clearErrors(type.CLEAR_ERRORS))
+            dispatch(returnErrors(err, err.response.status))
+
         })
-    }).catch(err => {
-        dispatch(clearErrors(type.CLEAR_ERRORS))
-        dispatch(returnErrors(err.response.data.msg, err.response.status))
-
-    })
 }
 
-export const onRetrievedItemsOnlinePrice = (store) => (dispatch, getState) => {
-    const { routes, type } = setRouteOnStore(store);    //get routes and action types on store selection
-    dispatch({
-        type: type.ON_RETRIEVED_ONLINE_PRICE
-    });
-}
+// export const onRetrievedItemsOnlinePrice = (store) => (dispatch, getState) => {
+//     const { routes, type } = setRouteOnStore(store);    //get routes and action types on store selection
+//     dispatch({
+//         type: type.ON_RETRIEVED_ONLINE_PRICE
+//     });
+// }
 
 export const getItemDetail = (store, _id) => dispatch => {
 
@@ -180,7 +183,8 @@ export const addItemSpec = (record, store) => (dispatch, getState) => {
                 type: type.ADD_ITEM_SPEC,
                 payload: res.data
             })
-            message.success(res.data.msg)
+            dispatch(clearMessages())
+            dispatch(returnMessages(res.data.msg, res.status))
         })
         .catch(e => {
             dispatch(returnErrors(e.response.data.msg, e.response.status))

@@ -1,5 +1,6 @@
 import { InputNumber, Input, Form, Space, Typography, Badge, Dropdown, Menu } from "antd";
-import { mainColumnGroup, nestedColumnGroup } from "component/Operation/columns";
+import { StatusBadge } from "component/Operation/OperationStatusBadge.jsx";
+import ActionMenu from "component/Operation/OperationAction.jsx";
 /*
  *  @usage: Nested child table elements
  */
@@ -25,7 +26,7 @@ export const EditableCell = ({
                             message: `Please Input ${title}!`,
                         },
                     ]}
-                    style={{"marginBottom":0}}
+                    style={{ "marginBottom": 0 }}
                     onClick={(e) => { e.stopPropagation() }}
                 >
                     {inputNode}
@@ -64,10 +65,138 @@ const mergedColumns = (columns, actions) => {
 }
 
 export const mainColumns = (actions) => {
-    const columnGroup = mainColumnGroup(actions);
-    return mergedColumns(columnGroup, actions);
+    const columns = [
+        {
+            title: 'Upc',
+            dataIndex: 'upc',
+            editable: true,
+            width: '40%',
+            searchable: true
+        },
+        // {
+        //     title: 'Name',
+        //     dataIndex: 'name',
+        //     editable: true,
+        // },
+        {
+            title: 'WMS Quantity',
+            dataIndex: 'wmsQuantity',
+            editable: false,
+            width: '10%',
+            sorter: (a, b) => {
+                if (a.wmsQuantity === undefined) {
+                    return -1;
+                } else if (b.wmsQuantity === undefined) {
+                    return 1;
+                }
+                return a.wmsQuantity - b.wmsQuantity
+            }
+            ,
+            searchable: true,
+            defaultSortOrder: 'descend'
+            // sortDirections: ['descend', 'ascend', 'descend']
+        },
+        {
+            title: 'Unit Cost',
+            dataIndex: 'unitCost',
+            editable: false,
+            width: '10%',
+        },
+        // {
+        //     title: 'Settlement Rate Universal',
+        //     dataIndex: 'settleRateUniv',
+        //     editable: true,
+        //     inputType: "number"
+        // },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'state',
+            width: '20%',
+            // searchable: true,
+            render: (_, record) => {
+                return <StatusBadge record={record} />
+            }
+        },
+        {
+            title: 'Action',
+            key: 'action',
+            width: '20%',
+            render: (_, record) => <ActionMenu actions={actions} record={record} />,
+        },
+    ];
+    return mergedColumns(columns, actions);
 }
 export const nestedColumns = (actions) => {
-    const columnGroup = nestedColumnGroup(actions);
-    return mergedColumns(columnGroup, actions)
+    const columns = [
+        {
+            title: 'Asin',
+            dataIndex: 'asin',
+            key: 'asin',
+            editable: false,
+            width: '20%',
+        },
+        {
+            title: 'Sku',
+            dataIndex: 'SellerSKU',
+            key: 'sku',
+            editable: false,
+            width: '30%',
+        },
+        {
+            title: 'Fulfillment Channel',
+            dataIndex: 'FulfillmentChannel',
+            key: 'fulfillmentChannel',
+            editable: false,
+            width: '15%',
+            filters: [
+                {
+                    text: 'Amazon',
+                    value: 'AMAZON',
+                },
+                {
+                    text: 'Merchant',
+                    value: 'MERCHANT',
+                },
+            ],
+            onFilter: (value, record) => record.FulfillmentChannel.includes(value)
+
+        },
+        {
+            title: 'Amazon Regular Price',
+            dataIndex: ['RegularPrice', 'Amount'],
+            key: 'amzRegularPrice',
+            editable: false,
+            width: '15%',
+        },
+        // {
+        //     title: 'Settlement Rate',
+        //     dataIndex: 'settlementRate',
+        //     key: 'settlementRate',
+        //     editable: true
+        // },
+        // {
+        //     title: 'Settlement Price',
+        //     dataIndex: 'settlementPrice',
+        //     key: 'settlementPrice',
+        //     editable: true
+
+        // },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'state',
+            width: '5%',
+            render: (_, record) => <StatusBadge record={record} />
+
+        },
+        {
+            title: 'Operation',
+            dataIndex: 'operation',
+            key: 'operation',
+            width: '15%',
+            render: (_, record) => <ActionMenu actions={actions} record={record} />
+        }
+    ];
+    return mergedColumns(columns, actions)
 }

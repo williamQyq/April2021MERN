@@ -10,7 +10,7 @@ const router = express.Router();
 // @route POST api/users
 // @desc Register new Users
 // @access public
-router.post('/', auth, (req, res) => {
+router.post('/register', auth, (req, res) => {
     const { email, password, role } = req.body;
 
     if (!email || !password || !role) {

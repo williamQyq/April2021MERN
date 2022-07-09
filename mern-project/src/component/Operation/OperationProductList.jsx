@@ -2,15 +2,14 @@ import React from 'react';
 import './Operation.scss';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Table, Form, Typography, Input, Button, Space } from 'antd';
+import { Form, Typography } from 'antd';
 import { defaultSettings, title, footer } from 'component/Operation/Settings.js';
 import { mainColumns } from 'component/Operation/OperationEditableEle.js';
 import { getProductPricing } from 'reducers/actions/operationActions.js';
 import OperationMenu from 'component/Operation/OperationMenu';
-import { SearchOutlined } from '@ant-design/icons';
-import Highlighter from 'react-highlight-words';
 import { SocketContext } from 'component/socket/socketContext';
 import BackTopHelper from 'component/utility/BackTop.jsx';
+import FormTable from 'component/utility/FormTable';
 
 const { Title } = Typography;
 
@@ -24,7 +23,7 @@ class OperationProductList extends React.Component {
             searchedColumn: '',
             editingKey: '',
             data: [],
-            defaultSettings: { ...defaultSettings },
+            defaultSettings: defaultSettings
         };
         this.formRef = React.createRef();
     }
@@ -156,82 +155,6 @@ class OperationProductList extends React.Component {
             this.setState({ bottom: e.target.value })
         },
     }
-    getColumnSearchProps = dataIndex => ({
-        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-            <div style={{ padding: 8 }}>
-                <Input
-                    ref={node => {
-                        this.searchInput = node;
-                    }}
-                    placeholder={`Search ${dataIndex}`}
-                    value={selectedKeys[0]}
-                    onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-                    onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
-                    style={{ marginBottom: 8, display: 'block' }}
-                />
-                <Space>
-                    <Button
-                        type="primary"
-                        onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
-                        icon={<SearchOutlined />}
-                        size="small"
-                        style={{ width: 90 }}
-                    >
-                        Search
-                    </Button>
-                    <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
-                        Reset
-                    </Button>
-                    <Button
-                        type="link"
-                        size="small"
-                        onClick={() => {
-                            confirm({ closeDropdown: false });
-                            this.setState({
-                                searchText: selectedKeys[0],
-                                searchedColumn: dataIndex,
-                            });
-                        }}
-                    >
-                        Filter
-                    </Button>
-                </Space>
-            </div>
-        ),
-        filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-        onFilter: (value, record) =>
-            record[dataIndex]
-                ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
-                : '',
-        onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-                setTimeout(() => this.searchInput.select(), 100);
-            }
-        },
-        render: (text, record) => (
-            this.state.searchedColumn === dataIndex ? (
-                <a target="_blank" rel="noopener noreferrer" href={record.link}>
-                    <Highlighter
-                        highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-                        searchWords={[this.state.searchText]}
-                        autoEscape
-                        textToHighlight={text ? text.toString() : ''}
-                    />
-                </a>
-            ) : (
-                this.state.searchedRowId === record._id ?
-                    <a target="_blank" rel="noopener noreferrer" href={record.link}>
-                        <Highlighter
-                            highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-                            searchWords={[text]}
-                            autoEscape
-                            textToHighlight={text ? text.toString() : ''}
-                        />
-                    </a>
-                    :
-                    <a target="_blank" rel="noopener noreferrer" href={record.link}>{text}</a>
-            ))
-    });
 
     handleSearch = (selectedKeys, confirm, dataIndex) => {
         confirm();
@@ -250,7 +173,6 @@ class OperationProductList extends React.Component {
 
     render() {
         const { data, defaultSettings } = this.state;
-        // let loading = true
         const { loading } = this.props;
         const actions = {
             isEditing: this.isEditing,
@@ -259,7 +181,6 @@ class OperationProductList extends React.Component {
             save: this.save,
             publish: this.publish,
             editingKey: this.state.editingKey,
-            getColumnSearchProps: this.getColumnSearchProps,
             handleSearch: this.handleSearch,
             handleReset: this.handleReset
         }
@@ -268,11 +189,11 @@ class OperationProductList extends React.Component {
             <>
                 <OperationMenu handler={this.handler} {...this.state} title="Pricing Table" />
                 <Form ref={this.formRef} component={false}>
-                    <Table
-                        {...defaultSettings}
+                    <FormTable
                         loading={loading}
+                        tableSettings={defaultSettings}
                         columns={columns}
-                        dataSource={data}
+                        data={data}
                     />
                 </Form>
                 {/* <BackTopHelper /> */}

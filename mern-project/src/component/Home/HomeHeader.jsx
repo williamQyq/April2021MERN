@@ -1,21 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 import { MenuFoldOutlined, MenuUnfoldOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Layout } from "antd";
 const { Header } = Layout;
 
 const HomeHeader = (props) => {
     const { toggle, handleLogOut, isCollapsed } = props;
-    const [collapsed, setCollapsed] = useState(isCollapsed);
 
     return (
         <Header className="header" >
-            {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+            {React.createElement(isCollapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
                 className: 'trigger',
                 onClick: (e) => {
                     e.preventDefault();
-                    setCollapsed(!collapsed);
-                    toggle(collapsed);
-
+                    toggle(isCollapsed);
                 },
             })}
             <LogoutOutlined onClick={(e) => {

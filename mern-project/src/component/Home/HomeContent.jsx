@@ -4,21 +4,24 @@ import ProtectedRoutes from 'component/auth/ProtectedRoutes.js';
 import openAlertNotification from 'component/utility/errorAlert.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { clearErrors } from 'reducers/actions/errorActions';
 const { Content } = Layout;
 
 const HomeContent = () => {
     const dispatch = useDispatch();
     const { status, msg } = useSelector((state) => state.error);
-    const action = {
-        clearErrors: () => {
-            dispatch(clearErrors())
-        }
+    const clearErrors = () => {
+        dispatch(clearErrors())
+    }
+    const clearMessages = () => {
+        dispatch(clearMessages())
     }
 
     useEffect(() => {
-        if (status)
-            openAlertNotification('error', msg, action)
+        if (status && status !== 200)
+            openAlertNotification('error', msg, clearErrors)
+        else if (status === 200)
+            openAlertNotification('success', msg, clearMessages)
+
     })
 
     return (

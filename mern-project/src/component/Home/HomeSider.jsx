@@ -9,7 +9,6 @@ import {
     ProfileOutlined,
     DesktopOutlined,
     ScanOutlined,
-    CloudDownloadOutlined,
     TrademarkOutlined,
     DownloadOutlined
 } from "@ant-design/icons";
@@ -18,7 +17,7 @@ const { Sider } = Layout;
 
 
 const HomeSider = (props) => {
-    const { path, collapsed } = props;
+    const { path, isCollapsed, toggle } = props;
     let selectedKeys = [];
     const location = useLocation();
 
@@ -120,11 +119,12 @@ const HomeSider = (props) => {
 
     return (
         <Sider
-            // trigger={null}
+            trigger={null}
             collapsible
-            // collapsed={collapsed}
+            collapsed={isCollapsed}
             breakpoint="lg"
             collapsedWidth="0"
+            onBreakpoint={(broken) => toggle(!broken)}
         >
             <div className="logo">
                 <TrademarkOutlined style={{ margin: "auto", fontSize: "48px" }} />

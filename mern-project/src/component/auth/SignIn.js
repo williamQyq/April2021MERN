@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Form, Input, Button, Typography, message, Image } from 'antd';
+import { Layout, Form, Input, Button, Typography, message } from 'antd';
 import 'antd/dist/antd.min.css';
 import 'styles/login.scss';
 import { Link, withRouter } from "react-router-dom";
@@ -18,9 +18,10 @@ message.config({
 
 const siderLayout = {
     width: "50%",
-    collapsble: true,
+    collapsible: true,
     breakpoint: "lg",
     collapsedWidth: "0",
+    trigger: null
     // zeroWidthTriggerStyle: {}
 }
 

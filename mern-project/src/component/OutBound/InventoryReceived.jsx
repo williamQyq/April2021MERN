@@ -83,7 +83,6 @@ class InventoryReceived extends React.Component {
         //     editingKey: this.state.editingKey,
         // }
         const { loading, inventoryReceivedItems } = this.props;
-        const columns = inventoryReceivedColumns;
         return (
             <>
                 <InventoryReceivedMenu />
@@ -91,7 +90,7 @@ class InventoryReceived extends React.Component {
                     <FormTable
                         loading={loading}
                         data={inventoryReceivedItems}
-                        columns={columns}
+                        columns={inventoryReceivedColumns}
                         tableSettings={defaultSettings}
                     />
                 </Form>
