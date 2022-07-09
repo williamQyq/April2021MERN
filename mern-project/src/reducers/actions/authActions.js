@@ -5,6 +5,7 @@ import {
     LOGIN_FAIL,
     LOGIN_SUCCESS,
     LOGOUT_SUCCESS,
+    REGISTER_FAIL,
     // REGISTER_FAIL,
     // REGISTER_SUCCESS
 } from "./types.js";
@@ -20,7 +21,7 @@ export const loadUser = () => (dispatch, getState) => {
             payload: res.data
         }))
         .catch(err => {
-            dispatch(returnErrors(err.response.data.msg, err.response.status));
+            // dispatch(returnErrors(err.response.data.msg, err.response.status));
             dispatch({
                 type: AUTH_ERROR
             });
@@ -37,7 +38,7 @@ export const tokenConfig = getState => {
         headers: {
             "Content-type": "application/json"
         },
-        timeout:2000
+        timeout: 2000
     };
 
     if (token) {
@@ -78,4 +79,10 @@ export const logout = () => dispatch => {
     dispatch({
         type: LOGOUT_SUCCESS
     })
+}
+
+export const register = () => dispatch => {
+    dispatch(
+        returnErrors("Currently, registration is not yet open to public.", 404, REGISTER_FAIL)
+    )
 }

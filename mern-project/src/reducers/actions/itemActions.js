@@ -22,7 +22,8 @@ import {
     CLEAR_MICROSOFT_ERRORS,
     CLEAR_BESTBUY_ERRORS,
     ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE,
-    ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE
+    ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE,
+    SERVICE_UNAVAILABLE
 } from './types';
 import { tokenConfig } from './authActions.js';
 import { clearMessages, returnMessages } from './messageActions.js';
@@ -81,7 +82,6 @@ const setRouteOnStore = (store) => {
                     ITEMS_ONLINE_PRICE_LOADING: MS_ITEMS_ONLINE_PRICE_LOADING,
                     CLEAR_ERRORS: CLEAR_MICROSOFT_ERRORS,
                     ON_RETRIEVED_ONLINE_PRICE: ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE,
-                    // ADD_ITEM_SPEC: ADD_MS_ITEM_SPEC,
                 }
             }
         case BESTBUY:
@@ -98,6 +98,7 @@ const setRouteOnStore = (store) => {
             }
         default:
             console.error(`[ERROR] storeSwitch did not receive store name`);
+            return;
     }
 }
 
@@ -177,6 +178,13 @@ export const setTableState = (store, clickedId) => dispatch => {
 export const addItemSpec = (record, store) => (dispatch, getState) => {
     dispatch(setItemsLoading);
     const { routes, type } = setRouteOnStore(store)
+    if (type.ADD_ITEM_SPEC === undefined) {
+        dispatch(clearMessages())
+        dispatch(returnMessages("Get Item Specification is currently not available ", 404, SERVICE_UNAVAILABLE))
+        return;
+    }
+
+
     axios.put(`/api/${routes}/itemSpec/add`, record, tokenConfig(getState))
         .then(res => {
             dispatch({

@@ -18,8 +18,8 @@ const openAlertNotification = (type, msg, action) => {
             msgSubject = "Oops! Error!";
             break;
         default:
-            color = "#b37feb";
-            background = "#f9f0ff";
+            color = "#9254de";
+            background = "#efdbff";
             msgSubject = "What's going on?";
             break;
     }

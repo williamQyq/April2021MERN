@@ -1,11 +1,11 @@
 import { Space, Typography, Dropdown, Menu, Button } from "antd";
 import { DownOutlined } from '@ant-design/icons';
 
-const { Link, Text } = Typography;
+const { Link } = Typography;
 
 const ActionMenu = ({ actions, record }) => {
     const editable = actions.isEditing(record);
-    const isEditing = actions.editingKey == "" ? false : true;
+    const isEditing = actions.editingKey === "" ? false : true;
 
     return editable ? (
         <OnEditingActionMenu onClick={(e) => { e.stopPropagation() }} actions={actions} record={record} />

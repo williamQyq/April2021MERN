@@ -2,15 +2,15 @@ import React from 'react';
 import { Layout, Form, Input, Button, Typography, message } from 'antd';
 import 'antd/dist/antd.min.css';
 import 'styles/login.scss';
-import { Link, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { login } from 'reducers/actions/authActions.js';
+import { login, register } from 'reducers/actions/authActions.js';
 import { clearErrors } from 'reducers/actions/errorActions.js';
 
 const { Sider, Content, } = Layout;
-const { Text, Title } = Typography;
+const { Text, Title, Link } = Typography;
 
 message.config({
     maxCount: 3,
@@ -96,6 +96,11 @@ class SignIn extends React.Component {
         return value.replace(/^\s+|\s+$/g, "")
     }
 
+    handleAccountRegister = () => {
+        console.log('User request registration')
+        this.props.register();
+    }
+
     render() {
 
         return (
@@ -139,7 +144,7 @@ class SignIn extends React.Component {
                         <Form.Item>
                             <Button className="sign-in-btn" type="primary" htmlType="submit">Sign In</Button>
                             <Text>Not on RockyStone?</Text>
-                            <Link to=''>Create an account</Link>
+                            <Link onClick={() => this.handleAccountRegister()}>Create an account</Link>
                         </Form.Item>
 
 
@@ -158,4 +163,4 @@ const mapStateToProps = state => ({
     error: state.error
 })
 
-export default withRouter(connect(mapStateToProps, { login, clearErrors })(SignIn));
+export default withRouter(connect(mapStateToProps, { login, clearErrors, register })(SignIn));
