@@ -93,7 +93,7 @@ router.get('/alsoBought/:sku', auth, (req, res) => {
 router.get('/getOnlinePrice', auth, (req, res) => {
     const pupeteer = new Bestbuy();
     pupeteer.getAndSaveBestbuyLaptopsPrice()
-        .then(() => { res.json("success"); }) // io.sockets.emit("ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE")
+        .then(() => res.json({ msg: "get online price success" })) // io.sockets.emit("ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE")
         .catch(err => res.status(500).json({ msg: `Fail to retrive Bestbuy Laptop Price \n\n${err}` }))
 })
 

@@ -7,8 +7,8 @@ const openAlertNotification = (type, msg, action) => {
     let color, background, msgSubject, durationSec = 0;
     switch (type) {
         case 'success':
-            color = "#7cb305";
-            background = "#f4ffb8";
+            color = "#389e0d";
+            background = "#b7eb8f";
             msgSubject = "Affirmative!";
             durationSec = 3;
             break;
@@ -16,11 +16,13 @@ const openAlertNotification = (type, msg, action) => {
             color = "#D8000C";
             background = "#FFD2D2";
             msgSubject = "Oops! Error!";
+            durationSec = 0;
             break;
         default:
             color = "#9254de";
             background = "#efdbff";
             msgSubject = "What's going on?";
+            durationSec = 3;
             break;
     }
 

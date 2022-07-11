@@ -107,18 +107,17 @@ export const getItemsOnlinePrice = (store) => (dispatch, getState) => {
     const { routes, type } = setRouteOnStore(store);    //get routes and action types on store selection
 
     dispatch(setItemsOnlinePriceLoading(type.ITEMS_ONLINE_PRICE_LOADING));
-
+    dispatch(returnMessages("Working on online price retrieval...\nPlease wait.", 202, type.ITEMS_ONLINE_PRICE_LOADING));
     axios.get(`/api/${routes}/getOnlinePrice`, tokenConfig(getState))
         .then((res) => {
             dispatch({
                 type: type.GET_ITEM_ONLINE_PRICE
             })
             dispatch(clearMessages())
-            dispatch(returnMessages(res.data.msg, res.status))
+            dispatch(returnMessages(res.data.msg, res.status, type.GET_ITEM_ONLINE_PRICE))
         }).catch(err => {
             dispatch(clearErrors(type.CLEAR_ERRORS))
             dispatch(returnErrors(err, err.response.status))
-
         })
 }
 
@@ -180,11 +179,11 @@ export const addItemSpec = (record, store) => (dispatch, getState) => {
     const { routes, type } = setRouteOnStore(store)
     if (type.ADD_ITEM_SPEC === undefined) {
         dispatch(clearMessages())
-        dispatch(returnMessages("Get Item Specification is currently not available ", 404, SERVICE_UNAVAILABLE))
+        dispatch(returnMessages("Get Item Specification is currently not available ", 202, SERVICE_UNAVAILABLE))
         return;
     }
 
-
+    dispatch(returnMessages("Working on online price retrieval...\nPlease wait.", 202, type.ADD_ITEM_SPEC))
     axios.put(`/api/${routes}/itemSpec/add`, record, tokenConfig(getState))
         .then(res => {
             dispatch({

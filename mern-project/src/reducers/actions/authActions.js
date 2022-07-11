@@ -38,7 +38,7 @@ export const tokenConfig = getState => {
         headers: {
             "Content-type": "application/json"
         },
-        timeout: 2000
+        timeout: 30000
     };
 
     if (token) {
@@ -83,6 +83,6 @@ export const logout = () => dispatch => {
 
 export const register = () => dispatch => {
     dispatch(
-        returnErrors("Currently, registration is not yet open to public.", 404, REGISTER_FAIL)
+        returnErrors("Currently, registration is not yet open to public.", 202, REGISTER_FAIL)
     )
 }

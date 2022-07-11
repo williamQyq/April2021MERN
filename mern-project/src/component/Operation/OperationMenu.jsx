@@ -2,10 +2,11 @@ import React from 'react';
 import './Operation.scss';
 import { useState } from 'react';
 import { Menu, Tree } from 'antd';
-import { LineChartOutlined, AreaChartOutlined, DownOutlined } from '@ant-design/icons';
-import { Settings } from 'component/Operation/Settings'
-import Upload from 'component/Operation/AsinMappingUpload.jsx';
+import { AreaChartOutlined, DownOutlined } from '@ant-design/icons';
+// import { Settings } from 'component/Operation/Settings'
 import { ContentHeader } from 'component/utility/Layout.jsx';
+import FileUpload from 'component/utility/FileUpload.jsx';
+import { uploadAsinsMapping } from 'reducers/actions/operationActions';
 
 
 
@@ -21,11 +22,10 @@ const OperationMenu = (props) => {
         }
     ]
 
-
     const switchContent = (key) => {
         switch (key) {
             case 'upload':
-                return <Upload />
+                return <FileUpload customizedUpload={uploadAsinsMapping} />
             default:
                 break;
         }

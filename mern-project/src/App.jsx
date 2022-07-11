@@ -19,7 +19,6 @@ import { SocketProvider } from 'component/socket/socketContext';
 import openAlertNotification from 'component/utility/errorAlert.js';
 import { clearErrors } from 'reducers/actions/errorActions';
 import { clearMessages } from 'reducers/actions/messageActions';
-import { REGISTER_FAIL, SERVICE_UNAVAILABLE } from 'reducers/actions/types';
 
 class App extends React.Component {
 
@@ -31,9 +30,8 @@ class App extends React.Component {
     this.props.loadUser();
   }
   componentDidUpdate() {
-    const { status, msg, id } = this.props;
-
-    if (id === REGISTER_FAIL || id === SERVICE_UNAVAILABLE) {
+    const { status, msg } = this.props;
+    if (status === 202) {
       openAlertNotification('warning', msg, this.props.handleMessages)
     }
     else if (status && status !== 200) {

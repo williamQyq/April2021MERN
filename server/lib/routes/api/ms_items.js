@@ -27,7 +27,7 @@ router.get('/detail/:_id', (req, res) => {
 router.get('/getOnlinePrice', auth, (req, res) => {
     let puppeteer = new Microsoft();
     puppeteer.getAndSaveMicrosoftLaptopsPrice()
-        .then(() => res.json("success"))
+        .then(() => res.json({ msg: "get online price success" }))
         .catch(err => res.status(500).json({ msg: `Fail to retrive Microsoft Laptop Price \n\n${err}` }))
 })
 
