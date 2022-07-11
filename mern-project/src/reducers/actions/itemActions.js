@@ -117,7 +117,7 @@ export const getItemsOnlinePrice = (store) => (dispatch, getState) => {
             dispatch(returnMessages(res.data.msg, res.status, type.GET_ITEM_ONLINE_PRICE))
         }).catch(err => {
             dispatch(clearErrors(type.CLEAR_ERRORS))
-            dispatch(returnErrors(err, err.response.status))
+            dispatch(returnErrors(err.response.data.msg, err.response.status))
         })
 }
 

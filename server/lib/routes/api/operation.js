@@ -16,11 +16,10 @@ router.post('/upload/asins-mapping', (req, res) => {
     const { uploadFile } = req.body
     console.log(`=======received file:======\n${JSON.stringify(uploadFile)}\n\n`)
     processMappingFile(uploadFile)
-        .then(() => { res.json('success') })
+        .then(() => { res.json({ msg: 'success' }) })
         .then(() => updateProdPricingCatalogItems())
         .catch(e => {
-            console.log(`error:`, e)
-            res.status(400).json({ msg: 'Upload File contains Invalid Input' })
+            res.status(400).json({ msg: `Upload File contains Invalid Input\n${e}` })
         })
         .finally(() => console.log('Upload Finished'))
 })

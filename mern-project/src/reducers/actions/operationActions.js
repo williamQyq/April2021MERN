@@ -11,6 +11,7 @@ import {
     // GET_ERRORS,
 } from './types';
 import store from 'store.js'
+import { returnMessages } from './messageActions';
 
 // GET Upc Asins Mapping Record from db, then get asin pricing info via SP API,
 // then get upc quantity info from wms. Finally, dispatch product pricing data.
@@ -58,25 +59,26 @@ export const getWmsProdQty = async (prods) => {
 
 }
 
-export const uploadAsinsMapping = (file) => dispatch => {
+export const uploadAsinsMapping = (file, onSuccess, onError) => dispatch => {
     dispatch(setResLoading());
-    return new Promise((resolve, reject) => {
-        Papa.parse(file, {
-            complete: (results) => {
-                const uploadFile = results.data;
-                axios.post('/api/operation/upload/asins-mapping', { uploadFile })
-                    .then(res => {
-                        dispatch({
-                            type: UPLOAD_ASINS_MAPPING,
-                            payload: res.data
-                        })
-                        resolve(res)
-                    })
-            },
-            error: err => {
-                reject(err)
-            }
-        })
+    Papa.parse(file, {
+        complete: (results) => {
+            const uploadFile = results.data;
+            axios.post('/api/operation/upload/asins-mapping', { uploadFile })
+                .then(res => {
+                    dispatch({
+                        type: UPLOAD_ASINS_MAPPING,
+                    });
+                    onSuccess(res.data.msg);
+                    dispatch(returnMessages(res.data.msg, res.status, UPLOAD_ASINS_MAPPING))
+                })
+                .catch(err => {
+                    onError(err);
+                })
+        },
+        error: err => {
+            onError(err)
+        }
     })
 }
 
