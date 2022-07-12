@@ -1,8 +1,5 @@
 import React from 'react';
 import 'component/SourceStore/Store.scss';
-import { Table, Input, Button, Space } from 'antd';
-import Highlighter from 'react-highlight-words';
-import { SearchOutlined, } from '@ant-design/icons';
 import {
     locateSearchedItem,
     scrollToTableRow,
@@ -11,11 +8,17 @@ import {
     tableColumns
 } from 'component/SourceStore/StoreTableUtilities.js';
 import FormTable from 'component/utility/FormTable';
-import { defaultSettings } from 'component/Operation/Settings';
+import { connect } from 'react-redux';
+import {
+    handleOnRetrievedItemsOnlinePrice,
+    handleErrorOnRetrievedItemsOnlinePrice
+} from 'reducers/actions/itemActions.js';
+import { SocketContext } from 'component/socket/socketContext.js';
+import { socketType } from './data.js';
+
 // import BackTopHelper from 'component/utility/BackTop';
-
-
-export default class StoreTable extends React.Component {
+class StoreTable extends React.Component {
+    static contextType = SocketContext
     constructor(props) {
         super(props);
 
@@ -24,11 +27,26 @@ export default class StoreTable extends React.Component {
             searchedRowId: '',
             searchedColumn: '',
         };
-
+        this.socketType = socketType;
     }
 
     componentDidMount() {
+        let socket = this.context;
         this.handleScrollPosition(this.props.items, this.props.tableState);
+
+        socket.on(socketType.ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE, (data) => {
+            this.props.handleOnRetrievedOnlinePrice(this.props.store, data.msg);
+        })
+        socket.on(socketType.ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE, (data) => {
+            this.props.handleOnRetrievedItemsOnlinePrice(this.props.store, data.msg)
+        })
+        socket.on(socketType.FAILED_RETRIEVE_BB_ITEMS_ONLINE_PRICE, (data) => {
+            this.props.handleOnRetrievedOnlinePrice(this.props.store, data.msg);
+        })
+        socket.on(socketType.FAILED_RETRIEVE_MS_ITEMS_ONLINE_PRICE, (data) => {
+
+            this.props.handleErrorOnRetrievedItemsOnlinePrice(this.props.store, data.msg)
+        })
     }
 
     handleScrollPosition = (items, clickHistory) => {
@@ -46,7 +64,7 @@ export default class StoreTable extends React.Component {
                 <StoreOperationMenu store={store} />
                 <FormTable
                     loading={loading}
-                    tableSettings={{ ...defaultSettings, expandable: null }}
+                    tableSettings={{ ...defaultTableSettings, expandable: null }}
                     columns={columns}
                     data={items}
                 />
@@ -54,3 +72,8 @@ export default class StoreTable extends React.Component {
         )
     }
 }
+const mapStateToProps = (state) => ({
+
+})
+
+export default connect(mapStateToProps, { handleOnRetrievedItemsOnlinePrice, handleErrorOnRetrievedItemsOnlinePrice })(StoreTable);

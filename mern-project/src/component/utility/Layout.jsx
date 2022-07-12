@@ -1,7 +1,6 @@
-import { Typography, Row, Col, PageHeader } from "antd";
+import { PageHeader } from "antd";
 import { useHistory } from "react-router-dom";
 
-const { Text, Title } = Typography;
 
 export const ContentHeader = ({ title }) => {
 
@@ -23,8 +22,8 @@ export const SubContentHeader = ({ title }) => {
         <PageHeader
             className="site-page-header"
             title={title}
-            // subTitle=""
+        // subTitle=""
         />
-       
+
     );
 }

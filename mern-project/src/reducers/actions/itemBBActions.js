@@ -2,14 +2,14 @@ import axios from 'axios';
 import Moment from 'moment';
 import {
     GET_BB_ITEMS,
-    GET_BB_ITEM_DETAIL,
     SET_TABLE_STATE,
     ITEMS_LOADING_BB,
     MOST_VIEWED_ITEMS_LOADING,
     GET_BB_MOST_VIEWED_ITEMS,
     GET_BB_VIEWED_ULTIMATELY_BOUGHT_ITEMS,
     GET_BB_ALSO_BOUGHT_ITEMS,
-    GET_BESTBUY_API_ERRORS
+    GET_BESTBUY_API_ERRORS,
+    GET_ERRORS
 } from './types';
 import { tokenConfig } from './authActions.js';
 import { returnErrors } from './errorActions';
@@ -30,7 +30,7 @@ export const getBBItems = () => (dispatch, getState) => {
             payload: items
         })
     }).catch(err => {
-        dispatch(returnErrors(err.response.data.msg, err.response.status))
+        dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS))
     })
 };
 
@@ -62,7 +62,7 @@ export const getMostViewedOnCategoryId = (categoryId) => (dispatch, getState) =>
         })
     }).catch(err => {
         dispatch(resetBestbuyApiMostViewedItems());
-        dispatch(returnErrors(err.response.data.msg, err.response.status, categoryId))
+        dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS))
     })
 
 }
@@ -76,7 +76,7 @@ export const getViewedUltimatelyBoughtOnSku = (sku) => (dispatch, getState) => {
         });
     }).catch(err => {
         dispatch(resetBestbuyApiMostViewedItems());
-        dispatch(returnErrors(err.response.data.msg, err.response.status));
+        dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS));
     })
 
 }
@@ -89,7 +89,7 @@ export const getAlsoBoughtOnSku = (sku) => (dispatch, getState) => {
         });
     }).catch(err => {
         dispatch(resetBestbuyApiMostViewedItems());
-        dispatch(returnErrors(err.response.data.msg, err.response.status));
+        dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS));
     });
 }
 

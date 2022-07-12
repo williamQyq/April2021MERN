@@ -1,6 +1,5 @@
 import React from "react";
 import './Configuration.scss';
-import StoreTable from "component/SourceStore/StoreTable"
 import { Divider, Steps, Typography } from 'antd';
 import { CheckCircleOutlined, LoadingOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 const { Step } = Steps;
@@ -80,7 +79,7 @@ class Configuration extends React.Component {
         return (
             <>
                 <Title level={4}>Data Entry Procedure</Title>
-                <Divider/>
+                <Divider />
                 <Steps
                     type="navigation"
                     current={current}

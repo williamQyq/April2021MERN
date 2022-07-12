@@ -5,7 +5,6 @@ import {
     GET_WM_ITEM_DETAIL,
     ITEMS_LOADING_WM,
     SET_TABLE_STATE,
-    GET_ERRORS,
 } from './types';
 
 export const getWMItems = () => dispatch => {

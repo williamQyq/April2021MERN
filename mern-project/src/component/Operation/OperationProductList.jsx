@@ -2,16 +2,14 @@ import React from 'react';
 import './Operation.scss';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Form, Typography } from 'antd';
+import { Form } from 'antd';
 import { defaultSettings, title, footer } from 'component/Operation/Settings.js';
 import { mainColumns } from 'component/Operation/OperationEditableEle.js';
 import { getProductPricing } from 'reducers/actions/operationActions.js';
 import OperationMenu from 'component/Operation/OperationMenu';
 import { SocketContext } from 'component/socket/socketContext';
-import BackTopHelper from 'component/utility/BackTop.jsx';
+// import BackTopHelper from 'component/utility/BackTop.jsx';
 import FormTable from 'component/utility/FormTable';
-
-const { Title } = Typography;
 
 class OperationProductList extends React.Component {
     static contextType = SocketContext //This part is important to access context values which are socket

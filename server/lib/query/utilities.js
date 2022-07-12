@@ -265,6 +265,10 @@ export class WMSDatabaseApis {
         return needToshipItemsByToday;
     }
 
+    async updateInventoryReceiveOrgNmOnTracking() {
+        const collection = this.db.collection(WMSDatabaseApis._collection.inventoryReceive);
+    }
+
 }
 
 export class GsheetApis extends GenerateGSheetApis {

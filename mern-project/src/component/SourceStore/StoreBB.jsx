@@ -5,20 +5,20 @@ import {
     getMostViewedOnCategoryId,
     getViewedUltimatelyBoughtOnSku,
     getAlsoBoughtOnSku
-} from 'reducers/actions/itemBBActions';
+} from 'reducers/actions/itemBBActions.js';
 import PropTypes from 'prop-types';
 import { SocketContext } from 'component/socket/socketContext.js';
 import StoreTable from 'component/SourceStore/StoreTable.jsx';
 import StoreAnalyticCards from 'component/SourceStore/StoreAnalyticCards.jsx'
 // import BackTopHelper from 'component/utility/BackTop.jsx';
-import { categoryIdGroup, STORE } from './data.js'
+import { categoryIdGroup, storeType } from './data.js'
 
 class BB extends React.Component {
     static contextType = SocketContext  //This part is important to access context values which are socket
     constructor(props) {
         super(props);
         this.state = {
-            store: STORE.BESTBUY,
+            store: storeType.BESTBUY,
             selectedMostViewedCategoryId: "",
         }
     }
@@ -30,7 +30,6 @@ class BB extends React.Component {
         socket.on('Store Listings Update', () => {
             this.props.getBBItems()
         })
-
     }
     componentWillUnmount() {
         let socket = this.context;
@@ -80,9 +79,6 @@ class BB extends React.Component {
         }
     }
 
-
-
-
     render() {
         const data = {
             store: this.state.store,
@@ -124,4 +120,9 @@ const mapStateToProps = (state) => ({
     loading: state.bestbuy.loading
 })
 
-export default connect(mapStateToProps, { getBBItems, getMostViewedOnCategoryId, getViewedUltimatelyBoughtOnSku, getAlsoBoughtOnSku })(BB);
+export default connect(mapStateToProps, {
+    getBBItems,
+    getMostViewedOnCategoryId,
+    getViewedUltimatelyBoughtOnSku,
+    getAlsoBoughtOnSku,
+})(BB);

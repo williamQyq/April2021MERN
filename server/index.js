@@ -10,10 +10,12 @@ import operationRouter from '#routes/api/operation.js';
 import googleServiceRouter from '#routes/api/googleService.js';
 
 import { Server } from 'socket.io';
+import cors from 'cors';
 
 //@Bodyparser Middleware
 const app = express();
-app.use(express.json());
+app.use(cors());
+app.use(express.json())
 const port = process.env.PORT || 5000;
 
 // @server connection
@@ -43,7 +45,22 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // @Socket IO listner
-const io = new Server(server, { 'pingTimeout': 7000, 'pingInterval': 3000 });
+const io = new Server(server, {
+    'pingTimeout': 7000,
+    'pingInterval': 5000,
+    "cors": {
+        "origin": "http://localhost:3000",
+        "methods": ["GET", "POST"],
+        "transports": ['websocket', 'polling'],
+        "credentials": true
+    },
+    "allowEIO3": true
+});
+
+
+io.on("connect_error", (err) => {
+    console.log(`connect_error due to ${err.message}`);
+})
 io.on("connection", (socket) => {
     socket.on(`subscribe`, (room) => {
         try {
@@ -65,7 +82,7 @@ io.on("connection", (socket) => {
     })
 
     socket.on(`disconnect`, (reason) => {
-        console.log(`\nUSER DISCONNECTED: ${socket.id}\n***REASON:${reason}***\n`);
+        // console.log(`\nUSER DISCONNECTED: ${socket.id}\n***REASON:${reason}***\n`);
     })
     socket.on('error', (reason) => {
         console.error(`[Socket Error] ${reason}`)

@@ -1,4 +1,4 @@
-import { Form, Radio, Switch, Table, Typography } from 'antd';
+import { Form, Radio, Switch, Typography } from 'antd';
 import OperationNestedTable from 'component/Operation/OperationProductListNestedTable.jsx';
 import { EditableCell } from './OperationEditableEle.js';
 

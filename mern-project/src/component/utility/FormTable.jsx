@@ -51,7 +51,7 @@ export default class FormTable extends React.Component {
         if (searchId) {
             for (let index = 0; index < items.length; index++) {
                 let currentItemId = items[index]._id;
-                if (currentItemId == searchId) {
+                if (currentItemId === searchId) {
                     searchItem.index = index;
                     searchItem._id = currentItemId;
                     return searchItem;  //return found item

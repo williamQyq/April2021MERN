@@ -4,14 +4,14 @@ import { getMSItems } from 'reducers/actions/itemMSActions.js';
 import PropTypes from 'prop-types';
 import StoreTable from 'component/SourceStore/StoreTable.jsx';
 import { SocketContext } from 'component/socket/socketContext.js';
-import { STORE } from './data.js';
+import { storeType } from './data.js';
 
 class MS extends React.Component {
     static contextType = SocketContext
     constructor(props) {
         super(props);
         this.state = {
-            store: STORE.MICROSOFT
+            store: storeType.MICROSOFT
         };
 
     }

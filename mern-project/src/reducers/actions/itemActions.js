@@ -23,8 +23,10 @@ import {
     CLEAR_BESTBUY_ERRORS,
     ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE,
     ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE,
-    SERVICE_UNAVAILABLE
-} from './types';
+    SERVICE_UNAVAILABLE,
+    FAILED_RETRIEVE_BB_ITEMS_ONLINE_PRICE,
+    FAILED_RETRIEVE_MS_ITEMS_ONLINE_PRICE
+} from './types.js';
 import { tokenConfig } from './authActions.js';
 import { clearMessages, returnMessages } from './messageActions.js';
 
@@ -82,6 +84,7 @@ const setRouteOnStore = (store) => {
                     ITEMS_ONLINE_PRICE_LOADING: MS_ITEMS_ONLINE_PRICE_LOADING,
                     CLEAR_ERRORS: CLEAR_MICROSOFT_ERRORS,
                     ON_RETRIEVED_ONLINE_PRICE: ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE,
+                    FAILED_RETRIEVE_ONLINE_PRICE: FAILED_RETRIEVE_MS_ITEMS_ONLINE_PRICE
                 }
             }
         case BESTBUY:
@@ -94,10 +97,10 @@ const setRouteOnStore = (store) => {
                     ITEMS_ONLINE_PRICE_LOADING: BB_ITEMS_ONLINE_PRICE_LOADING,
                     CLEAR_ERRORS: CLEAR_BESTBUY_ERRORS,
                     ON_RETRIEVED_ONLINE_PRICE: ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE,
+                    FAILED_RETRIEVE_BB_ITEMS_ONLINE_PRICE: FAILED_RETRIEVE_BB_ITEMS_ONLINE_PRICE
                 }
             }
         default:
-            console.error(`[ERROR] storeSwitch did not receive store name`);
             return;
     }
 }
@@ -105,28 +108,36 @@ const setRouteOnStore = (store) => {
 
 export const getItemsOnlinePrice = (store) => (dispatch, getState) => {
     const { routes, type } = setRouteOnStore(store);    //get routes and action types on store selection
-
-    dispatch(setItemsOnlinePriceLoading(type.ITEMS_ONLINE_PRICE_LOADING));
-    dispatch(returnMessages("Working on online price retrieval...\nPlease wait.", 202, type.ITEMS_ONLINE_PRICE_LOADING));
-    axios.get(`/api/${routes}/getOnlinePrice`, tokenConfig(getState))
-        .then((res) => {
-            dispatch({
-                type: type.GET_ITEM_ONLINE_PRICE
+    if (routes && type) {
+        dispatch(setItemsOnlinePriceLoading(type.ITEMS_ONLINE_PRICE_LOADING));
+        dispatch(returnMessages("Working on online price retrieval...\nPlease wait.", 202, type.ITEMS_ONLINE_PRICE_LOADING));
+        axios.get(`/api/${routes}/getOnlinePrice`, tokenConfig(getState))
+            .catch(err => {
+                dispatch(clearMessages())
+                dispatch(returnMessages(err.response.msg, err.response.status))
             })
-            dispatch(clearMessages())
-            dispatch(returnMessages(res.data.msg, res.status, type.GET_ITEM_ONLINE_PRICE))
-        }).catch(err => {
-            dispatch(clearErrors(type.CLEAR_ERRORS))
-            dispatch(returnErrors(err.response.data.msg, err.response.status))
-        })
+    }
 }
 
-// export const onRetrievedItemsOnlinePrice = (store) => (dispatch, getState) => {
-//     const { routes, type } = setRouteOnStore(store);    //get routes and action types on store selection
-//     dispatch({
-//         type: type.ON_RETRIEVED_ONLINE_PRICE
-//     });
-// }
+export const handleOnRetrievedItemsOnlinePrice = (store, msg) => dispatch => {
+    const { type } = setRouteOnStore(store);    //get routes and action types on store selection
+    if (type) {
+        dispatch({
+            type: type.GET_ITEM_ONLINE_PRICE
+        })
+        dispatch(clearMessages())
+        dispatch(returnMessages(msg, 200, type.GET_ITEM_ONLINE_PRICE))
+    }
+
+}
+
+export const handleErrorOnRetrievedItemsOnlinePrice = (store, errorMsg) => dispatch => {
+    const { type } = setRouteOnStore(store);
+    if (type) {
+        dispatch(clearErrors(type.CLEAR_ERRORS))
+        dispatch(returnErrors(errorMsg, 502))
+    }
+}
 
 export const getItemDetail = (store, _id) => dispatch => {
 

@@ -19,13 +19,12 @@ import {
 } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
-import { addItemSpec, getItemsOnlinePrice, onRetrievedItemsOnlinePrice } from "reducers/actions/itemActions.js";
+import { addItemSpec, getItemsOnlinePrice } from "reducers/actions/itemActions.js";
 import { setTableState } from "reducers/actions/itemActions.js";
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 
 import { ContentHeader } from "component/utility/Layout.jsx";
-import { SocketType, STORE } from "./data.js";
-import { SocketContext } from "component/socket/socketContext.js";
+import { storeType } from "./data.js";
 
 const { Text } = Typography;
 const { Search } = Input;
@@ -66,7 +65,7 @@ export const defaultTableSettings = {
         pageSizeOptions: ['10', '20', '50', '100'],
         position: ['topRight', 'bottomRight']
     },
-    // scroll: { y: "calc(100vh - 335px)" } //slow performance issue
+    scroll: { y: "calc(90vh - 335px)" } //slow performance issue
 
 }
 
@@ -255,23 +254,16 @@ export const StoreOperationMenu = (props) => {
     const dispatch = useDispatch()
     const bestbuyOnlinePriceRetriving = useSelector((state) => state.bestbuy.onlinePriceLoading)
     const microsoftOnlinePriceRetriving = useSelector((state) => state.microsoft.onlinePriceLoading)
-    // const socket = useContext(SocketContext);
-    // useEffect(() => {
-    //     socket.on(SocketType.ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE, () => {
-    //         dispatch(onRetrievedItemsOnlinePrice(store));
-    //     })
-    //     socket.on(SocketType.ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE, () => {
-    //         dispatch(onRetrievedItemsOnlinePrice(store));
-    //     })
-    // })
 
     //if puppeteer is retrieving online price on store return true else false
     const isOnlinePriceRetrieving = (store) => {
         switch (store) {
-            case STORE.BESTBUY:
+            case storeType.BESTBUY:
                 return bestbuyOnlinePriceRetriving
-            case STORE.MICROSOFT:
+            case storeType.MICROSOFT:
                 return microsoftOnlinePriceRetriving
+            default:
+                return;
         }
     }
     const menuItems = [

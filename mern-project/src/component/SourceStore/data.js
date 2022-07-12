@@ -4,7 +4,9 @@ import {
     COSTCO,
     WALMART,
     ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE,
-    ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE
+    ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE,
+    FAILED_RETRIEVE_BB_ITEMS_ONLINE_PRICE,
+    FAILED_RETRIEVE_MS_ITEMS_ONLINE_PRICE,
 } from "reducers/actions/types.js";
 
 export const categoryIdGroup = {
@@ -17,14 +19,16 @@ export const categoryIdGroup = {
     SURFACE: 'pcmcat1492808199261'
 }
 
-export const STORE = {
+export const storeType = {
     BESTBUY,
     MICROSOFT,
     COSTCO,
     WALMART
 }
 
-export const SocketType = {
+export const socketType = {
     ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE,
-    ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE
+    ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE,
+    FAILED_RETRIEVE_BB_ITEMS_ONLINE_PRICE,
+    FAILED_RETRIEVE_MS_ITEMS_ONLINE_PRICE
 }

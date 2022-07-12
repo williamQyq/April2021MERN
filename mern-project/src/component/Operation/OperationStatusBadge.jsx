@@ -26,7 +26,7 @@ export const MainStatusBadge = ({ record }) => {
         for (let identifier of identifiers) {
             if (hasActiveOffers)
                 break;
-            hasActiveOffers = identifier.offers.some(({ FulfillmentChannel }) => FulfillmentChannel == fulfillmentChannel)
+            hasActiveOffers = identifier.offers.some(({ FulfillmentChannel }) => FulfillmentChannel === fulfillmentChannel)
         }
 
 

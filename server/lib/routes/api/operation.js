@@ -3,11 +3,14 @@ const router = express.Router();
 import auth from '#middleware/auth.js';
 import { upsertProdPricingNewAsin, findAllProdPricing } from '#query/utilities.js';
 import { updateProdPricingCatalogItems } from '#amz/SPAPI/SP.js';
+import { OperationApi } from '../../query/utilities.js';
 
 // @route GET api/amazonSP
 // @desc: get all amazon seller central sync product pricing offers 
 router.get('/', (req, res) => {
-    findAllProdPricing().then(products => res.json(products));
+    let api = new OperationApi();
+    api.findAllProdPricing()
+        .then(products => { res.json(products) });
 });
 
 // @route POST api/amazonSP
@@ -30,11 +33,13 @@ router.post('/upload/asins-mapping', (req, res) => {
 @return: Promise.allSettled
 */
 const processMappingFile = async (file) => {
+    let api = new OperationApi();
     file.shift();
+
     return Promise.allSettled(file.map(row => {
         let upc = row[0];
         let asin = row[1];
-        return upsertProdPricingNewAsin(upc, asin)
+        return api.upsertProdPricingNewAsin(upc, asin)
     })
     )
 }
