@@ -1,15 +1,21 @@
 import { createContext, useState } from "react";
+import {
+    ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE,
+    ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE,
+    FAILED_RETRIEVE_BB_ITEMS_ONLINE_PRICE,
+    FAILED_RETRIEVE_MS_ITEMS_ONLINE_PRICE
+} from "reducers/actions/types";
 import { io } from "socket.io-client";
 
-export const SocketContext = createContext();
-
+const socket = io('ws://localhost:3000')
+export const SocketContext = createContext(socket);
+export const socketType = {
+    ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE,
+    ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE,
+    FAILED_RETRIEVE_BB_ITEMS_ONLINE_PRICE,
+    FAILED_RETRIEVE_MS_ITEMS_ONLINE_PRICE
+}
 export const SocketProvider = (props) => {
-    const initSocket = io('http://localhost:3000/')
-    const [socket, setSocket] = useState(initSocket)
-    socket.on('disconnect', (reason) => {
-        console.warn(`reason:${reason} `, socket)
-    })
-
     return (
         <SocketContext.Provider value={socket}>
             {props.children}

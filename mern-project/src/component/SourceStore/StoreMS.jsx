@@ -3,8 +3,13 @@ import { connect } from 'react-redux';
 import { getMSItems } from 'reducers/actions/itemMSActions.js';
 import PropTypes from 'prop-types';
 import StoreTable from 'component/SourceStore/StoreTable.jsx';
-import { SocketContext } from 'component/socket/socketContext.js';
+import { SocketContext, socketType } from 'component/socket/socketContext.js';
 import { storeType } from './data.js';
+import {
+    handleErrorOnRetrievedItemsOnlinePrice,
+    handleOnRetrievedItemsOnlinePrice
+} from 'reducers/actions/itemActions.js';
+
 
 class MS extends React.Component {
     static contextType = SocketContext
@@ -22,6 +27,12 @@ class MS extends React.Component {
         this.props.getMSItems();
         socket.on('Store Listings Update', () => {
             this.props.getMSItems()
+        })
+        socket.on(socketType.ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE, (data) => {
+            this.props.handleOnRetrievedItemsOnlinePrice(this.state.store, data.msg)
+        })
+        socket.on(socketType.FAILED_RETRIEVE_MS_ITEMS_ONLINE_PRICE, (data) => {
+            this.props.handleErrorOnRetrievedItemsOnlinePrice(this.state.store, data.msg)
         })
     }
     componentWillUnmount() {
@@ -54,4 +65,4 @@ const mapStateToProps = (state) => ({
     loading: state.microsoft.loading
 })
 
-export default connect(mapStateToProps, { getMSItems })(MS);
+export default connect(mapStateToProps, { getMSItems, handleOnRetrievedItemsOnlinePrice, handleErrorOnRetrievedItemsOnlinePrice })(MS);

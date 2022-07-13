@@ -25,7 +25,8 @@ import {
     ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE,
     SERVICE_UNAVAILABLE,
     FAILED_RETRIEVE_BB_ITEMS_ONLINE_PRICE,
-    FAILED_RETRIEVE_MS_ITEMS_ONLINE_PRICE
+    FAILED_RETRIEVE_MS_ITEMS_ONLINE_PRICE,
+    GET_ERRORS
 } from './types.js';
 import { tokenConfig } from './authActions.js';
 import { clearMessages, returnMessages } from './messageActions.js';
@@ -114,7 +115,7 @@ export const getItemsOnlinePrice = (store) => (dispatch, getState) => {
         axios.get(`/api/${routes}/getOnlinePrice`, tokenConfig(getState))
             .catch(err => {
                 dispatch(clearMessages())
-                dispatch(returnMessages(err.response.msg, err.response.status))
+                dispatch(returnMessages(err.response.msg, err.response.status, GET_ERRORS))
             })
     }
 }

@@ -12,7 +12,7 @@
     "axios": "^0.21.4",
     "chart.js": "^3.5.1",
     "less": "^4.1.2",
-    "moment": "^2.29.3",
+    "moment": "^2.29.4",
     "papaparse": "^5.3.1",
     "rc-virtual-list": "^3.4.8",
     "react": "^17.0.2",

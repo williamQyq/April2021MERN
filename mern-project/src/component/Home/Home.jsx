@@ -25,6 +25,10 @@ class Home extends React.Component {
 
   componentDidMount() {
     store.dispatch(loadUser());
+    let socket = this.context;
+    if(!socket.connected){
+      socket.connect();
+    }
   }
 
   handleLogOut = () => {

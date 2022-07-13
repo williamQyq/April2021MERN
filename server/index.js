@@ -46,22 +46,24 @@ if (process.env.NODE_ENV === 'production') {
 
 // @Socket IO listner
 const io = new Server(server, {
-    'pingTimeout': 7000,
-    'pingInterval': 5000,
-    "cors": {
-        "origin": "http://localhost:3000",
-        "methods": ["GET", "POST"],
-        "transports": ['websocket', 'polling'],
-        "credentials": true
+    pingTimeout:7000,
+    pingInterval:5000,
+    cors: {
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"],
     },
-    "allowEIO3": true
+    transports: ["websocket", "polling"]
 });
 
 
-io.on("connect_error", (err) => {
-    console.log(`connect_error due to ${err.message}`);
-})
+io.engine.on("connection_error", (err) => {
+    console.log(err.code);     // the error code, for example 1
+    console.log(err.message);  // the error message, for example "Session ID unknown"
+    console.log(err.context);  // some additional error context
+});
+
 io.on("connection", (socket) => {
+    // console.log(`${socket.id} connected!!! \n`)
     socket.on(`subscribe`, (room) => {
         try {
             socket.join(room);
@@ -82,7 +84,7 @@ io.on("connection", (socket) => {
     })
 
     socket.on(`disconnect`, (reason) => {
-        // console.log(`\nUSER DISCONNECTED: ${socket.id}\n***REASON:${reason}***\n`);
+        console.log(`\nUSER DISCONNECTED: ${socket.id}\n***REASON:${reason}***\n`);
     })
     socket.on('error', (reason) => {
         console.error(`[Socket Error] ${reason}`)

@@ -7,11 +7,15 @@ import {
     getAlsoBoughtOnSku
 } from 'reducers/actions/itemBBActions.js';
 import PropTypes from 'prop-types';
-import { SocketContext } from 'component/socket/socketContext.js';
+import { SocketContext, socketType } from 'component/socket/socketContext.js';
 import StoreTable from 'component/SourceStore/StoreTable.jsx';
 import StoreAnalyticCards from 'component/SourceStore/StoreAnalyticCards.jsx'
 // import BackTopHelper from 'component/utility/BackTop.jsx';
 import { categoryIdGroup, storeType } from './data.js'
+import {
+    handleErrorOnRetrievedItemsOnlinePrice,
+    handleOnRetrievedItemsOnlinePrice
+} from 'reducers/actions/itemActions.js';
 
 class BB extends React.Component {
     static contextType = SocketContext  //This part is important to access context values which are socket
@@ -27,8 +31,16 @@ class BB extends React.Component {
         let socket = this.context;
         socket.emit(`subscribe`, `StoreListingRoom`);
         this.props.getBBItems();
+
         socket.on('Store Listings Update', () => {
             this.props.getBBItems()
+        })
+
+        socket.on(socketType.ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE, (data) => {
+            this.props.handleOnRetrievedOnlinePrice(this.props.store, data.msg);
+        })
+        socket.on(socketType.FAILED_RETRIEVE_BB_ITEMS_ONLINE_PRICE, (data) => {
+            this.props.handleOnRetrievedOnlinePrice(this.props.store, data.msg);
         })
     }
     componentWillUnmount() {
@@ -125,4 +137,6 @@ export default connect(mapStateToProps, {
     getMostViewedOnCategoryId,
     getViewedUltimatelyBoughtOnSku,
     getAlsoBoughtOnSku,
+    handleOnRetrievedItemsOnlinePrice,
+    handleErrorOnRetrievedItemsOnlinePrice
 })(BB);

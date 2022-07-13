@@ -13,8 +13,7 @@ import {
     handleOnRetrievedItemsOnlinePrice,
     handleErrorOnRetrievedItemsOnlinePrice
 } from 'reducers/actions/itemActions.js';
-import { SocketContext } from 'component/socket/socketContext.js';
-import { socketType } from './data.js';
+import { SocketContext, socketType } from 'component/socket/socketContext.js';
 
 // import BackTopHelper from 'component/utility/BackTop';
 class StoreTable extends React.Component {
@@ -31,22 +30,7 @@ class StoreTable extends React.Component {
     }
 
     componentDidMount() {
-        let socket = this.context;
         this.handleScrollPosition(this.props.items, this.props.tableState);
-
-        socket.on(socketType.ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE, (data) => {
-            this.props.handleOnRetrievedOnlinePrice(this.props.store, data.msg);
-        })
-        socket.on(socketType.ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE, (data) => {
-            this.props.handleOnRetrievedItemsOnlinePrice(this.props.store, data.msg)
-        })
-        socket.on(socketType.FAILED_RETRIEVE_BB_ITEMS_ONLINE_PRICE, (data) => {
-            this.props.handleOnRetrievedOnlinePrice(this.props.store, data.msg);
-        })
-        socket.on(socketType.FAILED_RETRIEVE_MS_ITEMS_ONLINE_PRICE, (data) => {
-
-            this.props.handleErrorOnRetrievedItemsOnlinePrice(this.props.store, data.msg)
-        })
     }
 
     handleScrollPosition = (items, clickHistory) => {
@@ -76,4 +60,7 @@ const mapStateToProps = (state) => ({
 
 })
 
-export default connect(mapStateToProps, { handleOnRetrievedItemsOnlinePrice, handleErrorOnRetrievedItemsOnlinePrice })(StoreTable);
+export default connect(mapStateToProps, {
+    handleOnRetrievedItemsOnlinePrice,
+    handleErrorOnRetrievedItemsOnlinePrice
+})(StoreTable);
