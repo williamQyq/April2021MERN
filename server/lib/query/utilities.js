@@ -265,8 +265,12 @@ export class WMSDatabaseApis {
         return needToshipItemsByToday;
     }
 
-    async updateInventoryReceiveOrgNmOnTracking() {
+    async updateInventoryReceiveOrgNmOnTracking(tracking, newOrgNm) {
         const collection = this.db.collection(WMSDatabaseApis._collection.inventoryReceive);
+        let trackingFilter = { trNo: tracking };
+        let orgNmUpdate = { $set: { orgNm: newOrgNm } };
+        let updateOrgNmByTracking = await collection.findOneAndUpdate(trackingFilter, orgNmUpdate, { returnNewDocument: true });
+        return updateOrgNmByTracking;
     }
 
 }

@@ -1,7 +1,6 @@
 import express from 'express';
 const router = express.Router();
 import auth from '#middleware/auth.js';
-import { upsertProdPricingNewAsin, findAllProdPricing } from '#query/utilities.js';
 import { updateProdPricingCatalogItems } from '#amz/SPAPI/SP.js';
 import { OperationApi } from '../../query/utilities.js';
 
@@ -15,7 +14,7 @@ router.get('/', (req, res) => {
 
 // @route POST api/amazonSP
 // @desc: save upc asin mapping Schema for ProductPricing API
-router.post('/upload/asins-mapping', (req, res) => {
+router.post('/upload/asins-mapping', auth, (req, res) => {
     const { uploadFile } = req.body
     console.log(`=======received file:======\n${JSON.stringify(uploadFile)}\n\n`)
     processMappingFile(uploadFile)

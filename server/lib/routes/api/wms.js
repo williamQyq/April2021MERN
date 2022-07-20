@@ -3,7 +3,7 @@ const router = express.Router();
 import auth from '#middleware/auth.js';
 import wms from '#wms/wmsDatabase.js';
 import { WMSDatabaseApis, GsheetApis } from '../../query/utilities.js';
-
+import excel from 'exceljs';
 
 //@route GET api/wms
 //@desc get warehouse quantity on upc
@@ -80,6 +80,64 @@ router.get('/getNeedToShipItems', auth, (req, res) => {
         }))
 })
 
+router.post('/inventoryReceive/updateRecOnTracking', auth, (req, res) => {
+    const { uploadFile } = req.body;
+    updateRecOnTracking(uploadFile)
+        .then((response) => {
+            let unfulfilled = response.filter(actionRes => (actionRes.status !== "fulfilled"))
+            if (unfulfilled.length > 0) {
+                res.json({ msg: 'Some records are rejected', rejected: unfulfilled })
+            } else {
+                res.json({ msg: 'Sucess, All records are updated.' })
+            }
 
+        })
+        .catch(e => {
+            res.status(400).json({ msg: `Upload File contains Invalid Input\n${e}` })
+        })
+})
+
+const updateRecOnTracking = async (file) => {
+    let api = new WMSDatabaseApis();
+    let titles = file.shift();
+    let colTitleIndexMap = new Map()
+    titles.forEach((colTitle, index) => {
+        colTitleIndexMap.set(colTitle, index);
+    })
+
+    return Promise.allSettled(file.map(row => {
+        let tracking = row[colTitleIndexMap.get('Tracking')];
+        let orgNm = row[colTitleIndexMap.get('OrgNm')];
+        if (tracking && orgNm)
+            // console.log(tracking, orgNm)
+            return api.updateInventoryReceiveOrgNmOnTracking(tracking, orgNm);
+    }))
+}
+
+router.get('/inventoryReceive/downloadSampleXlsx', (req, res) => {
+    let workbook = new excel.Workbook();
+    let worksheet = workbook.addWorksheet("Inventory Received");
+    worksheet.columns = [
+        { header: "Tracking", key: "tracking", width: 25 },
+        { header: "OrgNm", key: "orgNm", width: 5 }
+    ];
+    let rows = [];
+    rows.push({
+        tracking: "",
+        orgNm: ""
+    })
+    worksheet.addRows(rows);
+    res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=" + "sample.xlsx"
+    );
+    return workbook.xlsx.write(res).then(() => {
+        res.status(200).end();
+    });
+})
 
 export default router;

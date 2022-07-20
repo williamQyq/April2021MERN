@@ -36,6 +36,7 @@
     "concurrently": "^6.2.1",
     "config": "^3.3.6",
     "dotenv": "^16.0.0",
+    "exceljs": "^4.3.0",
     "express": "^4.17.1",
     "googleapis": "^95.0.0",
     "jsonwebtoken": "^8.5.1",

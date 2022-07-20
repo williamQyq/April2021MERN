@@ -1,7 +1,8 @@
 import React from 'react';
-import { AreaChartOutlined, CloudSyncOutlined, LoadingOutlined } from '@ant-design/icons';
+import { AreaChartOutlined, CloudSyncOutlined, DownloadOutlined, LoadingOutlined } from '@ant-design/icons';
 import {
-    uploadInventoryReceived,
+    downloadInventoryReceivedUploadSample,
+    updateInventoryReceivedByUpload,
     uploadNeedToShip
 } from 'reducers/actions/inboundActions.js';
 import MenuBar from 'component/utility/MenuBar.jsx';
@@ -35,12 +36,16 @@ export const InventoryReceivedMenu = () => {
         {
             key: 'upload',
             icon: <AreaChartOutlined />,
-            label: 'Upload'
+            label: 'Update Existing Records by Upload'
         },
         {
             key: 'syncInventoryReceived',
             icon: isInventoryReceivedLoading ? <LoadingOutlined /> : <CloudSyncOutlined />,
             label: "Sync Inventory Received"
+        }, {
+            key: 'downloadSampleXlsx',
+            icon: <DownloadOutlined />,
+            label: "Download Sample Excel"
         }
     ]
 
@@ -49,18 +54,23 @@ export const InventoryReceivedMenu = () => {
             case "syncInventoryReceived":
                 dispatch(syncInventoryReceivedWithGsheet());
                 break;
+            case "downloadSampleXlsx":
+                dispatch(downloadInventoryReceivedUploadSample());
+                break;
+            case "upload":
+                break;
             default:
                 let msg = `${key} failed.`
                 let status = 400;
                 dispatch(returnErrors(msg, status))
-                break;
+                return;
         }
     }
 
     return (
         <MenuBar
             handleClick={handleClick}
-            customizedUpload={uploadInventoryReceived}
+            customizedUpload={updateInventoryReceivedByUpload}
             menuItems={inventoryReceivedMenuItems}
             title="Inventory Received"
         />
