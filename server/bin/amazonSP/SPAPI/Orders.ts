@@ -64,8 +64,8 @@ export class Orders {
                 ...this.getOrdersParam,
                 query: {
                     ...this.getOrdersParam.query,
-                    LastUpdatedAfter: moment("2022-06-28T00:00:00Z").toISOString(),
-                    LastUpdatedBefore: moment("2022-06-28T00:00:00Z").toISOString()
+                    LastUpdatedAfter: moment("2022-07-21T00:00:00Z").toISOString(),
+                    // LastUpdatedBefore: moment("2022-06-28T00:00:00Z").toISOString()
                 }
             };
             // let param = this.getOrdersParam;

@@ -1,3 +1,5 @@
+import SellingPartner from 'amazon-sp-api';
+import { AMZ_CREDENTIALS, AMZ_REFRESH_TOKEN, REGION } from 'config';    //absolute path cannot be resolve in typescript. a bug here.
 import { performance } from 'perf_hooks';
 
 type T = any;
@@ -16,6 +18,7 @@ interface LeakyBucket {
 
     start(): Promise<Array<TaskResponse>>;
     isQueueEmpty(): boolean;
+    addTask(task: Task): void;
 
     _enqueue(task: Task): void;
     _dequeue(): void;
@@ -25,6 +28,11 @@ interface LeakyBucket {
     _clearTimer(): void;
 
 }
+export const sellingPartner = (): SellingPartner => new SellingPartner({
+    region: REGION,
+    credentials: AMZ_CREDENTIALS,
+    refresh_token: AMZ_REFRESH_TOKEN
+});
 
 class LeakyBucket {
     static capacity = 100;
@@ -45,8 +53,11 @@ class LeakyBucket {
         let results = await this._measureTaskHandlingPerformanceAndResovle(tasks);
         return results;
     }
-    isQueueEmpty() {
+    isQueueEmpty(): boolean {
         return this.queue.length > 0 ? false : true;
+    }
+    addTask(task: Task): void {
+        this._enqueue(task);
     }
 
     _enqueue(task: Task): void {

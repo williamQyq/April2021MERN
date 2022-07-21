@@ -55,7 +55,7 @@ db.once('open', () => {
         }
     })
 
-    unitTest();
+    // unitTest();
     // startScrapeScheduler();
     // @AMAZON SP UPDATE
     // startamazonScheduler();
