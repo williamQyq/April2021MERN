@@ -30,25 +30,17 @@ class StoreTable extends React.Component {
     }
 
     componentDidMount() {
-        this.handleScrollPosition(this.props.items, this.props.tableState);
     }
 
-    handleScrollPosition = (items, clickHistory) => {
-        if (clickHistory) {
-            let itemHistory = locateSearchedItem(items, clickHistory.clickedId)
-            this.setState({ searchedRowId: itemHistory._id })
-            scrollToTableRow(document, itemHistory.index)
-        }
-    }
     render() {
-        const { items, store, loading } = this.props
+        const { items, store, loading, tableState } = this.props
         const columns = tableColumns(store)
         return (
             <>
                 <StoreOperationMenu store={store} />
                 <FormTable
                     loading={loading}
-                    tableSettings={{ ...defaultTableSettings, expandable: null }}
+                    tableSettings={{ ...defaultTableSettings, expandable: null, tableState: tableState }}
                     columns={columns}
                     data={items}
                 />
@@ -57,6 +49,7 @@ class StoreTable extends React.Component {
     }
 }
 const mapStateToProps = (state) => ({
+    tableState: state.item.tableState,
 
 })
 

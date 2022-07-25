@@ -172,12 +172,9 @@ export const getItems = (store) => dispatch => {
     }
 }
 
-export const setTableState = (store, clickedId) => dispatch => {
+export const setTableState = (settings) => dispatch => {
     dispatch(setItemsLoading());
-    let tableState = {
-        store: store,
-        clickedId: clickedId
-    }
+    let tableState = { ...settings }
 
     dispatch({
         type: SET_TABLE_STATE,

@@ -1,25 +1,11 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { Table, Input, Button, Space } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
+import { setTableState } from 'reducers/actions/itemActions';
 
-const addSearchPropsToColumns = (columns, getColumnSearchProps) => {
-    return columns.map(col => {
-        if (col.searchable) {
-            return {
-                ...col,
-                ...getColumnSearchProps(col.dataIndex)
-            }
-        }
-
-        return {
-            ...col,
-        }
-    })
-}
-
-
-export default class FormTable extends React.Component {
+class FormTable extends React.Component {
     constructor(props) {
         super(props);
 
@@ -27,12 +13,45 @@ export default class FormTable extends React.Component {
             searchText: '',
             searchedRowId: '',
             searchedColumn: '',
+            data: this.props.data,
+            tableState: this.props.tableSettings.tableState
         };
-
     }
 
     componentDidMount() {
-        this.handleScrollPosition(this.props.items, this.props.tableState);
+        this.handleScrollPosition(this.state.data, this.state.tableState);  //scroll to clicked row
+        this.handleTableState(this.state.tableState);
+    }
+    componentDidUpdate(prevProps, prevState) {
+        if (this.state.searchText !== prevState.searchText) {
+            this.props.setTableState({
+                ...this.state.tableState,
+                searchText: this.state.searchText,
+                searchedRowId: this.state.searchedRowId,
+                searchedColumn: this.state.searchedColumn
+            })
+        }
+    }
+    handleTableState = (tableState) => {
+        const { searchText, searchedRowId, searchedColumn } = tableState;
+        if (tableState.searchText) {
+            this.setState({ searchText, searchedRowId, searchedColumn })
+        }
+    }
+
+    addSearchPropsToColumns = (columns, getColumnSearchProps) => {
+        return columns.map(col => {
+            if (col.searchable) {
+                return {
+                    ...col,
+                    ...getColumnSearchProps(col.dataIndex)
+                }
+            }
+
+            return {
+                ...col,
+            }
+        })
     }
 
     handleScrollPosition = (items, clickHistory) => {
@@ -63,8 +82,8 @@ export default class FormTable extends React.Component {
 
     scrollToTableRow = (document, row) => {
         const tableRowHight = 75.31;
-        let v = document.getElementsByClassName("ant-table-body")[0];
-        v.scrollTop = tableRowHight * (row - 3);
+        let v = document.getElementsByClassName("ant-layout-content site-layout-content")[0];
+        v.scrollTop = tableRowHight * (row - 0);
     }
 
     getColumnSearchProps = dataIndex => {
@@ -77,7 +96,7 @@ export default class FormTable extends React.Component {
                         }}
                         placeholder={`Search ${dataIndex}`}
                         value={selectedKeys[0]}
-                        onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                        onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [''])}
                         onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
                         style={{ marginBottom: 8, display: 'block' }}
                     />
@@ -94,7 +113,7 @@ export default class FormTable extends React.Component {
                         <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
                             Reset
                         </Button>
-                        <Button
+                        {/* <Button
                             type="link"
                             size="small"
                             onClick={() => {
@@ -106,12 +125,14 @@ export default class FormTable extends React.Component {
                             }}
                         >
                             Filter
-                        </Button>
+                        </Button> */}
                     </Space>
                 </div>
             ),
+            filteredValue: this.state.searchedColumn === dataIndex ? [this.state.searchText] : [],
             filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
             onFilter: (value, record) => {
+                if (value === undefined) return false;  //if empty searchText, filter no data
                 let isValueIncluded = record[dataIndex]
                     ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
                     : '';
@@ -164,7 +185,7 @@ export default class FormTable extends React.Component {
 
     render() {
         const { data, loading, columns, tableSettings } = this.props
-        const searchPropsColumns = addSearchPropsToColumns(columns, this.getColumnSearchProps);
+        const searchPropsColumns = this.addSearchPropsToColumns(columns, this.getColumnSearchProps);
         return (
             <Table
                 loading={loading}
@@ -175,3 +196,4 @@ export default class FormTable extends React.Component {
         )
     }
 }
+export default connect(null, { setTableState })(FormTable);

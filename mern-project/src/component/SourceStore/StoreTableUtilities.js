@@ -34,29 +34,6 @@ message.config = {
     maxCount: 3
 }
 
-
-export const locateSearchedItem = (items, searchId) => {
-    if (searchId) {
-        for (let index = 0; index < items.length; index++)
-            if (items[index]._id === searchId) {
-                return ({
-                    index: index,
-                    _id: items[index]._id,
-                })
-            }
-    }
-    return ({
-        index: 0,
-        _id: ""
-    })
-}
-
-export const scrollToTableRow = (document, row) => {
-    const tableRowHight = 75.31;
-    let v = document.getElementsByClassName("ant-table-body")[0];
-    v.scrollTop = tableRowHight * (row - 3);
-}
-
 export const defaultTableSettings = {
     showSorterTooltip: false,
     pagination: {
@@ -65,7 +42,8 @@ export const defaultTableSettings = {
         pageSizeOptions: ['10', '20', '50', '100'],
         position: ['topRight', 'bottomRight']
     },
-    scroll: { y: "calc(90vh - 335px)" } //slow performance issue
+    size: "middle"
+    // scroll: { y: "calc(100vh)" }
 
 }
 
@@ -141,6 +119,8 @@ export const tableColumns = (storeName) => [
 const DropDownActions = (props) => {
     const { record, storeName } = props
     const dispatch = useDispatch();
+    const prevTableState = useSelector(state => state.item.tableState)
+
     const { pathname } = useLocation();
 
     const actionHandler = {
@@ -151,7 +131,7 @@ const DropDownActions = (props) => {
 
         saveActionHistory: () => {
             console.log(`clicked`, record._id)
-            dispatch(setTableState(storeName, record._id));
+            dispatch(setTableState({ ...prevTableState, store: storeName, clickedId: record._id }));
         },
         pathname
     }
