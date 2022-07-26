@@ -1,19 +1,17 @@
 import React from 'react';
 import 'component/SourceStore/Store.scss';
-import {
-    locateSearchedItem,
-    scrollToTableRow,
-    defaultTableSettings,
-    StoreOperationMenu,
-    tableColumns
-} from 'component/SourceStore/StoreTableUtilities.js';
 import FormTable from 'component/utility/FormTable';
+import { SocketContext, socketType } from 'component/socket/socketContext.js';
 import { connect } from 'react-redux';
 import {
     handleOnRetrievedItemsOnlinePrice,
     handleErrorOnRetrievedItemsOnlinePrice
 } from 'reducers/actions/itemActions.js';
-import { SocketContext, socketType } from 'component/socket/socketContext.js';
+import {
+    defaultTableSettings,
+    StoreOperationMenu,
+    tableColumns
+} from 'component/SourceStore/StoreTableUtilities.js';
 
 // import BackTopHelper from 'component/utility/BackTop';
 class StoreTable extends React.Component {

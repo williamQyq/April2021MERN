@@ -99,7 +99,7 @@ router.get('/getOnlinePrice', auth, (req, res) => {
         })
         .catch(err => {
             res.status(500).json({ msg: `Fail to retrive Bestbuy Laptop Price \n\n${err}` })
-            io.sockets.emit("FAILED_RETRIEVED_BB_ITEMS_ONLINE_PRICE", { msg: `Fail to retrive Bestbuy Laptop Price \n\n${err}` })
+            io.sockets.emit("FAILED_RETRIEVE_BB_ITEMS_ONLINE_PRICE", { msg: `Fail to retrive Bestbuy Laptop Price \n\n${err}` })
         })
 })
 

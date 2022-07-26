@@ -80,15 +80,9 @@ export const GET_INVENTORY_RECEIVED_HALF_MONTH_AGO = [
         }
     }, {
         $project: {
-            _id: 1,
+            _id: 0,
             mdfTmEst: '$mdfTm',
-            mdfDate: {
-                '$dateToString': {
-                    'date': {
-                        '$toDate': '$mdfTm'
-                    }
-                }
-            },
+            mdfStmp: 1,
             orgNm: 1,
             UPC: '$rcIts.UPC',
             trNo: 1,
@@ -96,13 +90,17 @@ export const GET_INVENTORY_RECEIVED_HALF_MONTH_AGO = [
         }
     }, {
         $match: {
-            mdfDate: {
-                '$gte': getDateHalfMonthAgo()
+            mdfStmp: {
+                '$gte': getPastDateInUnix(14)   //half month ago date in unix number
             }
         }
     }, {
+        $sort: {
+            mdfStmp: -1
+        }
+    }, {
         $project: {
-            _id: 1,
+            _id: { $concat: ["$trNo", "-", "$UPC"] },
             mdfTmEst: 1,
             orgNm: 1,
             UPC: 1,
@@ -112,22 +110,20 @@ export const GET_INVENTORY_RECEIVED_HALF_MONTH_AGO = [
     }
 ]
 
-export function getDateHalfMonthAgo() {
+export function getPastDateInUnix(dayBefore) {
     let d = new Date();
     let day = d.getDate();
-    d.setDate(day - 14);
+    d.setDate(day - dayBefore);
 
     // if (d.getMonth() == m) d.setDate(0);
 
     d.setHours(0, 0, 0, 0);
-
-    return moment(d).format();
+    let resultDate = Number(moment(d).format('x'))
+    return resultDate;
 
 }
 export function getTodayDate() {
-    let d = new Date()
-    d.setHours(0, 0, 0, 0);
-    return moment(d).format();
+    return getPastDateInUnix(0)
 }
 export const GET_NEED_TO_SHIP_ITEMS_BY_TODAY = [
     {
@@ -139,21 +135,28 @@ export const GET_NEED_TO_SHIP_ITEMS_BY_TODAY = [
             'rcIts': 1,
             'UserID': 1,
             'shipBy': 1,
-            'crtTm': {
-                '$dateToString': {
-                    // 'format': '%Y-%m-%d T %HH%MM%SS',
-                    'timezone': 'America/New_York',
-                    'date': {
-                        '$toDate': '$crtStmp'
-                    }
-                }
-            }
+            'crtTm': 1,
+            'crtStmp': 1
+            // 'crtTm': {
+            //     '$dateToString': {
+            //         // 'format': '%Y-%m-%d T %HH%MM%SS',
+            //         'timezone': 'America/New_York',
+            //         'date': {
+            //             '$toDate': '$crtStmp'
+            //         }
+            //     }
+            // }
         }
     }, {
         '$match': {
-            'crtTm': {
-                '$gte': getTodayDate()
+            'crtStmp': {
+                '$gte': getTodayDate(0)
             }
         }
+    }, {
+        '$sort': {
+            'crtStmp': 1
+        }
     }
+
 ]

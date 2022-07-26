@@ -3,13 +3,11 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Form } from 'antd';
 import { defaultSettings, inventoryReceivedColumns } from 'component/OutBound/utilities.js';
-import { SocketContext } from 'component/socket/socketContext';
 import { InventoryReceivedMenu } from './Menus.jsx';
 import FormTable from 'component/utility/FormTable.jsx';
 import { getInventoryReceived } from 'reducers/actions/outboundActions.js';
 
 class InventoryReceived extends React.Component {
-    // static contextType = SocketContext //This part is important to access context values which are socket
     constructor(props) {
         super(props);
         this.state = {
@@ -19,14 +17,12 @@ class InventoryReceived extends React.Component {
     formRef = React.createRef()
 
     componentDidMount() {
-        // let socket = this.context
-        // socket.emit(`subscribe`, `OutboundRoom`);
+
         this.props.getInventoryReceived()
     }
 
     componentWillUnmount() {
-        // let socket = this.context
-        // socket.emit(`unsubscribe`, `OutboundRoom`)
+     
     }
     isLoading = () => {
         const { loading } = this.props;

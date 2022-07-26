@@ -48,9 +48,7 @@ router.get('/inventoryReceivedItems', auth, (req, res) => {
     let wms = new WMSDatabaseApis();
     wms.getInventoryReceive()
         .then(receivedItems => { res.json(receivedItems) })
-        .catch(err => {
-            res.status(500).json({ msg: "Fail to get Inventory Received" })
-        })
+        .catch(err => { res.status(500).json({ msg: "Fail to get Inventory Received" }) })
 })
 
 //@route get api/wms
