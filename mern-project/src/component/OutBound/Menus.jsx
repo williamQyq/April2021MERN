@@ -18,8 +18,13 @@ export const NeedToShipMenu = () => {
             label: 'Upload'
         }
     ]
+    const handleClick = () => {
+
+    }
+    
     return (
         <MenuBar
+            handleClick={handleClick}
             customizedUpload={uploadNeedToShip}
             menuItems={needToShipMenuItems}
             title="Need To Ship"
@@ -36,7 +41,7 @@ export const InventoryReceivedMenu = () => {
         {
             key: 'upload',
             icon: <AreaChartOutlined />,
-            label: 'Update Existing Records by Upload'
+            label: 'Update Received Records by Upload'
         },
         {
             key: 'syncInventoryReceived',

@@ -3,6 +3,7 @@ import { tokenConfig } from './authActions.js';
 import { returnErrors } from './errorActions.js';
 import { clearMessages, returnMessages } from './messageActions.js';
 import {
+    GET_ERRORS,
     // GET_INVENTORY_RECEIVED,
     GET_INVENTORY_RECEIVED_ITEMS,
     GET_SHIPMENT_ITEMS,
@@ -37,17 +38,28 @@ export const getInventoryReceived = () => (dispatch, getState) => {
             });
         })
         .catch(err => {
+            dispatch({
+                type: GET_INVENTORY_RECEIVED_ITEMS,
+                payload: []
+            })
             dispatch(returnErrors(err.response.data.msg, err.response.status));
         })
 }
-export const getNeedToShipFromShipment = () => (dispatch, getState) => {
+export const getNeedToShipFromShipment = (docLimits, docSkip) => (dispatch, getState) => {
     dispatch(setShipmentItemsLoading());
-    axios.get(`/api/wms/getNeedToShipItems`, tokenConfig(getState))
+    axios.get(`/api/wms/getNeedToShipItems/limit/${docLimits}/skip/${docSkip}`, { ...tokenConfig(getState), params: { docLimits, docSkip } })
         .then(res => {
             dispatch({
                 type: GET_SHIPMENT_ITEMS,
                 payload: res.data
             })
+        })
+        .catch(err => {
+            dispatch({
+                type: GET_SHIPMENT_ITEMS,
+                payload: []
+            })
+            dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS))
         })
 }
 

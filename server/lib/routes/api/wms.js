@@ -67,11 +67,13 @@ router.get('/inventoryReceived/syncGsheet', auth, (req, res) => {
 
 })
 
-router.get('/getNeedToShipItems', auth, (req, res) => {
+router.get('/getNeedToShipItems/limit/:docLimit/skip/:docSkip', auth, (req, res) => {
+    const { docLimit, docSkip } = req.params;
     let wms = new WMSDatabaseApis();
-    wms.getNeedToshipFromShipment()
-        .then(needToshipItems => {
-            res.json(needToshipItems)
+    wms.getNeedToShipFromShipment(Number(docLimit), Number(docSkip))// params in req are strings, mongodb limit query accepts number only
+        .then(needToShipItems => {
+            wms.countNeedToShipFromShipment()
+                .then((totalShipmentCount) => res.json({ shipment: needToShipItems, totalShipmentCount }))
         })
         .catch((err => {
             res.status(500).json({ msg: "Fail to get Shipment" })

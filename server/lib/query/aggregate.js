@@ -125,7 +125,8 @@ export function getPastDateInUnix(dayBefore) {
 export function getTodayDate() {
     return getPastDateInUnix(0)
 }
-export const GET_NEED_TO_SHIP_ITEMS_BY_TODAY = [
+
+export const GET_NEED_TO_SHIP_ITEMS_BY_TODAY = (limit, skip) => [
     {
         '$project': {
             '_id': 0,
@@ -136,7 +137,8 @@ export const GET_NEED_TO_SHIP_ITEMS_BY_TODAY = [
             'UserID': 1,
             'shipBy': 1,
             'crtTm': 1,
-            'crtStmp': 1
+            'crtStmp': 1,
+            'status': 1,
             // 'crtTm': {
             //     '$dateToString': {
             //         // 'format': '%Y-%m-%d T %HH%MM%SS',
@@ -150,13 +152,53 @@ export const GET_NEED_TO_SHIP_ITEMS_BY_TODAY = [
     }, {
         '$match': {
             'crtStmp': {
-                '$gte': getTodayDate(0)
-            }
+                '$gte': getTodayDate()
+            },
+            'status': "ready"
         }
     }, {
         '$sort': {
             'crtStmp': 1
         }
-    }
+    }, {
+        '$skip': skip
+    }, {
+        '$limit': limit
+    },
 
+]
+
+export const COUNT_NEED_TO_SHIP_ITEMS_BY_TODAY = [
+    {
+        '$project': {
+            '_id': 0,
+            'tracking': "$_id",
+            'orderID': 1,
+            'orgNm': 1,
+            'rcIts': 1,
+            'UserID': 1,
+            'shipBy': 1,
+            'crtTm': 1,
+            'crtStmp': 1,
+            'status': 1
+            // 'crtTm': {
+            //     '$dateToString': {
+            //         // 'format': '%Y-%m-%d T %HH%MM%SS',
+            //         'timezone': 'America/New_York',
+            //         'date': {
+            //             '$toDate': '$crtStmp'
+            //         }
+            //     }
+            // }
+        }
+    }, {
+        '$match': {
+            'crtStmp': {
+                '$gte': getTodayDate()
+            },
+            'status': "ready"
+        }
+    }, {
+        '$count': "shipmentCount"
+    }
 ]

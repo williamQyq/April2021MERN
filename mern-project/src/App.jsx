@@ -30,7 +30,7 @@ class App extends React.Component {
     this.props.loadUser();
   }
   componentDidUpdate() {
-    const { status, msg } = this.props;
+    const { status, msg } = this.props.error;
     if (status === 202) {
       openAlertNotification('warning', msg, this.props.handleMessages)
     }
@@ -61,9 +61,7 @@ class App extends React.Component {
 
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated,
-  status: state.error.status,
-  msg: state.error.msg,
-  id: state.error.id
+  error: state.error
 })
 
 const mapDispatchToProps = (dispatch) => ({

@@ -15,7 +15,8 @@ import {
     LOOKUP_ITEM_SPEC,
     LAST_PRICE,
     GET_INVENTORY_RECEIVED_HALF_MONTH_AGO,
-    GET_NEED_TO_SHIP_ITEMS_BY_TODAY
+    GET_NEED_TO_SHIP_ITEMS_BY_TODAY,
+    COUNT_NEED_TO_SHIP_ITEMS_BY_TODAY
 } from './aggregate.js';
 import GenerateGSheetApis from '../../bin/gsheet/gsheet.js';
 import moment from 'moment';
@@ -259,10 +260,16 @@ export class WMSDatabaseApis {
         return invRecItemsHalfMonthAgo;
     }
 
-    async getNeedToshipFromShipment() {
+    async getNeedToShipFromShipment(docLimits = 10, docSkip = 0) {
         const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
-        let needToshipItemsByToday = await collection.aggregate(GET_NEED_TO_SHIP_ITEMS_BY_TODAY).toArray();
-        return needToshipItemsByToday;
+        let needToShipItemsByToday = await collection.aggregate(GET_NEED_TO_SHIP_ITEMS_BY_TODAY(docLimits, docSkip)).toArray();
+        return needToShipItemsByToday;
+    }
+
+    async countNeedToShipFromShipment() {
+        const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
+        let shipmentCountByToday = await collection.aggregate(COUNT_NEED_TO_SHIP_ITEMS_BY_TODAY).toArray();
+        return shipmentCountByToday[0].shipmentCount;
     }
 
     async updateInventoryReceiveOrgNmOnTracking(tracking, newOrgNm) {

@@ -39,7 +39,8 @@ export default function Reducer(state = initialState, action) {
                 ...state,
                 needToShip: {
                     ...state.needToShip,
-                    items: action.payload,
+                    items: action.payload.shipment,
+                    totalShipmentCount: action.payload.totalShipmentCount,
                     itemsLoading: false
                 }
             }
