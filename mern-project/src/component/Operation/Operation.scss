@@ -2,6 +2,7 @@
 
 .ant-tree {
     .ant-tree-node-content-wrapper {
+        cursor: auto;
         background-color: transparent;
         &:hover {
             background-color: transparent;
@@ -10,7 +11,7 @@
             background-color: transparent;
         }
     }
-    .ant-tree-indent{
+    .ant-tree-indent {
         width: 0;
     }
 }

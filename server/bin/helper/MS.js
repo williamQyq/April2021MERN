@@ -58,25 +58,31 @@ export default class Microsoft extends Stores {
         try {
             for (let i = 0; i < pagesNum; i++) {
                 let pageUrl = this.initURL(i * numPerPage);
-                let items = await this.getPageItems(page, pageUrl); //ItemType { link, sku, currentPrice, name }
-                await Promise.all(items.map((item, index) =>
-                    erpApi.saveStoreItemToDatabase(item, databaseModel).then((result) =>
-                        this.printMsg(new Map(
-                            Object.entries({
+                let promisesRes = await this.getPageItems(page, pageUrl); //Array<{PromiseResolveType}>
+                let details = promisesRes.filter(prom => prom.status === 'fulfilled' && prom.value.price !== undefined)
+                await Promise.all(
+                    details.map((detail, index) => {
+                        const { pid, cN, price } = detail.value;
+                        let itemDetail = {
+                            sku: pid,
+                            name: cN,
+                            link: 'https://www.microsoft.com/en-us/d/' + cN.replace(/\s/g, "-").replace(/"/g, "").toLowerCase() + '/' + pid,
+                            currentPrice: price
+                        }
+                        erpApi.saveStoreItemToDatabase(itemDetail, databaseModel).then(result => {
+                            this.printMsg(new Map(Object.entries({
                                 store: Microsoft.name,
                                 page: i,
                                 index: index,
-                                sku: item.sku,
-                                currentPrice: item.currentPrice,
+                                sku: itemDetail.sku,
+                                currentPrice: itemDetail.currentPrice,
                                 result: result
-                            })  //printMsg received a Map of msgObj
-                        ))
-                    )
-                ))
-                    .finally(() => {
-                        console.log(`[${Microsoft.name}]===Page ${i} finished.===`)
-                    })
+                            })))
+                        });
+                    }))
+                    .finally(console.log(`[${Microsoft.name}]===Page ${i} finished.===`))
             }
+
             await page.close();
             await browser.close();
         } catch (e) {
@@ -143,29 +149,39 @@ export default class Microsoft extends Stores {
         @return: Array<Item>
     */
     async #parseItemsList(page) {
-        const ITEMS_LIST_EXPR = '//div[@class="m-channel-placement-item f-wide f-full-bleed-image"]/a'
-        const PRICE_LIST_EXPR = '//span[@itemprop="price"]'
+        const ITEM_ELEMENTS_EXPR = '//div[@class="m-channel-placement-item f-wide f-full-bleed-image"]'
+        const PRICE_SPAN_EXPR = 'span[itemprop="price"]'
+        const IS_INSTOCK_EXPR = 'strong[class="c-badge f-small f-lowlight x-hidden-focus"]'
         const ITEM_ATTRIBUTE_ID = "data-m"
         const PRICE_ATTRIBUTE_ID = "content"
 
-        let itemAttrLists = await this.evaluateItemAttribute(page, ITEMS_LIST_EXPR, ITEM_ATTRIBUTE_ID)
-        let priceAttrLists = await this.evaluatePriceAttribute(page, PRICE_LIST_EXPR, PRICE_ATTRIBUTE_ID)
-        let itemsArray = itemAttrLists.map((item, index) => {
-            item = JSON.parse(item)
-            let sku = item['pid']
-            let name = item["tags"]["prdName"]
-            let link = 'https://www.microsoft.com/en-us/d/' + name.replace(/\s/g, "-").replace(/"/g, "").toLowerCase() + '/' + sku
-            let currentPrice = priceAttrLists[index]
+        // let itemAttrLists = await this.evaluateItemAttribute(page, ITEMS_LIST_EXPR, ITEM_ATTRIBUTE_ID)
+        // let priceAttrLists = await this.evaluatePriceAttribute(page, PRICE_LIST_EXPR, PRICE_ATTRIBUTE_ID)
 
-            let itemObj = {
-                link,
-                sku,
-                currentPrice,
-                name
+        await page.waitForXPath(ITEM_ELEMENTS_EXPR);
+        let itemElements = await page.$x(ITEM_ELEMENTS_EXPR);
+        // let itemElements = await page.$$('div.m-channel-placement-item f-wide f-full-bleed-image');
+
+        let results = await Promise.allSettled(itemElements.map(async (ele) => {
+            let price = undefined, isInStock = true;
+            let attrRes = await ele.$eval('a', (ele, ITEM_ATTRIBUTE_ID) => ele.getAttribute(ITEM_ATTRIBUTE_ID), ITEM_ATTRIBUTE_ID)
+            let data = JSON.parse(attrRes)//JSON text data-m attribute to JSON object
+            try {
+                let priceRes = await ele.$eval(PRICE_SPAN_EXPR, (span, PRICE_ATTRIBUTE_ID) => span.getAttribute(PRICE_ATTRIBUTE_ID), PRICE_ATTRIBUTE_ID)
+                price = Number(priceRes.replace(/[$|,]/g, ""));
+            } catch {
+                return { ...data, price, isInStock: false } //if no price found, not in stock
             }
-            return itemObj;
-        })
-        return itemsArray
+            try {
+                isInStockRes = await ele.$eval(IS_INSTOCK_EXPR, el => el.textContent)
+                isInStock = isInStockRes === "OUT OF STOCK" ? false : true;
+            } catch {
+                //if no OUT OF STOCK tag do nothing...
+            }
+            return { ...data, price, isInStock };   //found price and currently instock
+        }))
+
+        return results;
     }
     /* 
         @param: page:Puppeteer<page>

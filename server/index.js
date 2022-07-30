@@ -46,8 +46,8 @@ if (process.env.NODE_ENV === 'production') {
 
 // @Socket IO listner
 const io = new Server(server, {
-    pingTimeout:7000,
-    pingInterval:5000,
+    pingTimeout: 7000,
+    pingInterval: 5000,
     cors: {
         origin: "http://localhost:3000",
         methods: ["GET", "POST"],
@@ -63,7 +63,7 @@ io.engine.on("connection_error", (err) => {
 });
 
 io.on("connection", (socket) => {
-    // console.log(`${socket.id} connected!!! \n`)
+    console.log(`${socket.id} connected!!! \n `)
     socket.on(`subscribe`, (room) => {
         try {
             socket.join(room);

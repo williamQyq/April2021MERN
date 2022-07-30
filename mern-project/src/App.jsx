@@ -1,5 +1,4 @@
 import React from 'react';
-import './styles/app.scss';
 import 'antd/dist/antd.min.css';
 import {
   Switch,

@@ -2,8 +2,7 @@ import axios from 'axios';
 import Moment from 'moment';
 import { getBBItems } from './itemBBActions.js';
 import { getMSItems } from './itemMSActions.js';
-import { returnErrors } from './errorActions.js'
-
+import { clearErrors, returnErrors } from './errorActions.js'
 import {
     // GET_ITEMS,
     ADD_ITEM,
@@ -24,9 +23,9 @@ import {
     ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE,
     ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE,
     SERVICE_UNAVAILABLE,
-    FAILED_RETRIEVE_BB_ITEMS_ONLINE_PRICE,
-    FAILED_RETRIEVE_MS_ITEMS_ONLINE_PRICE,
-    GET_ERRORS
+    RETRIEVE_BB_ITEMS_ONLINE_PRICE_ERROR,
+    RETRIEVE_MS_ITEMS_ONLINE_PRICE_ERROR,
+    GET_ERRORS,
 } from './types.js';
 import { tokenConfig } from './authActions.js';
 import { clearMessages, returnMessages } from './messageActions.js';
@@ -85,7 +84,7 @@ const setRouteOnStore = (store) => {
                     ITEMS_ONLINE_PRICE_LOADING: MS_ITEMS_ONLINE_PRICE_LOADING,
                     CLEAR_ERRORS: CLEAR_MICROSOFT_ERRORS,
                     ON_RETRIEVED_ONLINE_PRICE: ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE,
-                    FAILED_RETRIEVE_ONLINE_PRICE: FAILED_RETRIEVE_MS_ITEMS_ONLINE_PRICE
+                    FAILED_RETRIEVE_ONLINE_PRICE: RETRIEVE_MS_ITEMS_ONLINE_PRICE_ERROR
                 }
             }
         case BESTBUY:
@@ -98,7 +97,7 @@ const setRouteOnStore = (store) => {
                     ITEMS_ONLINE_PRICE_LOADING: BB_ITEMS_ONLINE_PRICE_LOADING,
                     CLEAR_ERRORS: CLEAR_BESTBUY_ERRORS,
                     ON_RETRIEVED_ONLINE_PRICE: ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE,
-                    FAILED_RETRIEVE_BB_ITEMS_ONLINE_PRICE: FAILED_RETRIEVE_BB_ITEMS_ONLINE_PRICE
+                    RETRIEVE_BB_ITEMS_ONLINE_PRICE_ERROR: RETRIEVE_BB_ITEMS_ONLINE_PRICE_ERROR
                 }
             }
         default:
@@ -136,7 +135,7 @@ export const handleErrorOnRetrievedItemsOnlinePrice = (store, errorMsg) => dispa
     const { type } = setRouteOnStore(store);
     if (type) {
         dispatch(clearErrors(type.CLEAR_ERRORS))
-        dispatch(returnErrors(errorMsg, 502))
+        dispatch(returnErrors(errorMsg, 502, RETRIEVE_MS_ITEMS_ONLINE_PRICE_ERROR))
     }
 }
 
@@ -205,10 +204,4 @@ export const addItemSpec = (record, store) => (dispatch, getState) => {
         .catch(e => {
             dispatch(returnErrors(e.response.data.msg, e.response.status))
         })
-}
-
-const clearErrors = (ERROR_TYPE) => {
-    return {
-        type: ERROR_TYPE
-    }
 }

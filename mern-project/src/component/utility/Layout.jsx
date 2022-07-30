@@ -1,29 +1,28 @@
-import { PageHeader } from "antd";
+import { Divider, PageHeader } from "antd";
 import { useHistory } from "react-router-dom";
 
 
-export const ContentHeader = ({ title }) => {
+export const ContentHeader = ({ title, subTitle = "" }) => {
 
     const history = useHistory();
 
     return (
-        <PageHeader
-            className="site-page-header"
-            onBack={() => history.goBack()}
-            title={title}
-            subTitle=""
-        />
-        // <Title level={4}>{title}</Title>
+        <Divider plain>
+            <PageHeader
+                className="site-page-header"
+                onBack={() => history.goBack()}
+                title={title}
+                subTitle={subTitle}
+            />
+        </Divider>
     );
 }
 
 export const SubContentHeader = ({ title }) => {
     return (
-        <PageHeader
-            className="site-page-header"
-            title={title}
-        // subTitle=""
-        />
+        <Divider plain>
+            <PageHeader className="site-page-header" title={title} />
+        </Divider>
 
     );
 }

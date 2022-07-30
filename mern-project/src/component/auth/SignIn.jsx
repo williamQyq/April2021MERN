@@ -104,7 +104,7 @@ class SignIn extends React.Component {
     render() {
 
         return (
-            <Layout className="login-layout">
+            <Layout className="login-layout" style={{minHeight:"100vh"}}>
                 <Sider {...siderLayout} />
                 <Content className="login-content">
                     <Form

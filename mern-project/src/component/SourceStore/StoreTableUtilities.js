@@ -25,6 +25,7 @@ import { useState } from "react";
 
 import { ContentHeader } from "component/utility/Layout.jsx";
 import { storeType } from "./data.js";
+import './Store.scss';
 
 const { Text } = Typography;
 const { Search } = Input;
@@ -291,6 +292,8 @@ export const StoreOperationMenu = (props) => {
             defaultSelectedKeys={['controller']}
             switcherIcon={< DownOutlined />}
             treeData={treeData}
+            selectable={false}
+            style={{ "cursor": "auto" }}
         />
 
     );

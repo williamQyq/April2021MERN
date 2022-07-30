@@ -22,31 +22,34 @@ console.log('*********',__dirname);
         const db = client.db("DB");
         // const testdb = client.db("Product_Info")
 
-        const query = {
-            "upc":{$exists:true}
-        }
         // const query = {
-            // "price_timestamps.date":{
-            //     $gt:ISODate('2022-05-10')
-            // }
+        //     "upc":{$exists:true}
+        // }
+        const query = {
+            "price_timestamps.date":{
+                $gte:new Date('2022-07-28'),
+                $lt:new Date('2022-07-29')
+            }
             // _id: ObjectID('61a1286b9b530e8626d9ec8b'),
             // "price_timestamps.date":{
             //     $gte: new Date('2022-05-10')
             // }
-        // }
+        }
         
-        // const update = {
-        //     $pull:{
-        //         "price_timestamps":{
-        //             date:{
-        //                 $gte: new Date('2022-05-10')
-        //             }
-        //         }
-        //     }
-        // }
+        const update = {
+            $pull:{
+                "price_timestamps":{
+                    date:{
+                        $gte: new Date('2022-07-28'),
+                        $lt:new Date('2022-07-29')
+                    }
+                }
+            }
+        }
 
-        const doc = await db.collection(process.env.DB_COLLECTION_MICROSOFT).findOne(query)
+        // const doc = await db.collection(process.env.DB_COLLECTION_MICROSOFT).find(query).toArray()
         // const doc = await testdb.collection("Pc_info").findOneAndUpdate(query,update)
+        const doc = await db.collection(process.env.DB_COLLECTION_MICROSOFT).updateMany(query,update)
         console.log(JSON.stringify(doc,null,4))
 
     } catch(e) {

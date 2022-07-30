@@ -31,7 +31,7 @@ class MS extends React.Component {
         socket.on(socketType.ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE, (data) => {
             this.props.handleOnRetrievedItemsOnlinePrice(this.state.store, data.msg)
         })
-        socket.on(socketType.FAILED_RETRIEVE_MS_ITEMS_ONLINE_PRICE, (data) => {
+        socket.on(socketType.RETRIEVE_MS_ITEMS_ONLINE_PRICE_ERROR, (data) => {
             this.props.handleErrorOnRetrievedItemsOnlinePrice(this.state.store, data.msg)
         })
     }

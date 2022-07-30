@@ -1,9 +1,8 @@
-
 .ant-btn-primary:focus {
   background-color: #1890ff !important;
 }
 
-.action-link > *{
+.action-link > * {
   padding: 0 6px;
 }
 
@@ -13,6 +12,9 @@
 }
 .ant-dropdown-menu-item {
   padding: 0px;
+}
+.ant-tree .ant-tree-node-content-wrapper {
+  cursor: auto;
 }
 .ant-select-focused .ant-select-selector,
 .ant-select-selector:focus,
@@ -25,14 +27,14 @@
   margin: 8px 0;
 }
 
-.most-viewed-cards{
-  &.ant-card-hoverable{
+.most-viewed-cards {
+  &.ant-card-hoverable {
     cursor: auto;
   }
-  .card-cover{
+  .card-cover {
     height: 150px;
 
-    .card-image{
+    .card-image {
       display: block;
       max-width: 200px;
       max-height: 150px;
@@ -40,8 +42,7 @@
       margin-bottom: 0;
     }
   }
-  .card-content{
+  .card-content {
     text-align: center;
   }
 }
- 

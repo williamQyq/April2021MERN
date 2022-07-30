@@ -39,7 +39,7 @@ router.get('/getOnlinePrice', auth, (req, res) => {
         })
         .catch(err => {
             res.status(500).json({ msg: `Fail to retrive Microsoft Laptop Price \n\n${err}` });
-            io.sockets.emit("FAILED_RETRIEVED_MS_ITEMS_ONLINE_PRICE", { msg: `Fail to retrive Microsoft Laptop Price \n\n${err}` });
+            io.sockets.emit("RETRIEVE_MS_ITEMS_ONLINE_PRICE_ERROR", { msg: `Fail to retrive Microsoft Laptop Price \n\n${err}` });
         })
 })
 

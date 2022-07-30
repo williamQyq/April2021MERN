@@ -49,7 +49,7 @@ class Home extends React.Component {
     const { collapsed } = this.state;
     return (
       <Router>
-        <Layout className="main-layout">
+        <Layout className="main-layout" style={{minHeight:"100vh"}}>
           <HomeSider path={path} isCollapsed={collapsed} toggle={this.toggle} />
           <Layout className="site-layout">
             {/* Home Header  */}

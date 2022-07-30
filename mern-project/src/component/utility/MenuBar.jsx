@@ -4,6 +4,7 @@ import { Menu, Tree } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import FileUpload from 'component/utility/FileUpload.jsx';
 import { ContentHeader } from 'component/utility/Layout.jsx';
+import './MenuBar.scss';
 
 const MenuBar = (props) => {
     const [selectedMenuKey, setSelectedMenuKey] = useState("upload");
@@ -51,6 +52,7 @@ const MenuBar = (props) => {
             defaultSelectedKeys={['controller']}
             switcherIcon={< DownOutlined />}
             treeData={treeData}
+            selectable={false}
         />
 
     );

@@ -72,9 +72,10 @@ export default class Stores {
     async evaluateElementsText(page, XPATH_EXPR) {
         await page.waitForXPath(XPATH_EXPR)
         const elements = await page.$x(XPATH_EXPR)
-        return await page.evaluate((...elements) =>
+        const textResult = await page.evaluate((...elements) =>
             (elements.map(e => e.textContent))
             , ...elements)
+        return textResult;
     }
 
     //@param: puppeter page, xpath expression, attribute id
@@ -82,11 +83,11 @@ export default class Stores {
     async evaluateItemAttribute(page, XPATH_EXPR, ATTRIBUTE_ID) {
         await page.waitForXPath(XPATH_EXPR)
         const elements = await page.$x(XPATH_EXPR)
-        let res = await page.evaluate((ATTRIBUTE_ID, ...elements) =>
+        const res = await page.evaluate((ATTRIBUTE_ID, ...elements) =>
             (elements.map(e => e.getAttribute(ATTRIBUTE_ID)))
             , ATTRIBUTE_ID, ...elements)
 
-        return res
+        return res;
 
     }
     //parse evaluate result no need
