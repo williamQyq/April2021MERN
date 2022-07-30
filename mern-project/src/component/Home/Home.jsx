@@ -1,5 +1,5 @@
 import React from 'react';
-import 'component/Home/Home.scss';
+import './Home.scss';
 import 'antd/dist/antd.min.css';
 import { Layout } from 'antd';
 import {
