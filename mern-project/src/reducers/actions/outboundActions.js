@@ -1,4 +1,5 @@
 import axios from 'axios';
+import store from 'store.js';
 import { tokenConfig } from './authActions.js';
 import { returnErrors } from './errorActions.js';
 import { clearMessages, returnMessages } from './messageActions.js';
@@ -45,9 +46,11 @@ export const getInventoryReceived = () => (dispatch, getState) => {
             dispatch(returnErrors(err.response.data.msg, err.response.status));
         })
 }
+
+//axios get needtoship documents for inifite scroll
 export const getNeedToShipFromShipment = (docLimits, docSkip) => (dispatch, getState) => {
     dispatch(setShipmentItemsLoading());
-    axios.get(`/api/wms/getNeedToShipItems/limit/${docLimits}/skip/${docSkip}`, { ...tokenConfig(getState), params: { docLimits, docSkip } })
+    axios.get(`/api/wms/shipment/getNeedToShipItems/limit/${docLimits}/skip/${docSkip}`, { ...tokenConfig(getState), params: { docLimits, docSkip } })
         .then(res => {
             dispatch({
                 type: GET_SHIPMENT_ITEMS,
@@ -61,6 +64,15 @@ export const getNeedToShipFromShipment = (docLimits, docSkip) => (dispatch, getS
             })
             dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS))
         })
+}
+
+export const getNeedToShipPendingAndTotalCount = async (orgNm = "M") => {
+    const getState = store.getState;
+    return axios.get(`/api/wms/shipment/getPendingAndTotal/${orgNm}`, { ...tokenConfig(getState), params: { orgNm } })
+        .then(res => {
+            const { pending, total } = res.data;
+            return { pending, total }
+        });
 }
 
 const setInventoryReceivedLoading = () => {

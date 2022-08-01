@@ -8,7 +8,7 @@ import {
 import { io } from "socket.io-client";
 
 const socket = io('ws://localhost:3000', {
-    reconnection: true,
+    // reconnection: true,
     transportOptions: ["websocket"]
 })
 socket.on('connect', () => {
@@ -16,6 +16,13 @@ socket.on('connect', () => {
 })
 socket.on('reconnect', (attemp) => {
     console.log(`${socket.id} tried reconnect ${attemp}`)
+})
+socket.on('disconnect', () => {
+    console.log(`socket disconnected. Reconnecting...`)
+    // socket.connect();
+})
+socket.on('connect_error', (err) => {
+    console.log(`socket exception: ${err}`)
 })
 export const SocketContext = createContext(socket);
 export const socketType = {

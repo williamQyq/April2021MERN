@@ -67,7 +67,7 @@ router.get('/inventoryReceived/syncGsheet', auth, (req, res) => {
 
 })
 
-router.get('/getNeedToShipItems/limit/:docLimit/skip/:docSkip', auth, (req, res) => {
+router.get('/shipment/getNeedToShipItems/limit/:docLimit/skip/:docSkip', auth, (req, res) => {
     const { docLimit, docSkip } = req.params;
     let wms = new WMSDatabaseApis();
     wms.getNeedToShipFromShipment(Number(docLimit), Number(docSkip))// params in req are strings, mongodb limit query accepts number only
@@ -78,6 +78,19 @@ router.get('/getNeedToShipItems/limit/:docLimit/skip/:docSkip', auth, (req, res)
         .catch((err => {
             res.status(500).json({ msg: "Fail to get Shipment" })
         }))
+})
+router.get('/shipment/getPendingAndTotal/:orgNm', auth, (req, res) => {
+    const { orgNm } = req.params;
+    let wms = new WMSDatabaseApis();
+    wms.getPendingShipmentInfoByOrgNm(orgNm)
+        .then((pendingInfo) => {
+            if (pendingInfo.total > 0) {
+                const { pending, total } = pendingInfo;
+                res.json({ pending, total })
+            } else {
+                res.json({ pending: -1, total: -1 })    //no shipment by today
+            }
+        })
 })
 
 router.post('/inventoryReceive/updateRecOnTracking', auth, (req, res) => {

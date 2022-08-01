@@ -5,7 +5,6 @@ import { AmzProdPricing, AmzIdentifier } from '../models/Amz.js';
 import wms from '#wms/wmsDatabase.js';
 import mongoose from 'mongoose';
 
-
 const { ObjectId } = mongoose.Types;
 import {
     PROJ_ITEM,
@@ -16,7 +15,8 @@ import {
     LAST_PRICE,
     GET_INVENTORY_RECEIVED_HALF_MONTH_AGO,
     GET_NEED_TO_SHIP_ITEMS_BY_TODAY,
-    COUNT_NEED_TO_SHIP_ITEMS_BY_TODAY
+    COUNT_NEED_TO_SHIP_ITEMS_BY_TODAY,
+    COUNT_PENDING_SHIPMENT_BY_TODAY
 } from './aggregate.js';
 import GenerateGSheetApis from '../../bin/gsheet/gsheet.js';
 import moment from 'moment';
@@ -266,10 +266,23 @@ export class WMSDatabaseApis {
         return needToShipItemsByToday;
     }
 
+    //Get all org pending shipment Info by default.
+    async getPendingShipmentInfoByOrgNm(orgNm) {
+        const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
+        let pendingShipmentCountByToday = await collection.aggregate(COUNT_PENDING_SHIPMENT_BY_TODAY(orgNm)).toArray();
+
+        //handle no shipment document by today
+        if (pendingShipmentCountByToday.length === 0) {
+            return ({ pending: -1, total: -1 });
+        }
+        const { pending, total } = pendingShipmentCountByToday[0];
+        return { pending, total };
+    }
     async countNeedToShipFromShipment() {
         const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
         let shipmentCountByToday = await collection.aggregate(COUNT_NEED_TO_SHIP_ITEMS_BY_TODAY).toArray();
-        return shipmentCountByToday[0].shipmentCount;
+        let count = shipmentCountByToday.length > 0 ? shipmentCountByToday[0].shipmentCount : 0
+        return count;
     }
 
     async updateInventoryReceiveOrgNmOnTracking(tracking, newOrgNm) {
