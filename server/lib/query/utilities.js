@@ -300,12 +300,25 @@ export class GsheetApis extends GenerateGSheetApis {
         spreadsheetId: "14lDiRT1Hfwfd63wvPBXoJGluXs66LejPO9nMYCc-Jok",
         range: "forUpload!A:F",
         order: {
-            _id: null,
-            mdfTmEst: null,
-            orgNm: null,
-            UPC: null,
-            trNo: null,
-            qty: null
+            _id: undefined,
+            mdfTmEst: undefined,
+            orgNm: undefined,
+            UPC: undefined,
+            trNo: undefined,
+            qty: undefined
+        }
+    }
+    static _needToShipSpreadSheet = {
+        spreadsheetId: "1Pgk6x0Dflq6FwMLk2qIyU9QgHH8RZNneYWLWMk3J2qM",
+        ranges: ["needtoship!I:I", "needtoship!J:J", "needtoship!AV:AV", "needtoship!AD:AD", "needtoship!AE:AF", "needtoship!AG:AH", "needtoship!AI:AJ", "needtoship!AK:AL"],
+        order: {
+            amzOrderId: undefined,
+            tracking: undefined,
+            upc1: undefined,
+            bundleUpc1: undefined,
+            bundleUpc2: undefined,
+            bundleUpc3: undefined,
+            RMAUpc: undefined
         }
     }
     constructor() {
@@ -330,17 +343,22 @@ export class GsheetApis extends GenerateGSheetApis {
 
     }
 
-    async readSheet(spreadSheetDetail, range) {
-        const { spreadsheetId } = spreadSheetDetail;
+    async readSheet(spreadsheetId, range) {
         const spreadSheet = await this._getSpreadSheet();
-
-        let readData = await spreadSheet.values.get({
-            auth,
+        let response = (await spreadSheet.values.get({
+            spreadsheetId, range
+        })).data;
+        return response;
+    }
+    async batchReadSheet(spreadSheetDetail) {
+        const { spreadsheetId, ranges } = spreadSheetDetail;
+        const spreadSheet = await this._getSpreadSheet();
+        let response = (await spreadSheet.values.batchGet({
             spreadsheetId,
-            range
-        }).data
-
-        return readData
+            ranges,
+            majorDimension:"ROWS"
+        })).data
+        return response
     }
     createArrayOfArrayFromDocumentsInOrder(spreadSheetDetail, docs) {
         let aoa;

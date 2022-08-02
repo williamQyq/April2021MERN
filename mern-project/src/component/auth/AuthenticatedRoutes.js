@@ -38,22 +38,22 @@ const routes = [
   },
   {
     path: 'app/Inbound',
-    component: lazy(() => import('component/InBound')),
+    component: lazy(() => import('component/Warehouse/OutBound.jsx')),
     exact: true
   },
   {
     path: 'app/outbound',
-    component: lazy(() => import('component/OutBound/OutBound.jsx')),
+    component: lazy(() => import('component/Warehouse/OutBound.jsx')),
     exact: true
   },
   {
     path: 'app/outbound/needToShipUpload',
-    component: lazy(() => import('component/OutBound/NeedToShipUpload.jsx')),
+    component: lazy(() => import('component/Warehouse/NeedToShipUpload.jsx')),
     exact: true
   },
   {
     path: 'app/outbound/inventoryReceived',
-    component: lazy(() => import('component/OutBound/InventoryReceived.jsx')),
+    component: lazy(() => import('component/Warehouse/InventoryReceived.jsx')),
     exact: true
   },
   {

@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { response } from 'express';
 const router = express.Router();
 import auth from '#middleware/auth.js';
 import wms from '#wms/wmsDatabase.js';
@@ -151,6 +151,16 @@ router.get('/inventoryReceive/downloadSampleXlsx', (req, res) => {
     return workbook.xlsx.write(res).then(() => {
         res.status(200).end();
     });
+})
+
+router.get('/needToShip/syncGsheet', auth, (req, res) => {
+    let gsheet = new GsheetApis();
+
+    gsheet.batchReadSheet(GsheetApis._needToShipSpreadSheet).then((res) => {
+        console.log(res.valueRanges[0].values)
+    })
+
+    res.json({ msg: "success" })
 })
 
 export default router;

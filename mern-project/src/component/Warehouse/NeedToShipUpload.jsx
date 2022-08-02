@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { NeedToShipMenu } from 'component/OutBound/Menus.jsx';
+import { NeedToShipMenu } from 'component/Warehouse/Menus.jsx';
 import { getNeedToShipFromShipment } from 'reducers/actions/outboundActions.js';
 import AwaitingShipmentList from './AwaitingShipmentList';
 

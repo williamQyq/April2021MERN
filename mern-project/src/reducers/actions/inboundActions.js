@@ -48,12 +48,9 @@ export const updateInventoryReceivedByUpload = (file, onSuccess, onError) => (di
 }
 
 export const downloadInventoryReceivedUploadSample = () => dispatch => {
-
     axios.get('/api/wms/inventoryReceive/downloadSampleXlsx', { responseType: "blob" }).then((res) => {
         fileDownload(res.data, 'inventoryReceived.xlsx')
     })
-
-
 }
 
 export const uploadNeedToShip = (file, onSuccess, onError) => (dispatch, getState) => {
@@ -61,3 +58,9 @@ export const uploadNeedToShip = (file, onSuccess, onError) => (dispatch, getStat
     dispatch(returnMessages("Service is currently unavilable.", 202, SERVICE_UNAVAILABLE))
 }
 
+export const syncFromNeedToShipGsheet = () => (dispatch, getState) => {
+    axios.get('/api/wms/needToShip/syncGsheet', tokenConfig(getState))
+        .then((res) => {
+
+        })
+}

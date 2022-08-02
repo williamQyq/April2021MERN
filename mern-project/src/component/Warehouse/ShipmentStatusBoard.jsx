@@ -4,7 +4,6 @@ const { Text } = Typography;
 const ShipmentStatusBoard = (props) => {
     const { shipmentInfo } = props;
     const { pending, total } = shipmentInfo;
-
     const getPercent = (pendingCount, totalCount) => (
         ((totalCount - pendingCount) / totalCount).toFixed(2) * 100
     )

@@ -2,22 +2,12 @@ import React from 'react';
 import { useState } from 'react';
 import { Menu, Tree } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
-import FileUpload from 'component/utility/FileUpload.jsx';
 import { ContentHeader } from 'component/utility/Layout.jsx';
 import './MenuBar.scss';
 
 const MenuBar = (props) => {
-    const [selectedMenuKey, setSelectedMenuKey] = useState("upload");
-    const { customizedUpload, handleClick, menuItems, title } = props
-
-    const switchContent = (key) => {
-        switch (key) {
-            case 'upload':
-                return <FileUpload customizedUpload={customizedUpload} />
-            default:
-                break;
-        }
-    }
+    const { handleContentSwitch, handleClick, menuItems, title, defaultSelectedKeys } = props
+    const [selectedMenuKey, setSelectedMenuKey] = useState(defaultSelectedKeys);
 
     const treeData = [
         {
@@ -28,7 +18,7 @@ const MenuBar = (props) => {
                     key: 'menu',
                     title: <>
                         <Menu
-                            onClick={e => {
+                            onClick={(e) => {
                                 handleClick(e.key);
                                 setSelectedMenuKey(e.key);
                             }}
@@ -37,7 +27,7 @@ const MenuBar = (props) => {
                             items={menuItems}
                         />
                         {
-                            switchContent(selectedMenuKey)
+                            handleContentSwitch(selectedMenuKey)
                         }
                     </>
                 }
@@ -54,7 +44,6 @@ const MenuBar = (props) => {
             treeData={treeData}
             selectable={false}
         />
-
     );
 
 }

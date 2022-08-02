@@ -16,7 +16,7 @@ const AwaitingShipmentList = (props) => {
             SetPending(pendingShipmentInfo.pending);
             SetTotal(pendingShipmentInfo.total);
         });
-    },[])
+    }, [])
 
     return (
         <>
@@ -28,7 +28,9 @@ const AwaitingShipmentList = (props) => {
                     height: "80vh",
                     overflow: 'auto',
                     padding: '0 16px',
-                    border: '1px solid rgba(140, 140, 140, 0.35)',
+                    // border: '1px solid #fbfbfd',
+                    background: "linear-gradient(145deg, #e2e2e4, #ffffff)",
+                    boxShadow: "5px 5px 10px #9c9c9d"
                 }}
             >
                 <InfiniteScroll

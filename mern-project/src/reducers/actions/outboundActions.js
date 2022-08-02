@@ -69,10 +69,7 @@ export const getNeedToShipFromShipment = (docLimits, docSkip) => (dispatch, getS
 export const getNeedToShipPendingAndTotalCount = async (orgNm = "M") => {
     const getState = store.getState;
     return axios.get(`/api/wms/shipment/getPendingAndTotal/${orgNm}`, { ...tokenConfig(getState), params: { orgNm } })
-        .then(res => {
-            const { pending, total } = res.data;
-            return { pending, total }
-        });
+        .then(res => res.data);
 }
 
 const setInventoryReceivedLoading = () => {

@@ -37,10 +37,11 @@ class BB extends React.Component {
         })
 
         socket.on(socketType.ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE, (data) => {
-            this.props.handleOnRetrievedOnlinePrice(this.props.store, data.msg);
+            console.log(this.state.store, data)
+            this.props.handleOnRetrievedItemsOnlinePrice(this.state.store, data.msg);
         })
-        socket.on(socketType.FAILED_RETRIEVE_BB_ITEMS_ONLINE_PRICE, (data) => {
-            this.props.handleOnRetrievedOnlinePrice(this.props.store, data.msg);
+        socket.on(socketType.RETRIEVE_BB_ITEMS_ONLINE_PRICE_ERROR, (data) => {
+            this.props.handleErrorOnRetrievedItemsOnlinePrice(this.state.store, data.msg);
         })
     }
     componentWillUnmount() {
@@ -119,6 +120,8 @@ BB.prototypes = {
     getBBItems: PropTypes.func.isRequired,
     getMostViewedOnCategoryId: PropTypes.func.isRequired,
     getAlsoBoughtOnSku: PropTypes.func.isRequired,
+    handleOnRetrievedItemsOnlinePrice: PropTypes.func.isRequired,
+    handleErrorOnRetrievedItemsOnlinePrice: PropTypes.func.isRequired,
     items: PropTypes.array.isRequired,
     mostViewedItems: PropTypes.array.isRequired,
     tableState: PropTypes.object.isRequired,

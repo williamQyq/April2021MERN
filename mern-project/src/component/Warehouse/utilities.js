@@ -35,6 +35,13 @@ export const needToShipColumns =
             editable: true,
             searchable: true,
             width: "10%"
+        },
+        {
+            title: "upc",
+            dataIndex: "upc",
+            editable: true,
+            searchable: true,
+            width: "10%"
         }
     ]
 

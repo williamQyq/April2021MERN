@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Form } from 'antd';
-import { defaultSettings, inventoryReceivedColumns } from 'component/OutBound/utilities.js';
+import { defaultSettings, inventoryReceivedColumns } from 'component/Warehouse/utilities.js';
 import { InventoryReceivedMenu } from './Menus.jsx';
 import FormTable from 'component/utility/FormTable.jsx';
 import { getInventoryReceived } from 'reducers/actions/outboundActions.js';
@@ -22,7 +22,7 @@ class InventoryReceived extends React.Component {
     }
 
     componentWillUnmount() {
-     
+
     }
     isLoading = () => {
         const { loading } = this.props;

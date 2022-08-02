@@ -2,6 +2,7 @@ import React from 'react';
 import { AreaChartOutlined, CloudSyncOutlined, DownloadOutlined, LoadingOutlined } from '@ant-design/icons';
 import {
     downloadInventoryReceivedUploadSample,
+    syncFromNeedToShipGsheet,
     updateInventoryReceivedByUpload,
     uploadNeedToShip
 } from 'reducers/actions/inboundActions.js';
@@ -9,25 +10,53 @@ import MenuBar from 'component/utility/MenuBar.jsx';
 import { useDispatch, useSelector } from 'react-redux';
 import { returnErrors } from 'reducers/actions/errorActions';
 import { syncInventoryReceivedWithGsheet } from 'reducers/actions/outboundActions.js';
+import FileUpload from 'component/utility/FileUpload.jsx';
+import NeedToShipTable from 'component/Warehouse/NeedToShipTable.jsx';
 
 export const NeedToShipMenu = () => {
+    const dispatch = useDispatch();
     const needToShipMenuItems = [
         {
-            key: 'upload',
+            key: 'uploadNeedToShip',
             icon: <AreaChartOutlined />,
-            label: 'Upload'
+            label: 'Upload Need To Ship'
+        },
+        {
+            key: 'loadFromGsheet',
+            icon: <AreaChartOutlined />,
+            label: 'Load From Gsheet'
         }
     ]
-    const handleClick = () => {
-
+    const handleClick = (key) => {
+        switch (key) {
+            case "uploadNeedToShip":
+                break;
+            case "loadFromGsheet":
+                // dispatch(syncFromNeedToShipGsheet());
+                break;
+            default:
+                console.warn(`clicked key not found `, key);
+                return;
+        }
     }
-    
+
+    const handleContentSwitch = (key) => {
+        switch (key) {
+            case 'uploadNeedToShip':
+                return <FileUpload customizedUpload={uploadNeedToShip} />
+            case 'loadFromGsheet':
+                return <NeedToShipTable />
+            default:
+                return;
+        }
+    }
     return (
         <MenuBar
             handleClick={handleClick}
-            customizedUpload={uploadNeedToShip}
+            handleContentSwitch={handleContentSwitch}
             menuItems={needToShipMenuItems}
             title="Need To Ship"
+            defaultSelectedKey="uploadNeedToShip"
         />
     )
 }
@@ -72,10 +101,18 @@ export const InventoryReceivedMenu = () => {
         }
     }
 
+    const handleContentSwitch = (key) => {
+        switch (key) {
+            case "upload":
+                return <FileUpload customizedUpload={updateInventoryReceivedByUpload} />
+            default:
+                return;
+        }
+    }
     return (
         <MenuBar
             handleClick={handleClick}
-            customizedUpload={updateInventoryReceivedByUpload}
+            handleContentSwitch={handleContentSwitch}
             menuItems={inventoryReceivedMenuItems}
             title="Inventory Received"
         />
