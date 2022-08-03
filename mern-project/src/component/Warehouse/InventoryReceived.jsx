@@ -101,9 +101,12 @@ InventoryReceived.prototypes = {
     loading: PropTypes.bool.isRequired,
     inventoryReceivedItems: PropTypes.array.isRequired
 }
-const mapStateToProps = (state) => ({
-    loading: state.warehouse.inventoryReceivedLoading,
-    inventoryReceivedItems: state.warehouse.inventoryReceivedItems
-})
+const mapStateToProps = (state) => {
+    const inventoryReceived = state.warehouse.inventoryReceived;
+    return ({
+        loading: inventoryReceived.inventoryReceivedLoading,
+        inventoryReceivedItems: inventoryReceived.inventoryReceivedItems
+    })
+}
 
 export default connect(mapStateToProps, { getInventoryReceived })(InventoryReceived);

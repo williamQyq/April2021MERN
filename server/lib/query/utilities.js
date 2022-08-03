@@ -16,7 +16,8 @@ import {
     GET_INVENTORY_RECEIVED_HALF_MONTH_AGO,
     GET_NEED_TO_SHIP_ITEMS_BY_TODAY,
     COUNT_NEED_TO_SHIP_ITEMS_BY_TODAY,
-    COUNT_PENDING_SHIPMENT_BY_TODAY
+    COUNT_PENDING_SHIPMENT_BY_TODAY,
+    GET_UNVERIFIED_SHIPMENT
 } from './aggregate.js';
 import GenerateGSheetApis from '../../bin/gsheet/gsheet.js';
 import moment from 'moment';
@@ -293,6 +294,12 @@ export class WMSDatabaseApis {
         return updateOrgNmByTracking;
     }
 
+    async getShippedNotVerifiedShipment(dateMin, dateMax) {
+        const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
+        let unverifiedShipment = await collection.aggregate(GET_UNVERIFIED_SHIPMENT(dateMin, dateMax)).toArray();
+        return unverifiedShipment;
+    }
+
 }
 
 export class GsheetApis extends GenerateGSheetApis {
@@ -356,7 +363,7 @@ export class GsheetApis extends GenerateGSheetApis {
         let response = (await spreadSheet.values.batchGet({
             spreadsheetId,
             ranges,
-            majorDimension:"ROWS"
+            majorDimension: "ROWS"
         })).data
         return response
     }

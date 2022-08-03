@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { NeedToShipMenu } from 'component/Warehouse/Menus.jsx';
-import { getNeedToShipFromShipment } from 'reducers/actions/outboundActions.js';
+import { getNeedToShipFromShipmentWithLimit } from 'reducers/actions/outboundActions.js';
 import AwaitingShipmentList from './AwaitingShipmentList';
 
 class NeedToShipUpload extends React.Component {
@@ -20,7 +20,7 @@ class NeedToShipUpload extends React.Component {
 
     componentDidMount() {
         const { docLimits, docSkip } = this.state;
-        this.props.getNeedToShipFromShipment(docLimits, docSkip);
+        this.props.getNeedToShipFromShipmentWithLimit(docLimits, docSkip);
     }
     componentDidUpdate(prevProps) {
         const { docLimits, docSkip, data } = this.state;
@@ -40,7 +40,7 @@ class NeedToShipUpload extends React.Component {
             return;
         }
         this.setState({ loading: true })
-        this.props.getNeedToShipFromShipment(docLimits, docSkip)
+        this.props.getNeedToShipFromShipmentWithLimit(docLimits, docSkip)
     }
 
     render() {
@@ -50,7 +50,7 @@ class NeedToShipUpload extends React.Component {
             <>
                 <NeedToShipMenu />
                 <AwaitingShipmentList data={data} loadMore={this.loadMore} dataLengthLimit={totalNeedToShipItemsCount} />
-                
+
             </>
 
         );
@@ -60,7 +60,7 @@ class NeedToShipUpload extends React.Component {
 NeedToShipUpload.prototypes = {
     needToShipItems: PropTypes.array.isRequired,
     needToShipItemsLoading: PropTypes.bool.isRequired,
-    getNeedToShipFromShipment: PropTypes.func.isRequired,
+    getNeedToShipFromShipmentWithLimit: PropTypes.func.isRequired,
 }
 const mapStateToProps = (state) => ({
     totalNeedToShipItemsCount: state.warehouse.needToShip.totalShipmentCount,
@@ -68,4 +68,4 @@ const mapStateToProps = (state) => ({
     needToshipItemsLoading: state.warehouse.needToShip.itemsLoading
 })
 
-export default connect(mapStateToProps, { getNeedToShipFromShipment })(NeedToShipUpload);
+export default connect(mapStateToProps, { getNeedToShipFromShipmentWithLimit })(NeedToShipUpload);

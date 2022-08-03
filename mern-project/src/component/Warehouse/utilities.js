@@ -42,7 +42,52 @@ export const needToShipColumns =
             editable: true,
             searchable: true,
             width: "10%"
-        }
+        },
+        {
+            title: "upc qty",
+            dataIndex: "upc qty",
+            editable: true,
+            width: "10%"
+        },
+        {
+            title: "bundle I",
+            dataIndex: "bundle_1",
+            editable: true,
+            searchable: true,
+            width: "10%"
+        },
+        {
+            title: "bundle I Qty",
+            dataIndex: "bundle_1_qty",
+            editable: true,
+            width: "10%"
+        },
+        {
+            title: "bundle II",
+            dataIndex: "bundle_2",
+            editable: true,
+            searchable: true,
+            width: "10%"
+        },
+        {
+            title: "bundle II Qty",
+            dataIndex: "bundle_2_qty",
+            editable: true,
+            width: "10%"
+        },
+        {
+            title: "RMA Item",
+            dataIndex: "rmaItem",
+            editable: true,
+            searchable: true,
+            width: "10%"
+        },
+        {
+            title: "RMA Item Qty",
+            dataIndex: "rmaItemQty",
+            editable: true,
+            width: "10%"
+        },
     ]
 
 export const inventoryReceivedColumns = [

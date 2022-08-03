@@ -22,6 +22,7 @@ export const NeedToShipMenu = () => {
             label: 'Upload Need To Ship'
         },
         {
+            disabled: true,
             key: 'loadFromGsheet',
             icon: <AreaChartOutlined />,
             label: 'Load From Gsheet'
@@ -47,7 +48,7 @@ export const NeedToShipMenu = () => {
             case 'loadFromGsheet':
                 return <NeedToShipTable />
             default:
-                return;
+                return <NeedToShipTable />
         }
     }
     return (

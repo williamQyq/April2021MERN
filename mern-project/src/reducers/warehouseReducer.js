@@ -1,6 +1,8 @@
 import {
     GET_INVENTORY_RECEIVED_ITEMS,
     GET_SHIPMENT_ITEMS,
+    GET_SHIPMENT_ITEMS_WITH_LIMIT,
+    GET_SHIPPED_NOT_VERIFIED_SHIPMENT,
     INVENTORY_RECEIVED_LOADING,
     SHIPMENT_ITEMS_LOADING,
     SYNC_INVENTORY_RECEIVED_WITH_GSHEET
@@ -8,11 +10,14 @@ import {
 } from './actions/types';
 
 const initialState = {
-    inventoryReceivedItems: [],
-    inventoryReceivedLoading: false,
+    inventoryReceived: {
+        inventoryReceivedItems: [],
+        inventoryReceivedLoading: false
+    },
     needToShip: {
         items: [],
-        itemsLoading: false
+        itemsLoading: false,
+        shippedNotVerifiedItems: []
     }
 }
 
@@ -34,7 +39,7 @@ export default function Reducer(state = initialState, action) {
                 ...state,
                 inventoryReceivedLoading: true
             };
-        case GET_SHIPMENT_ITEMS:
+        case GET_SHIPMENT_ITEMS_WITH_LIMIT:
             return {
                 ...state,
                 needToShip: {
@@ -51,6 +56,11 @@ export default function Reducer(state = initialState, action) {
                     ...state.needToShip,
                     itemsLoading: true
                 }
+            }
+        case GET_SHIPPED_NOT_VERIFIED_SHIPMENT:
+            return {
+                ...state,
+                shippedNotVerifiedItems: action.payload
             }
         default:
             return Object.assign({}, state, {

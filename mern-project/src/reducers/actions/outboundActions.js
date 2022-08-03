@@ -8,6 +8,8 @@ import {
     // GET_INVENTORY_RECEIVED,
     GET_INVENTORY_RECEIVED_ITEMS,
     GET_SHIPMENT_ITEMS,
+    GET_SHIPMENT_ITEMS_WITH_LIMIT,
+    GET_SHIPPED_NOT_VERIFIED_SHIPMENT,
     INVENTORY_RECEIVED_LOADING,
     SHIPMENT_ITEMS_LOADING,
     SYNC_INVENTORY_RECEIVED_WITH_GSHEET
@@ -48,12 +50,12 @@ export const getInventoryReceived = () => (dispatch, getState) => {
 }
 
 //axios get needtoship documents for inifite scroll
-export const getNeedToShipFromShipment = (docLimits, docSkip) => (dispatch, getState) => {
+export const getNeedToShipFromShipmentWithLimit = (docLimits, docSkip) => (dispatch, getState) => {
     dispatch(setShipmentItemsLoading());
     axios.get(`/api/wms/shipment/getNeedToShipItems/limit/${docLimits}/skip/${docSkip}`, { ...tokenConfig(getState), params: { docLimits, docSkip } })
         .then(res => {
             dispatch({
-                type: GET_SHIPMENT_ITEMS,
+                type: GET_SHIPMENT_ITEMS_WITH_LIMIT,
                 payload: res.data
             })
         })
@@ -81,4 +83,20 @@ const setShipmentItemsLoading = () => {
     return {
         type: SHIPMENT_ITEMS_LOADING
     }
+}
+
+//get shipped but not qty deducted shipment info
+export const getShippedNotVerifiedShipmentByDate = (dateRange) => (dispatch, getState) => {
+    const [dateMin, dateMax] = dateRange;
+    axios.get(`/api/wms/shipment/getNotVerifiedShipment/dateMin/${dateMin}/dateMax/${dateMax}`, { ...tokenConfig(getState), params: { dateMin, dateMax } })
+        .then((res) => {
+            console.log(res.data)
+            dispatch({
+                type: GET_SHIPPED_NOT_VERIFIED_SHIPMENT,
+                payload: res.data
+            })
+        })
+        .catch(err => {
+            dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS))
+        })
 }

@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import ShipmentStatusBoard from './ShipmentStatusBoard.jsx';
 import { getNeedToShipPendingAndTotalCount } from 'reducers/actions/outboundActions.js';
+import { useDispatch } from 'react-redux';
 
 const AwaitingShipmentList = (props) => {
     const { data, loadMore, dataLengthLimit } = props;

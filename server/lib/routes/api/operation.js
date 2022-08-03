@@ -21,7 +21,7 @@ router.post('/upload/asins-mapping', auth, (req, res) => {
         .then(() => { res.json({ msg: 'success' }) })
         .then(() => updateProdPricingCatalogItems())
         .catch(e => {
-            res.status(400).json({ msg: `Upload File contains Invalid Input\n${e}` })
+            res.status(400).json({ msg: `Upload File contains Invalid Input\n\n${e}` })
         })
         .finally(() => console.log('Upload Finished'))
 })

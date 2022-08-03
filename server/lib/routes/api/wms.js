@@ -1,4 +1,4 @@
-import express, { response } from 'express';
+import express from 'express';
 const router = express.Router();
 import auth from '#middleware/auth.js';
 import wms from '#wms/wmsDatabase.js';
@@ -106,7 +106,7 @@ router.post('/inventoryReceive/updateRecOnTracking', auth, (req, res) => {
 
         })
         .catch(e => {
-            res.status(400).json({ msg: `Upload File contains Invalid Input\n${e}` })
+            res.status(400).json({ msg: `Upload File contains Invalid Input\n\n${e}` })
         })
 })
 
@@ -127,7 +127,7 @@ const updateRecOnTracking = async (file) => {
     }))
 }
 
-router.get('/inventoryReceive/downloadSampleXlsx', (req, res) => {
+router.get('/downloadSampleXlsx/inventoryReceive', (req, res) => {
     let workbook = new excel.Workbook();
     let worksheet = workbook.addWorksheet("Inventory Received");
     worksheet.columns = [
@@ -161,6 +161,19 @@ router.get('/needToShip/syncGsheet', auth, (req, res) => {
     })
 
     res.json({ msg: "success" })
+})
+
+router.get('/shipment/getNotVerifiedShipment/dateMin/:dateMin/dateMax/:dateMax', auth, (req, res) => {
+    const { dateMin, dateMax } = req.params;
+    let wms = new WMSDatabaseApis();
+    wms.getShippedNotVerifiedShipment(Number(dateMin), Number(dateMax))
+        .then(unsubstantiatedShipment => {
+            console.log(unsubstantiatedShipment)
+            res.json(unsubstantiatedShipment)
+        })
+        .catch(err => {
+            res.status(500).json({ msg: `Unable to get unsubstantiated Shipment\n\n${err}` })
+        })
 })
 
 export default router;

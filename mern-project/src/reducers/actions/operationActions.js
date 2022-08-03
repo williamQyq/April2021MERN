@@ -10,7 +10,6 @@ import {
     RES_LOADED
     // GET_ERRORS,
 } from './types';
-import store from 'store.js'
 import { returnMessages } from './messageActions';
 
 // GET Upc Asins Mapping Record from db, then get asin pricing info via SP API,
@@ -27,7 +26,7 @@ export const getProductPricing = () => (dispatch, getState) => {
             return res.data
         })
         .then(prods =>
-            getWmsProdQty(prods)    //append warehouse qty to prod list.
+            dispatch(getWmsProdQty(prods))    //append warehouse qty to prod list.
         )
         .then(warehouseData => {
             dispatch({
@@ -43,9 +42,9 @@ export const getProductPricing = () => (dispatch, getState) => {
         })
 }
 
-export const getWmsProdQty = async (prods) => {
+export const getWmsProdQty = (prods) => async (dispatch, getState) => {
     let upcArr = prods.map(prod => prod.upc)
-    let appendedQtyProducts = await axios.post(`/api/wms/quantity/all`, { upcArr }, tokenConfig(store.getState))
+    let appendedQtyProducts = await axios.post(`/api/wms/quantity/all`, { upcArr }, tokenConfig(getState))
         .then(res => {
             let upcQtyMap = new Map(res.data)
             let newProdsArr = [...prods];

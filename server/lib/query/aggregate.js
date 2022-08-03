@@ -254,3 +254,37 @@ export const COUNT_PENDING_SHIPMENT_BY_TODAY = () =>
             }
         }
     ]
+//@params dateMax, dateMin: Unix date
+export const GET_UNVERIFIED_SHIPMENT = (dateMin, dateMax) => [
+    {
+        '$project': {
+            '_id': 0,
+            'tracking': "$_id",
+            'orderID': 1,
+            'orgNm': 1,
+            'rcIts': 1,
+            'UserID': 1,
+            'shipBy': 1,
+            'crtTm': 1,
+            'crtStmp': 1,
+            'status': 1,
+        }
+    }, {
+        '$match': {
+            'crtStmp': {
+                '$gte': dateMin,
+                '$lt': dateMax
+            },
+            '$expr': {
+                '$and': [
+                    { 'status': { "$ne": ["$status", "ready"] } },
+                    { 'status': { "$ne": ["$status", "substantiated"] } }
+                ]
+            }
+        }
+    }, {
+        '$sort': {
+            'crtStmp': 1
+        }
+    }
+]
