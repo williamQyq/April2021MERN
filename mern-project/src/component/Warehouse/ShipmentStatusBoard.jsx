@@ -5,7 +5,7 @@ const ShipmentStatusBoard = (props) => {
     const { pending, total } = props.shipmentInfo;
 
     const getFinishedPercent = (pendingCount, totalCount) => {
-        if (totalCount === 0) {
+        if (totalCount <= 0) {
             return 0;
         }
         return (
@@ -18,7 +18,7 @@ const ShipmentStatusBoard = (props) => {
         <Row gutter={[8, 8]} justify="end">
             <Col flex={6}></Col>
             <Col flex={2}><Progress showInfo={false} percent={finishedPercent}></Progress></Col>
-            <Col ><Text italic={true}>{`${pending} pending - ${total} total`}</Text></Col>
+            <Col ><Text italic={true}>{`${pending > 0 ? pending : 0} pending - ${total > 0 ? total : 0} total`}</Text></Col>
         </Row >
     )
 }

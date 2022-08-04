@@ -4,6 +4,7 @@ import { tokenConfig } from './authActions.js';
 import { returnErrors } from './errorActions.js';
 import { clearMessages, returnMessages } from './messageActions.js';
 import {
+    CONFIRM_SHIPMENT,
     GET_ERRORS,
     // GET_INVENTORY_RECEIVED,
     GET_INVENTORY_RECEIVED_ITEMS,
@@ -11,6 +12,7 @@ import {
     GET_SHIPMENT_ITEMS_WITH_LIMIT,
     GET_SHIPPED_NOT_VERIFIED_SHIPMENT,
     INVENTORY_RECEIVED_LOADING,
+    SERVICE_UNAVAILABLE,
     SHIPMENT_ITEMS_LOADING,
     SYNC_INVENTORY_RECEIVED_WITH_GSHEET
 } from './types.js';
@@ -90,7 +92,6 @@ export const getShippedNotVerifiedShipmentByDate = (dateRange) => (dispatch, get
     const [dateMin, dateMax] = dateRange;
     axios.get(`/api/wms/shipment/getNotVerifiedShipment/dateMin/${dateMin}/dateMax/${dateMax}`, { ...tokenConfig(getState), params: { dateMin, dateMax } })
         .then((res) => {
-            console.log(res.data)
             dispatch({
                 type: GET_SHIPPED_NOT_VERIFIED_SHIPMENT,
                 payload: res.data
@@ -98,5 +99,18 @@ export const getShippedNotVerifiedShipmentByDate = (dateRange) => (dispatch, get
         })
         .catch(err => {
             dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS))
+        })
+}
+export const confirmShipmentAndSubTractQty = (shipmentArr) => (dispatch, getState) => {
+    if (shipmentArr.length <= 0) {
+        dispatch(returnMessages("No Shipment selected", 202, SERVICE_UNAVAILABLE));
+        return;
+    }
+    axios.post('/api/wms/needToShip/confirmShipment', { allShipment: shipmentArr }, tokenConfig(getState))
+        .then((res) => {
+            dispatch(returnMessages(res.data.msg, res.status, CONFIRM_SHIPMENT))
+        })
+        .catch(err => {
+            dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS));
         })
 }

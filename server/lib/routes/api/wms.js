@@ -1,34 +1,29 @@
 import express from 'express';
-const router = express.Router();
 import auth from '#middleware/auth.js';
-import wms from '#wms/wmsDatabase.js';
 import { WMSDatabaseApis, GsheetApis } from '../../query/utilities.js';
 import excel from 'exceljs';
+
+const router = express.Router();
 
 //@route GET api/wms
 //@desc get warehouse quantity on upc
 router.get('/quantity/:upc', (req, res) => {
     let upc = req.params.upc;
-    const collection = wms.getDatabase().collection('sellerInv')
-    collection.findOne({ '_id.UPC': upc, '_id.org': "M" })
-        .then(doc => {
-            res.json(doc.qty)
-        })
+    let wms = new WMSDatabaseApis();
+    wms.findUpcQtyOnOrg(upc)
+        .then(qty => { res.json(qty) });
 });
 
 //@route POST api/wms
 //@desc get warehouse quantity on multiple upcs
 router.post('/quantity/all', auth, (req, res) => {
     const { upcArr } = req.body;
-    let upcWmsQtyMap = [];
-
-    const collection = wms.getDatabase().collection('sellerInv')
-    collection.find({ '_id.UPC': { $in: upcArr }, '_id.org': "M" }).toArray()
-        .then(doc => {
-            doc.forEach(doc => {
-                upcWmsQtyMap.push([doc._id.UPC, doc.qty])
-            })
-            res.json(upcWmsQtyMap)
+    let result = [];
+    let wms = new WMSDatabaseApis();
+    wms.findUpcQtyMultiOnOrg(upcArr)
+        .then(docs => {
+            docs.forEach(doc => { result.push([doc._id.UPC, doc.qty]) })   //create array of array: upc, qty array mapping
+            res.json(result)
         })
         .catch(err => {
             res.status(502).json({ msg: "WMS connection error" })
@@ -166,14 +161,56 @@ router.get('/needToShip/syncGsheet', auth, (req, res) => {
 router.get('/shipment/getNotVerifiedShipment/dateMin/:dateMin/dateMax/:dateMax', auth, (req, res) => {
     const { dateMin, dateMax } = req.params;
     let wms = new WMSDatabaseApis();
+    const shipmentObj = {
+        orderID: undefined,
+        trackingID: undefined,
+        upc0: undefined,
+        upc0Qty: undefined,
+        upc1: undefined,
+        upc1Qty: undefined,
+        upc2: undefined,
+        upc2Qty: undefined,
+        upc3: undefined,
+        upc3Qty: undefined,
+        orgNm: undefined,
+    }
     wms.getShippedNotVerifiedShipment(Number(dateMin), Number(dateMax))
-        .then(unsubstantiatedShipment => {
-            console.log(unsubstantiatedShipment)
-            res.json(unsubstantiatedShipment)
+        .then(unsubstantiatedShipment => (
+            unsubstantiatedShipment.map((unformattedshipment) => {
+                let shipment = Object.create(shipmentObj)
+                shipment.orderID = unformattedshipment["orderID"];
+                shipment.orgNm = unformattedshipment["orgNm"];
+                shipment.trackingID = unformattedshipment["tracking"];
+                if (unformattedshipment.rcIts.length > 0) {
+                    unformattedshipment.rcIts.forEach((item, index) => {
+                        shipment[`upc${index}`] = item["UPC"];
+                        shipment[`upc${index}Qty`] = item["qty"];
+                    })
+                }
+                return shipment;
+            })
+        ))
+        .then(formattedShipmentArr => {
+            res.json(formattedShipmentArr)
         })
         .catch(err => {
             res.status(500).json({ msg: `Unable to get unsubstantiated Shipment\n\n${err}` })
         })
+})
+
+router.post('/needToShip/confirmShipment', auth, (req, res) => {
+    const { allShipment } = req.body;
+    console.log(`shipment`, allShipment)
+    let wms = new WMSDatabaseApis();
+    wms.shipUPCAndUpdateQty(allShipment).then(res => {
+        res.json(res)
+    }).catch(err => {
+        res.status(500).json({
+            msg: `Unable to update sellerInv qty or locInv qty on Upc\n\n${err}`
+        })
+    })
+
+    // res.json({ msg: "yes" })
 })
 
 export default router;

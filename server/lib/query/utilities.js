@@ -255,6 +255,19 @@ export class WMSDatabaseApis {
     constructor() {
         this.db = wms.getDatabase();
     }
+    async findUpcQtyOnOrg(upc, org = "M") {
+        const collection = this.db.collection(WMSDatabaseApis._collection.sellerInv);
+        let qty = await collection.findOne({ '_id.UPC': upc, '_id.org': org })
+            .then(doc => doc.qty)
+        return qty;
+    }
+    async findUpcQtyMultiOnOrg(upcArr, org = "M") {
+        const collection = this.db.collection(WMSDatabaseApis._collection.sellerInv);
+        let upcQtyArr = await collection.find({ '_id.UPC': { $in: upcArr }, '_id.org': org }).toArray()
+        return upcQtyArr;
+    }
+
+
     async getInventoryReceive() {
         const collection = this.db.collection(WMSDatabaseApis._collection.inventoryReceive);
         let invRecItemsHalfMonthAgo = await collection.aggregate(GET_INVENTORY_RECEIVED_HALF_MONTH_AGO).toArray();
@@ -295,6 +308,11 @@ export class WMSDatabaseApis {
     }
 
     async getShippedNotVerifiedShipment(dateMin, dateMax) {
+        const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
+        let unverifiedShipment = await collection.aggregate(GET_UNVERIFIED_SHIPMENT(dateMin, dateMax)).toArray();
+        return unverifiedShipment;
+    }
+    async shipUPCAndUpdateQty(upc, qty) {
         const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
         let unverifiedShipment = await collection.aggregate(GET_UNVERIFIED_SHIPMENT(dateMin, dateMax)).toArray();
         return unverifiedShipment;

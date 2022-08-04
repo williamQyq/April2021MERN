@@ -15,7 +15,13 @@ import NeedToShipTable from 'component/Warehouse/NeedToShipTable.jsx';
 
 export const NeedToShipMenu = () => {
     const dispatch = useDispatch();
+    const { shippedNotVerifiedItems, itemsLoading } = useSelector((state) => (state.warehouse.needToShip));
     const needToShipMenuItems = [
+        {
+            key: 'unstantiatedShipment',
+            icon: <AreaChartOutlined />,
+            label: 'Confirm Shipment'
+        },
         {
             key: 'uploadNeedToShip',
             icon: <AreaChartOutlined />,
@@ -33,7 +39,7 @@ export const NeedToShipMenu = () => {
             case "uploadNeedToShip":
                 break;
             case "loadFromGsheet":
-                // dispatch(syncFromNeedToShipGsheet());
+                dispatch(syncFromNeedToShipGsheet());
                 break;
             default:
                 console.warn(`clicked key not found `, key);
@@ -43,12 +49,14 @@ export const NeedToShipMenu = () => {
 
     const handleContentSwitch = (key) => {
         switch (key) {
+            case 'unstantiatedShipment':
+                return <NeedToShipTable data={shippedNotVerifiedItems} loading={itemsLoading} />
             case 'uploadNeedToShip':
                 return <FileUpload customizedUpload={uploadNeedToShip} />
             case 'loadFromGsheet':
-                return <NeedToShipTable />
+                break;
             default:
-                return <NeedToShipTable />
+                return <NeedToShipTable data={shippedNotVerifiedItems} loading={itemsLoading} />
         }
     }
     return (
@@ -57,7 +65,7 @@ export const NeedToShipMenu = () => {
             handleContentSwitch={handleContentSwitch}
             menuItems={needToShipMenuItems}
             title="Need To Ship"
-            defaultSelectedKey="uploadNeedToShip"
+            defaultSelectedKey="unstantiatedShipment"
         />
     )
 }

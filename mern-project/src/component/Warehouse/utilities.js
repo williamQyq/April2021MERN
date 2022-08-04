@@ -17,77 +17,64 @@ export const defaultSettings = {
         body: {
             cell: EditableCell
         }
-    }
+    },
 }
 
 export const needToShipColumns =
     [
         {
-            title: "orderId",
-            dataIndex: "orderId",
+            title: "orderID",
+            dataIndex: "orderID",
             editable: true,
             searchable: true,
-            width: "10%",
+            // width: "20%",
         },
         {
-            title: "trackingNo",
-            dataIndex: "trackingNo",
+            title: "trackingID",
+            dataIndex: "trackingID",
             editable: true,
             searchable: true,
-            width: "10%"
+            // width: "15%"
         },
         {
             title: "upc",
-            dataIndex: "upc",
+            dataIndex: "upc0",
             editable: true,
             searchable: true,
-            width: "10%"
+            // width: "10%"
         },
         {
-            title: "upc qty",
-            dataIndex: "upc qty",
+            title: "qty",
+            dataIndex: "upc0Qty",
             editable: true,
-            width: "10%"
+            width: "5%"
         },
         {
             title: "bundle I",
-            dataIndex: "bundle_1",
+            dataIndex: "upc1",
             editable: true,
             searchable: true,
-            width: "10%"
+            // width: "10%"
         },
         {
-            title: "bundle I Qty",
-            dataIndex: "bundle_1_qty",
+            title: "qty",
+            dataIndex: "upc1Qty",
             editable: true,
-            width: "10%"
+            width: "5%"
         },
         {
             title: "bundle II",
-            dataIndex: "bundle_2",
+            dataIndex: "upc2",
             editable: true,
             searchable: true,
-            width: "10%"
+            // width: "10%"
         },
         {
-            title: "bundle II Qty",
-            dataIndex: "bundle_2_qty",
+            title: "qty",
+            dataIndex: "upc2Qty",
             editable: true,
-            width: "10%"
-        },
-        {
-            title: "RMA Item",
-            dataIndex: "rmaItem",
-            editable: true,
-            searchable: true,
-            width: "10%"
-        },
-        {
-            title: "RMA Item Qty",
-            dataIndex: "rmaItemQty",
-            editable: true,
-            width: "10%"
-        },
+            width: "5%"
+        }
     ]
 
 export const inventoryReceivedColumns = [

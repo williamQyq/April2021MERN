@@ -60,7 +60,12 @@ export default function Reducer(state = initialState, action) {
         case GET_SHIPPED_NOT_VERIFIED_SHIPMENT:
             return {
                 ...state,
-                shippedNotVerifiedItems: action.payload
+                needToShip: {
+                    ...state.needToShip,
+                    itemsLoading: false,
+                    shippedNotVerifiedItems: action.payload
+                }
+
             }
         default:
             return Object.assign({}, state, {
