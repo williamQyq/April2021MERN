@@ -17,7 +17,9 @@ import {
     GET_NEED_TO_SHIP_ITEMS_BY_TODAY,
     COUNT_NEED_TO_SHIP_ITEMS_BY_TODAY,
     COUNT_PENDING_SHIPMENT_BY_TODAY,
-    GET_UNVERIFIED_SHIPMENT
+    GET_UNVERIFIED_SHIPMENT,
+    GET_LOCINV_UPC_QTY_SUM_EXCLUDE_WMS,
+    GET_UPC_LOCATION_QTY
 } from './aggregate.js';
 import GenerateGSheetApis from '../../bin/gsheet/gsheet.js';
 import moment from 'moment';
@@ -251,6 +253,7 @@ export class WMSDatabaseApis {
         sellerInv: "sellerInv",
         inventoryReceive: "inventoryReceive",
         shipment: "shipment",
+        locationInv: "locationInv"
     }
     constructor() {
         this.db = wms.getDatabase();
@@ -307,15 +310,140 @@ export class WMSDatabaseApis {
         return updateOrgNmByTracking;
     }
 
-    async getShippedNotVerifiedShipment(dateMin, dateMax) {
+    async getShippedNotVerifiedShipment(startDateUnix) {
         const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
-        let unverifiedShipment = await collection.aggregate(GET_UNVERIFIED_SHIPMENT(dateMin, dateMax)).toArray();
+        let unverifiedShipment = await collection.aggregate(GET_UNVERIFIED_SHIPMENT(startDateUnix)).toArray();
         return unverifiedShipment;
     }
-    async shipUPCAndUpdateQty(upc, qty) {
+    async updateSellerInvQtyByUpcAndOrgNm(upc, orgNm, qty) {
+        const query = {
+            "_id.UPC": upc,
+            "_id.org": orgNm,
+            "qty": { $gte: qty }
+        }
+        const update = {
+            $inc: { "qty": -qty }
+        }
+
+        const collection = this.db.collection(WMSDatabaseApis._collection.sellerInv);
+        try {
+            let sellerInvUpdatedResult = (await collection.updateOne(query, update)).result;
+            return ({
+                action: "updateSellerInvQtyByUpcAndOrgNm",
+                orgNm,
+                upc,
+                needToShipQty: qty,
+                queryRes: sellerInvUpdatedResult
+            });
+        } catch (err) {
+            throw ({ reason: `SellerInv: ${upc} does not have enought qty.\n Need ${qty}` })
+        }
+        //@TEST 
+        // throw ({ reason: `SellerInv: ${upc} does not have enought qty.\n Need ${qty}` })
+    }
+    async updateLocationInvQtyByUpc(upc, unProcQty) {
+        // let batch = []
+        let reqProcQty = unProcQty;
+
+        const collection = this.db.collection(WMSDatabaseApis._collection.locationInv);
+        const totalLocQty = (await collection.aggregate(GET_LOCINV_UPC_QTY_SUM_EXCLUDE_WMS(upc)).toArray())[0].sum;
+        if (totalLocQty < unProcQty) {
+            throw ({ reason: `locInv: ${upc} does not have enought qty.\n Need ${unProcQty}` })
+        }
+        const upcLocQtyDocs = await collection.aggregate(GET_UPC_LOCATION_QTY(upc)).toArray();
+
+
+        try {
+            for (const doc of upcLocQtyDocs) {
+                if (doc.qty <= unProcQty) { //cur loc does not have enough qty for deduction
+                    // batch.push({ upc: doc.upc, loc: doc.loc, newQty: 0 })
+                    const findLocDocQuery = {
+                        "_id.UPC": doc.upc,
+                        "_id.loc": doc.loc
+                    }
+                    const update = {
+                        $set: { "qty": 0 }
+                    }
+                    await collection.updateOne(findLocDocQuery, update)
+                    unProcQty -= doc.qty;   //subtract qty from locInv
+                } else {
+                    const findLocDocQuery = {
+                        "_id.UPC": doc.upc,
+                        "_id.loc": doc.loc
+                    }
+                    const update = {
+                        $inc: { "qty": -unProcQty }
+                    }
+                    await collection.updateOne(findLocDocQuery, update)
+                    unProcQty = 0   //subtract qty finished, no unProcQty left
+                }
+            }
+
+            const findWMSDocQuery = {
+                "_id.UPC": upc,
+                "_id.loc": "WMS",
+            }
+            const update = {
+                $inc: { "qty": reqProcQty }
+            }
+            await collection.updateOne(findWMSDocQuery, update)
+
+            return ({
+                action: "updateLocationInvQtyByUpc",
+                upc,
+                unProcQty,
+                reqProcQty
+            })
+        } catch (err) {
+            console.log(`locInv err: `, err)
+            throw ({ reason: `locationInv: ${upc} does not have enought qty under locations.\n Need ${reqProcQty}` })
+        }
+    }
+    async updateShipmentStatus(trackingID, newStatus) {
+        let query = {
+            "_id": trackingID,
+        }
+        let update = {
+            $set: { "status": newStatus }
+        }
         const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
-        let unverifiedShipment = await collection.aggregate(GET_UNVERIFIED_SHIPMENT(dateMin, dateMax)).toArray();
-        return unverifiedShipment;
+        try {
+            let isShipmentStatusUpdated = (await collection.updateOne(query, update)).result;
+            return ({
+                action: "updateShipmentStatus",
+                trackingID,
+                newStatus,
+                queryRes: isShipmentStatusUpdated
+            });
+        } catch (err) {
+            throw ({ reason: `Shipment tracking: ${trackingID} rejected.`, rejectedTracking: trackingID })
+        }
+        //@TEST 
+        // throw ({ reason: `Shipment tracking: ${trackingID} status update failed.` })
+    }
+
+    //@usage: router, method: POST, path: '/needToShip/confirmShipment'
+    createUnShipmentMapping(allUnShipment) {
+        let unShipmentHandler = new Map();
+        let processedTrackings = new Array();
+
+        allUnShipment.forEach((unShipment) => {
+            unShipment.rcIts.forEach(([unShippedUpc, unShippedQty]) => {
+
+                unShippedQty = Number(unShippedQty);
+                let hasUnShippedUpc = unShipmentHandler.get(unShippedUpc) === undefined ? false : true
+                if (hasUnShippedUpc) {
+                    let prevRcIts = unShipmentHandler.get(unShippedUpc)
+                    let newQty = prevRcIts.unShippedQty + unShippedQty;
+                    unShipmentHandler.set(unShippedUpc, { unShippedQty: newQty, orgNm: unShipment.orgNm })
+                } else {
+                    unShipmentHandler.set(unShippedUpc, { unShippedQty: unShippedQty, orgNm: unShipment.orgNm })
+                }
+            })
+            processedTrackings.push(unShipment.trackingID)
+        })
+
+        return { unShipmentHandler, processedTrackings }
     }
 
 }

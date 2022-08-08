@@ -4,20 +4,16 @@ import { Divider, List, PageHeader, Skeleton } from 'antd';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import ShipmentStatusBoard from './ShipmentStatusBoard.jsx';
-import { getNeedToShipPendingAndTotalCount } from 'reducers/actions/outboundActions.js';
-import { useDispatch } from 'react-redux';
 
 const AwaitingShipmentList = (props) => {
-    const { data, loadMore, dataLengthLimit } = props;
+    const { data, loadMore, dataLengthLimit, pendingShipmentInfo } = props;
     const [pending, SetPending] = useState(0);
     const [total, SetTotal] = useState(0);
 
     useEffect(() => {
-        getNeedToShipPendingAndTotalCount().then(pendingShipmentInfo => {
-            SetPending(pendingShipmentInfo.pending);
-            SetTotal(pendingShipmentInfo.total);
-        });
-    }, [])
+        SetPending(pendingShipmentInfo.pending);
+        SetTotal(pendingShipmentInfo.total);
+    }, [pendingShipmentInfo])
 
     return (
         <>

@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { NeedToShipMenu } from 'component/Warehouse/Menus.jsx';
-import { getNeedToShipFromShipmentWithLimit } from 'reducers/actions/outboundActions.js';
+import { getNeedToShipFromShipmentWithLimit, getNeedToShipPendingAndTotalCount } from 'reducers/actions/outboundActions.js';
 import AwaitingShipmentList from './AwaitingShipmentList';
 
 class NeedToShipUpload extends React.Component {
@@ -14,13 +14,20 @@ class NeedToShipUpload extends React.Component {
             loading: false,
             data: [],
             docLimits: 5,
-            docSkip: 0
+            docSkip: 0,
+            pendingShipmentInfo: {
+                pending: 0,
+                total: 0
+            }
         };
     }
 
     componentDidMount() {
         const { docLimits, docSkip } = this.state;
         this.props.getNeedToShipFromShipmentWithLimit(docLimits, docSkip);
+        getNeedToShipPendingAndTotalCount().then(pendingShipmentInfo => {
+            this.setState({ pendingShipmentInfo });
+        })
     }
     componentDidUpdate(prevProps) {
         const { docLimits, docSkip, data } = this.state;
@@ -45,12 +52,16 @@ class NeedToShipUpload extends React.Component {
 
     render() {
         const { totalNeedToShipItemsCount } = this.props;
-        const { data, initLoading } = this.state;
+        const { data, pendingShipmentInfo } = this.state;
         return (
             <>
-                <NeedToShipMenu />
-                <AwaitingShipmentList data={data} loadMore={this.loadMore} dataLengthLimit={totalNeedToShipItemsCount} />
-
+                <NeedToShipMenu pendingShipmentInfo={pendingShipmentInfo} />
+                <AwaitingShipmentList
+                    data={data}
+                    loadMore={this.loadMore}
+                    dataLengthLimit={totalNeedToShipItemsCount}
+                    pendingShipmentInfo={pendingShipmentInfo}
+                />
             </>
 
         );

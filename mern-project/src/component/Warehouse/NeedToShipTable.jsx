@@ -4,15 +4,18 @@ import FormTable from "component/utility/FormTable.jsx";
 import { defaultSettings, needToShipColumns } from "component/Warehouse/utilities.js";
 import { getShippedNotVerifiedShipmentByDate } from "reducers/actions/outboundActions";
 import moment from "moment";
-import { Button, Table } from "antd";
+import { Button, Table, Typography } from "antd";
 import { confirmShipmentAndSubTractQty } from "reducers/actions/outboundActions.js";
 
+const { Text } = Typography;
+
 const NeedToShipTable = (props) => {
-    const { data, loading } = props;
+    const { data, loading, pendingShipmentInfo } = props;
     const dispatch = useDispatch();
     const [allSelected, setAllSelected] = useState(false);
-    const [selectedRows, setSelectedRows] = useState([])
-    const [selectedRowKeys, setSelectedRowkeys] = useState([])
+    const [selectedRows, setSelectedRows] = useState([]);
+    const [selectedRowKeys, setSelectedRowkeys] = useState([]);
+
     const rowSelection = {
         fixed: true,
         selectedRowKeys,
@@ -28,6 +31,7 @@ const NeedToShipTable = (props) => {
     }
     useEffect(() => {
         let today = getUnixDate(0);
+        // console.log(`today date in unix: `, today)
         let tommorrow = getUnixDate(1);
         dispatch(getShippedNotVerifiedShipmentByDate([today, tommorrow]))//get unsubstantiated shipment from today to tomorrow excluded
 
@@ -38,7 +42,9 @@ const NeedToShipTable = (props) => {
         } else {
             setAllSelected(false)
         }
-    }, [selectedRowKeys, allSelected])
+
+
+    }, [selectedRowKeys, allSelected, data.length, dispatch])
 
     const getUnixDate = (offset) => {
         let date = new Date();
@@ -47,7 +53,30 @@ const NeedToShipTable = (props) => {
         return moment(date).format('x');
     }
     const handleShipmentConfirmClick = () => {
-        dispatch(confirmShipmentAndSubTractQty(selectedRows))
+        setSelectedRowkeys([]);
+        setSelectedRows([]);
+        //add unshipment rcIts property, array of [upc, qty], to unshipment from selectedRows
+        let selectedShipment = selectedRows.map((row) => {
+            let rcIts = []
+            let unshipment = { ...row };
+
+            for (const property in row) {
+                if (property.match(/^upc\d+$/g)) {
+                    rcIts.push([row[property], row[`${property}Qty`]])
+                    delete unshipment[property]
+                    delete unshipment[`${property}Qty`]
+                }
+            }
+
+            return { ...unshipment, rcIts };
+        })
+
+        //update sellerInv and locationInv then get shipment data 
+        dispatch(confirmShipmentAndSubTractQty(selectedShipment)).then(() => {
+            let today = getUnixDate(0);
+            let tommorrow = getUnixDate(1);
+            dispatch(getShippedNotVerifiedShipmentByDate([today, tommorrow]))
+        })
     }
     const toggleSelectAll = () => {
         // if all roww selected, deselect all, vice versa.
@@ -64,7 +93,7 @@ const NeedToShipTable = (props) => {
     }
 
     const selectedCount = selectedRows.length;
-
+    let hasPendingShipment = pendingShipmentInfo.pending > 0 ? true : false;
     return (
         <div style={{
             padding: "4px 8px",
@@ -90,6 +119,7 @@ const NeedToShipTable = (props) => {
                                 }
                             </Button>
                             <Button
+                                style={{ marginRight: "8px" }}
                                 type="primary"
                                 onClick={() => handleShipmentConfirmClick()}
                             >
@@ -98,10 +128,11 @@ const NeedToShipTable = (props) => {
                                         `Confirm Shipment`)
                                 }
                             </Button>
+                            <Text type={hasPendingShipment > 0 ? "danger" : "success"}> {hasPendingShipment > 0 ? `Awaiting ${pendingShipmentInfo.pending} Shipment...` : "All unsubstantiated shipment loaded!"}</Text>
                         </>
                 }}
             />
-        </div>
+        </div >
     )
 }
 

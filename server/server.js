@@ -3,7 +3,7 @@ import io from './index.js';    //socket io
 import wms from "./wms/wmsDatabase.js";    // @local wms server connection
 import startScrapeScheduler from './bin/scrapeScheduler.js';    //scripts scheduler, node-cron
 import startAmazonScheduler from '#amz/amazonSchedule.js';
-import unitTest from './unit_test.js'   //For testing functionalities
+// import unitTest from './unit_test.js'   //For testing functionalities
 
 // @CREATE WMS CONNECTION
 wms.connect(wms.config, () => console.log(`WMS Database Connected...`));

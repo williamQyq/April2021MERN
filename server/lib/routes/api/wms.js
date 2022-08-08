@@ -2,6 +2,7 @@ import express from 'express';
 import auth from '#middleware/auth.js';
 import { WMSDatabaseApis, GsheetApis } from '../../query/utilities.js';
 import excel from 'exceljs';
+import { status } from '../../query/aggregate.js';
 
 const router = express.Router();
 
@@ -116,9 +117,9 @@ const updateRecOnTracking = async (file) => {
     return Promise.allSettled(file.map(row => {
         let tracking = row[colTitleIndexMap.get('Tracking')];
         let orgNm = row[colTitleIndexMap.get('OrgNm')];
-        if (tracking && orgNm)
-            // console.log(tracking, orgNm)
+        if (tracking && orgNm) {
             return api.updateInventoryReceiveOrgNmOnTracking(tracking, orgNm);
+        }
     }))
 }
 
@@ -159,7 +160,8 @@ router.get('/needToShip/syncGsheet', auth, (req, res) => {
 })
 
 router.get('/shipment/getNotVerifiedShipment/dateMin/:dateMin/dateMax/:dateMax', auth, (req, res) => {
-    const { dateMin, dateMax } = req.params;
+    // const { dateMin, dateMax } = req.params;
+    const startDateUnix = 1659931200000;    //2022-08-08 00:00:00 since then, get all unsubstantiated shipment
     let wms = new WMSDatabaseApis();
     const shipmentObj = {
         orderID: undefined,
@@ -174,7 +176,7 @@ router.get('/shipment/getNotVerifiedShipment/dateMin/:dateMin/dateMax/:dateMax',
         upc3Qty: undefined,
         orgNm: undefined,
     }
-    wms.getShippedNotVerifiedShipment(Number(dateMin), Number(dateMax))
+    wms.getShippedNotVerifiedShipment(startDateUnix)
         .then(unsubstantiatedShipment => (
             unsubstantiatedShipment.map((unformattedshipment) => {
                 let shipment = Object.create(shipmentObj)
@@ -199,16 +201,71 @@ router.get('/shipment/getNotVerifiedShipment/dateMin/:dateMin/dateMax/:dateMax',
 })
 
 router.post('/needToShip/confirmShipment', auth, (req, res) => {
-    const { allShipment } = req.body;
-    console.log(`shipment`, allShipment)
+    console.log(`*************confirm Shipment*************`);
+    const { allUnShipment } = req.body;
+
     let wms = new WMSDatabaseApis();
-    wms.shipUPCAndUpdateQty(allShipment).then(res => {
-        res.json(res)
-    }).catch(err => {
-        res.status(500).json({
-            msg: `Unable to update sellerInv qty or locInv qty on Upc\n\n${err}`
+    console.log(`all unShipment: `, allUnShipment)
+    const { unShipmentHandler, processedTrackings } = wms.createUnShipmentMapping(allUnShipment);
+    console.log(`unshipment Map: `, unShipmentHandler);
+
+    // concat 2 steps promise array:
+    // update locationInv -> update shipment status
+
+    Promise.allSettled(
+        //concat update location Inv promises
+        Array.from(unShipmentHandler)
+            .map(([upc, { unShippedQty, orgNm }]) =>
+                new Promise((resolve, reject) => {
+                    wms.updateLocationInvQtyByUpc(upc, Number(unShippedQty))
+                        .then(updateRes => resolve(updateRes))
+                        .catch(err => {
+                            reject({
+                                action: "updateLocationInv",
+                                reason: err.reason,
+                                rejectedUpc: upc,
+                                rejectedQty: Number(unShippedQty),
+                                rejectedOrgNm: orgNm
+                            })
+                        }
+                        );
+                })
+            )
+
+            // concat update shipment status promises    
+            .concat(
+                processedTrackings.map(trackingId =>
+                    new Promise((resolve, reject) => {
+                        wms.updateShipmentStatus(trackingId, status.shipment.SUBSTANTIATED)
+                            .then(updateRes => resolve(updateRes))
+                            .catch((err) => {
+                                reject({
+                                    action: "updateShipmentStatus",
+                                    reason: err.reason,
+                                    trackingId: trackingId
+                                })
+                            })
+                    })
+                )
+            )
+    )
+        .then((results) => {
+            console.log(`results: `, JSON.stringify(results, null, 4))
+            let allRejectedShipment = results.filter(res => res.status === "rejected")
+            // console.log(`rejected promise results: `, allRejectedShipment)
+
+            if (allRejectedShipment.length > 0) {
+                res.status(400).json({ msg: `Rejected Shipment Occurs`, reason: allRejectedShipment })
+            } else {
+                res.json({ msg: `All Shipment fullfilled.` })
+            }
+        }).catch(err => {
+            res.status(500).json({
+                msg: `Reject updating sellerInv qty or locInv qty on Upc`,
+                reason: err.reason
+            })
         })
-    })
+
 
     // res.json({ msg: "yes" })
 })

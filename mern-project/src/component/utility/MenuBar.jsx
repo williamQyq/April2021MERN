@@ -11,7 +11,7 @@ const MenuBar = (props) => {
     const [selectedMenuKey, setSelectedMenuKey] = useState(defaultSelectedKey);
     useEffect(() => {
         console.log(`selectedKey: `, selectedMenuKey)
-    }, [])
+    }, [selectedMenuKey])
     const treeData = [
         {
             title: <ContentHeader title={title} />,

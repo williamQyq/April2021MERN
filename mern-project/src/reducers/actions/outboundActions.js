@@ -1,7 +1,7 @@
 import axios from 'axios';
 import store from 'store.js';
 import { tokenConfig } from './authActions.js';
-import { returnErrors } from './errorActions.js';
+import { clearErrors, returnErrors } from './errorActions.js';
 import { clearMessages, returnMessages } from './messageActions.js';
 import {
     CONFIRM_SHIPMENT,
@@ -47,6 +47,7 @@ export const getInventoryReceived = () => (dispatch, getState) => {
                 type: GET_INVENTORY_RECEIVED_ITEMS,
                 payload: []
             })
+            dispatch(clearErrors());
             dispatch(returnErrors(err.response.data.msg, err.response.status));
         })
 }
@@ -66,6 +67,7 @@ export const getNeedToShipFromShipmentWithLimit = (docLimits, docSkip) => (dispa
                 type: GET_SHIPMENT_ITEMS,
                 payload: []
             })
+            dispatch(clearErrors());
             dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS))
         })
 }
@@ -98,19 +100,22 @@ export const getShippedNotVerifiedShipmentByDate = (dateRange) => (dispatch, get
             })
         })
         .catch(err => {
+            dispatch(clearErrors());
             dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS))
         })
 }
-export const confirmShipmentAndSubTractQty = (shipmentArr) => (dispatch, getState) => {
-    if (shipmentArr.length <= 0) {
+export const confirmShipmentAndSubTractQty = (unShipmentArr) => async (dispatch, getState) => {
+    if (unShipmentArr.length <= 0) {
         dispatch(returnMessages("No Shipment selected", 202, SERVICE_UNAVAILABLE));
         return;
     }
-    axios.post('/api/wms/needToShip/confirmShipment', { allShipment: shipmentArr }, tokenConfig(getState))
+    return axios.post('/api/wms/needToShip/confirmShipment', { allUnShipment: unShipmentArr }, tokenConfig(getState))
         .then((res) => {
             dispatch(returnMessages(res.data.msg, res.status, CONFIRM_SHIPMENT))
         })
         .catch(err => {
-            dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS));
+            console.log(`err reason: `, err.response.data.reason)
+            dispatch(clearErrors());
+            dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS, err.response.data.reason));
         })
 }

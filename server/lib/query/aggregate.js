@@ -1,5 +1,14 @@
 // @get aggregate query
 import moment from "moment";
+export const status = {
+    shipment: {
+        SUBSTANTIATED: "substantiated",
+        READY: "ready",
+        SHIPPED: "shipped",
+        BACK_ORDER: "backOrder",
+        EXCEPTION: "exception"
+    }
+}
 
 export const LAST_PRICE = {
     $arrayElemAt: [
@@ -255,7 +264,7 @@ export const COUNT_PENDING_SHIPMENT_BY_TODAY = () =>
         }
     ]
 //@params dateMax, dateMin: Unix date
-export const GET_UNVERIFIED_SHIPMENT = (dateMin, dateMax) => [
+export const GET_UNVERIFIED_SHIPMENT = (startDateUnix) => [
     {
         '$project': {
             '_id': 0,
@@ -272,19 +281,63 @@ export const GET_UNVERIFIED_SHIPMENT = (dateMin, dateMax) => [
     }, {
         '$match': {
             'crtStmp': {
-                '$gte': dateMin,
-                '$lt': dateMax
+                '$gte': startDateUnix,
+                // '$lt': dateMax
             },
             '$expr': {
                 '$and': [
-                    { 'status': { "$ne": ["$status", "ready"] } },
-                    { 'status': { "$ne": ["$status", "substantiated"] } }
+                    { "$ne": ["$status", status.shipment.READY] },
+                    { "$ne": ["$status", status.shipment.SUBSTANTIATED] }
                 ]
+                // "$eq": ["$status", status.shipment.SHIPPED]
             }
         }
     }, {
         '$sort': {
             'crtStmp': 1
+        }
+    }
+]
+
+export const GET_LOCINV_UPC_QTY_SUM_EXCLUDE_WMS = (upc) => [
+    {
+        '$match': {
+            '_id.UPC': upc,
+            '_id.loc': { "$ne": "WMS" }
+        }
+    }, {
+        '$group': {
+            '_id': {
+                'upc': '$_id.UPC'
+            },
+            'sum': {
+                '$sum': '$qty'
+            }
+        }
+    }
+]
+
+export const GET_UPC_LOCATION_QTY = (upc) => [
+    {
+        '$match': {
+            '_id.UPC': upc,
+            '_id.loc': {
+                '$ne': 'WMS'
+            },
+            'qty': {
+                '$gt': 0
+            }
+        }
+    }, {
+        '$project': {
+            '_id': 0,
+            'upc': '$_id.UPC',
+            'loc': '$_id.loc',
+            'qty': '$qty'
+        }
+    }, {
+        '$sort': {
+            'qty': 1
         }
     }
 ]

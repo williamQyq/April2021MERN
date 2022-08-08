@@ -3,7 +3,7 @@ import { notification, Typography } from "antd";
 
 const { Text } = Typography;
 
-const openAlertNotification = (type, msg, action) => {
+const openAlertNotification = (type, msg, handleAction, context) => {
     let color, background, msgSubject, durationSec = 0;
     switch (type) {
         case 'success':
@@ -26,25 +26,22 @@ const openAlertNotification = (type, msg, action) => {
             break;
     }
 
-
+    console.log(`context: `, context);
     notification[type]({
         message: <Text style={{ color }}>{msgSubject}</Text>,
-        description: <Text style={{ color }}>{msg}</Text>,
+        description:
+            <>
+                <Text style={{ color }}>{msg}</Text>
+                {(
+                    context ? <div>{JSON.stringify(context, null, 4)}</div> : null
+
+                )}
+            </>,
         icon: <SmileOutlined style={{ color }} />,
         duration: durationSec,
         style: { background },
-        onClose: () => action()
+        onClose: () => handleAction()
     })
-    // return status ? (
-    //     <Alert
-    //         message={msg}
-    //         type={"warning"}
-    //         showIcon
-    //         banner
-    //         closable
-    //         afterClose={() => dispatch(clearErrors())}
-    //     />
-    // ) : <></>
 }
 
 export default openAlertNotification;

@@ -29,15 +29,15 @@ class App extends React.Component {
     this.props.loadUser();
   }
   componentDidUpdate() {
-    const { status, msg } = this.props.error;
+    const { status, msg, reason } = this.props.error;
     if (status === 202) {
-      openAlertNotification('warning', msg, this.props.handleMessages)
+      openAlertNotification('warning', msg, this.props.handleMessages, reason)
     }
     else if (status && status !== 200) {
-      openAlertNotification('error', msg, this.props.handleErrors)
+      openAlertNotification('error', msg, this.props.handleErrors, reason)
     }
     else if (status === 200) {
-      openAlertNotification('success', msg, this.props.handleMessages)
+      openAlertNotification('success', msg, this.props.handleMessages, reason)
     }
   }
 

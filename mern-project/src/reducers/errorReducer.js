@@ -12,7 +12,8 @@ export default function Reducer(state = initialState, action) {
             return {
                 msg: action.payload.msg,
                 status: action.payload.status,
-                id: action.payload.id
+                id: action.payload.id,
+                reason: action.payload.reason
             };
         case CLEAR_ERRORS:
             return {
