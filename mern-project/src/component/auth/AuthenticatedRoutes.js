@@ -47,8 +47,8 @@ const routes = [
     exact: true
   },
   {
-    path: 'app/outbound/needToShipUpload',
-    component: lazy(() => import('component/Warehouse/NeedToShipUpload.jsx')),
+    path: 'app/outbound/needToShip',
+    component: lazy(() => import('component/Warehouse/NeedToShip.jsx')),
     exact: true
   },
   {

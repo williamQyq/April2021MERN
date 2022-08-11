@@ -4,13 +4,13 @@ import FormTable from "component/utility/FormTable.jsx";
 import { defaultSettings, needToShipColumns } from "component/Warehouse/utilities.js";
 import { getShippedNotVerifiedShipmentByDate } from "reducers/actions/outboundActions";
 import moment from "moment";
-import { Button, Table, Typography } from "antd";
+import { Table } from "antd";
 import { confirmShipmentAndSubTractQty } from "reducers/actions/outboundActions.js";
+import NeedToShipTableTitle from "./NeedToShipTableTitle";
 
-const { Text } = Typography;
 
 const NeedToShipTable = (props) => {
-    const { data, loading, pendingShipmentInfo } = props;
+    const { data, loading, shipmentInfo } = props;
     const dispatch = useDispatch();
     const [allSelected, setAllSelected] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]);
@@ -93,7 +93,14 @@ const NeedToShipTable = (props) => {
     }
 
     const selectedCount = selectedRows.length;
-    let hasPendingShipment = pendingShipmentInfo.pending > 0 ? true : false;
+
+    const titleHandler = {
+        handleShipmentConfirmClick,
+        toggleSelectAll,
+        allSelected,
+        selectedCount,
+        shipmentInfo
+    }
     return (
         <div style={{
             padding: "4px 8px",
@@ -107,29 +114,8 @@ const NeedToShipTable = (props) => {
                     ...defaultSettings,
                     rowKey: "trackingID",
                     rowSelection: { ...rowSelection },
-                    title: () =>
-                        <>
-                            <Button
-                                style={{ marginRight: "8px" }}
-                                type={allSelected ? "danger" : "primary"}
-                                onClick={() => toggleSelectAll()}
-                            >
-                                {
-                                    (allSelected ? `Unselected All Shipment` : `Select All Shipment`)
-                                }
-                            </Button>
-                            <Button
-                                style={{ marginRight: "8px" }}
-                                type="primary"
-                                onClick={() => handleShipmentConfirmClick()}
-                            >
-                                {
-                                    (selectedCount > 0 ? `Confirm ${selectedCount} Selected Shipment` :
-                                        `Confirm Shipment`)
-                                }
-                            </Button>
-                            <Text type={hasPendingShipment > 0 ? "danger" : "success"}> {hasPendingShipment > 0 ? `Awaiting ${pendingShipmentInfo.pending} Shipment...` : "All unsubstantiated shipment loaded!"}</Text>
-                        </>
+                    title: () => <NeedToShipTableTitle {...titleHandler} />
+
                 }}
             />
         </div >

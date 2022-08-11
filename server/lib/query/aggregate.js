@@ -212,7 +212,7 @@ export const COUNT_NEED_TO_SHIP_ITEMS_BY_TODAY = [
     }
 ]
 
-export const COUNT_PENDING_SHIPMENT_BY_TODAY = () =>
+export const COUNT_SHIPMENT_BY_TODAY = () =>
     [
         {
             '$facet': {
@@ -246,6 +246,23 @@ export const COUNT_PENDING_SHIPMENT_BY_TODAY = () =>
                     }, {
                         '$count': 'pending'
                     }
+                ],
+                'confirm': [
+                    {
+                        '$match': {
+                            'orderID': {
+                                '$exists': true
+                            },
+                            'crtStmp': {
+                                '$gte': getTodayDate()
+                            },
+                            'status': {
+                                '$eq': 'substantiated'
+                            }
+                        }
+                    }, {
+                        '$count': 'confirm'
+                    }
                 ]
             }
         }, {
@@ -258,6 +275,11 @@ export const COUNT_PENDING_SHIPMENT_BY_TODAY = () =>
                 'pending': {
                     '$arrayElemAt': [
                         '$pending.pending', 0
+                    ]
+                },
+                'confirm': {
+                    '$arrayElemAt': [
+                        '$confirm.confirm', 0
                     ]
                 }
             }

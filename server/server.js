@@ -6,7 +6,9 @@ import startAmazonScheduler from '#amz/amazonSchedule.js';
 // import unitTest from './unit_test.js'   //For testing functionalities
 
 // @CREATE WMS CONNECTION
-wms.connect(wms.config, () => console.log(`WMS Database Connected...`));
+wms.connect(() =>
+    console.log(`WMS Database Connected...`)
+);
 
 //@Mongoose connection; Connect to Mongo.
 const mongoURI = process.env.DB_URI;

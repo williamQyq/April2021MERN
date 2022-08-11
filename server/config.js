@@ -8,7 +8,7 @@ import dotenv from 'dotenv'
 // const __dirname = path.dirname(__filename);
 dotenv.config();   //secrete keys in environment
 
-export const WMS_CONFIG = {
+export const sshConfig = {
     agent: process.env.SSH_AUTH_SOCK,
     username: process.env.WMS_USERNAME,
     password: process.env.WMS_PASSWORD,
@@ -20,7 +20,7 @@ export const WMS_CONFIG = {
     keepAlive: true
 }
 
-export const WMS_COLLECTIONS = {
+export const wmsCollections = {
     LOCATION_INV: "locationInv",
     SELLER_INV: "sellerInv",
     SHIPMENT: "shipment"

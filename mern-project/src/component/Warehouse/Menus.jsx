@@ -14,7 +14,7 @@ import FileUpload from 'component/utility/FileUpload.jsx';
 import NeedToShipTable from 'component/Warehouse/NeedToShipTable.jsx';
 
 export const NeedToShipMenu = (props) => {
-    const { pendingShipmentInfo } = props;
+    const { shipmentInfo } = props;
     const dispatch = useDispatch();
     const { shippedNotVerifiedItems, itemsLoading } = useSelector((state) => (state.warehouse.needToShip));
     const needToShipMenuItems = [
@@ -51,7 +51,7 @@ export const NeedToShipMenu = (props) => {
     const handleContentSwitch = (key) => {
         switch (key) {
             case 'unstantiatedShipment':
-                return <NeedToShipTable data={shippedNotVerifiedItems} loading={itemsLoading} pendingShipmentInfo={pendingShipmentInfo} />
+                return <NeedToShipTable data={shippedNotVerifiedItems} loading={itemsLoading} shipmentInfo={shipmentInfo} />
             case 'uploadNeedToShip':
                 return <FileUpload customizedUpload={uploadNeedToShip} />
             case 'loadFromGsheet':

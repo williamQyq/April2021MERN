@@ -2,10 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { NeedToShipMenu } from 'component/Warehouse/Menus.jsx';
-import { getNeedToShipFromShipmentWithLimit, getNeedToShipPendingAndTotalCount } from 'reducers/actions/outboundActions.js';
-import AwaitingShipmentList from './AwaitingShipmentList';
+import {
+    getNeedToShipFromShipmentWithLimit,
+    getNeedToShipPendingAndTotalCount
+} from 'reducers/actions/outboundActions.js';
+import AwaitingShipmentList from './AwaitingShipmentList.jsx';
 
-class NeedToShipUpload extends React.Component {
+class NeedToShip extends React.Component {
     // static contextType = SocketContext //This part is important to access context values which are socket
     constructor(props) {
         super(props);
@@ -15,9 +18,10 @@ class NeedToShipUpload extends React.Component {
             data: [],
             docLimits: 5,
             docSkip: 0,
-            pendingShipmentInfo: {
+            shipmentInfo: {
                 pending: 0,
-                total: 0
+                total: 0,
+                confirm: 0
             }
         };
     }
@@ -25,8 +29,8 @@ class NeedToShipUpload extends React.Component {
     componentDidMount() {
         const { docLimits, docSkip } = this.state;
         this.props.getNeedToShipFromShipmentWithLimit(docLimits, docSkip);
-        getNeedToShipPendingAndTotalCount().then(pendingShipmentInfo => {
-            this.setState({ pendingShipmentInfo });
+        getNeedToShipPendingAndTotalCount().then(shipmentInfo => {
+            this.setState({ shipmentInfo });
         })
     }
     componentDidUpdate(prevProps) {
@@ -52,15 +56,15 @@ class NeedToShipUpload extends React.Component {
 
     render() {
         const { totalNeedToShipItemsCount } = this.props;
-        const { data, pendingShipmentInfo } = this.state;
+        const { data, shipmentInfo } = this.state;
         return (
             <>
-                <NeedToShipMenu pendingShipmentInfo={pendingShipmentInfo} />
+                <NeedToShipMenu shipmentInfo={shipmentInfo} />
                 <AwaitingShipmentList
                     data={data}
                     loadMore={this.loadMore}
                     dataLengthLimit={totalNeedToShipItemsCount}
-                    pendingShipmentInfo={pendingShipmentInfo}
+                    shipmentInfo={shipmentInfo}
                 />
             </>
 
@@ -68,7 +72,7 @@ class NeedToShipUpload extends React.Component {
     }
 }
 
-NeedToShipUpload.prototypes = {
+NeedToShip.prototypes = {
     needToShipItems: PropTypes.array.isRequired,
     needToShipItemsLoading: PropTypes.bool.isRequired,
     getNeedToShipFromShipmentWithLimit: PropTypes.func.isRequired,
@@ -79,4 +83,4 @@ const mapStateToProps = (state) => ({
     needToshipItemsLoading: state.warehouse.needToShip.itemsLoading
 })
 
-export default connect(mapStateToProps, { getNeedToShipFromShipmentWithLimit })(NeedToShipUpload);
+export default connect(mapStateToProps, { getNeedToShipFromShipmentWithLimit })(NeedToShip);

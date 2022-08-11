@@ -6,14 +6,14 @@ import { useEffect } from 'react';
 import ShipmentStatusBoard from './ShipmentStatusBoard.jsx';
 
 const AwaitingShipmentList = (props) => {
-    const { data, loadMore, dataLengthLimit, pendingShipmentInfo } = props;
+    const { data, loadMore, dataLengthLimit, shipmentInfo } = props;
     const [pending, SetPending] = useState(0);
     const [total, SetTotal] = useState(0);
 
     useEffect(() => {
-        SetPending(pendingShipmentInfo.pending);
-        SetTotal(pendingShipmentInfo.total);
-    }, [pendingShipmentInfo])
+        SetPending(shipmentInfo.pending);
+        SetTotal(shipmentInfo.total);
+    }, [shipmentInfo])
 
     return (
         <>

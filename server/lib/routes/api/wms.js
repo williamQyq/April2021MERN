@@ -79,13 +79,8 @@ router.get('/shipment/getPendingAndTotal/:orgNm', auth, (req, res) => {
     const { orgNm } = req.params;
     let wms = new WMSDatabaseApis();
     wms.getPendingShipmentInfoByOrgNm(orgNm)
-        .then((pendingInfo) => {
-            if (pendingInfo.total > 0) {
-                const { pending, total } = pendingInfo;
-                res.json({ pending, total })
-            } else {
-                res.json({ pending: -1, total: -1 })    //no shipment by today
-            }
+        .then((shipmentCountInfo) => {
+            res.json(shipmentCountInfo)
         })
 })
 
@@ -213,12 +208,14 @@ router.post('/needToShip/confirmShipment', auth, (req, res) => {
     // update locationInv -> update shipment status
 
     Promise.allSettled(
-        //concat update location Inv promises
+        // update qty on location Inv
         Array.from(unShipmentHandler)
-            .map(([upc, { unShippedQty, orgNm }]) =>
+            .map(([upc, { unShippedQty, orgNm, trackings }]) =>
                 new Promise((resolve, reject) => {
                     wms.updateLocationInvQtyByUpc(upc, Number(unShippedQty))
-                        .then(updateRes => resolve(updateRes))
+                        .then(updateRes => {
+                            resolve(updateRes)
+                        })
                         .catch(err => {
                             reject({
                                 action: "updateLocationInv",
@@ -227,14 +224,15 @@ router.post('/needToShip/confirmShipment', auth, (req, res) => {
                                 rejectedQty: Number(unShippedQty),
                                 rejectedOrgNm: orgNm
                             })
-                        }
-                        );
+                        });
                 })
             )
-
-            // concat update shipment status promises    
-            .concat(
-                processedTrackings.map(trackingId =>
+    )
+        //update fulfilled shipment status 
+        .then(async (results) => {
+            await Promise.allSettled(
+                //array of update shipment status promise
+                Array.from(processedTrackings).map(trackingId =>
                     new Promise((resolve, reject) => {
                         wms.updateShipmentStatus(trackingId, status.shipment.SUBSTANTIATED)
                             .then(updateRes => resolve(updateRes))
@@ -248,7 +246,8 @@ router.post('/needToShip/confirmShipment', auth, (req, res) => {
                     })
                 )
             )
-    )
+            return results;
+        })
         .then((results) => {
             console.log(`results: `, JSON.stringify(results, null, 4))
             let allRejectedShipment = results.filter(res => res.status === "rejected")
@@ -259,7 +258,8 @@ router.post('/needToShip/confirmShipment', auth, (req, res) => {
             } else {
                 res.json({ msg: `All Shipment fullfilled.` })
             }
-        }).catch(err => {
+        })
+        .catch(err => {
             res.status(500).json({
                 msg: `Reject updating sellerInv qty or locInv qty on Upc`,
                 reason: err.reason

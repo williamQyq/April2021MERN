@@ -6,7 +6,7 @@ import { Link, withRouter } from 'react-router-dom';
 
 const outboundMenuFeatures = [
     {
-        key: "needToShipUpload",
+        key: "needToShip",
         title: "Need to Ship",
         description: "Update Seller Inventory Quantity",
     },
