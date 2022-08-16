@@ -156,7 +156,7 @@ router.get('/needToShip/syncGsheet', auth, (req, res) => {
 
 router.get('/shipment/getNotVerifiedShipment/dateMin/:dateMin/dateMax/:dateMax', auth, (req, res) => {
     // const { dateMin, dateMax } = req.params;
-    const startDateUnix = 1659931200000;    //2022-08-08 00:00:00 since then, get all unsubstantiated shipment
+    const startDateUnix = 1660622400000;    //2022-08-16 00:00:00 since then, get all unsubstantiated shipment
     let wms = new WMSDatabaseApis();
     const shipmentObj = {
         orderID: undefined,
@@ -197,6 +197,7 @@ router.get('/shipment/getNotVerifiedShipment/dateMin/:dateMin/dateMax/:dateMax',
 
 router.post('/needToShip/confirmShipment', auth, (req, res) => {
     console.log(`*************confirm Shipment*************`);
+
     const { allUnShipment } = req.body;
 
     let wms = new WMSDatabaseApis();
@@ -204,8 +205,8 @@ router.post('/needToShip/confirmShipment', auth, (req, res) => {
     const { unShipmentHandler, processedTrackings } = wms.createUnShipmentMapping(allUnShipment);
     console.log(`unshipment Map: `, unShipmentHandler);
 
-    // concat 2 steps promise array:
-    // update locationInv -> update shipment status
+    // // concat 2 steps promise array:
+    // // update locationInv -> update shipment status
 
     Promise.allSettled(
         // update qty on location Inv
@@ -219,27 +220,42 @@ router.post('/needToShip/confirmShipment', auth, (req, res) => {
                         .catch(err => {
                             reject({
                                 action: "updateLocationInv",
-                                reason: err.reason,
+                                reason: err.message,
                                 rejectedUpc: upc,
                                 rejectedQty: Number(unShippedQty),
-                                rejectedOrgNm: orgNm
+                                rejectedTrackings: trackings,
+                                rejectedOrgNm: orgNm,
                             })
                         });
                 })
             )
     )
-        //update fulfilled shipment status 
+        //     //update fulfilled shipment status 
         .then(async (results) => {
+
+            //get rejected trackings for fulfilled trackings filter
+            let allRejectedTrackings = new Array();
+            const rejectedShipment = results.filter(res => res.status === "rejected")
+            rejectedShipment.forEach(shipment => {
+                const { reason: { rejectedTrackings } } = shipment;
+                allRejectedTrackings = [...allRejectedTrackings, ...rejectedTrackings];
+            })
+
+            const allTrackings = Array.from(processedTrackings);
+            //fulfilled trackings filter
+            const fulfilledTrackings = allTrackings.filter(tracking => (
+                allRejectedTrackings.indexOf(tracking) === -1 ? true : false
+            ))
             await Promise.allSettled(
                 //array of update shipment status promise
-                Array.from(processedTrackings).map(trackingId =>
+                fulfilledTrackings.map(trackingId =>
                     new Promise((resolve, reject) => {
                         wms.updateShipmentStatus(trackingId, status.shipment.SUBSTANTIATED)
                             .then(updateRes => resolve(updateRes))
                             .catch((err) => {
                                 reject({
                                     action: "updateShipmentStatus",
-                                    reason: err.reason,
+                                    reason: err.msg,
                                     trackingId: trackingId
                                 })
                             })
@@ -260,6 +276,7 @@ router.post('/needToShip/confirmShipment', auth, (req, res) => {
             }
         })
         .catch(err => {
+            console.log(`err: `, err)
             res.status(500).json({
                 msg: `Reject updating sellerInv qty or locInv qty on Upc`,
                 reason: err.reason
@@ -267,7 +284,6 @@ router.post('/needToShip/confirmShipment', auth, (req, res) => {
         })
 
 
-    // res.json({ msg: "yes" })
 })
 
 export default router;

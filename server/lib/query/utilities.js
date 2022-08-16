@@ -19,11 +19,11 @@ import {
     COUNT_SHIPMENT_BY_TODAY,
     GET_UNVERIFIED_SHIPMENT,
     GET_LOCINV_UPC_QTY_SUM_EXCLUDE_WMS,
-    GET_UPC_LOCATION_QTY
+    GET_UPC_LOCATION_QTY_EXCEPT_WMS,
+    GET_LOCATION_QTY_BY_UPC_AND_LOC
 } from './aggregate.js';
 import GenerateGSheetApis from '../../bin/gsheet/gsheet.js';
 import moment from 'moment';
-
 
 //@desc Api for ERP application
 //@desc next version, currently not used.
@@ -309,6 +309,7 @@ export class WMSDatabaseApis {
         return updateOrgNmByTracking;
     }
 
+    //@desc: get shipped status and operStatus unverified shipment docs
     async getShippedNotVerifiedShipment(startDateUnix) {
         const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
         let unverifiedShipment = await collection.aggregate(GET_UNVERIFIED_SHIPMENT(startDateUnix)).toArray();
@@ -340,29 +341,45 @@ export class WMSDatabaseApis {
         //@TEST 
         // throw ({ reason: `SellerInv: ${upc} does not have enought qty.\n Need ${qty}` })
     }
-    async updateLocationInvQtyByUpc(upc, unProcQty) {
-        // let batch = []
-        let reqProcQty = unProcQty;
 
+    /**
+     * @desc:
+     * 1. handle locQty on "WMS" only: no action needed.
+     * 2. qty on location except "WMS" is not enough and "WMS" do not have enough qty: throw error.
+     * 3. subtract shipped qty from every location sorting on qty until all qty shipped. *increment "WMS" loc shipped qty.
+     */
+    async updateLocationInvQtyByUpc(upc, reqProcQty) {
+        let unProcQty = reqProcQty;
         const collection = this.db.collection(WMSDatabaseApis._collection.locationInv);
-        let cursors = await collection.aggregate(GET_LOCINV_UPC_QTY_SUM_EXCLUDE_WMS(upc)).toArray()
-        if (cursors.length === 0) {
-            // No need actions, No Locations exclude “WMS"
+        let cursors = await collection.aggregate(GET_LOCINV_UPC_QTY_SUM_EXCLUDE_WMS(upc)).toArray();
+
+        let hasQtyOnWMSOnly = cursors.length === 0 ? true : false;
+        // do nothing, if no location qty sum documents exclude “WMS" are found.
+        if (hasQtyOnWMSOnly) {
             return ({
                 action: "updateLocationInvQtyByUpc",
                 msg: "No location other than WMS exists, no action taken"
             });
         }
-        let totalLocQty = cursors[0].sum;
-        if (totalLocQty < unProcQty) {
-            throw new Error({ reason: `locInv: ${upc} does not have enought qty.\n Need ${unProcQty}` })
-        }
+
+        let qtyOnLocExceptWMS = cursors[0].sum;
+        let locHasEnoughQty = qtyOnLocExceptWMS >= unProcQty ? true : false;
+
+        let locWMSQty = (await collection.aggregate(GET_LOCATION_QTY_BY_UPC_AND_LOC(upc, "WMS")).toArray())[0].qty;
+
+        let locWMSHasEnoughQty = locWMSQty >= (reqProcQty - qtyOnLocExceptWMS) ? true : false;
+
         try {
-            const upcLocQtyDocs = await collection.aggregate(GET_UPC_LOCATION_QTY(upc)).toArray();
+            const upcLocQtyDocs = await collection.aggregate(GET_UPC_LOCATION_QTY_EXCEPT_WMS(upc)).toArray();
+            console.log(`upcLocQtyDocs: `, upcLocQtyDocs)
+            if (!locHasEnoughQty && !locWMSHasEnoughQty) {
+                throw new Error(`locInv: ${upc} does not have enought qty.\n Need ${unProcQty}`)
+            }
 
             for (const doc of upcLocQtyDocs) {
-                if (doc.qty <= unProcQty) { //cur loc does not have enough qty for deduction
-                    // batch.push({ upc: doc.upc, loc: doc.loc, newQty: 0 })
+                console.log(`doc qty: `, typeof (doc.qty))
+
+                if (doc.qty < unProcQty) { //cur loc does not have enough qty for deduction
                     const findLocDocQuery = {
                         "_id.UPC": doc.upc,
                         "_id.loc": doc.loc
@@ -372,7 +389,7 @@ export class WMSDatabaseApis {
                     }
                     await collection.updateOne(findLocDocQuery, update)
                     unProcQty -= doc.qty;   //subtract qty from locInv
-                } else {
+                } else if (doc.qty >= unProcQty) {
                     const findLocDocQuery = {
                         "_id.UPC": doc.upc,
                         "_id.loc": doc.loc
@@ -381,7 +398,8 @@ export class WMSDatabaseApis {
                         $inc: { "qty": -unProcQty }
                     }
                     await collection.updateOne(findLocDocQuery, update)
-                    unProcQty = 0   //subtract qty finished, no unProcQty left
+                    unProcQty = 0
+                    break;  //all qty processed, quit locqtyDocs iteration
                 }
             }
 
@@ -397,12 +415,12 @@ export class WMSDatabaseApis {
             return ({
                 action: "updateLocationInvQtyByUpc",
                 upc,
-                unProcQty,
-                reqProcQty
+                reqProcQty: reqProcQty,
+                procQty: reqProcQty - unProcQty
             })
         } catch (err) {
-            console.log(`locInv err: `, err)
-            throw new Error({ reason: `locationInv: unable to get loc qty for upc ${upc}` })
+            console.log(`locInv err: `, JSON.stringify(err, null, 4))
+            throw new Error(`locationInv: unable to get loc qty for upc ${upc}`)
         }
     }
     async updateShipmentStatus(trackingID, newStatus) {
@@ -410,10 +428,10 @@ export class WMSDatabaseApis {
             "_id": trackingID,
         }
         let update = {
-            $set: { "status": newStatus }
+            $set: { "operStatus": newStatus }
         }
-        const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
         try {
+            const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
             let isShipmentStatusUpdated = (await collection.updateOne(query, update)).result;
             return ({
                 action: "updateShipmentStatus",
@@ -422,7 +440,7 @@ export class WMSDatabaseApis {
                 queryRes: isShipmentStatusUpdated
             });
         } catch (err) {
-            throw ({ reason: `Shipment tracking: ${trackingID} rejected.`, rejectedTracking: trackingID })
+            throw ({ msg: `Shipment tracking: ${trackingID} rejected.`, rejectedTracking: trackingID })
         }
         //@TEST 
         // throw ({ reason: `Shipment tracking: ${trackingID} status update failed.` })
@@ -463,6 +481,60 @@ export class WMSDatabaseApis {
         })
 
         return { unShipmentHandler, processedTrackings }
+    }
+
+    async findAndModifyShipment() {
+        // let update = {
+        //     $set: { "status": newStatus }
+        // }
+        let pipeline = [
+            {
+                '$project': {
+                    'status': 1,
+                    'orderID': 1,
+                    'rcIts': 1,
+                    'crtTm': 1,
+                    'mdfTm': 1,
+                    'UPCandSN': 1,
+                    'ymd': {
+                        '$dateToString': {
+                            'format': '%Y-%m-%d',
+                            'date': {
+                                '$toDate': '$mdfTm'
+                            }
+                        }
+                    }
+                }
+            }, {
+                '$match': {
+                    'status': {
+                        '$ne': 'shipped'
+                    },
+                    'ymd': {
+                        '$gte': '2022-08-08',
+                        '$lt': '2022-08-15'
+                    }
+                }
+            }, {
+                '$sort': {
+                    'ymd': -1
+                }
+            }
+        ];
+
+        const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
+        let docs = await collection.aggregate(pipeline).toArray();
+        for (const doc of docs) {
+            const query = {
+                _id: doc._id
+            }
+            const update = {
+                $set: {
+                    status: "shipped"
+                }
+            }
+            await collection.updateOne(query, update);
+        }
     }
 
 }

@@ -163,7 +163,7 @@ export const GET_NEED_TO_SHIP_ITEMS_BY_TODAY = (limit, skip) => [
             'crtStmp': {
                 '$gte': getTodayDate()
             },
-            'status': "ready"
+            'status': { "$ne": "shipped" }
         }
     }, {
         '$sort': {
@@ -205,7 +205,7 @@ export const COUNT_NEED_TO_SHIP_ITEMS_BY_TODAY = [
             'crtStmp': {
                 '$gte': getTodayDate()
             },
-            'status': "ready"
+            'status': { "$ne": "shipped" }
         }
     }, {
         '$count': "shipmentCount"
@@ -239,9 +239,7 @@ export const COUNT_SHIPMENT_BY_TODAY = () =>
                             'crtStmp': {
                                 '$gte': getTodayDate()
                             },
-                            'status': {
-                                '$eq': 'ready'
-                            }
+                            'status': { "$ne": "shipped" }
                         }
                     }, {
                         '$count': 'pending'
@@ -256,7 +254,7 @@ export const COUNT_SHIPMENT_BY_TODAY = () =>
                             'crtStmp': {
                                 '$gte': getTodayDate()
                             },
-                            'status': {
+                            'operStatus': {
                                 '$eq': 'substantiated'
                             }
                         }
@@ -296,27 +294,23 @@ export const GET_UNVERIFIED_SHIPMENT = (startDateUnix) => [
             'rcIts': 1,
             'UserID': 1,
             'shipBy': 1,
-            'crtTm': 1,
-            'crtStmp': 1,
+            'mdfTm': 1,
+            'mdfStmp': 1,
             'status': 1,
+            'operStatus': { $ifNull: ["$operStatus", "unverified"] }
         }
     }, {
         '$match': {
-            'crtStmp': {
+            'mdfStmp': {
                 '$gte': startDateUnix,
                 // '$lt': dateMax
             },
-            '$expr': {
-                '$and': [
-                    { "$ne": ["$status", status.shipment.READY] },
-                    { "$ne": ["$status", status.shipment.SUBSTANTIATED] }
-                ]
-                // "$eq": ["$status", status.shipment.SHIPPED]
-            }
+            'status': { '$eq': "shipped" },
+            'operStatus': { "$eq": "unverified" }
         }
     }, {
         '$sort': {
-            'crtStmp': 1
+            'mdfStmp': 1
         }
     }
 ]
@@ -325,7 +319,8 @@ export const GET_LOCINV_UPC_QTY_SUM_EXCLUDE_WMS = (upc) => [
     {
         '$match': {
             '_id.UPC': upc,
-            '_id.loc': { "$ne": "WMS" }
+            '_id.loc': { "$ne": "WMS" },
+            'qty': { "$gt": 0 }
         }
     }, {
         '$group': {
@@ -339,7 +334,7 @@ export const GET_LOCINV_UPC_QTY_SUM_EXCLUDE_WMS = (upc) => [
     }
 ]
 
-export const GET_UPC_LOCATION_QTY = (upc) => [
+export const GET_UPC_LOCATION_QTY_EXCEPT_WMS = (upc) => [
     {
         '$match': {
             '_id.UPC': upc,
@@ -360,6 +355,22 @@ export const GET_UPC_LOCATION_QTY = (upc) => [
     }, {
         '$sort': {
             'qty': 1
+        }
+    }
+]
+
+export const GET_LOCATION_QTY_BY_UPC_AND_LOC = (upc, loc) => [
+    {
+        '$match': {
+            '_id.UPC': upc,
+            '_id.loc': loc,
+        }
+    }, {
+        '$project': {
+            '_id': 0,
+            'upc': '$_id.UPC',
+            'loc': '$_id.loc',
+            'qty': '$qty'
         }
     }
 ]
