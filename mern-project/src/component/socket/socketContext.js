@@ -9,7 +9,7 @@ import { io } from "socket.io-client";
 
 const socket = io('ws://localhost:3000', {
     // reconnection: true,
-    transportOptions: ["websocket"]
+    transportOptions: ["websocket","polling"]
 })
 socket.on('connect', () => {
     console.log(`${socket.id} connected.\n`)
