@@ -222,7 +222,7 @@ export const COUNT_SHIPMENT_BY_TODAY = () =>
                             'orderID': {
                                 '$exists': true
                             },
-                            'crtStmp': {
+                            'mdfStmp': {
                                 '$gte': getTodayDate()
                             }
                         }
@@ -236,7 +236,7 @@ export const COUNT_SHIPMENT_BY_TODAY = () =>
                             'orderID': {
                                 '$exists': true
                             },
-                            'crtStmp': {
+                            'mdfStmp': {
                                 '$gte': getTodayDate()
                             },
                             'status': { "$ne": "shipped" }
@@ -251,7 +251,7 @@ export const COUNT_SHIPMENT_BY_TODAY = () =>
                             'orderID': {
                                 '$exists': true
                             },
-                            'crtStmp': {
+                            'mdfStmp': {
                                 '$gte': getTodayDate()
                             },
                             'operStatus': {

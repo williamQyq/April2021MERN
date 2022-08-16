@@ -38,6 +38,9 @@ class NeedToShip extends React.Component {
         if (prevProps.needToShipItems !== this.props.needToShipItems) {
             this.setState({ data: [...data, ...this.props.needToShipItems], initLoading: false, loading: false })
             this.setState({ docSkip: docLimits + docSkip })
+            getNeedToShipPendingAndTotalCount().then(shipmentInfo => {
+                this.setState({ shipmentInfo });
+            })
         }
 
     }

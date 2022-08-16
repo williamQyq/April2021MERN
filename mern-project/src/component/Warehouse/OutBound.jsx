@@ -31,7 +31,6 @@ class Outbound extends React.Component {
         return (
             <>
                 <ContentHeader title="Outbound" />
-                <SubContentHeader title="Wut you want💩¿¿¿" />
                 <Row gutter={[24, 16]}>
                     {
                         outboundMenuFeatures.map((feature, i) => {

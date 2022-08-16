@@ -13,7 +13,7 @@ const DescriptionCard = ({ detail }) => {
                             Object.entries(detail).map(([key, value]) => {
                                 if (value.constructor === Array) {
                                     return value.map((content, index) => (
-                                        <Descriptions.Item key={`${key}-${index}`}>
+                                        <Descriptions.Item key={`${content}-${index}`}>
                                             {
                                                 Object.entries(content).map(([contentKey, contentValue]) => (
                                                     <Text

@@ -371,13 +371,11 @@ export class WMSDatabaseApis {
 
         try {
             const upcLocQtyDocs = await collection.aggregate(GET_UPC_LOCATION_QTY_EXCEPT_WMS(upc)).toArray();
-            console.log(`upcLocQtyDocs: `, upcLocQtyDocs)
             if (!locHasEnoughQty && !locWMSHasEnoughQty) {
                 throw new Error(`locInv: ${upc} does not have enought qty.\n Need ${unProcQty}`)
             }
 
             for (const doc of upcLocQtyDocs) {
-                console.log(`doc qty: `, typeof (doc.qty))
 
                 if (doc.qty < unProcQty) { //cur loc does not have enough qty for deduction
                     const findLocDocQuery = {
