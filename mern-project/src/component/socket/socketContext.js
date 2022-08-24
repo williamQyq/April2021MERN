@@ -7,9 +7,10 @@ import {
 } from "reducers/actions/types";
 import { io } from "socket.io-client";
 
-const socket = io('ws://localhost:3000', {
+const socket = io('http://localhost:3000', {
     // reconnection: true,
-    transportOptions: ["websocket","polling"]
+    upgrade: true,
+    transportOptions: ["websocket"]
 })
 socket.on('connect', () => {
     console.log(`${socket.id} connected.\n`)

@@ -50,7 +50,7 @@ const io = new Server(server, {
         origin: "http://localhost:3000",
         methods: ["GET", "POST"],
     },
-    transports: ["websocket","polling"]
+    transports: ["websocket", "polling"]
 });
 
 
