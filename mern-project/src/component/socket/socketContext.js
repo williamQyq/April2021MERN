@@ -7,11 +7,7 @@ import {
 } from "reducers/actions/types";
 import { io } from "socket.io-client";
 
-const socket = io('http://localhost:3000', {
-    // reconnection: true,
-    upgrade: true,
-    transportOptions: ["websocket"]
-})
+const socket = io();
 socket.on('connect', () => {
     console.log(`${socket.id} connected.\n`)
 })

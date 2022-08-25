@@ -1,13 +1,13 @@
 .login-layout {
     .login-content {
-        min-height: 400px;
-        min-width: 1000px;
+        min-height: 25vh;
+        min-width: 30vw;
         margin: auto;
     }
     .login-form {
-        height: 400px;
+        height: 100%;
+        max-width: 100%;
         margin: auto 52px;
-        max-width: 920px;
 
         .sign-in-btn {
             margin-right: 24px;
@@ -19,7 +19,7 @@
         overflow: hidden;
     }
     .ant-layout-sider {
-        background-image: url("assets/background.png");
+        background-image: url("assets/ironicBG1.jpg");
         background-position: 0 0;
         background-size: cover;
         background-repeat: repeat-x;
