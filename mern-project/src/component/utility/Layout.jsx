@@ -18,10 +18,10 @@ export const ContentHeader = ({ title, subTitle = "" }) => {
     );
 }
 
-export const SubContentHeader = ({ title }) => {
+export const SubContentHeader = ({ title, subTitle = "" }) => {
     return (
         <Divider plain>
-            <PageHeader className="site-page-header" title={title} />
+            <PageHeader className="site-page-header" title={title} subTitle={subTitle} />
         </Divider>
 
     );

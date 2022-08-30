@@ -9,11 +9,13 @@ const AwaitingShipmentList = (props) => {
     const { data, loadMore, dataLengthLimit, shipmentInfo } = props;
     const [pending, SetPending] = useState(0);
     const [total, SetTotal] = useState(0);
+    const [awaitngShipment, SetAwaitingShipment] = useState(data);
 
     useEffect(() => {
         SetPending(shipmentInfo.pending);
         SetTotal(shipmentInfo.total);
-    }, [shipmentInfo])
+        SetAwaitingShipment(data)
+    }, [shipmentInfo, data])
 
     return (
         <>
@@ -31,9 +33,9 @@ const AwaitingShipmentList = (props) => {
                 }}
             >
                 <InfiniteScroll
-                    dataLength={data.length}
+                    dataLength={awaitngShipment.length}
                     next={loadMore}
-                    hasMore={data.length < dataLengthLimit}
+                    hasMore={awaitngShipment.length < dataLengthLimit}
                     loader={
                         <Skeleton
                             paragraph={{
@@ -47,7 +49,7 @@ const AwaitingShipmentList = (props) => {
 
                 >
                     <List
-                        dataSource={data}
+                        dataSource={awaitngShipment}
                         size="small"
                         renderItem={(item) => (
                             <List.Item key={item.orderID}>

@@ -114,3 +114,53 @@ export const inventoryReceivedColumns = [
     }
 
 ]
+
+export const searchShipmentColumns = [
+    {
+        title: "OrderId",
+        dataIndex: "orderID",
+        editable: false,
+        searchable: true,
+        // width: "20%",
+    },
+    {
+        title: "TrackingId",
+        dataIndex: "trackingID",
+        editable: false,
+        searchable: true,
+        // width: "15%"
+    },
+    {
+        title: "UPC",
+        dataIndex: "upc",
+        editable: false,
+        searchable: true,
+        // width: "10%"
+    },
+    {
+        title: "Qty",
+        dataIndex: "qty",
+        editable: false,
+        width: "5%"
+    },
+    {
+        title: "SN",
+        dataIndex: "SN",
+        searchable: true
+    },
+    {
+        title: "Create Time",
+        dataIndex: "crtTm",
+        searchable: true
+    },
+    {
+        title: "Shipped Time",
+        dataIndex: "mdfTm",
+        searchable: true
+    },
+    {
+        title: "Ship By",
+        dataIndex: "shipBy",
+        searchable: true
+    }
+]

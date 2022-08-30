@@ -57,6 +57,11 @@ const routes = [
     exact: true
   },
   {
+    path: 'app/outbound/searchRecord',
+    component: lazy(() => import('component/Warehouse/SearchRecords.jsx')),
+    exact: true
+  },
+  {
     path: 'app/configuration',
     component: lazy(() => import('component/Operation/Configuration')),
     exact: true

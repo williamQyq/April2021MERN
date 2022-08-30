@@ -14,6 +14,11 @@ const outboundMenuFeatures = [
         key: "inventoryReceived",
         title: "Inventory Receive",
         description: "Manage received Inventory"
+    },
+    {
+        key: "searchRecord",
+        title: "Search",
+        description: "Search Records"
     }
 ]
 
@@ -37,10 +42,7 @@ class Outbound extends React.Component {
                             return (
                                 <Col key={i} xs={16} xl={8}>
                                     <Link to={`${path}/${feature.key}`}>
-                                        <Card
-                                            hoverable
-                                            title={feature.title}
-                                        >
+                                        <Card hoverable title={feature.title}>
                                             <Card.Meta description={feature.description} />
                                         </Card>
                                     </Link>
