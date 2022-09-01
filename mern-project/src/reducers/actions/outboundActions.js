@@ -7,7 +7,6 @@ import {
     CONFIRM_SHIPMENT,
     GET_ERRORS,
     // GET_INVENTORY_RECEIVED,
-    GET_INVENTORY_RECEIVED_ITEMS,
     GET_SHIPMENT_ITEMS,
     GET_SHIPMENT_ITEMS_WITH_LIMIT,
     GET_SHIPPED_NOT_VERIFIED_SHIPMENT,
@@ -33,28 +32,7 @@ export const syncInventoryReceivedWithGsheet = () => (dispatch, getState) => {
         })
 }
 
-export const getInventoryReceived = (requiredFields) => (dispatch, getState) => {
-    // dispatch(setInventoryReceivedLoading());
-    let params = {};
-    let paramsURL = ""
-    axios.get(`/api/wms/inventoryReceivedItems/${paramsURL}`,
-        { ...tokenConfig(getState), params: { params } }
-    )
-        .then(receivedItems => {
-            dispatch({
-                type: GET_INVENTORY_RECEIVED_ITEMS,
-                payload: receivedItems.data
-            });
-        })
-        .catch(err => {
-            dispatch({
-                type: GET_INVENTORY_RECEIVED_ITEMS,
-                payload: []
-            })
-            dispatch(clearErrors());
-            dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS));
-        })
-}
+
 //working get Shipment for search
 
 // export const getShipment = (requiredFields) => (dispatch, getState) => {

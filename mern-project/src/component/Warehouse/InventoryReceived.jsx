@@ -5,7 +5,7 @@ import { Form } from 'antd';
 import { defaultSettings, inventoryReceivedColumns } from 'component/Warehouse/utilities.js';
 import { InventoryReceivedMenu } from './Menus.jsx';
 import FormTable from 'component/utility/FormTable.jsx';
-import { getInventoryReceived } from 'reducers/actions/outboundActions.js';
+import { getInventoryReceived } from 'reducers/actions/inboundActions.js';
 
 class InventoryReceived extends React.Component {
     constructor(props) {

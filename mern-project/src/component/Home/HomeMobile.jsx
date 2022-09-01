@@ -3,7 +3,7 @@ import { Content } from 'antd/lib/layout/layout';
 import React from 'react';
 import { connect } from 'react-redux';
 import './HomeMobile.scss';
-import { getInvReceive } from 'reducers/actions/inboundActions.js';
+import { getInvReceivedWithWrongAdds } from 'reducers/actions/inboundActions.js';
 import { logout } from 'reducers/actions/authActions.js';
 
 // import { SocketContext } from 'component/socket/socketContext.js';
@@ -20,7 +20,7 @@ class HomeMobile extends React.Component {
 
     handleClick = (e) => {
         this.setState({ loading: true })
-        this.props.getInvReceive().then(res => {
+        this.props.getInvReceivedWithWrongAdds().then(res => {
             message.success("get wrong adds success")
             this.setState({ loading: false })
         }).catch(e => {
@@ -51,4 +51,4 @@ class HomeMobile extends React.Component {
 
 
 
-export default connect(null, { getInvReceive, logout })(HomeMobile);
+export default connect(null, { getInvReceivedWithWrongAdds, logout })(HomeMobile);
