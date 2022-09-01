@@ -32,30 +32,28 @@ export const syncInventoryReceivedWithGsheet = () => (dispatch, getState) => {
         })
 }
 
-
-//working get Shipment for search
-
-// export const getShipment = (requiredFields) => (dispatch, getState) => {
-//     let params = {};
-//     let paramsURL = ""
-//     axios.get(`/api/wms/shipmentItems/${paramsURL}`,
-//         { ...tokenConfig(getState), params: { params } }
-//     )
-//         .then(shippedItems => {
-//             dispatch({
-//                 type: GET_INVENTORY_RECEIVED_ITEMS,
-//                 payload: receivedItems.data
-//             });
-//         })
-//         .catch(err => {
-//             dispatch({
-//                 type: GET_INVENTORY_RECEIVED_ITEMS,
-//                 payload: []
-//             })
-//             dispatch(clearErrors());
-//             dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS));
-//         })
-// }
+//@desc: get Shipment On Required Fields
+export const getShipment = (requiredFields) => (dispatch, getState) => {
+    let params = {};
+    let paramsURL = ""
+    axios.get(`/api/wms/shipmentItems/${paramsURL}`,
+        { ...tokenConfig(getState), params: { params } }
+    )
+        .then(res => {
+            dispatch({
+                type: GET_SHIPMENT_ITEMS,
+                payload: res.data
+            });
+        })
+        .catch(err => {
+            dispatch({
+                type: GET_SHIPMENT_ITEMS,
+                payload: []
+            })
+            dispatch(clearErrors());
+            dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS));
+        })
+}
 
 //axios get needtoship documents for inifite scroll
 export const getNeedToShipFromShipmentWithLimit = (docLimits, docSkip) => (dispatch, getState) => {

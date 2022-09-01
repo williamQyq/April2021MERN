@@ -1,5 +1,6 @@
 import {
     GET_INVENTORY_RECEIVED_ITEMS,
+    GET_SHIPMENT_ITEMS,
     GET_SHIPMENT_ITEMS_WITH_LIMIT,
     GET_SHIPPED_NOT_VERIFIED_SHIPMENT,
     INVENTORY_RECEIVED_LOADING,
@@ -17,6 +18,10 @@ const initialState = {
         items: [],
         itemsLoading: false,
         shippedNotVerifiedItems: []
+    },
+    shipment: {
+        shipmentItems: [],
+        shipmentItemsLoading: false
     }
 }
 
@@ -30,14 +35,24 @@ export default function Reducer(state = initialState, action) {
         case GET_INVENTORY_RECEIVED_ITEMS:
             return {
                 ...state,
-                inventoryReceivedItems: action.payload,
-                inventoryReceivedLoading: false
+                inventoryReceived: {
+                    inventoryReceivedItems: action.payload,
+                    inventoryReceivedLoading: false
+                }
             }
         case INVENTORY_RECEIVED_LOADING:
             return {
                 ...state,
                 inventoryReceivedLoading: true
             };
+        case GET_SHIPMENT_ITEMS:
+            return {
+                ...state,
+                shipment: {
+                    shipmentItems: action.payload,
+                    shipmentItemsLoading: false
+                }
+            }
         case GET_SHIPMENT_ITEMS_WITH_LIMIT:
             return {
                 ...state,
