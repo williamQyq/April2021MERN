@@ -21,7 +21,8 @@ import {
     GET_LOCINV_UPC_QTY_SUM_EXCLUDE_WMS,
     GET_UPC_LOCATION_QTY_EXCEPT_WMS,
     GET_LOCATION_QTY_BY_UPC_AND_LOC,
-    GET_SHIPMENT_BY_COMPOUND_FILTER
+    GET_SHIPMENT_BY_COMPOUND_FILTER,
+    GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER
 } from './aggregate.js';
 import GenerateGSheetApis from '../../bin/gsheet/gsheet.js';
 import moment from 'moment';
@@ -271,8 +272,8 @@ export class WMSDatabaseApis {
         return upcQtyArr;
     }
 
-
-    async getInventoryReceive() {
+    //@desc: deprecat soon
+    async getInventoryReceiveInHalfMonth() {
         const collection = this.db.collection(WMSDatabaseApis._collection.inventoryReceive);
         let invRecItemsHalfMonthAgo = await collection.aggregate(GET_INVENTORY_RECEIVED_HALF_MONTH_AGO).toArray();
         return invRecItemsHalfMonthAgo;
@@ -544,6 +545,13 @@ export class WMSDatabaseApis {
         return shipmentRecordsByReqFields;
     }
 
+    async getInventoryReceive(fields) {
+        let requiredFields = Object.assign({}, fields);
+        delete requiredFields.type;
+        const collection = this.db.collection(WMSDatabaseApis._collection.inventoryReceive);
+        let invRecRecords = await collection.aggregate(GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER).toArray();
+        return invRecRecords;
+    }
 }
 
 export class GsheetApis extends GenerateGSheetApis {

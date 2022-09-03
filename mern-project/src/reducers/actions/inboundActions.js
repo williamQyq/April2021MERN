@@ -23,15 +23,11 @@ export const getInvReceivedWithWrongAdds = () => (dispatch, getState) => (
 
 export const getInventoryReceived = (requiredFields) => (dispatch, getState) => {
     // dispatch(setInventoryReceivedLoading());
-    let params = {};
-    let paramsURL = ""
-    axios.get(`/api/wms/inventoryReceivedItems/${paramsURL}`,
-        { ...tokenConfig(getState), params: { params } }
-    )
-        .then(receivedItems => {
+    axios.post(`/api/wms/getInventoryReceived`, { requiredFields }, tokenConfig(getState))
+        .then(res => {
             dispatch({
                 type: GET_INVENTORY_RECEIVED_ITEMS,
-                payload: receivedItems.data
+                payload: res.data
             });
         })
         .catch(err => {

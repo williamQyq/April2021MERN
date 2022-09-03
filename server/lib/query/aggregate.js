@@ -423,3 +423,51 @@ export const GET_SHIPMENT_BY_COMPOUND_FILTER = (fields) => {
     console.log(`compondFilter : `, compoundFilter)
     return compoundFilter;
 }
+
+export const GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER = (fields) => {
+    let compoundFilter = [];
+    let matchObj = {};
+    compoundFilter = compoundFilter.concat([
+        {
+            '$unwind': {
+                'path': '$rcIts'
+            }
+        }, {
+            '$project': {
+                '_id': 0,
+                'trackingID': '$_id',
+                'orderID': 1,
+                'orgNm': 1,
+                'upc': '$rcIts.UPC',
+                'qty': '$rcIts.qty',
+                'userID': 1,
+                'shipBy': 1,
+                'crtTm': 1,
+                'mdfTm': 1,
+                'status': 1,
+            }
+        }
+    ]);
+
+    if (fields["OrderId"]) {
+        matchObj["orderID"] = new RegExp(`.*${fields["OrderId"]}.*`);
+    }
+    if (fields["trackingId"]) {
+        matchObj["trackingID"] = new RegExp(`.*${fields["trackingId"]}.*`);
+    }
+    if (fields["orgNm"]) {
+        matchObj["orgNm"] = new RegExp(`.*${fields["orgNm"]}.*`);
+    }
+    if (fields["upc"]) {
+        matchObj["upc"] = new RegExp(`.*${fields["upc"]}.*`);
+    }
+    if (fields["sn"]) {
+        matchObj['UPCandSN.SN'] = fields["sn"];
+    }
+
+    if (Object.entries(matchObj).length > 0) {
+        compoundFilter.push({ '$match': matchObj })
+    }
+    console.log(`compondFilter : `, compoundFilter)
+    return compoundFilter;
+}
