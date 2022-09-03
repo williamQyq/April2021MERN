@@ -34,11 +34,8 @@ export const syncInventoryReceivedWithGsheet = () => (dispatch, getState) => {
 
 //@desc: get Shipment On Required Fields
 export const getShipment = (requiredFields) => (dispatch, getState) => {
-    let params = {};
-    let paramsURL = ""
-    axios.get(`/api/wms/shipmentItems/${paramsURL}`,
-        { ...tokenConfig(getState), params: { params } }
-    )
+    dispatch(setShipmentItemsLoading());
+    axios.post(`/api/wms/getShipment`, { requiredFields }, tokenConfig(getState))
         .then(res => {
             dispatch({
                 type: GET_SHIPMENT_ITEMS,
@@ -67,7 +64,7 @@ export const getNeedToShipFromShipmentWithLimit = (docLimits, docSkip) => (dispa
         })
         .catch(err => {
             dispatch({
-                type: GET_SHIPMENT_ITEMS,
+                type: GET_SHIPMENT_ITEMS_WITH_LIMIT,
                 payload: []
             })
             dispatch(clearErrors());

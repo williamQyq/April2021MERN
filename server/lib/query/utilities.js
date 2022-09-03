@@ -20,7 +20,8 @@ import {
     GET_UNVERIFIED_SHIPMENT,
     GET_LOCINV_UPC_QTY_SUM_EXCLUDE_WMS,
     GET_UPC_LOCATION_QTY_EXCEPT_WMS,
-    GET_LOCATION_QTY_BY_UPC_AND_LOC
+    GET_LOCATION_QTY_BY_UPC_AND_LOC,
+    GET_SHIPMENT_BY_COMPOUND_FILTER
 } from './aggregate.js';
 import GenerateGSheetApis from '../../bin/gsheet/gsheet.js';
 import moment from 'moment';
@@ -533,6 +534,14 @@ export class WMSDatabaseApis {
             }
             await collection.updateOne(query, update);
         }
+    }
+
+    async getShipment(fields) {
+        let requiredFields = Object.assign({}, fields);
+        delete requiredFields.type;
+        const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
+        let shipmentRecordsByReqFields = await collection.aggregate(GET_SHIPMENT_BY_COMPOUND_FILTER(requiredFields)).toArray();
+        return shipmentRecordsByReqFields;
     }
 
 }

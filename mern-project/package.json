@@ -32,7 +32,8 @@
     "sass": "^1.35.1",
     "scss": "^0.2.4",
     "socket.io-client": "^4.5.1",
-    "typescript": "^4.4.4"
+    "typescript": "^4.4.4",
+    "url": "^0.11.0"
   },
   "scripts": {
     "start": "react-scripts start",

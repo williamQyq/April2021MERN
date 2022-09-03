@@ -50,7 +50,7 @@ export default function Reducer(state = initialState, action) {
                 ...state,
                 shipment: {
                     shipmentItems: action.payload,
-                    shipmentItemsLoading: false
+                    itemsLoading: false
                 }
             }
         case GET_SHIPMENT_ITEMS_WITH_LIMIT:
@@ -68,6 +68,10 @@ export default function Reducer(state = initialState, action) {
                 ...state,
                 needToShip: {
                     ...state.needToShip,
+                    itemsLoading: true
+                },
+                shipment: {
+                    ...state.shipment,
                     itemsLoading: true
                 }
             }
