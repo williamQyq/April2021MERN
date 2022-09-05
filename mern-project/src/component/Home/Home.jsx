@@ -6,7 +6,6 @@ import {
   BrowserRouter as Router,
   withRouter
 } from "react-router-dom";
-import store from 'store.js';
 import { loadUser, logout } from 'reducers/actions/authActions.js';
 import { connect } from 'react-redux';
 import HomeContent from 'component/Home/HomeContent.jsx';
@@ -24,9 +23,9 @@ class Home extends React.Component {
   };
 
   componentDidMount() {
-    store.dispatch(loadUser());
+    this.props.loadUser();
     let socket = this.context;
-    if(!socket.connected){
+    if (!socket.connected) {
       socket.connect();
     }
   }
@@ -49,7 +48,7 @@ class Home extends React.Component {
     const { collapsed } = this.state;
     return (
       <Router>
-        <Layout className="main-layout" style={{minHeight:"100vh"}}>
+        <Layout className="main-layout" style={{ minHeight: "100vh" }}>
           <HomeSider path={path} isCollapsed={collapsed} toggle={this.toggle} />
           <Layout className="site-layout">
             {/* Home Header  */}
@@ -64,4 +63,4 @@ class Home extends React.Component {
   }
 }
 
-export default withRouter(connect(null, { logout })(Home));
+export default withRouter(connect(null, { logout, loadUser })(Home));

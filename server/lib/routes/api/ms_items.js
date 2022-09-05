@@ -7,7 +7,7 @@ import Microsoft from '../../../bin/helper/MS.js';
 const router = express.Router();
 
 // @route GET api/items
-router.get('/', (req, res) => {
+router.get('/peek/v0/prices', (req, res) => {
     let alertApi = new AlertApi();
     let model = alertApi.getMicrosoftAlertModel();
     alertApi.getStoreItems(model)
@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
         .catch(err => res.status(503).json({ msg: err }));
 });
 
-router.get('/detail/:_id', (req, res) => {
+router.get('/peek/v0/getProductDetail/id/:_id', (req, res) => {
     let alertApi = new AlertApi();
     let model = alertApi.getMicrosoftAlertModel();
     alertApi.getStoreItemDetailById(model, req.params._id)
@@ -23,7 +23,7 @@ router.get('/detail/:_id', (req, res) => {
         .catch(err => res.status(503).json({ msg: err }));
 });
 
-router.get('/getOnlinePrice', auth, (req, res) => {
+router.get('/crawl/v0/getOnlinePrice', auth, (req, res) => {
     // setTimeout(() => {
     //     res.json({ msg: "get online price success" })
     //     // io.on('connection', (socket) => {

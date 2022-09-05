@@ -13,7 +13,7 @@ const SearchShipment = () => {
 
     const [visible, setVisible] = useState(false);
     const dispatch = useDispatch();
-    const { shipmentItems, itemsLoading } = useSelector((state) => state.warehouse.shipment)
+    const { items, itemsLoading } = useSelector((state) => state.warehouse.shipmentSearch)
     const [form] = Form.useForm();
 
     const onSubmit = () => {
@@ -38,7 +38,7 @@ const SearchShipment = () => {
     return (
 
         <FormTable
-            data={shipmentItems}
+            data={items}
             columns={searchShipmentColumns}
             loading={itemsLoading}
             tableSettings={{

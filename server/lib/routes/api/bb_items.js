@@ -1,21 +1,33 @@
 import express from 'express';
-import { getMostViewedOnCategoryId, getViewedUltimatelyBought, getAlsoBoughtOnSku } from '#bin/bestbuyIO/bestbuyIO.js';
 import auth from '#middleware/auth.js';
 import { AlertApi } from '../../query/utilities.js';
 import io from '../../../index.js';
 import Bestbuy from '../../../bin/helper/BB.js';
+import {
+    getMostViewedOnCategoryId,
+    getViewedUltimatelyBought,
+    getAlsoBoughtOnSku
+} from '#bin/bestbuyIO/bestbuyIO.js';
+
 
 const router = express.Router();
 
 // @route GET api/items
 // @access private
-router.get('/', auth, (req, res) => {
+router.get('/peek/v0/prices', auth, (req, res) => {
     let alertApi = new AlertApi();
     let model = alertApi.getBestbuyAlertModel();
 
     alertApi.getStoreItems(model)
         .then(items => res.json(items))
-        .catch(err => res.status(503).json({ msg: "Service Unavailable" }));
+        .catch(err => {
+            res.status(503).json(
+                {
+                    msg: "Service Unavailable",
+                    reason: err.message
+                }
+            )
+        });
 });
 
 // @route GET api/items
@@ -55,7 +67,7 @@ router.put('/itemSpec/add', auth, (req, res) => {
 })
 
 // @access private
-router.get('/mostViewed/:categoryId', auth, (req, res) => {
+router.get('/peek/v0/getMostViewed/categoryId/:categoryId', auth, (req, res) => {
     getMostViewedOnCategoryId(req.params.categoryId)
         .then(result => {
             console.log(`\nbestbuy api most viewed request received...`)
@@ -67,7 +79,7 @@ router.get('/mostViewed/:categoryId', auth, (req, res) => {
 });
 
 // @access private
-router.get('/viewedUltimatelyBought/:sku', auth, (req, res) => {
+router.get('/peek/v0/getViewedUltimatelyBought/sku/:sku', auth, (req, res) => {
     getViewedUltimatelyBought(req.params.sku)
         .then(result => {
             console.log(`\nbestbuy api ultimately bought request received...`)
@@ -79,7 +91,7 @@ router.get('/viewedUltimatelyBought/:sku', auth, (req, res) => {
 })
 
 // @access private
-router.get('/alsoBought/:sku', auth, (req, res) => {
+router.get('/peek/v0/getAlsoBought/sku/:sku', auth, (req, res) => {
     getAlsoBoughtOnSku(req.params.sku)
         .then(result => {
             console.log(`\nbestbuy api also bought request received...`)
@@ -90,7 +102,7 @@ router.get('/alsoBought/:sku', auth, (req, res) => {
         })
 })
 
-router.get('/getOnlinePrice', auth, (req, res) => {
+router.get('/crawl/v0/getOnlinePrice', auth, (req, res) => {
     const pupeteer = new Bestbuy();
     pupeteer.getAndSaveBestbuyLaptopsPrice()
         .then(() => {

@@ -40,6 +40,7 @@ import { clearMessages, returnMessages } from './messageActions.js';
 //     )
 // };
 
+//@status: deprecated
 export const deleteItem = (_id) => dispatch => {
     axios.delete(`/api/items/${_id}`).then(res => {
         dispatch({
@@ -51,6 +52,7 @@ export const deleteItem = (_id) => dispatch => {
     })
 };
 
+//@status: deprecated
 export const addItem = item => dispatch => {
     axios.post('/api/items', item).then(res =>
         dispatch({
@@ -77,7 +79,7 @@ const setRouteOnStore = (store) => {
     switch (store) {
         case MICROSOFT:
             return {
-                routes: 'ms_items',
+                routes: 'microsoft',
                 type: {
                     GET_ITEM_DETAIL: GET_MS_ITEM_DETAIL,
                     GET_ITEM_ONLINE_PRICE: GET_MS_ITEMS_ONLINE_PRICE,
@@ -89,7 +91,7 @@ const setRouteOnStore = (store) => {
             }
         case BESTBUY:
             return {
-                routes: 'bb_items',
+                routes: 'bestbuy',
                 type: {
                     GET_ITEM_DETAIL: GET_BB_ITEM_DETAIL,
                     GET_ITEM_ONLINE_PRICE: GET_BB_ITEMS_ONLINE_PRICE,
@@ -111,7 +113,7 @@ export const getItemsOnlinePrice = (store) => (dispatch, getState) => {
     if (routes && type) {
         dispatch(setItemsOnlinePriceLoading(type.ITEMS_ONLINE_PRICE_LOADING));
         dispatch(returnMessages("Working on online price retrieval...\nPlease wait.", 202, type.ITEMS_ONLINE_PRICE_LOADING));
-        axios.get(`/api/${routes}/getOnlinePrice`, tokenConfig(getState))
+        axios.get(`/api/${routes}/crawl/v0/getOnlinePrice`, tokenConfig(getState))
             .catch(err => {
                 dispatch(clearMessages())
                 dispatch(returnMessages(err.response.msg, err.response.status, GET_ERRORS))
@@ -143,7 +145,7 @@ export const getItemDetail = (store, _id) => dispatch => {
 
     dispatch(setItemsLoading());
     const { routes, type } = setRouteOnStore(store);    //get routes and action types on store selection
-    axios.get(`/api/${routes}/detail/${_id}`).then(res => {
+    axios.get(`/api/${routes}/peek/v0/getProductDetail/id/${_id}`).then(res => {
         let item = Object.values(res.data).pop();
         item.price_timestamps.forEach(ts => {
             ts.date = Moment(ts.date).format("MMM Do YYYY HH:mm a");

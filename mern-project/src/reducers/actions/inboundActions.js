@@ -6,13 +6,14 @@ import {
     GET_ERRORS,
     SERVICE_UNAVAILABLE,
     UPDATE_INVENTORY_RECEIVE,
-    GET_INVENTORY_RECEIVED_ITEMS
+    SEARCH_SHIPMENT
 } from './types.js';
 import Papa from "papaparse";
 import fileDownload from 'js-file-download';
+import { setSearchShipmentLoading } from './loadingActions.js';
 
 export const getInvReceivedWithWrongAdds = () => (dispatch, getState) => (
-    axios.get(`/api/inbound/inv-receive/wrongadds`, tokenConfig(getState))
+    axios.get(`/api/wms/inventoryReceive/v0/getWrongAdds`, tokenConfig(getState))
         .then(result => {
             return result
         })
@@ -22,17 +23,18 @@ export const getInvReceivedWithWrongAdds = () => (dispatch, getState) => (
 )
 
 export const getInventoryReceived = (requiredFields) => (dispatch, getState) => {
-    // dispatch(setInventoryReceivedLoading());
-    axios.post(`/api/wms/getInventoryReceived`, { requiredFields }, tokenConfig(getState))
+    dispatch(setSearchShipmentLoading());
+
+    axios.post(`/api/wms/inventoryReceive/v0/getInventoryReceived`, { requiredFields }, tokenConfig(getState))
         .then(res => {
             dispatch({
-                type: GET_INVENTORY_RECEIVED_ITEMS,
+                type: SEARCH_SHIPMENT,
                 payload: res.data
             });
         })
         .catch(err => {
             dispatch({
-                type: GET_INVENTORY_RECEIVED_ITEMS,
+                type: SEARCH_SHIPMENT,
                 payload: []
             })
             dispatch(clearErrors());
@@ -44,7 +46,7 @@ export const updateInventoryReceivedByUpload = (file, onSuccess, onError) => (di
     Papa.parse(file, {
         complete: (results) => {
             const uploadFile = results.data;
-            axios.post('/api/wms/inventoryReceive/updateRecOnTracking', { uploadFile }, tokenConfig(getState))
+            axios.post('/api/wms/inventoryReceive/v0/updateRecOnTracking', { uploadFile }, tokenConfig(getState))
                 .then(res => {
                     dispatch({
                         type: UPDATE_INVENTORY_RECEIVE,
@@ -71,7 +73,7 @@ export const updateInventoryReceivedByUpload = (file, onSuccess, onError) => (di
 }
 
 export const downloadInventoryReceivedUploadSample = () => dispatch => {
-    axios.get('/api/wms/downloadSampleXlsx/inventoryReceive', { responseType: "blob" }).then((res) => {
+    axios.get('/api/wms/inventoryReceive/v0/downloadSampleXlsx', { responseType: "blob" }).then((res) => {
         fileDownload(res.data, 'inventoryReceived.xlsx')
     })
 }

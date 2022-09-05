@@ -6,7 +6,7 @@ import { OperationApi } from '../../query/utilities.js';
 
 // @route GET api/amazonSP
 // @desc: get all amazon seller central sync product pricing offers 
-router.get('/', (req, res) => {
+router.get('/products/pricing/v0/price', (req, res) => {
     let api = new OperationApi();
     api.findAllProdPricing()
         .then(products => { res.json(products) });
@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
 
 // @route POST api/amazonSP
 // @desc: save upc asin mapping Schema for ProductPricing API
-router.post('/upload/asins-mapping', auth, (req, res) => {
+router.post('/upload/v0/asinsMapping', auth, (req, res) => {
     const { uploadFile } = req.body
     console.log(`=======received file:======\n${JSON.stringify(uploadFile)}\n\n`)
     processMappingFile(uploadFile)

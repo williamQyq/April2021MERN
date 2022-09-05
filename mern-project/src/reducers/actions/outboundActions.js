@@ -2,6 +2,11 @@ import axios from 'axios';
 import store from 'store.js';
 import { tokenConfig } from './authActions.js';
 import { clearErrors, returnErrors } from './errorActions.js';
+import {
+    setInventoryReceivedLoading,
+    setSearchShipmentLoading,
+    setShipmentItemsLoading
+} from './loadingActions.js';
 import { clearMessages, returnMessages } from './messageActions.js';
 import {
     CONFIRM_SHIPMENT,
@@ -11,6 +16,8 @@ import {
     GET_SHIPMENT_ITEMS_WITH_LIMIT,
     GET_SHIPPED_NOT_VERIFIED_SHIPMENT,
     INVENTORY_RECEIVED_LOADING,
+    SEARCH_SHIPMENT,
+    SEARCH_SHIPMENT_LOADING,
     SERVICE_UNAVAILABLE,
     SHIPMENT_ITEMS_LOADING,
     SYNC_INVENTORY_RECEIVED_WITH_GSHEET
@@ -18,7 +25,10 @@ import {
 
 export const syncInventoryReceivedWithGsheet = () => (dispatch, getState) => {
     dispatch(setInventoryReceivedLoading())
-    axios.get(`/api/wms/inventoryReceived/syncGsheet`, tokenConfig(getState))
+    axios.get(
+        `/api/wms/inventoryReceive/v0/getInventoryReceiveInHalfMonth/updateGsheet`,
+        tokenConfig(getState)
+    )
         .then((res) => {
             dispatch({
                 type: SYNC_INVENTORY_RECEIVED_WITH_GSHEET,
@@ -34,17 +44,21 @@ export const syncInventoryReceivedWithGsheet = () => (dispatch, getState) => {
 
 //@desc: get Shipment On Required Fields
 export const getShipment = (requiredFields) => (dispatch, getState) => {
-    dispatch(setShipmentItemsLoading());
-    axios.post(`/api/wms/getShipment`, { requiredFields }, tokenConfig(getState))
+    dispatch(setSearchShipmentLoading());
+    axios.post(
+        `/api/wms/shipment/v0/getShipment`,
+        { requiredFields },
+        tokenConfig(getState)
+    )
         .then(res => {
             dispatch({
-                type: GET_SHIPMENT_ITEMS,
+                type: SEARCH_SHIPMENT,
                 payload: res.data
             });
         })
         .catch(err => {
             dispatch({
-                type: GET_SHIPMENT_ITEMS,
+                type: SEARCH_SHIPMENT,
                 payload: []
             })
             dispatch(clearErrors());
@@ -55,7 +69,16 @@ export const getShipment = (requiredFields) => (dispatch, getState) => {
 //axios get needtoship documents for inifite scroll
 export const getNeedToShipFromShipmentWithLimit = (docLimits, docSkip) => (dispatch, getState) => {
     dispatch(setShipmentItemsLoading());
-    axios.get(`/api/wms/shipment/getNeedToShipItems/limit/${docLimits}/skip/${docSkip}`, { ...tokenConfig(getState), params: { docLimits, docSkip } })
+    axios.get(
+        `/api/wms/shipment/v0/getNeedToShipItems/limit/${docLimits}/skip/${docSkip}`,
+        {
+            ...tokenConfig(getState),
+            params: {
+                docLimits,
+                docSkip
+            }
+        }
+    )
         .then(res => {
             dispatch({
                 type: GET_SHIPMENT_ITEMS_WITH_LIMIT,
@@ -74,25 +97,32 @@ export const getNeedToShipFromShipmentWithLimit = (docLimits, docSkip) => (dispa
 
 export const getNeedToShipPendingAndTotalCount = async (orgNm = "M") => {
     const getState = store.getState;
-    return axios.get(`/api/wms/shipment/getPendingAndTotal/${orgNm}`, { ...tokenConfig(getState), params: { orgNm } })
+    return axios.get(
+        `/api/wms/shipment/v0/getPendingAndTotal/${orgNm}`,
+        {
+            ...tokenConfig(getState),
+            params: {
+                orgNm
+            }
+        }
+    )
         .then(res => res.data);
 }
 
-const setInventoryReceivedLoading = () => {
-    return {
-        type: INVENTORY_RECEIVED_LOADING
-    }
-}
-const setShipmentItemsLoading = () => {
-    return {
-        type: SHIPMENT_ITEMS_LOADING
-    }
-}
 
 //get shipped but not qty deducted shipment info
 export const getShippedNotVerifiedShipmentByDate = (dateRange) => (dispatch, getState) => {
     const [dateMin, dateMax] = dateRange;
-    axios.get(`/api/wms/shipment/getNotVerifiedShipment/dateMin/${dateMin}/dateMax/${dateMax}`, { ...tokenConfig(getState), params: { dateMin, dateMax } })
+    axios.get(
+        `/api/wms/shipment/v0/getNotVerifiedShipment/dateMin/${dateMin}/dateMax/${dateMax}`,
+        {
+            ...tokenConfig(getState),
+            params: {
+                dateMin,
+                dateMax
+            }
+        }
+    )
         .then((res) => {
             dispatch({
                 type: GET_SHIPPED_NOT_VERIFIED_SHIPMENT,
@@ -109,7 +139,7 @@ export const confirmShipmentAndSubTractQty = (unShipmentArr) => async (dispatch,
         dispatch(returnMessages("No Shipment selected", 202, SERVICE_UNAVAILABLE));
         return;
     }
-    return axios.post('/api/wms/needToShip/confirmShipment', { allUnShipment: unShipmentArr }, tokenConfig(getState))
+    return axios.post('/api/wms/needToShip/v0/confirmShipment', { allUnShipment: unShipmentArr }, tokenConfig(getState))
         .then((res) => {
             dispatch(returnMessages(res.data.msg, res.status, CONFIRM_SHIPMENT))
         })

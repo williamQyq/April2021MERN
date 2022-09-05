@@ -47,7 +47,7 @@ export const tokenConfig = getState => {
     return config;
 }
 
-export const login = ({ email, password }) => dispatch => {
+export const login = ({ email, password }) => async (dispatch) => {
     //Headers
     const config = {
         headers: {
@@ -57,14 +57,15 @@ export const login = ({ email, password }) => dispatch => {
 
     const body = JSON.stringify({ email, password });
 
-    axios.post('/api/auth', body, config)
-        .then(res =>
+    return axios.post('/api/auth', body, config)
+        .then(res => {
             dispatch({
                 type: LOGIN_SUCCESS,
                 payload: res.data
             })
-        )
+        })
         .catch(err => {
+            console.log(`err:`, err)
             dispatch(
                 returnErrors(err.response.data.msg, err.response.status, LOGIN_FAIL)
             );

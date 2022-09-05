@@ -23,9 +23,9 @@ const server = app.listen(port, () => {
 });
 
 //@routes; direct axios request from client
-app.use('/api/bb_items', bbItemsRouter);
-app.use('/api/ms_items', msItemsRouter);
-app.use('/api/wm_items', wmItemsRouter);
+app.use('/api/bestbuy', bbItemsRouter);
+app.use('/api/microsoft', msItemsRouter);
+// app.use('/api/walmart', wmItemsRouter);
 // app.use('/api/cc_items', require('./routes/api/cc_items'));
 app.use('/api/items', itemsRouter);
 app.use('/api/users', usersRouter);
@@ -33,7 +33,6 @@ app.use('/api/auth', authRouter);
 // app.use('/api/keepa', require('./routes/api/keepa'));
 app.use('/api/wms', wmsRouter);
 app.use('/api/operation', operationRouter);
-// app.use('/api/inbound', require('./routes/api/inbound'));
 
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, '../mern-project/build')));

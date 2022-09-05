@@ -17,7 +17,7 @@ import { returnErrors } from './errorActions';
 
 export const getBBItems = () => (dispatch, getState) => {
     dispatch(setItemsLoading());
-    axios.get('/api/bb_items', tokenConfig(getState)).then(res => {
+    axios.get('/api/bestbuy/peek/v0/prices', tokenConfig(getState)).then(res => {
 
         //modify created date time format in res.data
         let items = Object.values(res.data);
@@ -55,7 +55,7 @@ export const setTableSettings = (store, clickedId) => dispatch => {
 export const getMostViewedOnCategoryId = (categoryId) => (dispatch, getState) => {
     dispatch(setMostViewedItemsLoading());
     console.log('Get most viewed request sent...')
-    axios.get(`/api/bb_items/mostViewed/${categoryId}`, tokenConfig(getState)).then(res => {
+    axios.get(`/api/bestbuy/peek/v0/getMostViewed/categoryId/${categoryId}`, tokenConfig(getState)).then(res => {
         dispatch({
             type: GET_BB_MOST_VIEWED_ITEMS,
             payload: res.data
@@ -69,7 +69,7 @@ export const getMostViewedOnCategoryId = (categoryId) => (dispatch, getState) =>
 
 export const getViewedUltimatelyBoughtOnSku = (sku) => (dispatch, getState) => {
     dispatch(setMostViewedItemsLoading());
-    axios.get(`/api/bb_items/viewedUltimatelyBought/${sku}`, tokenConfig(getState)).then(res => {
+    axios.get(`/api/bestbuy/peek/v0/getViewedUltimatelyBought/sku/${sku}`, tokenConfig(getState)).then(res => {
         dispatch({
             type: GET_BB_VIEWED_ULTIMATELY_BOUGHT_ITEMS,
             payload: res.data
@@ -82,7 +82,7 @@ export const getViewedUltimatelyBoughtOnSku = (sku) => (dispatch, getState) => {
 }
 export const getAlsoBoughtOnSku = (sku) => (dispatch, getState) => {
     dispatch(setMostViewedItemsLoading());
-    axios.get(`/api/bb_items/alsoBought/${sku}`, tokenConfig(getState)).then(res => {
+    axios.get(`/api/bestbuy/peek/v0/getAlsoBought/sku/${sku}`, tokenConfig(getState)).then(res => {
         dispatch({
             type: GET_BB_ALSO_BOUGHT_ITEMS,
             payload: res.data

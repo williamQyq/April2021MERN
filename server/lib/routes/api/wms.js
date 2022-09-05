@@ -1,14 +1,14 @@
 import express from 'express';
 import auth from '#middleware/auth.js';
-import { WMSDatabaseApis, GsheetApis } from '../../query/utilities.js';
 import excel from 'exceljs';
+import { WMSDatabaseApis, GsheetApis } from '../../query/utilities.js';
 import { status } from '../../query/aggregate.js';
 
 const router = express.Router();
 
 //@route GET api/wms
 //@desc get warehouse quantity on upc
-router.get('/quantity/:upc', (req, res) => {
+router.get('/sellerInv/v0/quantity/upc/:upc', (req, res) => {
     let upc = req.params.upc;
     let wms = new WMSDatabaseApis();
     wms.findUpcQtyOnOrg(upc)
@@ -17,7 +17,7 @@ router.get('/quantity/:upc', (req, res) => {
 
 //@route POST api/wms
 //@desc get warehouse quantity on multiple upcs
-router.post('/quantity/all', auth, (req, res) => {
+router.post('/sellerInv/v0/quantity/upcs', auth, (req, res) => {
     const { upcArr } = req.body;
     let result = [];
     let wms = new WMSDatabaseApis();
@@ -40,19 +40,33 @@ router.post('/sellerInv/subtractQty', auth, (req, res) => {
     res.status(503).json({ msg: "Update WMS Service Unavailable" })
 })
 
-router.post('/getInventoryReceived', auth, (req, res) => {
+router.post('/inventoryReceive/v0/getInventoryReceived', auth, (req, res) => {
     const { requiredFields } = req.body;
     let wms = new WMSDatabaseApis();
     wms.getInventoryReceive(requiredFields)
         .then(validRecItems => { res.json(validRecItems) })
         .catch(err => {
-            res.status(400).json({ msg: "Fail to get Inventory Received", reason: err.reason })
+            res.status(400).json({ msg: "Fail to get Inventory Received", reason: err.message })
         })
 })
 
+//@route GET api/wms
+router.get('/inventoryReceive/v0/getWrongAdds', auth, (req, res) => {
+    const db = wms.getDatabase();
+    const collection = db.collection('inventoryReceive');
+
+    collection.find({ 'orgNm': 'wrongadds' }).toArray()
+        .then(docs => {
+            console.log(`[routes] receive inventoryReceive wrongadds GET request...`)
+            res.json(docs)
+            // return docs;
+        })
+});
+
+
 //@route get api/wms
 //@desc sync warehouse inventory Received with ForUpload Gsheet
-router.get('/inventoryReceived/syncGsheet', auth, (req, res) => {
+router.get('/inventoryReceive/v0/getInventoryReceiveInHalfMonth/updateGsheet', auth, (req, res) => {
     let wms = new WMSDatabaseApis();
     let gsheet = new GsheetApis();
 
@@ -66,7 +80,7 @@ router.get('/inventoryReceived/syncGsheet', auth, (req, res) => {
 
 })
 
-router.get('/shipment/getNeedToShipItems/limit/:docLimit/skip/:docSkip', auth, (req, res) => {
+router.get('/shipment/v0/getNeedToShipItems/limit/:docLimit/skip/:docSkip', auth, (req, res) => {
     const { docLimit, docSkip } = req.params;
     let wms = new WMSDatabaseApis();
     wms.getNeedToShipFromShipment(Number(docLimit), Number(docSkip))// params in req are strings, mongodb limit query accepts number only
@@ -78,7 +92,7 @@ router.get('/shipment/getNeedToShipItems/limit/:docLimit/skip/:docSkip', auth, (
             res.status(500).json({ msg: "Fail to get Shipment" })
         }))
 })
-router.get('/shipment/getPendingAndTotal/:orgNm', auth, (req, res) => {
+router.get('/shipment/v0/getPendingAndTotal/:orgNm', auth, (req, res) => {
     const { orgNm } = req.params;
     let wms = new WMSDatabaseApis();
     wms.getPendingShipmentInfoByOrgNm(orgNm)
@@ -87,7 +101,7 @@ router.get('/shipment/getPendingAndTotal/:orgNm', auth, (req, res) => {
         })
 })
 
-router.post('/inventoryReceive/updateRecOnTracking', auth, (req, res) => {
+router.post('/inventoryReceive/v0/updateRecOnTracking', auth, (req, res) => {
     const { uploadFile } = req.body;
     updateRecOnTracking(uploadFile)
         .then((response) => {
@@ -121,7 +135,7 @@ const updateRecOnTracking = async (file) => {
     }))
 }
 
-router.get('/downloadSampleXlsx/inventoryReceive', (req, res) => {
+router.get('/inventoryReceive/v0/downloadSampleXlsx', (req, res) => {
     let workbook = new excel.Workbook();
     let worksheet = workbook.addWorksheet("Inventory Received");
     worksheet.columns = [
@@ -157,7 +171,7 @@ router.get('/needToShip/syncGsheet', auth, (req, res) => {
     res.json({ msg: "success" })
 })
 
-router.get('/shipment/getNotVerifiedShipment/dateMin/:dateMin/dateMax/:dateMax', auth, (req, res) => {
+router.get('/shipment/v0/getNotVerifiedShipment/dateMin/:dateMin/dateMax/:dateMax', auth, (req, res) => {
     // const { dateMin, dateMax } = req.params;
     const startDateUnix = 1660622400000;    //2022-08-16 00:00:00 since then, get all unsubstantiated shipment
     let wms = new WMSDatabaseApis();
@@ -198,7 +212,7 @@ router.get('/shipment/getNotVerifiedShipment/dateMin/:dateMin/dateMax/:dateMax',
         })
 })
 
-router.post('/needToShip/confirmShipment', auth, (req, res) => {
+router.post('/needToShip/v0/confirmShipment', auth, (req, res) => {
     console.log(`*************confirm Shipment*************`);
 
     const { allUnShipment } = req.body;
@@ -282,25 +296,24 @@ router.post('/needToShip/confirmShipment', auth, (req, res) => {
             console.log(`err: `, err)
             res.status(500).json({
                 msg: `Reject updating sellerInv qty or locInv qty on Upc`,
-                reason: err.reason
+                reason: err.message
             })
         })
 
 
 })
 
-router.post('/getShipment', auth, (req, res) => {
+router.post('/shipment/v0/getShipment', auth, (req, res) => {
     const { requiredFields } = req.body;
     let wms = new WMSDatabaseApis();
     wms.getShipment(requiredFields)
         .then(validShipment => {
-            console.log(validShipment)
             res.json(validShipment)
         })
         .catch(err => {
             res.status(400).json({
                 msg: `Reject get shipment by required fields`,
-                reasoon: err.reason
+                reasoon: err.message
             })
         })
 })

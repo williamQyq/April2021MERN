@@ -19,6 +19,7 @@ router.post('/', (req, res) => {
 
     User.findOne({ email })
         .then(user => {
+            console.log(`User sign in:`, user)
             if (!user) return res.status(400).json({ msg: 'Unauthorized access denied' });
 
             //validate password
@@ -44,7 +45,7 @@ router.post('/', (req, res) => {
                     )
                 })
 
-        });
+        })
 });
 
 // @route:  GET api/auth/user

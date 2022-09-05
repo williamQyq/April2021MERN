@@ -1,9 +1,10 @@
 import {
     GET_INVENTORY_RECEIVED_ITEMS,
-    GET_SHIPMENT_ITEMS,
     GET_SHIPMENT_ITEMS_WITH_LIMIT,
     GET_SHIPPED_NOT_VERIFIED_SHIPMENT,
     INVENTORY_RECEIVED_LOADING,
+    SEARCH_SHIPMENT,
+    SEARCH_SHIPMENT_LOADING,
     SHIPMENT_ITEMS_LOADING,
     SYNC_INVENTORY_RECEIVED_WITH_GSHEET
     // GET_ITEM_SPEC,
@@ -19,9 +20,9 @@ const initialState = {
         itemsLoading: false,
         shippedNotVerifiedItems: []
     },
-    shipment: {
-        shipmentItems: [],
-        shipmentItemsLoading: false
+    shipmentSearch: {
+        items: [],
+        itemsLoading: false
     }
 }
 
@@ -45,11 +46,12 @@ export default function Reducer(state = initialState, action) {
                 ...state,
                 inventoryReceivedLoading: true
             };
-        case GET_SHIPMENT_ITEMS:
+        case SEARCH_SHIPMENT:
             return {
                 ...state,
-                shipment: {
-                    shipmentItems: action.payload,
+                shipmentSearch: {
+                    ...state.shipmentSearch,
+                    items: action.payload,
                     itemsLoading: false
                 }
             }
@@ -63,15 +65,19 @@ export default function Reducer(state = initialState, action) {
                     itemsLoading: false
                 }
             }
+        case SEARCH_SHIPMENT_LOADING:
+            return {
+                ...state,
+                shipmentSearch: {
+                    ...state.shipmentSearch,
+                    itemsLoading: true
+                }
+            }
         case SHIPMENT_ITEMS_LOADING:
             return {
                 ...state,
                 needToShip: {
                     ...state.needToShip,
-                    itemsLoading: true
-                },
-                shipment: {
-                    ...state.shipment,
                     itemsLoading: true
                 }
             }

@@ -5,7 +5,7 @@ import { tokenConfig } from './authActions.js';
 
 export const getMSItems = () => (dispatch, getState) => {
     dispatch(setItemsLoading());
-    axios.get('/api/ms_items', tokenConfig(getState))
+    axios.get('/api/microsoft/peek/v0/prices', tokenConfig(getState))
         .then(res => {
             //modify created date time format in res.data
             let items = Object.values(res.data);

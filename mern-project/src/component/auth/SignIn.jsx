@@ -79,7 +79,6 @@ class SignIn extends React.Component {
 
     onFinish = (values) => {
         const { email, password } = values;
-
         const user = {
             email,
             password
@@ -104,7 +103,7 @@ class SignIn extends React.Component {
     render() {
 
         return (
-            <Layout className="login-layout" style={{minHeight:"100vh"}}>
+            <Layout className="login-layout" style={{ minHeight: "100vh" }}>
                 <Sider {...siderLayout} />
                 <Content className="login-content">
                     <Form

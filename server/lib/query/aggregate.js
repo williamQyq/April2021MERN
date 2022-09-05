@@ -420,7 +420,6 @@ export const GET_SHIPMENT_BY_COMPOUND_FILTER = (fields) => {
     if (Object.entries(matchObj).length > 0) {
         compoundFilter.push({ '$match': matchObj })
     }
-    console.log(`compondFilter : `, compoundFilter)
     return compoundFilter;
 }
 
@@ -435,11 +434,10 @@ export const GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER = (fields) => {
         }, {
             '$project': {
                 '_id': 0,
-                'trackingID': '$_id',
-                'orderID': 1,
+                'trackingID': '$trNo',
                 'orgNm': 1,
                 'upc': '$rcIts.UPC',
-                'qty': '$rcIts.qty',
+                'qty': '$rcIts.qn',
                 'userID': 1,
                 'shipBy': 1,
                 'crtTm': 1,
@@ -449,9 +447,6 @@ export const GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER = (fields) => {
         }
     ]);
 
-    if (fields["OrderId"]) {
-        matchObj["orderID"] = new RegExp(`.*${fields["OrderId"]}.*`);
-    }
     if (fields["trackingId"]) {
         matchObj["trackingID"] = new RegExp(`.*${fields["trackingId"]}.*`);
     }
@@ -468,6 +463,5 @@ export const GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER = (fields) => {
     if (Object.entries(matchObj).length > 0) {
         compoundFilter.push({ '$match': matchObj })
     }
-    console.log(`compondFilter : `, compoundFilter)
     return compoundFilter;
 }

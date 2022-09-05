@@ -16,7 +16,7 @@ import { returnMessages } from './messageActions';
 // then get upc quantity info from wms. Finally, dispatch product pricing data.
 export const getProductPricing = () => (dispatch, getState) => {
     dispatch(setResLoading());
-    axios.get('/api/operation', tokenConfig(getState))
+    axios.get('/api/operation/products/pricing/v0/price', tokenConfig(getState))
         .then(res => {
             //dispatch mongo atlas prod pricing collection ducuments first, then wms quantity.
             dispatch({
@@ -44,7 +44,7 @@ export const getProductPricing = () => (dispatch, getState) => {
 
 export const getWmsProdQty = (prods) => async (dispatch, getState) => {
     let upcArr = prods.map(prod => prod.upc)
-    let appendedQtyProducts = await axios.post(`/api/wms/quantity/all`, { upcArr }, tokenConfig(getState))
+    let appendedQtyProducts = await axios.post(`/api/wms/sellerInv/v0/quantity/upcs`, { upcArr }, tokenConfig(getState))
         .then(res => {
             let upcQtyMap = new Map(res.data)
             let newProdsArr = [...prods];
@@ -63,7 +63,7 @@ export const uploadAsinsMapping = (file, onSuccess, onError) => dispatch => {
     Papa.parse(file, {
         complete: (results) => {
             const uploadFile = results.data;
-            axios.post('/api/operation/upload/asins-mapping', { uploadFile })
+            axios.post('/api/operation/upload/v0/asinsMapping', { uploadFile })
                 .then(res => {
                     dispatch({
                         type: UPLOAD_ASINS_MAPPING,

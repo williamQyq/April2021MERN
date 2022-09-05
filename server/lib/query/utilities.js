@@ -549,7 +549,7 @@ export class WMSDatabaseApis {
         let requiredFields = Object.assign({}, fields);
         delete requiredFields.type;
         const collection = this.db.collection(WMSDatabaseApis._collection.inventoryReceive);
-        let invRecRecords = await collection.aggregate(GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER).toArray();
+        let invRecRecords = await collection.aggregate(GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER(requiredFields)).toArray();
         return invRecRecords;
     }
 }

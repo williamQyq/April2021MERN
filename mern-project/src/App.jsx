@@ -7,7 +7,6 @@ import {
 import SignIn from 'component/auth/SignIn.jsx';
 import ErrorPage from 'component/utility/ErrorPage.jsx';
 import PrivateRoute from 'component/auth/PrivateRoute.js';
-import { loadUser } from 'reducers/actions/authActions.js';
 import { connect } from 'react-redux';
 import Proptypes from 'prop-types';
 
@@ -25,9 +24,6 @@ class App extends React.Component {
     isAuthenticated: Proptypes.bool
   }
 
-  componentDidMount() {
-    this.props.loadUser();
-  }
   componentDidUpdate() {
     const { status, msg, reason } = this.props.error;
     if (status === 202) {
@@ -65,8 +61,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch) => ({
   handleErrors: () => dispatch(clearErrors()),
-  handleMessages: () => dispatch(clearMessages()),
-  loadUser: () => dispatch(loadUser())
+  handleMessages: () => dispatch(clearMessages())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

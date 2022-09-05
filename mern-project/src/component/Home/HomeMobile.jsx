@@ -20,13 +20,15 @@ class HomeMobile extends React.Component {
 
     handleClick = (e) => {
         this.setState({ loading: true })
-        this.props.getInvReceivedWithWrongAdds().then(res => {
-            message.success("get wrong adds success")
-            this.setState({ loading: false })
-        }).catch(e => {
-            message.error(e);
-            this.setState({ loading: false });
-        })
+        this.props.getInvReceivedWithWrongAdds()
+            .then(res => {
+                message.success("get wrong adds success")
+                this.setState({ loading: false })
+            })
+            .catch(e => {
+                message.error(e);
+                this.setState({ loading: false });
+            })
     }
 
     handleLogOut = () => {
