@@ -446,7 +446,7 @@ export const GET_SHIPMENT_BY_COMPOUND_FILTER = (fields) => {
         matchObj["upc"] = new RegExp(`.*${fields["upc"]}.*`);
     }
     if (fields["sn"]) {
-        matchObj['UPCandSN.SN'] = fields["sn"];
+        matchObj['sn'] = fields["sn"];
     }
 
     if (Object.entries(matchObj).length > 0) {
@@ -488,9 +488,7 @@ export const GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER = (fields) => {
     if (fields["upc"]) {
         matchObj["upc"] = new RegExp(`.*${fields["upc"]}.*`);
     }
-    if (fields["sn"]) {
-        matchObj['UPCandSN.SN'] = fields["sn"];
-    }
+  
 
     if (Object.entries(matchObj).length > 0) {
         compoundFilter.push({ '$match': matchObj })
