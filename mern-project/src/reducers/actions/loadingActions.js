@@ -2,7 +2,6 @@ import {
     INVENTORY_RECEIVED_LOADING,
     SHIPMENT_ITEMS_LOADING,
     SEARCH_SHIPMENT_LOADING,
-
 } from "./types";
 
 export const setInventoryReceivedLoading = () => {

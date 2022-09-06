@@ -145,7 +145,7 @@ export const searchShipmentColumns = [
     },
     {
         title: "SN",
-        dataIndex: "SN",
+        dataIndex: "sn",
         searchable: true
     },
     {
@@ -163,4 +163,67 @@ export const searchShipmentColumns = [
         dataIndex: "shipBy",
         searchable: true
     }
+]
+
+export const searchReceivedShipmentColumns = [
+
+    {
+        title: "TrackingId",
+        dataIndex: "trackingID",
+        editable: false,
+        searchable: true,
+        // width: "15%"
+    },
+    {
+        title: "UPC",
+        dataIndex: "upc",
+        editable: false,
+        searchable: true,
+        // width: "10%"
+    },
+    {
+        title: "Qty",
+        dataIndex: "qty",
+        editable: false,
+        width: "5%"
+    },
+    {
+        title: "Create Time",
+        dataIndex: "crtTm",
+        searchable: true
+    },
+    {
+        title: "Shipped Time",
+        dataIndex: "mdfTm",
+        searchable: true
+    },
+]
+
+export const searchLocationInventoryColumns = [
+
+    {
+        title: "Location ID",
+        dataIndex: "loc",
+        editable: false,
+        searchable: true,
+        // width: "15%"
+    },
+    {
+        title: "UPC",
+        dataIndex: "upc",
+        editable: false,
+        searchable: true,
+        // width: "10%"
+    },
+    {
+        title: "Qty",
+        dataIndex: "qty",
+        editable: false,
+        width: "5%"
+    },
+    {
+        title: "Modify Time",
+        dataIndex: "mdfTm",
+        searchable: true
+    },
 ]

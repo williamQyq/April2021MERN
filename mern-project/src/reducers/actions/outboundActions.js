@@ -1,5 +1,5 @@
 import axios from 'axios';
-import store from 'store.js';
+import store from 'reducers/store/store.js';
 import { tokenConfig } from './authActions.js';
 import { clearErrors, returnErrors } from './errorActions.js';
 import {
@@ -11,15 +11,10 @@ import { clearMessages, returnMessages } from './messageActions.js';
 import {
     CONFIRM_SHIPMENT,
     GET_ERRORS,
-    // GET_INVENTORY_RECEIVED,
-    GET_SHIPMENT_ITEMS,
     GET_SHIPMENT_ITEMS_WITH_LIMIT,
     GET_SHIPPED_NOT_VERIFIED_SHIPMENT,
-    INVENTORY_RECEIVED_LOADING,
     SEARCH_SHIPMENT,
-    SEARCH_SHIPMENT_LOADING,
     SERVICE_UNAVAILABLE,
-    SHIPMENT_ITEMS_LOADING,
     SYNC_INVENTORY_RECEIVED_WITH_GSHEET
 } from './types.js';
 

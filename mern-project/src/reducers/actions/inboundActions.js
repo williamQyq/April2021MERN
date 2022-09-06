@@ -90,3 +90,23 @@ export const syncFromNeedToShipGsheet = () => (dispatch, getState) => {
 
     //     })
 }
+
+export const getLocationInventory = (requiredFields) => (dispatch, getState) => {
+    dispatch(setSearchShipmentLoading());
+
+    axios.post(`/api/wms/locationInventory/v0/getLocationInventory`, { requiredFields }, tokenConfig(getState))
+        .then(res => {
+            dispatch({
+                type: SEARCH_SHIPMENT,
+                payload: res.data
+            });
+        })
+        .catch(err => {
+            dispatch({
+                type: SEARCH_SHIPMENT,
+                payload: []
+            })
+            dispatch(clearErrors());
+            dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS));
+        })
+}

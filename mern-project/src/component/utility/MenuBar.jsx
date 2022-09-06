@@ -1,10 +1,9 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { Menu, Tree } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { ContentHeader } from 'component/utility/Layout.jsx';
-import './MenuBar.scss';
-import { useEffect } from 'react';
+import 'styles/MenuBar.scss';
 
 const MenuBar = (props) => {
     const { handleContentSwitch, handleClick, menuItems, title, defaultSelectedKey } = props

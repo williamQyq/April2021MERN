@@ -1,12 +1,23 @@
 
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Col, DatePicker, Drawer, Form, Input, Row, Select, Space } from 'antd';
+import { useEffect } from 'react';
+import { useState } from 'react';
 
 const { Option } = Select;
 
 const DrawerSearch = (props) => {
-
     const { title, onSubmit, setVisible, visible, form } = props;
+    const [searchCategory, setCategory] = useState('');
+    const [shipmentOptionSelectable, setShipmentOption] = useState(true);
+    const [inventoryReceiveOptionSelectable, setInventoryReceiveOption] = useState(true);
+    const [inventoryLocationOptionSelectable, setInventoryLocationOption] = useState(true);
+
+    useEffect(() => {
+        setShipmentOption(searchCategory === 'outBoundShipment' ? true : false);
+        setInventoryReceiveOption(searchCategory === 'inBoundReceived' ? true : false);
+        setInventoryLocationOption(searchCategory === 'locationInventory' ? true : false);
+    }, [searchCategory])
 
     const showDrawer = () => {
         setVisible(true);
@@ -15,6 +26,10 @@ const DrawerSearch = (props) => {
     const onClose = () => {
         setVisible(false);
     };
+
+    const handleCategoryChange = (category) => {
+        setCategory(category);
+    }
 
     return (
         <>
@@ -45,7 +60,7 @@ const DrawerSearch = (props) => {
                                 name="OrderId"
                                 label="OrderId"
                             >
-                                <Input placeholder="Please enter OrderId" />
+                                <Input disabled={!shipmentOptionSelectable} placeholder="Please enter OrderId" />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
@@ -53,7 +68,7 @@ const DrawerSearch = (props) => {
                                 name="trackingId"
                                 label="TrackingId"
                             >
-                                <Input placeholder="Please enter TrackingId" />
+                                <Input disabled={!(shipmentOptionSelectable || inventoryReceiveOptionSelectable)} placeholder="Please enter TrackingId" />
                             </Form.Item>
                         </Col>
                     </Row>
@@ -63,7 +78,14 @@ const DrawerSearch = (props) => {
                                 name="orgNm"
                                 label="orgNm"
                             >
-                                <Select placeholder="Please select an organization">
+                                <Select
+                                    disabled={
+                                        !(
+                                            shipmentOptionSelectable ||
+                                            inventoryReceiveOptionSelectable
+                                        )
+                                    }
+                                    placeholder="Please select an organization">
                                     <Option value="M">M</Option>
                                     <Option value="R">R</Option>
                                     <Option value="X">X</Option>
@@ -81,9 +103,10 @@ const DrawerSearch = (props) => {
                                     },
                                 ]}
                             >
-                                <Select placeholder="Please choose the type">
+                                <Select onSelect={handleCategoryChange} placeholder="Please choose the type">
                                     <Option value="outBoundShipment">OutBound Shipment</Option>
                                     <Option value="inBoundReceived">InBound Received</Option>
+                                    <Option value="locationInventory">Location Inventory</Option>
                                 </Select>
                             </Form.Item>
                         </Col>
@@ -94,7 +117,15 @@ const DrawerSearch = (props) => {
                                 name="upc"
                                 label="UPC"
                             >
-                                <Input placeholder="Please enter UPC" />
+                                <Input
+                                    disabled={
+                                        !(
+                                            shipmentOptionSelectable ||
+                                            inventoryReceiveOptionSelectable ||
+                                            inventoryLocationOptionSelectable
+                                        )
+                                    }
+                                    placeholder="Please enter UPC" />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
@@ -102,7 +133,7 @@ const DrawerSearch = (props) => {
                                 name="sn"
                                 label="SN"
                             >
-                                <Input placeholder="Please enter SN" />
+                                <Input disabled={!shipmentOptionSelectable} placeholder="Please enter SN" />
                             </Form.Item>
                         </Col>
                     </Row>

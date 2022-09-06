@@ -4,6 +4,8 @@ import { Table, Input, Button, Space } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
 import { setTableState } from 'reducers/actions/itemActions';
+import 'styles/FormTable.scss';
+
 
 class FormTable extends React.Component {
     constructor(props) {

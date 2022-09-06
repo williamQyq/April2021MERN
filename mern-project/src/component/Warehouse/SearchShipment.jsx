@@ -1,20 +1,28 @@
 
-import React, { useState, useEffect } from 'react';
-import { defaultSettings, searchShipmentColumns } from 'component/Warehouse/utilities.js';
+import React, { useState } from 'react';
+import {
+    defaultSettings,
+    searchReceivedShipmentColumns,
+    searchShipmentColumns,
+    searchLocationInventoryColumns
+} from 'component/Warehouse/utilities.js';
 import DrawerSearch from 'component/utility/DrawerSearch.jsx';
 import FormTable from 'component/utility/FormTable.jsx';
 import { Form } from 'antd';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getShipment } from 'reducers/actions/outboundActions';
-import { getInventoryReceived } from 'reducers/actions/inboundActions';
-import { useSelector } from 'react-redux';
+import {
+    getInventoryReceived,
+    getLocationInventory
+} from 'reducers/actions/inboundActions';
 
 const SearchShipment = () => {
-
-    const [visible, setVisible] = useState(false);
     const dispatch = useDispatch();
-    const { items, itemsLoading } = useSelector((state) => state.warehouse.shipmentSearch)
     const [form] = Form.useForm();
+    const [visible, setVisible] = useState(false);
+    const [columns, setColumns] = useState(searchShipmentColumns);
+    const { items, itemsLoading } = useSelector((state) => state.warehouse.shipmentSearch)
+
 
     const onSubmit = () => {
         form.validateFields()
@@ -22,10 +30,16 @@ const SearchShipment = () => {
                 console.log(`Form values:`, values)
                 switch (values.type) {
                     case 'outBoundShipment':
-                        dispatch(getShipment(values))
+                        dispatch(getShipment(values));
+                        setColumns(searchShipmentColumns);
                         break;
                     case 'inBoundReceived':
                         dispatch(getInventoryReceived(values))
+                        setColumns(searchReceivedShipmentColumns);
+                        break;
+                    case 'locationInventory':
+                        dispatch(getLocationInventory(values));
+                        setColumns(searchLocationInventoryColumns);
                         break;
                     default:
                         return;
@@ -39,14 +53,14 @@ const SearchShipment = () => {
 
         <FormTable
             data={items}
-            columns={searchShipmentColumns}
+            columns={columns}
             loading={itemsLoading}
             tableSettings={{
                 ...defaultSettings,
                 title: () =>
                     <DrawerSearch
                         visible={visible}
-                        title="Search Shipment"
+                        title="Search my Bean Brain"
                         onSubmit={onSubmit}
                         setVisible={setVisible}
                         form={form}

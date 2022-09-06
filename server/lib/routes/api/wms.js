@@ -317,4 +317,20 @@ router.post('/shipment/v0/getShipment', auth, (req, res) => {
             })
         })
 })
+
+router.post('/locationInventory/v0/getLocationInventory', auth, (req, res) => {
+    const { requiredFields } = req.body;
+    let wms = new WMSDatabaseApis();
+    wms.getLocation(requiredFields)
+        .then(validShipment => {
+            res.json(validShipment)
+        })
+        .catch(err => {
+            res.status(400).json({
+                msg: `Reject get shipment by required fields`,
+                reasoon: err.message
+            })
+        })
+})
+
 export default router;
