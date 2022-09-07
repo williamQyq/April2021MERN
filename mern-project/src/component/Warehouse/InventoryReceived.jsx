@@ -17,8 +17,7 @@ class InventoryReceived extends React.Component {
     formRef = React.createRef()
 
     componentDidMount() {
-
-        this.props.getInventoryReceived()
+        // this.props.getInventoryReceived()
     }
 
     componentWillUnmount() {
@@ -102,10 +101,10 @@ InventoryReceived.prototypes = {
     inventoryReceivedItems: PropTypes.array.isRequired
 }
 const mapStateToProps = (state) => {
-    const inventoryReceived = state.warehouse.inventoryReceived;
+    const { inventoryReceivedItems, inventoryReceivedLoading } = state.warehouse.inventoryReceived;
     return ({
-        loading: inventoryReceived.inventoryReceivedLoading,
-        inventoryReceivedItems: inventoryReceived.inventoryReceivedItems
+        loading: inventoryReceivedLoading,
+        inventoryReceivedItems: inventoryReceivedItems
     })
 }
 
