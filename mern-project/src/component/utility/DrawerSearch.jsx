@@ -1,8 +1,9 @@
 
+import { useEffect, useState } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Col, DatePicker, Drawer, Form, Input, Row, Select, Space } from 'antd';
-import { useEffect } from 'react';
-import { useState } from 'react';
+import moment from 'moment';
+
 
 const { Option } = Select;
 
@@ -13,10 +14,21 @@ const DrawerSearch = (props) => {
     const [inventoryReceiveOptionSelectable, setInventoryReceiveOption] = useState(true);
     const [inventoryLocationOptionSelectable, setInventoryLocationOption] = useState(true);
 
+    const [hackValue, setHackValue] = useState(null);
+    const [value, setValue] = useState(null);
+    const [dates, setDates] = useState(null);
+
+    const dateFormat = 'YYYY-MM-DD';
+
+
+
     useEffect(() => {
         setShipmentOption(searchCategory === 'outBoundShipment' ? true : false);
         setInventoryReceiveOption(searchCategory === 'inBoundReceived' ? true : false);
         setInventoryLocationOption(searchCategory === 'locationInventory' ? true : false);
+
+        setHackValue([getOffDate(0), getOffDate(90)])
+        setValue([getOffDate(0), getOffDate(90)])
     }, [searchCategory])
 
     const showDrawer = () => {
@@ -30,6 +42,33 @@ const DrawerSearch = (props) => {
     const handleCategoryChange = (category) => {
         setCategory(category);
     }
+
+    const getOffDate = (offDays = 0) => {
+        let d = new Date();
+        let day = d.getDate();
+        d.setDate(day - offDays);
+
+        return moment(d, dateFormat);
+    }
+
+    const disabledDate = (current) => {
+        if (!dates) {
+            return false;
+        }
+
+        const tooLate = dates[0] && current.diff(dates[0], 'days') > 90;
+        const tooEarly = dates[1] && dates[1].diff(current, 'days') > 90;
+        return !!tooEarly || !!tooLate;
+    };
+
+    const onOpenChange = (open) => {
+        if (open) {
+            setHackValue([null, null]);
+            setDates([null, null]);
+        } else {
+            setHackValue(null);
+        }
+    };
 
     return (
         <>
@@ -147,6 +186,13 @@ const DrawerSearch = (props) => {
                                     style={{
                                         width: '100%',
                                     }}
+                                    value={hackValue || value}
+                                    disabledDate={disabledDate}
+                                    onCalendarChange={(val) => setDates(val)}
+                                    onChange={(val) => setValue(val)}
+                                    onOpenChange={onOpenChange}
+                                    defaultValue={value}
+                                    format={dateFormat}
                                     getPopupContainer={(trigger) => trigger.parentElement}
                                 />
                             </Form.Item>

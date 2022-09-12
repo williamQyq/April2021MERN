@@ -151,12 +151,20 @@ export const searchShipmentColumns = [
     {
         title: "Create Time",
         dataIndex: "crtTm",
-        searchable: true
+        searchable: true,
+        sorter: (a, b) => a.crtStmp - b.crtStmp,
     },
     {
         title: "Shipped Time",
         dataIndex: "mdfTm",
-        searchable: true
+        searchable: true,
+        sorter: (a, b) => a.mdfStmp - b.mdfStmp,
+    },
+    {
+        title: "Orgnization",
+        dataIndex: "orgNm",
+        searchable: true,
+        width: "8%"
     },
     {
         title: "Ship By",
@@ -190,13 +198,19 @@ export const searchReceivedShipmentColumns = [
     {
         title: "Create Time",
         dataIndex: "crtTm",
-        searchable: true
+        searchable: true,
+        sorter: (a, b) => a.crtStmp - b.crtStmp,
     },
     {
         title: "Shipped Time",
         dataIndex: "mdfTm",
         searchable: true
     },
+    {
+        title: "Orgnization",
+        dataIndex: "orgNm",
+        width: "8%"
+    }
 ]
 
 export const searchLocationInventoryColumns = [
@@ -224,6 +238,7 @@ export const searchLocationInventoryColumns = [
     {
         title: "Modify Time",
         dataIndex: "mdfTm",
-        searchable: true
+        searchable: true,
+        sorter: (a, b) => a.mdfStmp - b.mdfStmp,
     },
 ]

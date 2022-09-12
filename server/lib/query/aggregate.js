@@ -401,7 +401,9 @@ export const GET_SHIPMENT_BY_COMPOUND_FILTER = (fields) => {
                     'userID': 1,
                     'shipBy': 1,
                     'crtTm': 1,
+                    'crtStmp':1,
                     'mdfTm': 1,
+                    'mdfStmp': 1,
                     'status': 1,
                     'UPCandSN': 1,
                     'rcIts': 1,
@@ -425,7 +427,9 @@ export const GET_SHIPMENT_BY_COMPOUND_FILTER = (fields) => {
                     'userID': 1,
                     'shipBy': 1,
                     'crtTm': 1,
+                    'crtStmp':1,
                     'mdfTm': 1,
+                    'mdfStmp': 1,
                     'status': 1,
                     'sn': '$UPCandSN.SN'
                 }
@@ -447,6 +451,19 @@ export const GET_SHIPMENT_BY_COMPOUND_FILTER = (fields) => {
     }
     if (fields["sn"]) {
         matchObj['sn'] = fields["sn"];
+    }
+
+    if (fields["dateTime"]) {
+        let startDateUnix = moment(fields["dateTime"][0]).format('x');
+        let endDateUnix = moment(fields["dateTime"][1]).format('x');
+        matchObj["mdfStmp"] = { '$gte': startDateUnix, '$lte': endDateUnix }
+    }
+
+    //narrow limit doc search created in 3 months if search range too board.
+    if (!fields["OrderId"] || !fields["trackingId"] || !fields["upc"] || !fields["sn"] || !fields["dateTime"]) {
+        let startDateUnix = getPastDateInUnix(90); //3 months ago in date unix
+        let endDateUnix = getPastDateInUnix(0);
+        matchObj["mdfStmp"] = { '$gte': startDateUnix, '$lte': endDateUnix }
     }
 
     if (Object.entries(matchObj).length > 0) {
@@ -473,7 +490,9 @@ export const GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER = (fields) => {
                 'userID': 1,
                 'shipBy': 1,
                 'crtTm': 1,
+                'crtStmp':1,
                 'mdfTm': 1,
+                'mdfStmp': 1,
                 'status': 1,
             }
         }
@@ -488,7 +507,20 @@ export const GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER = (fields) => {
     if (fields["upc"]) {
         matchObj["upc"] = new RegExp(`.*${fields["upc"]}.*`);
     }
-  
+
+    if (fields["dateTime"]) {
+        let startDateUnix = moment(fields["dateTime"][0]).format('x');
+        let endDateUnix = moment(fields["dateTime"][1]).format('x');
+        matchObj["mdfStmp"] = { '$gte': startDateUnix, '$lte': endDateUnix }
+    }
+
+    //narrow limit doc search created in 3 months if search range too board.
+    if (!fields["trackingId"] || !fields["upc"] || !fields["orgNm"] || !fields["dateTime"]) {
+        let startDateUnix = getPastDateInUnix(90); //3 months ago in date unix
+        let endDateUnix = getPastDateInUnix(0);
+        matchObj["mdfStmp"] = { '$gte': startDateUnix, '$lte': endDateUnix }
+    }
+
 
     if (Object.entries(matchObj).length > 0) {
         compoundFilter.push({ '$match': matchObj })
@@ -508,6 +540,7 @@ export const GET_INVENTORY_LOCATION_BY_COMPOUND_FILTER = (fields) => {
                 'loc': '$_id.loc',
                 'qty': 1,
                 'mdfTm': 1,
+                'mdfStmp': 1
             }
         }
     ]);
@@ -521,6 +554,13 @@ export const GET_INVENTORY_LOCATION_BY_COMPOUND_FILTER = (fields) => {
     if (fields["upc"]) {
         matchObj["upc"] = new RegExp(`.*${fields["upc"]}.*`);
     }
+
+    if (fields["dateTime"]) {
+        let startDateUnix = moment(fields["dateTime"][0]).format('x');
+        let endDateUnix = moment(fields["dateTime"][1]).format('x');
+        matchObj["mdfStmp"] = { '$gte': startDateUnix, '$lte': endDateUnix }
+    }
+
 
     if (Object.entries(matchObj).length > 0) {
         compoundFilter.push({ '$match': matchObj })
