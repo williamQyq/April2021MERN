@@ -132,6 +132,11 @@ export const searchShipmentColumns = [
         title: "Ship By",
         dataIndex: "shipBy",
         searchable: true
+    },
+    {
+        title: "status",
+        dataIndex: "status",
+        searchable: true
     }
 ]
 

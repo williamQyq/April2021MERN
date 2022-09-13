@@ -15,6 +15,7 @@ import {
     getInventoryReceivedFromSearch,
     getLocationInventory
 } from 'reducers/actions/inboundActions';
+import { useEffect } from 'react';
 
 const SearchShipment = () => {
     const dispatch = useDispatch();
@@ -23,6 +24,9 @@ const SearchShipment = () => {
     const [columns, setColumns] = useState(searchShipmentColumns);
     const { items, itemsLoading } = useSelector((state) => state.warehouse.shipmentSearch)
 
+    useEffect(() => {
+        dispatch(getShipment({}));
+    }, [])
 
     const onSubmit = () => {
         form.validateFields()

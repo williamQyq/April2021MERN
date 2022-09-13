@@ -2,13 +2,13 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { createStateSyncMiddleware, initMessageListener } from 'redux-state-sync';
 import thunk from 'redux-thunk';
 import rootReducer from 'reducers/index.js';
-
 import { persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
+// import storage from 'redux-persist/lib/storage';
+import localforage from 'localforage';
 
 const persistConfig = {
     key: "root",
-    storage,
+    storage: localforage,
 }
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 

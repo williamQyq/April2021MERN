@@ -7,3 +7,7 @@ export const getUnixDate = (offset) => {
     date.setDate(date.getDate() + offset);
     return moment(date).format('x');
 }
+
+export const normalizeStringValue = (value) => {
+    return value.replace(/^\s+|\s+$/g, "")
+}

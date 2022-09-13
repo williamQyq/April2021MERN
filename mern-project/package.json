@@ -13,6 +13,7 @@
     "chart.js": "^3.5.1",
     "js-file-download": "^0.4.12",
     "less": "^4.1.2",
+    "localforage": "^1.10.0",
     "moment": "^2.29.4",
     "papaparse": "^5.3.1",
     "rc-virtual-list": "^3.4.8",

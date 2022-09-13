@@ -11,7 +11,7 @@
     "checkJs": true,
     "moduleResolution": "node",
     "types": ["node"],
-    "outDir": "./server/buildTS",
+    "outDir": "./server/dist",
     "baseUrl": "./server"
     // "paths": {
     //   "@root/*":["/*"],

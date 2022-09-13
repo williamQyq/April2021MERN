@@ -401,7 +401,7 @@ export const GET_SHIPMENT_BY_COMPOUND_FILTER = (fields) => {
                     'userID': 1,
                     'shipBy': 1,
                     'crtTm': 1,
-                    'crtStmp':1,
+                    'crtStmp': 1,
                     'mdfTm': 1,
                     'mdfStmp': 1,
                     'status': 1,
@@ -419,6 +419,9 @@ export const GET_SHIPMENT_BY_COMPOUND_FILTER = (fields) => {
                 }
             }, {
                 '$project': {
+                    '_id': {
+                        '$concat': ["$trackingID", "-", "$rcIts.UPC"]
+                    },
                     'trackingID': 1,
                     'orderID': 1,
                     'orgNm': 1,
@@ -427,7 +430,7 @@ export const GET_SHIPMENT_BY_COMPOUND_FILTER = (fields) => {
                     'userID': 1,
                     'shipBy': 1,
                     'crtTm': 1,
-                    'crtStmp':1,
+                    'crtStmp': 1,
                     'mdfTm': 1,
                     'mdfStmp': 1,
                     'status': 1,
@@ -482,7 +485,9 @@ export const GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER = (fields) => {
             }
         }, {
             '$project': {
-                '_id': 0,
+                '_id': {
+                    '$concat': ["$trNo", "-", "$rcIts.UPC"]
+                },
                 'trackingID': '$trNo',
                 'orgNm': 1,
                 'upc': '$rcIts.UPC',
@@ -490,7 +495,7 @@ export const GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER = (fields) => {
                 'userID': 1,
                 'shipBy': 1,
                 'crtTm': 1,
-                'crtStmp':1,
+                'crtStmp': 1,
                 'mdfTm': 1,
                 'mdfStmp': 1,
                 'status': 1,
@@ -535,7 +540,9 @@ export const GET_INVENTORY_LOCATION_BY_COMPOUND_FILTER = (fields) => {
     compoundFilter = compoundFilter.concat([
         {
             '$project': {
-                '_id': 0,
+                '_id': {
+                    '$concat': ["$_id.UPC", "-", "$_id.loc"]
+                },
                 'upc': '$_id.UPC',
                 'loc': '$_id.loc',
                 'qty': 1,

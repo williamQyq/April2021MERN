@@ -92,7 +92,7 @@ const DrawerSearch = (props) => {
                     </Space>
                 }
             >
-                <Form layout="vertical" hideRequiredMark={false} form={form}>
+                <Form layout="vertical" hideRequiredMark={false} form={form} initialValues={{ dateTime: value }}>
                     <Row gutter={16}>
                         <Col span={12}>
                             <Form.Item
