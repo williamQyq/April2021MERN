@@ -457,13 +457,13 @@ export const GET_SHIPMENT_BY_COMPOUND_FILTER = (fields) => {
     }
 
     if (fields["dateTime"]) {
-        let startDateUnix = moment(fields["dateTime"][0]).format('x');
-        let endDateUnix = moment(fields["dateTime"][1]).format('x');
+        let startDateUnix = Number(moment(fields["dateTime"][0]).format('x'));
+        let endDateUnix = Number(moment(fields["dateTime"][1]).format('x'));
         matchObj["mdfStmp"] = { '$gte': startDateUnix, '$lte': endDateUnix }
     }
 
     //narrow limit doc search created in 3 months if search range too board.
-    if (!fields["OrderId"] || !fields["trackingId"] || !fields["upc"] || !fields["sn"] || !fields["dateTime"]) {
+    if (!fields["OrderId"] && !fields["trackingId"] && !fields["upc"] && !fields["sn"] && !fields["dateTime"]) {
         let startDateUnix = getPastDateInUnix(90); //3 months ago in date unix
         let endDateUnix = getPastDateInUnix(0);
         matchObj["mdfStmp"] = { '$gte': startDateUnix, '$lte': endDateUnix }
@@ -514,13 +514,13 @@ export const GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER = (fields) => {
     }
 
     if (fields["dateTime"]) {
-        let startDateUnix = moment(fields["dateTime"][0]).format('x');
-        let endDateUnix = moment(fields["dateTime"][1]).format('x');
+        let startDateUnix = Number(moment(fields["dateTime"][0]).format('x'));
+        let endDateUnix = Number(moment(fields["dateTime"][1]).format('x'));
         matchObj["mdfStmp"] = { '$gte': startDateUnix, '$lte': endDateUnix }
     }
 
     //narrow limit doc search created in 3 months if search range too board.
-    if (!fields["trackingId"] || !fields["upc"] || !fields["orgNm"] || !fields["dateTime"]) {
+    if (!fields["trackingId"] && !fields["upc"] && !fields["dateTime"]) {
         let startDateUnix = getPastDateInUnix(90); //3 months ago in date unix
         let endDateUnix = getPastDateInUnix(0);
         matchObj["mdfStmp"] = { '$gte': startDateUnix, '$lte': endDateUnix }
@@ -563,14 +563,14 @@ export const GET_INVENTORY_LOCATION_BY_COMPOUND_FILTER = (fields) => {
     }
 
     if (fields["dateTime"]) {
-        let startDateUnix = moment(fields["dateTime"][0]).format('x');
-        let endDateUnix = moment(fields["dateTime"][1]).format('x');
+        let startDateUnix = Number(moment(fields["dateTime"][0]).format('x'));
+        let endDateUnix = Number(moment(fields["dateTime"][1]).format('x'));
         matchObj["mdfStmp"] = { '$gte': startDateUnix, '$lte': endDateUnix }
     }
-
 
     if (Object.entries(matchObj).length > 0) {
         compoundFilter.push({ '$match': matchObj })
     }
+
     return compoundFilter;
 }

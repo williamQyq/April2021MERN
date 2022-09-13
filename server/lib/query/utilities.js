@@ -559,6 +559,7 @@ export class WMSDatabaseApis {
         delete requiredFields.type;
         const collection = this.db.collection(WMSDatabaseApis._collection.locationInv);
         let locationRecordsByReqFields = await collection.aggregate(GET_INVENTORY_LOCATION_BY_COMPOUND_FILTER(requiredFields)).toArray();
+        console.log(`loc:`,locationRecordsByReqFields)
         return locationRecordsByReqFields;
     }
 

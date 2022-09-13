@@ -20,14 +20,13 @@ const DrawerSearch = (props) => {
 
     const dateFormat = 'YYYY-MM-DD';
 
-
-
     useEffect(() => {
+        console.log(`hackValueL:`, hackValue)
+        console.log(`valueL:`, value)
         setShipmentOption(searchCategory === 'outBoundShipment' ? true : false);
         setInventoryReceiveOption(searchCategory === 'inBoundReceived' ? true : false);
         setInventoryLocationOption(searchCategory === 'locationInventory' ? true : false);
 
-        setHackValue([getOffDate(0), getOffDate(90)])
         setValue([getOffDate(0), getOffDate(90)])
     }, [searchCategory])
 
@@ -65,6 +64,8 @@ const DrawerSearch = (props) => {
         if (open) {
             setHackValue([null, null]);
             setDates([null, null]);
+            form.setFieldsValue({dateTime:[null,null]});
+
         } else {
             setHackValue(null);
         }
@@ -191,7 +192,7 @@ const DrawerSearch = (props) => {
                                     onCalendarChange={(val) => setDates(val)}
                                     onChange={(val) => setValue(val)}
                                     onOpenChange={onOpenChange}
-                                    defaultValue={value}
+                                    // defaultValue={value}
                                     format={dateFormat}
                                     getPopupContainer={(trigger) => trigger.parentElement}
                                 />
