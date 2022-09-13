@@ -50,7 +50,7 @@ class Home extends React.Component {
       <Router>
         <Layout className="main-layout" style={{ minHeight: "100vh" }}>
           <HomeSider path={path} isCollapsed={collapsed} toggle={this.toggle} />
-          <Layout className="site-layout">
+          <Layout className="site-layout" style={{minWidth:"1400px"}}>
             {/* Home Header  */}
             <HomeHeader handleLogOut={this.handleLogOut} isCollapsed={collapsed} toggle={this.toggle} />
             {/* Home Content */}

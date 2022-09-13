@@ -43,8 +43,7 @@ const NeedToShipTable = (props) => {
             setAllSelected(false)
         }
 
-
-    }, [selectedRowKeys, allSelected, data.length, dispatch])
+    }, [selectedRowKeys, allSelected, data, dispatch])
 
     const getUnixDate = (offset) => {
         let date = new Date();
@@ -103,7 +102,7 @@ const NeedToShipTable = (props) => {
     }
     return (
         <div style={{
-            maxHeight:"100vh",
+            maxHeight: "100vh",
             padding: "4px 8px",
             boxShadow: "5px 8px 24px 5px rgba(208, 216, 243, 0.8)"
         }}>

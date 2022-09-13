@@ -1,5 +1,4 @@
 import axios from 'axios';
-import store from 'reducers/store/store.js';
 import { tokenConfig } from './authActions.js';
 import { clearErrors, returnErrors } from './errorActions.js';
 import {
@@ -62,18 +61,16 @@ export const getShipment = (requiredFields) => (dispatch, getState) => {
 }
 
 //axios get needtoship documents for inifite scroll
-export const getNeedToShipFromShipmentWithLimit = (docLimits, docSkip) => (dispatch, getState) => {
+export const getNeedToShipFromShipmentWithLimit = (docLimits, docSkip) => async (dispatch, getState) => {
     dispatch(setShipmentItemsLoading());
-    axios.get(
-        `/api/wms/shipment/v0/getNeedToShipItems/limit/${docLimits}/skip/${docSkip}`,
-        {
-            ...tokenConfig(getState),
-            params: {
-                docLimits,
-                docSkip
-            }
+    return axios.get(
+        `/api/wms/shipment/v0/getNeedToShipItems/limit/${docLimits}/skip/${docSkip}`, {
+        ...tokenConfig(getState),
+        params: {
+            docLimits,
+            docSkip
         }
-    )
+    })
         .then(res => {
             dispatch({
                 type: GET_SHIPMENT_ITEMS_WITH_LIMIT,
@@ -90,18 +87,17 @@ export const getNeedToShipFromShipmentWithLimit = (docLimits, docSkip) => (dispa
         })
 }
 
-export const getNeedToShipPendingAndTotalCount = async (orgNm = "M") => {
-    const getState = store.getState;
-    return axios.get(
-        `/api/wms/shipment/v0/getPendingAndTotal/${orgNm}`,
-        {
-            ...tokenConfig(getState),
-            params: {
-                orgNm
-            }
+export const getNeedToShipPendingAndTotalCount = (orgNm = "M") => async (dispatch, getState) => {
+    let shipmentCountInfo = await axios.get(
+        `/api/wms/shipment/v0/getPendingAndTotal/${orgNm}`, {
+        ...tokenConfig(getState),
+        params: {
+            orgNm
         }
-    )
+    })
         .then(res => res.data);
+
+    return shipmentCountInfo;
 }
 
 

@@ -77,44 +77,6 @@ export const needToShipColumns =
         }
     ]
 
-export const inventoryReceivedColumns = [
-    {
-        title: "Lastest Modified Time",
-        dataIndex: "mdfTmEst",
-        editable: false,
-        searchable: true,
-        width: "20%",
-    },
-    {
-        title: "Organization Name",
-        dataIndex: "orgNm",
-        editable: true,
-        searchable: true,
-        width: "20%",
-    },
-    {
-        title: "UPC",
-        dataIndex: "UPC",
-        editable: true,
-        searchable: true,
-        width: "20%",
-    },
-    {
-        title: "Tracking ID",
-        dataIndex: "trNo",
-        editable: true,
-        searchable: true,
-        width: "20%",
-    },
-    {
-        title: "Quantity",
-        dataIndex: "qty",
-        editable: true,
-        width: "20%",
-    }
-
-]
-
 export const searchShipmentColumns = [
     {
         title: "OrderId",
@@ -204,7 +166,8 @@ export const searchReceivedShipmentColumns = [
     {
         title: "Shipped Time",
         dataIndex: "mdfTm",
-        searchable: true
+        searchable: true,
+        sorter: (a, b) => a.mdfStmp - b.mdfStmp
     },
     {
         title: "Orgnization",

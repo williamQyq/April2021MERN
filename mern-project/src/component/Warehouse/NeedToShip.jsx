@@ -28,19 +28,22 @@ class NeedToShip extends React.Component {
 
     componentDidMount() {
         const { docLimits, docSkip } = this.state;
-        this.props.getNeedToShipFromShipmentWithLimit(docLimits, docSkip);
-        getNeedToShipPendingAndTotalCount().then(shipmentInfo => {
-            this.setState({ shipmentInfo });
-        })
+
+        this.props.getNeedToShipFromShipmentWithLimit(docLimits, docSkip)   //get need to ship shipment
+            .then(() => { this.setState({ initLoading: false }); })
+
+        this.props.getNeedToShipPendingAndTotalCount()  //set pending, total, and confirm count
+            .then(shipmentInfo => { this.setState({ shipmentInfo }); })
     }
+
     componentDidUpdate(prevProps) {
         const { docLimits, docSkip, data } = this.state;
         if (prevProps.needToShipItems !== this.props.needToShipItems) {
-            this.setState({ data: [...data, ...this.props.needToShipItems], initLoading: false, loading: false })
+            this.setState({ data: [...data, ...this.props.needToShipItems], loading: false })
             this.setState({ docSkip: docLimits + docSkip })
-            getNeedToShipPendingAndTotalCount().then(shipmentInfo => {
-                this.setState({ shipmentInfo });
-            })
+
+            this.props.getNeedToShipPendingAndTotalCount()
+                .then(shipmentInfo => { this.setState({ shipmentInfo }); })
         }
 
     }
@@ -79,6 +82,7 @@ NeedToShip.prototypes = {
     needToShipItems: PropTypes.array.isRequired,
     needToShipItemsLoading: PropTypes.bool.isRequired,
     getNeedToShipFromShipmentWithLimit: PropTypes.func.isRequired,
+    getNeedToShipPendingAndTotalCount: PropTypes.func.isRequired
 }
 const mapStateToProps = (state) => ({
     totalNeedToShipItemsCount: state.warehouse.needToShip.totalShipmentCount,
@@ -86,4 +90,4 @@ const mapStateToProps = (state) => ({
     needToshipItemsLoading: state.warehouse.needToShip.itemsLoading
 })
 
-export default connect(mapStateToProps, { getNeedToShipFromShipmentWithLimit })(NeedToShip);
+export default connect(mapStateToProps, { getNeedToShipFromShipmentWithLimit, getNeedToShipPendingAndTotalCount })(NeedToShip);

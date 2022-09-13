@@ -21,6 +21,7 @@ export default class SearchRecords extends React.Component {
                 <ContentHeader title="Search" />
                 <Anchor>
                     <Link href="#components-anchor-search-shipment" title="Search Shipment" />
+                    <Link href="#components-anchor-search-receival" title="Search Receival" />
                     <Link href="#components-anchor-search-location" title="Search Location" />
                 </Anchor>
 

@@ -2,15 +2,19 @@ import axios from 'axios';
 import { tokenConfig } from './authActions.js';
 import { clearErrors, returnErrors } from './errorActions.js';
 import { returnMessages } from './messageActions.js';
+import Papa from "papaparse";
+import fileDownload from 'js-file-download';
 import {
     GET_ERRORS,
     SERVICE_UNAVAILABLE,
     UPDATE_INVENTORY_RECEIVE,
-    SEARCH_SHIPMENT
+    SEARCH_SHIPMENT,
+    GET_INVENTORY_RECEIVED_ITEMS
 } from './types.js';
-import Papa from "papaparse";
-import fileDownload from 'js-file-download';
-import { setSearchShipmentLoading } from './loadingActions.js';
+import {
+    setInventoryReceivedLoading,
+    setSearchShipmentLoading
+} from './loadingActions.js';
 
 export const getInvReceivedWithWrongAdds = () => (dispatch, getState) => (
     axios.get(`/api/wms/inventoryReceive/v0/getWrongAdds`, tokenConfig(getState))
@@ -22,9 +26,8 @@ export const getInvReceivedWithWrongAdds = () => (dispatch, getState) => (
         })
 )
 
-export const getInventoryReceived = (requiredFields) => (dispatch, getState) => {
+export const getInventoryReceivedFromSearch = (requiredFields) => (dispatch, getState) => {
     dispatch(setSearchShipmentLoading());
-
     axios.post(`/api/wms/inventoryReceive/v0/getInventoryReceived`, { requiredFields }, tokenConfig(getState))
         .then(res => {
             dispatch({
@@ -41,6 +44,26 @@ export const getInventoryReceived = (requiredFields) => (dispatch, getState) => 
             dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS));
         })
 }
+
+export const getInventoryReceived = (requiredFields = {}) => (dispatch, getState) => {
+    dispatch(setInventoryReceivedLoading());
+    axios.post(`/api/wms/inventoryReceive/v0/getInventoryReceived`, { requiredFields }, tokenConfig(getState))
+        .then(res => {
+            dispatch({
+                type: GET_INVENTORY_RECEIVED_ITEMS,
+                payload: res.data
+            });
+        })
+        .catch(err => {
+            dispatch({
+                type: GET_INVENTORY_RECEIVED_ITEMS,
+                payload: []
+            })
+            dispatch(clearErrors());
+            dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS));
+        })
+}
+
 export const updateInventoryReceivedByUpload = (file, onSuccess, onError) => (dispatch, getState) => {
     // onError("err")
     Papa.parse(file, {

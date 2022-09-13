@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Form } from 'antd';
-import { defaultSettings, inventoryReceivedColumns } from 'component/Warehouse/utilities.js';
+import { defaultSettings, searchReceivedShipmentColumns } from 'component/Warehouse/utilities.js';
 import { InventoryReceivedMenu } from './Menus.jsx';
 import FormTable from 'component/utility/FormTable.jsx';
 import { getInventoryReceived } from 'reducers/actions/inboundActions.js';
@@ -17,16 +17,9 @@ class InventoryReceived extends React.Component {
     formRef = React.createRef()
 
     componentDidMount() {
-        // this.props.getInventoryReceived()
+        this.props.getInventoryReceived()
     }
 
-    componentWillUnmount() {
-
-    }
-    isLoading = () => {
-        const { loading } = this.props;
-        return loading;
-    }
     isEditing = (record) => record._id === this.state.editingKey
 
     edit = (record) => {
@@ -85,7 +78,7 @@ class InventoryReceived extends React.Component {
                     <FormTable
                         loading={loading}
                         data={inventoryReceivedItems}
-                        columns={inventoryReceivedColumns}
+                        columns={searchReceivedShipmentColumns}
                         tableSettings={defaultSettings}
                     />
                 </Form>

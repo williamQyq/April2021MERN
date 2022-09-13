@@ -12,7 +12,7 @@ import { Form } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { getShipment } from 'reducers/actions/outboundActions';
 import {
-    getInventoryReceived,
+    getInventoryReceivedFromSearch,
     getLocationInventory
 } from 'reducers/actions/inboundActions';
 
@@ -34,7 +34,7 @@ const SearchShipment = () => {
                         setColumns(searchShipmentColumns);
                         break;
                     case 'inBoundReceived':
-                        dispatch(getInventoryReceived(values))
+                        dispatch(getInventoryReceivedFromSearch(values))
                         setColumns(searchReceivedShipmentColumns);
                         break;
                     case 'locationInventory':

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ContentHeader, SubContentHeader } from 'component/utility/Layout.jsx';
+import { ContentHeader } from 'component/utility/Layout.jsx';
 import { Card, Col, Row } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 
@@ -13,7 +13,7 @@ const outboundMenuFeatures = [
     {
         key: "inventoryReceived",
         title: "Inventory Receive",
-        description: "Manage received Inventory"
+        description: "Manage received Inventory",
     },
     {
         key: "searchRecord",

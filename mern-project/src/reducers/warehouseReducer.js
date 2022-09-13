@@ -31,7 +31,10 @@ export default function Reducer(state = initialState, action) {
         case SYNC_INVENTORY_RECEIVED_WITH_GSHEET:
             return {
                 ...state,
-                inventoryReceivedLoading: false,
+                inventoryReceived: {
+                    ...state.inventoryReceived,
+                    inventoryReceivedLoading: false,
+                }
             };
         case GET_INVENTORY_RECEIVED_ITEMS:
             return {
@@ -44,7 +47,10 @@ export default function Reducer(state = initialState, action) {
         case INVENTORY_RECEIVED_LOADING:
             return {
                 ...state,
-                inventoryReceivedLoading: true
+                inventoryReceived: {
+                    ...state.inventoryReceived,
+                    inventoryReceivedLoading: true
+                }
             };
         case SEARCH_SHIPMENT:
             return {
