@@ -1,4 +1,5 @@
 import axios from 'axios';
+import fileDownload from 'js-file-download';
 import { tokenConfig } from './authActions.js';
 import { clearErrors, returnErrors } from './errorActions.js';
 import {
@@ -12,10 +13,11 @@ import {
     GET_ERRORS,
     GET_SHIPMENT_ITEMS_WITH_LIMIT,
     GET_SHIPPED_NOT_VERIFIED_SHIPMENT,
-    SEARCH_SHIPMENT,
+    SEARCH_OUTBOUND_SHIPMENT,
     SERVICE_UNAVAILABLE,
     SYNC_INVENTORY_RECEIVED_WITH_GSHEET
 } from './types.js';
+
 
 export const syncInventoryReceivedWithGsheet = () => (dispatch, getState) => {
     dispatch(setInventoryReceivedLoading())
@@ -46,17 +48,24 @@ export const getShipment = (requiredFields) => (dispatch, getState) => {
     )
         .then(res => {
             dispatch({
-                type: SEARCH_SHIPMENT,
+                type: SEARCH_OUTBOUND_SHIPMENT,
                 payload: res.data
             });
         })
         .catch(err => {
             dispatch({
-                type: SEARCH_SHIPMENT,
+                type: SEARCH_OUTBOUND_SHIPMENT,
                 payload: []
             })
             dispatch(clearErrors());
             dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS));
+        })
+}
+
+export const downloadShipment = (requiredFields = {}) => (dispatch, getState) => {
+    axios.post('/api/wms/shipment/v0/downloadShipmentXlsx', { requiredFields, responseType: "blob" })
+        .then((res) => {
+            fileDownload(res.data, 'shipmentRecords.xlsx')
         })
 }
 

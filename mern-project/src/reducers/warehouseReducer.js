@@ -3,7 +3,9 @@ import {
     GET_SHIPMENT_ITEMS_WITH_LIMIT,
     GET_SHIPPED_NOT_VERIFIED_SHIPMENT,
     INVENTORY_RECEIVED_LOADING,
-    SEARCH_SHIPMENT,
+    SEARCH_LOCATION_INVENTORY,
+    SEARCH_OUTBOUND_SHIPMENT,
+    SEARCH_RECIVIAL_SHIPMENT,
     SEARCH_SHIPMENT_LOADING,
     SHIPMENT_ITEMS_LOADING,
     SYNC_INVENTORY_RECEIVED_WITH_GSHEET
@@ -52,13 +54,16 @@ export default function Reducer(state = initialState, action) {
                     inventoryReceivedLoading: true
                 }
             };
-        case SEARCH_SHIPMENT:
+        case SEARCH_OUTBOUND_SHIPMENT:
+        case SEARCH_RECIVIAL_SHIPMENT:
+        case SEARCH_LOCATION_INVENTORY:
             return {
                 ...state,
                 shipmentSearch: {
                     ...state.shipmentSearch,
                     items: action.payload,
-                    itemsLoading: false
+                    itemsLoading: false,
+                    category: action.type
                 }
             }
         case GET_SHIPMENT_ITEMS_WITH_LIMIT:

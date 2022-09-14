@@ -156,9 +156,8 @@ router.get('/inventoryReceive/v0/downloadSampleXlsx', (req, res) => {
         "Content-Disposition",
         "attachment; filename=" + "sample.xlsx"
     );
-    return workbook.xlsx.write(res).then(() => {
-        res.status(200).end();
-    });
+    workbook.xlsx.write(res)
+        .then(() => { res.status(200).end(); });
 })
 
 router.get('/needToShip/syncGsheet', auth, (req, res) => {
@@ -316,6 +315,21 @@ router.post('/shipment/v0/getShipment', auth, (req, res) => {
                 reasoon: err.message
             })
         })
+})
+
+router.post('shipment/v0/downloadShipmentXlsx', auth, (req, res) => {
+    const { requiredFields } = req.body;
+    res.json();
+})
+
+router.post('inventoryReceive/v0/downloadReceivalXlsx', auth, (req, res) => {
+    const { requiredFields } = req.body;
+    res.json();
+})
+
+router.post('locationInventory/v0/downloadLocationInventoryXlsx', auth, (req, res) => {
+    const { requiredFields } = req.body;
+    res.json();
 })
 
 router.post('/locationInventory/v0/getLocationInventory', auth, (req, res) => {
