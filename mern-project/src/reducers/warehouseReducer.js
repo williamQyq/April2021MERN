@@ -5,7 +5,7 @@ import {
     INVENTORY_RECEIVED_LOADING,
     SEARCH_LOCATION_INVENTORY,
     SEARCH_OUTBOUND_SHIPMENT,
-    SEARCH_RECIVIAL_SHIPMENT,
+    SEARCH_RECEIVAL_SHIPMENT,
     SEARCH_SHIPMENT_LOADING,
     SHIPMENT_ITEMS_LOADING,
     SYNC_INVENTORY_RECEIVED_WITH_GSHEET
@@ -55,7 +55,7 @@ export default function Reducer(state = initialState, action) {
                 }
             };
         case SEARCH_OUTBOUND_SHIPMENT:
-        case SEARCH_RECIVIAL_SHIPMENT:
+        case SEARCH_RECEIVAL_SHIPMENT:
         case SEARCH_LOCATION_INVENTORY:
             return {
                 ...state,

@@ -21,7 +21,7 @@ import {
 import {
     SEARCH_LOCATION_INVENTORY,
     SEARCH_OUTBOUND_SHIPMENT,
-    SEARCH_RECIVIAL_SHIPMENT
+    SEARCH_RECEIVAL_SHIPMENT
 } from 'reducers/actions/types.js';
 
 const SearchShipment = () => {
@@ -38,14 +38,14 @@ const SearchShipment = () => {
             dispatch(getShipment({}));
         }
         handleColumnsOnSearchCategoryChange(category);
-    }, [category])
+    }, [category, items, dispatch])
 
     const handleDataOnSearchCategoryChange = (category, values) => {
         switch (category) {
             case SEARCH_OUTBOUND_SHIPMENT:
                 dispatch(getShipment(values));
                 break;
-            case SEARCH_RECIVIAL_SHIPMENT:
+            case SEARCH_RECEIVAL_SHIPMENT:
                 dispatch(getInventoryReceivedFromSearch(values))
                 break;
             case SEARCH_LOCATION_INVENTORY:
@@ -60,7 +60,7 @@ const SearchShipment = () => {
             case SEARCH_OUTBOUND_SHIPMENT:
                 setColumns(searchShipmentColumns);
                 break;
-            case SEARCH_RECIVIAL_SHIPMENT:
+            case SEARCH_RECEIVAL_SHIPMENT:
                 setColumns(searchReceivedShipmentColumns);
                 break;
             case SEARCH_LOCATION_INVENTORY:
@@ -90,7 +90,7 @@ const SearchShipment = () => {
                     case SEARCH_OUTBOUND_SHIPMENT:
                         dispatch(downloadShipment(values));
                         break;
-                    case SEARCH_RECIVIAL_SHIPMENT:
+                    case SEARCH_RECEIVAL_SHIPMENT:
                         dispatch(downloadInventoryReceived(values));
                         break;
                     case SEARCH_LOCATION_INVENTORY:

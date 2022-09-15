@@ -1,11 +1,14 @@
 import React from "react";
+import { connect } from "react-redux";
 import { Anchor } from "antd";
-import { ContentHeader, SubContentHeader } from "component/utility/Layout";
 import SearchShipment from "./SearchShipment.jsx";
+import { ContentHeader, SubContentHeader } from "component/utility/Layout";
+import { SEARCH_LOCATION_INVENTORY, SEARCH_OUTBOUND_SHIPMENT, SEARCH_RECEIVAL_SHIPMENT } from "reducers/actions/types.js";
+import Proptypes from 'prop-types';
 
 const { Link } = Anchor;
 
-export default class SearchRecords extends React.Component {
+class SearchRecords extends React.Component {
 
     constructor(props) {
         super(props);
@@ -14,7 +17,21 @@ export default class SearchRecords extends React.Component {
         }
     }
 
+    createCategoryHeader = (category) => {
+        switch (category) {
+            case SEARCH_OUTBOUND_SHIPMENT:
+                return "Search OutBound Shipment";
+            case SEARCH_RECEIVAL_SHIPMENT:
+                return "Search Receival Shipment";
+            case SEARCH_LOCATION_INVENTORY:
+                return "Search Location Inventory";
+            default:
+                return;
+        }
+    }
+
     render() {
+        let categoryTitle = this.createCategoryHeader(this.props.category);
 
         return (
             <>
@@ -26,7 +43,7 @@ export default class SearchRecords extends React.Component {
                 </Anchor>
 
                 <SubContentHeader
-                    title="Search Shipment"
+                    title={categoryTitle}
                     subTitle={<a href="#components-anchor-search-shipment" title="" />}
                 />
                 <SearchShipment />
@@ -36,3 +53,13 @@ export default class SearchRecords extends React.Component {
     }
 
 }
+
+SearchRecords.prototypes = {
+    category: Proptypes.string.isRequired
+}
+
+const mapStateToProps = (state) => ({
+    category: state.warehouse.shipmentSearch.category,
+})
+
+export default connect(mapStateToProps, null)(SearchRecords);

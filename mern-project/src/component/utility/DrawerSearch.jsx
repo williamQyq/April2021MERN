@@ -2,7 +2,7 @@ import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
 import { AutoComplete, Button, Col, DatePicker, Drawer, Form, Input, Row, Select, Space } from 'antd';
-import { SEARCH_LOCATION_INVENTORY, SEARCH_OUTBOUND_SHIPMENT, SEARCH_RECIVIAL_SHIPMENT } from 'reducers/actions/types.js';
+import { SEARCH_LOCATION_INVENTORY, SEARCH_OUTBOUND_SHIPMENT, SEARCH_RECEIVAL_SHIPMENT } from 'reducers/actions/types.js';
 
 const { Option } = Select;
 
@@ -21,7 +21,7 @@ const DrawerSearch = (props) => {
 
     useEffect(() => {
         setShipmentOption(searchCategory === SEARCH_OUTBOUND_SHIPMENT ? true : false);
-        setInventoryReceiveOption(searchCategory === SEARCH_RECIVIAL_SHIPMENT ? true : false);
+        setInventoryReceiveOption(searchCategory === SEARCH_RECEIVAL_SHIPMENT ? true : false);
         setInventoryLocationOption(searchCategory === SEARCH_LOCATION_INVENTORY ? true : false);
 
         setValue([getOffDate(-90), getOffDate(0)])
@@ -157,7 +157,7 @@ const DrawerSearch = (props) => {
                             >
                                 <Select onSelect={handleCategoryChange} placeholder="Please choose the type">
                                     <Option value={SEARCH_OUTBOUND_SHIPMENT}>OutBound Shipment</Option>
-                                    <Option value={SEARCH_RECIVIAL_SHIPMENT}>InBound Receival</Option>
+                                    <Option value={SEARCH_RECEIVAL_SHIPMENT}>InBound Receival</Option>
                                     <Option value={SEARCH_LOCATION_INVENTORY}>Location Inventory</Option>
                                 </Select>
                             </Form.Item>

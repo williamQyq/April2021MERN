@@ -9,7 +9,7 @@ import {
     SERVICE_UNAVAILABLE,
     UPDATE_INVENTORY_RECEIVE,
     GET_INVENTORY_RECEIVED_ITEMS,
-    SEARCH_RECIVIAL_SHIPMENT,
+    SEARCH_RECEIVAL_SHIPMENT,
     SEARCH_LOCATION_INVENTORY
 } from './types.js';
 import {
@@ -32,13 +32,13 @@ export const getInventoryReceivedFromSearch = (requiredFields) => (dispatch, get
     axios.post(`/api/wms/inventoryReceive/v0/getInventoryReceived`, { requiredFields }, tokenConfig(getState))
         .then(res => {
             dispatch({
-                type: SEARCH_RECIVIAL_SHIPMENT,
+                type: SEARCH_RECEIVAL_SHIPMENT,
                 payload: res.data
             });
         })
         .catch(err => {
             dispatch({
-                type: SEARCH_RECIVIAL_SHIPMENT,
+                type: SEARCH_RECEIVAL_SHIPMENT,
                 payload: []
             })
             dispatch(clearErrors());
