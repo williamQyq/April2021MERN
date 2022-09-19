@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Menu, Tree } from 'antd';
 import { AreaChartOutlined, DownOutlined } from '@ant-design/icons';
 // import { Settings } from 'component/Operation/Settings'
-import { ContentHeader } from 'component/utility/Layout.jsx';
 import FileUpload from 'component/utility/FileUpload.jsx';
 import { uploadAsinsMapping } from 'reducers/actions/operationActions';
 
@@ -12,7 +11,6 @@ import { uploadAsinsMapping } from 'reducers/actions/operationActions';
 
 const OperationMenu = (props) => {
     const [selectedMenuKey, setSelectedMenuKey] = useState("upload");
-    const { title } = props;
 
     const menuItems = [
         {
@@ -33,7 +31,7 @@ const OperationMenu = (props) => {
 
     const treeData = [
         {
-            title: <ContentHeader title={title} />,
+            title: <></>,
             key: 'controller',
             children: [
                 {

@@ -23,7 +23,6 @@ import { addItemSpec, getItemsOnlinePrice } from "reducers/actions/itemActions.j
 import { setTableState } from "reducers/actions/itemActions.js";
 import { useState } from "react";
 
-import { ContentHeader } from "component/utility/Layout.jsx";
 import { storeType } from "./data.js";
 import './Store.scss';
 
@@ -263,7 +262,7 @@ export const StoreOperationMenu = (props) => {
 
     const treeData = [
         {
-            title: <ContentHeader title={store} />,
+            title: "open more options",
             key: 'controller',
             children: [
                 {

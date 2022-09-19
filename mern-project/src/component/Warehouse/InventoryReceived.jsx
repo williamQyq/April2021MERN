@@ -6,6 +6,7 @@ import { defaultSettings, searchReceivedShipmentColumns } from 'component/Wareho
 import { InventoryReceivedMenu } from './Menus.jsx';
 import FormTable from 'component/utility/FormTable.jsx';
 import { getInventoryReceived } from 'reducers/actions/inboundActions.js';
+import { ContentHeader } from 'component/utility/Layout.jsx';
 
 class InventoryReceived extends React.Component {
     constructor(props) {
@@ -73,6 +74,7 @@ class InventoryReceived extends React.Component {
         const { loading, inventoryReceivedItems } = this.props;
         return (
             <>
+            <ContentHeader title ="InventoryReceived"/>
                 <InventoryReceivedMenu />
                 <Form ref={this.formRef} component={false}>
                     <FormTable

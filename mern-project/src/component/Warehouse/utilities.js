@@ -12,7 +12,12 @@ export const defaultSettings = {
     bottom: 'bottomRight',
     rowKey: "_id",
     tableLayout: "fixed",
-    pagination: { position: ['topRight', 'bottomRight'] },
+    pagination: {
+        defaultPageSize: 20,
+        showSizeChanger: true,
+        pageSizeOptions: ['10', '20', '50', '100'],
+        position: ['topRight', 'bottomRight']
+    },
     components: {
         body: {
             cell: EditableCell
@@ -201,12 +206,46 @@ export const searchLocationInventoryColumns = [
         title: "Qty",
         dataIndex: "qty",
         editable: false,
-        width: "5%"
+        width: "10%"
     },
     {
         title: "Modify Time",
         dataIndex: "mdfTm",
         searchable: true,
         sorter: (a, b) => a.mdfStmp - b.mdfStmp,
+    },
+]
+
+export const searchSellerInventoryColumns = [
+
+    {
+        title: "Orgnization",
+        dataIndex: "org",
+        searchable: true,
+        sorter: (a, b) => a.org.charCodeAt(0) - b.org.charCodeAt(0),
+        align: 'center'
+    },
+    {
+        title: "UPC",
+        dataIndex: "upc",
+        editable: false,
+        searchable: true,
+        align: 'right',
+    },
+    {
+        title: "Qty",
+        dataIndex: "qty",
+        editable: false,
+        width: "10%",
+        sorter: (a, b) => a.qty - b.qty,
+        align: 'center'
+    },
+
+    {
+        title: "Last Updated Time",
+        dataIndex: "mdfTm",
+        searchable: true,
+        sorter: (a, b) => a.mdfStmp - b.mdfStmp,
+        align: 'center'
     },
 ]

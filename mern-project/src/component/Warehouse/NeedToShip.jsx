@@ -7,6 +7,7 @@ import {
     getNeedToShipPendingAndTotalCount
 } from 'reducers/actions/outboundActions.js';
 import AwaitingShipmentList from './AwaitingShipmentList.jsx';
+import { ContentHeader } from 'component/utility/Layout.jsx';
 
 class NeedToShip extends React.Component {
     // static contextType = SocketContext //This part is important to access context values which are socket
@@ -65,6 +66,7 @@ class NeedToShip extends React.Component {
         const { data, shipmentInfo } = this.state;
         return (
             <>
+                <ContentHeader title="NeedToShip" />
                 <NeedToShipMenu shipmentInfo={shipmentInfo} />
                 <AwaitingShipmentList
                     data={data}

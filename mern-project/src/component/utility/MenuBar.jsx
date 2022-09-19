@@ -1,19 +1,18 @@
 import React from 'react';
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu, Tree } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
-import { ContentHeader } from 'component/utility/Layout.jsx';
 import 'styles/MenuBar.scss';
 
 const MenuBar = (props) => {
-    const { handleContentSwitch, handleClick, menuItems, title, defaultSelectedKey } = props
+    const { handleContentSwitch, handleClick, menuItems, defaultSelectedKey } = props
     const [selectedMenuKey, setSelectedMenuKey] = useState(defaultSelectedKey);
     useEffect(() => {
         console.log(`selectedKey: `, selectedMenuKey)
     }, [selectedMenuKey])
     const treeData = [
         {
-            title: <ContentHeader title={title} />,
+            title: "Open More Options",
             key: 'controller',
             children: [
                 {

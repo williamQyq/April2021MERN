@@ -9,36 +9,45 @@ import {
     defaultSettings,
     searchReceivedShipmentColumns,
     searchShipmentColumns,
-    searchLocationInventoryColumns
+    searchLocationInventoryColumns,
+    searchSellerInventoryColumns
 } from 'component/Warehouse/utilities.js';
 import { downloadShipment, getShipment } from 'reducers/actions/outboundActions.js';
 import {
     downloadInventoryReceived,
     downloadLocationInventory,
     getInventoryReceivedFromSearch,
-    getLocationInventory
+    getLocationInventory,
+    getSellerInventory
 } from 'reducers/actions/inboundActions';
 import {
     SEARCH_LOCATION_INVENTORY,
     SEARCH_OUTBOUND_SHIPMENT,
-    SEARCH_RECEIVAL_SHIPMENT
+    SEARCH_RECEIVAL_SHIPMENT,
+    SEARCH_SELLER_INVENTORY
 } from 'reducers/actions/types.js';
 
 const SearchShipment = () => {
     const dispatch = useDispatch();
     const [form] = Form.useForm();
     const [visible, setVisible] = useState(false);
-    const [columns, setColumns] = useState(searchShipmentColumns);
-    const { items, itemsLoading, category } = useSelector((state) => state.warehouse.shipmentSearch)
-
+    const [columns, setColumns] = useState(searchSellerInventoryColumns);
+    const [style, setStyle] = useState({maxWidth:"60%"});
+    const { items, itemsLoading } = useSelector((state) => state.warehouse.shipmentSearch)
+    const [formValues, setFormValues] = useState(null);
 
     useEffect(() => {
         let hasItems = items.length > 0 ? true : false;
         if (!hasItems) {
-            dispatch(getShipment({}));
+            dispatch(getSellerInventory());
         }
-        handleColumnsOnSearchCategoryChange(category);
-    }, [category, items, dispatch])
+
+        if (formValues) {
+            handleColumnsOnSearchCategoryChange(formValues.type);
+            handleDataOnSearchCategoryChange(formValues.type, formValues);
+            setVisible(false)
+        }
+    }, [formValues, items.length, dispatch])
 
     const handleDataOnSearchCategoryChange = (category, values) => {
         switch (category) {
@@ -51,6 +60,9 @@ const SearchShipment = () => {
             case SEARCH_LOCATION_INVENTORY:
                 dispatch(getLocationInventory(values));
                 break;
+            case SEARCH_SELLER_INVENTORY:
+                dispatch(getSellerInventory(values));
+                break;
             default:
                 return;
         }
@@ -59,12 +71,19 @@ const SearchShipment = () => {
         switch (category) {
             case SEARCH_OUTBOUND_SHIPMENT:
                 setColumns(searchShipmentColumns);
+                setStyle({ maxWidth: "100%" })
                 break;
             case SEARCH_RECEIVAL_SHIPMENT:
                 setColumns(searchReceivedShipmentColumns);
+                setStyle({ maxWidth: "100%" })
                 break;
             case SEARCH_LOCATION_INVENTORY:
                 setColumns(searchLocationInventoryColumns);
+                setStyle({ maxWidth: "60%" })
+                break;
+            case SEARCH_SELLER_INVENTORY:
+                setColumns(searchSellerInventoryColumns);
+                setStyle({ maxWidth: "60%" });
                 break;
             default:
                 return;
@@ -75,9 +94,7 @@ const SearchShipment = () => {
         form.validateFields()
             .then((values) => {
                 console.log(`Form values:`, values)
-                handleColumnsOnSearchCategoryChange(values.type);
-                handleDataOnSearchCategoryChange(values.type, values);
-                setVisible(false)
+                setFormValues(values);
             })
             .catch(err => { })
     }
@@ -103,8 +120,9 @@ const SearchShipment = () => {
     }
 
     return (
-
+        // <div style={{ width: "100%", display: "flex", alignItem: "center" }}>
         <FormTable
+            style={style}
             data={items}
             columns={columns}
             loading={itemsLoading}
@@ -123,6 +141,7 @@ const SearchShipment = () => {
                     </div>
             }}
         />
+        // </div>
     );
 
 }

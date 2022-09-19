@@ -23,7 +23,8 @@ import {
     GET_LOCATION_QTY_BY_UPC_AND_LOC,
     GET_SHIPMENT_BY_COMPOUND_FILTER,
     GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER,
-    GET_INVENTORY_LOCATION_BY_COMPOUND_FILTER
+    GET_INVENTORY_LOCATION_BY_COMPOUND_FILTER,
+    GET_SELLER_INVENTORY_BY_COMPOUND_FILTER
 } from './aggregate.js';
 import GenerateGSheetApis from '../../bin/gsheet/gsheet.js';
 import moment from 'moment';
@@ -560,6 +561,14 @@ export class WMSDatabaseApis {
         const collection = this.db.collection(WMSDatabaseApis._collection.locationInv);
         let locationRecordsByReqFields = await collection.aggregate(GET_INVENTORY_LOCATION_BY_COMPOUND_FILTER(requiredFields)).toArray();
         return locationRecordsByReqFields;
+    }
+
+    async getSellerInventory(fields) {
+        let requiredFields = Object.assign({}, fields);
+        delete requiredFields.type;
+        const collection = this.db.collection(WMSDatabaseApis._collection.sellerInv);
+        let sellerInvRecordsByReqFields = await collection.aggregate(GET_SELLER_INVENTORY_BY_COMPOUND_FILTER(requiredFields)).toArray();
+        return sellerInvRecordsByReqFields;
     }
 
 

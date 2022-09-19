@@ -65,7 +65,6 @@ export const NeedToShipMenu = (props) => {
             handleClick={handleClick}
             handleContentSwitch={handleContentSwitch}
             menuItems={needToShipMenuItems}
-            title="Need To Ship"
             defaultSelectedKey="unstantiatedShipment"
         />
     )

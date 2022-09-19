@@ -317,16 +317,19 @@ router.post('/shipment/v0/getShipment', auth, (req, res) => {
         })
 })
 
+//@desc: download xlsx shipment records
 router.post('shipment/v0/downloadShipmentXlsx', auth, (req, res) => {
     const { requiredFields } = req.body;
     res.json();
 })
 
+//@desc: download xlsx inventory receival records
 router.post('inventoryReceive/v0/downloadReceivalXlsx', auth, (req, res) => {
     const { requiredFields } = req.body;
     res.json();
 })
 
+//@desc: download xlsx location inventory records
 router.post('locationInventory/v0/downloadLocationInventoryXlsx', auth, (req, res) => {
     const { requiredFields } = req.body;
     res.json();
@@ -342,6 +345,21 @@ router.post('/locationInventory/v0/getLocationInventory', auth, (req, res) => {
         .catch(err => {
             res.status(400).json({
                 msg: `Reject get shipment by required fields`,
+                reasoon: err.message
+            })
+        })
+})
+
+router.post('/sellerInventory/v0/getSellerInventory', auth, (req, res) => {
+    const { requiredFields } = req.body;
+    let wms = new WMSDatabaseApis();
+    wms.getSellerInventory(requiredFields)
+        .then(validShipment => {
+            res.json(validShipment)
+        })
+        .catch(err => {
+            res.status(400).json({
+                msg: `Reject get Seller Inventory by required fields`,
                 reasoon: err.message
             })
         })

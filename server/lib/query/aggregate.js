@@ -574,3 +574,42 @@ export const GET_INVENTORY_LOCATION_BY_COMPOUND_FILTER = (fields) => {
 
     return compoundFilter;
 }
+
+export const GET_SELLER_INVENTORY_BY_COMPOUND_FILTER = (fields) => {
+    let compoundFilter = [];
+    let matchObj = {};
+    compoundFilter = compoundFilter.concat([
+        {
+            '$project': {
+                '_id': {
+                    '$concat': ["$_id.UPC", "-", "$_id.org"]
+                },
+                'upc': '$_id.UPC',
+                'qty': 1,
+                'org': '$_id.org',
+                'mdfTm': 1,
+                'mdfStmp': 1
+            }
+        }
+    ]);
+
+    
+    // if (fields["qty"]) {
+    //     matchObj["qty"] = new RegExp(`.*${fields["qty"]}.*`);
+    // }
+    if (fields["upc"]) {
+        matchObj["upc"] = new RegExp(`.*${fields["upc"]}.*`);
+    }
+
+    if (fields["dateTime"]) {
+        let startDateUnix = Number(moment(fields["dateTime"][0]).format('x'));
+        let endDateUnix = Number(moment(fields["dateTime"][1]).format('x'));
+        matchObj["mdfStmp"] = { '$gte': startDateUnix, '$lte': endDateUnix }
+    }
+
+    if (Object.entries(matchObj).length > 0) {
+        compoundFilter.push({ '$match': matchObj })
+    }
+
+    return compoundFilter;
+}

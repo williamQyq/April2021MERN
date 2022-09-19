@@ -8,3 +8,4 @@ server/unit_test.js
 *.crt
 credentials.json
 server/buildTS/*
+server/dist/*

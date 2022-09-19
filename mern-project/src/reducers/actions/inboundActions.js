@@ -10,7 +10,8 @@ import {
     UPDATE_INVENTORY_RECEIVE,
     GET_INVENTORY_RECEIVED_ITEMS,
     SEARCH_RECEIVAL_SHIPMENT,
-    SEARCH_LOCATION_INVENTORY
+    SEARCH_LOCATION_INVENTORY,
+    SEARCH_SELLER_INVENTORY
 } from './types.js';
 import {
     setInventoryReceivedLoading,
@@ -136,6 +137,26 @@ export const getLocationInventory = (requiredFields) => (dispatch, getState) => 
         .catch(err => {
             dispatch({
                 type: SEARCH_LOCATION_INVENTORY,
+                payload: []
+            })
+            dispatch(clearErrors());
+            dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS));
+        })
+}
+
+export const getSellerInventory = (requiredFields) => (dispatch, getState) => {
+    dispatch(setSearchShipmentLoading());
+
+    axios.post(`/api/wms/sellerInventory/v0/getSellerInventory`, { requiredFields }, tokenConfig(getState))
+        .then(res => {
+            dispatch({
+                type: SEARCH_SELLER_INVENTORY,
+                payload: res.data
+            });
+        })
+        .catch(err => {
+            dispatch({
+                type: SEARCH_SELLER_INVENTORY,
                 payload: []
             })
             dispatch(clearErrors());

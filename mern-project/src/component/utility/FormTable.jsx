@@ -188,10 +188,13 @@ class FormTable extends React.Component {
 
 
     render() {
-        const { data, loading, columns, tableSettings } = this.props
+        const { data, loading, columns, tableSettings, style } = this.props
         const searchPropsColumns = this.addSearchPropsToColumns(columns, this.getColumnSearchProps);
+        let maxWidth = style ? style.maxWidth : "100%"
+
         return (
             <Table
+                style={{ margin: "auto", maxWidth: maxWidth }}
                 loading={loading}
                 {...tableSettings}
                 columns={searchPropsColumns}

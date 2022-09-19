@@ -10,7 +10,7 @@ import OperationMenu from 'component/Operation/OperationMenu';
 import { SocketContext } from 'component/socket/socketContext';
 // import BackTopHelper from 'component/utility/BackTop.jsx';
 import FormTable from 'component/utility/FormTable';
-import { SubContentHeader } from 'component/utility/Layout';
+import { ContentHeader, SubContentHeader } from 'component/utility/Layout';
 
 class OperationProductList extends React.Component {
     static contextType = SocketContext //This part is important to access context values which are socket
@@ -186,7 +186,8 @@ class OperationProductList extends React.Component {
         const columns = mainColumns(actions)
         return (
             <>
-                <OperationMenu handler={this.handler} {...this.state} title="All Listed Products" />
+                <ContentHeader title="All Listed Products" />
+                <OperationMenu handler={this.handler} {...this.state} />
                 <Form ref={this.formRef} component={false}>
                     <FormTable
                         loading={loading}
@@ -196,7 +197,7 @@ class OperationProductList extends React.Component {
                     />
                 </Form>
                 <SubContentHeader title="New Products" />
-                
+
                 {/* <BackTopHelper /> */}
             </>
 

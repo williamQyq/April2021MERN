@@ -94,7 +94,7 @@ class BB extends React.Component {
 
     render() {
         const data = {
-            store: this.state.store,
+            storeName: this.state.store,
             items: this.props.items,
             loading: this.props.loading
         }
