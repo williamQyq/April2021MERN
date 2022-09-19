@@ -5,9 +5,15 @@ const ShipmentStatusBoard = (props) => {
     const { pending, total } = props.shipmentInfo;
 
     const getFinishedPercent = (pendingCount, totalCount) => {
+        //if no shipment today
         if (totalCount <= 0) {
             return 0;
         }
+        //if no pending
+        if (pendingCount === 0) {
+            return 100;
+        }
+
         return (
             Math.round(((totalCount - pendingCount) / totalCount).toFixed(2) * 100)
         )

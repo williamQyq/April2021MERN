@@ -217,9 +217,9 @@ router.post('/needToShip/v0/confirmShipment', auth, (req, res) => {
     const { allUnShipment } = req.body;
 
     let wms = new WMSDatabaseApis();
-    console.log(`all unShipment: `, allUnShipment)
     const { unShipmentHandler, processedTrackings } = wms.createUnShipmentMapping(allUnShipment);
-    console.log(`unshipment Map: `, unShipmentHandler);
+    // console.log(`all unShipment: `, allUnShipment)
+    // console.log(`unshipment Map: `, unShipmentHandler);
 
     // // concat 2 steps promise array:
     // // update locationInv -> update shipment status

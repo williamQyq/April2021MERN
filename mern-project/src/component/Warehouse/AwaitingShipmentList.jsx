@@ -12,19 +12,20 @@ const AwaitingShipmentList = (props) => {
     const [awaitngShipment, SetAwaitingShipment] = useState(data);
 
     useEffect(() => {
-        SetPending(shipmentInfo.pending);
-        SetTotal(shipmentInfo.total);
+        SetPending(Number(shipmentInfo.pending));
+        SetTotal(Number(shipmentInfo.total));
         SetAwaitingShipment(data)
     }, [shipmentInfo, data])
 
     return (
         <>
             <Divider plain><PageHeader title="Awaiting Shipment" /></Divider>
-            <ShipmentStatusBoard shipmentInfo={{ pending, total }}></ShipmentStatusBoard>
             <div
                 id="scrollableDiv"
                 style={{
-                    height: "80vh",
+                    height:"120vh",
+                    margin: "auto",
+                    maxWidth: '60vw',
                     overflow: 'auto',
                     padding: '0 16px',
                     // border: '1px solid #fbfbfd',
@@ -32,6 +33,7 @@ const AwaitingShipmentList = (props) => {
                     boxShadow: "5px 5px 10px #9c9c9d"
                 }}
             >
+                <ShipmentStatusBoard shipmentInfo={{ pending, total }}></ShipmentStatusBoard>
                 <InfiniteScroll
                     dataLength={awaitngShipment.length}
                     next={loadMore}

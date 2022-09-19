@@ -16,14 +16,13 @@ class FormTable extends React.Component {
             searchedRowId: '',
             searchedColumn: '',
             data: this.props.data,
-            tableState: this.props.tableSettings.tableState || null //
+            tableState: null // for caching table action history
         };
     }
 
     componentDidMount() {
         if (this.state.tableState != null) {
             this.handleScrollPosition(this.state.data, this.state.tableState);  //scroll to clicked row
-            this.handleTableState(this.state.tableState);
         }
     }
     componentDidUpdate(prevProps, prevState) {
