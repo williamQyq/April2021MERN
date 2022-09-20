@@ -32,7 +32,7 @@ const SearchShipment = () => {
     const [form] = Form.useForm();
     const [visible, setVisible] = useState(false);
     const [columns, setColumns] = useState(searchSellerInventoryColumns);
-    const [style, setStyle] = useState({maxWidth:"60%"});
+    const [style, setStyle] = useState({ maxWidth: "60%" });
     const { items, itemsLoading } = useSelector((state) => state.warehouse.shipmentSearch)
     const [formValues, setFormValues] = useState(null);
 

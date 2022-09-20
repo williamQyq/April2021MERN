@@ -34,6 +34,10 @@ export const syncInventoryReceivedWithGsheet = () => (dispatch, getState) => {
             dispatch(returnMessages(res.data.msg, res.status))
         })
         .catch(err => {
+            dispatch({
+                type: SYNC_INVENTORY_RECEIVED_WITH_GSHEET,
+                payload: []
+            })
             dispatch(returnErrors(err.response.data.msg, err.response.status))
         })
 }

@@ -1,21 +1,20 @@
 import InfiniteScroll from 'react-infinite-scroll-component';
 import DescriptionCard from 'component/utility/DescriptionCard.jsx';
 import { Divider, List, PageHeader, Skeleton } from 'antd';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import ShipmentStatusBoard from './ShipmentStatusBoard.jsx';
 
 const AwaitingShipmentList = (props) => {
-    const { data, loadMore, dataLengthLimit, shipmentInfo } = props;
-    const [pending, SetPending] = useState(0);
-    const [total, SetTotal] = useState(0);
-    const [awaitngShipment, SetAwaitingShipment] = useState(data);
+    const { data, loadMore, shipmentInfo } = props;
+    const [pending, SetPending] = useState(shipmentInfo.pending);
+    const [total, SetTotal] = useState(shipmentInfo.total);
+    const [awaitingShipment, SetAwaitingShipment] = useState(data);
 
     useEffect(() => {
         SetPending(Number(shipmentInfo.pending));
         SetTotal(Number(shipmentInfo.total));
         SetAwaitingShipment(data)
-    }, [shipmentInfo, data])
+    }, [shipmentInfo.pending, shipmentInfo.total, data])
 
     return (
         <>
@@ -23,7 +22,7 @@ const AwaitingShipmentList = (props) => {
             <div
                 id="scrollableDiv"
                 style={{
-                    height:"120vh",
+                    height: "120vh",
                     margin: "auto",
                     maxWidth: '60vw',
                     overflow: 'auto',
@@ -35,9 +34,9 @@ const AwaitingShipmentList = (props) => {
             >
                 <ShipmentStatusBoard shipmentInfo={{ pending, total }}></ShipmentStatusBoard>
                 <InfiniteScroll
-                    dataLength={awaitngShipment.length}
+                    dataLength={awaitingShipment.length}
                     next={loadMore}
-                    hasMore={awaitngShipment.length < dataLengthLimit}
+                    hasMore={awaitingShipment.length < total}
                     loader={
                         <Skeleton
                             paragraph={{
@@ -51,7 +50,7 @@ const AwaitingShipmentList = (props) => {
 
                 >
                     <List
-                        dataSource={awaitngShipment}
+                        dataSource={awaitingShipment}
                         size="small"
                         renderItem={(item) => (
                             <List.Item key={item.orderID}>

@@ -62,7 +62,6 @@ class NeedToShip extends React.Component {
     }
 
     render() {
-        const { totalNeedToShipItemsCount } = this.props;
         const { data, shipmentInfo } = this.state;
         return (
             <>
@@ -71,7 +70,6 @@ class NeedToShip extends React.Component {
                 <AwaitingShipmentList
                     data={data}
                     loadMore={this.loadMore}
-                    dataLengthLimit={totalNeedToShipItemsCount}
                     shipmentInfo={shipmentInfo}
                 />
             </>
@@ -87,7 +85,6 @@ NeedToShip.prototypes = {
     getNeedToShipPendingAndTotalCount: PropTypes.func.isRequired
 }
 const mapStateToProps = (state) => ({
-    totalNeedToShipItemsCount: state.warehouse.needToShip.totalShipmentCount,
     needToShipItems: state.warehouse.needToShip.items,
     needToshipItemsLoading: state.warehouse.needToShip.itemsLoading
 })

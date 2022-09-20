@@ -591,6 +591,7 @@ export class GsheetApis extends GenerateGSheetApis {
         spreadsheetId: "1Pgk6x0Dflq6FwMLk2qIyU9QgHH8RZNneYWLWMk3J2qM",
         ranges: ["needtoship!I:I", "needtoship!J:J", "needtoship!AV:AV", "needtoship!AD:AD", "needtoship!AE:AF", "needtoship!AG:AH", "needtoship!AI:AJ", "needtoship!AK:AL"],
         order: {
+            _id: undefined,
             amzOrderId: undefined,
             tracking: undefined,
             upc1: undefined,
@@ -642,11 +643,11 @@ export class GsheetApis extends GenerateGSheetApis {
     createArrayOfArrayFromDocumentsInOrder(spreadSheetDetail, docs) {
         let aoa;
         let keys;
-        let order = spreadSheetDetail.order;
-        let now = moment().format();
+        if (spreadSheetDetail.order) {
+            let order = spreadSheetDetail.order;
+            let now = moment().format();
 
-        keys = this._getInOrderKeys(order, docs);
-        if (keys !== undefined) {
+            keys = this._getInOrderKeys(order, docs);
             aoa = this._getInOrderValues(order, docs);
             aoa.unshift(keys, new Array(now))
         }
