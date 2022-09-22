@@ -26,6 +26,7 @@ import {
     SEARCH_RECEIVAL_SHIPMENT,
     SEARCH_SELLER_INVENTORY
 } from 'reducers/actions/types.js';
+import { useCallback } from 'react';
 
 const SearchShipment = () => {
     const dispatch = useDispatch();
@@ -33,40 +34,50 @@ const SearchShipment = () => {
     const [visible, setVisible] = useState(false);
     const [columns, setColumns] = useState(searchSellerInventoryColumns);
     const [style, setStyle] = useState({ maxWidth: "60%" });
-    const { items, itemsLoading } = useSelector((state) => state.warehouse.shipmentSearch)
+    const { items, category, itemsLoading } = useSelector((state) => state.warehouse.shipmentSearch)
     const [formValues, setFormValues] = useState(null);
 
+    //memorized stable fetchData function since dispatch is changing.
+    const fetchDataOnSearchCategoryChange = useCallback((type, values) => {
+        const handleDataOnSearchCategoryChange = (category, values) => {
+            switch (category) {
+                case SEARCH_OUTBOUND_SHIPMENT:
+                    dispatch(getShipment(values));
+                    break;
+                case SEARCH_RECEIVAL_SHIPMENT:
+                    dispatch(getInventoryReceivedFromSearch(values))
+                    break;
+                case SEARCH_LOCATION_INVENTORY:
+                    dispatch(getLocationInventory(values));
+                    break;
+                case SEARCH_SELLER_INVENTORY:
+                    dispatch(getSellerInventory(values));
+                    break;
+                default:
+                    return;
+            }
+        }
+        handleDataOnSearchCategoryChange(type, values);
+    }, [dispatch])
+
+    //fetch wms data on search with formValues changed
     useEffect(() => {
-        let hasItems = items.length > 0 ? true : false;
-        if (!hasItems) {
-            dispatch(getSellerInventory());
-        }
-
         if (formValues) {
-            handleColumnsOnSearchCategoryChange(formValues.type);
-            handleDataOnSearchCategoryChange(formValues.type, formValues);
-            setVisible(false)
+            handleColumnsOnSearchCategoryChange(formValues.type)
+            fetchDataOnSearchCategoryChange(formValues.type, formValues);   //fetch corresponding data
+            setVisible(false)   //set drawer invisible
         }
-    }, [formValues, items.length, dispatch])
+    }, [formValues, fetchDataOnSearchCategoryChange])
 
-    const handleDataOnSearchCategoryChange = (category, values) => {
-        switch (category) {
-            case SEARCH_OUTBOUND_SHIPMENT:
-                dispatch(getShipment(values));
-                break;
-            case SEARCH_RECEIVAL_SHIPMENT:
-                dispatch(getInventoryReceivedFromSearch(values))
-                break;
-            case SEARCH_LOCATION_INVENTORY:
-                dispatch(getLocationInventory(values));
-                break;
-            case SEARCH_SELLER_INVENTORY:
-                dispatch(getSellerInventory(values));
-                break;
-            default:
-                return;
+    //prevent refetch wms shipment if has info
+    useEffect(() => {
+        if (!category) {
+            dispatch(getSellerInventory()); //dispatch default get seller inventory when did mount
+        } else {
+            handleColumnsOnSearchCategoryChange(category);
         }
-    }
+    }, [category, dispatch])
+
     const handleColumnsOnSearchCategoryChange = (category) => {
         switch (category) {
             case SEARCH_OUTBOUND_SHIPMENT:

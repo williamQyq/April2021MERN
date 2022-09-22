@@ -26,14 +26,15 @@ class ItemDetail extends React.Component {
     }
 
     render() {
-        const itemDetail = this.props.itemDetail;
+        const { itemDetail, loading } = this.props;
+
         if (itemDetail != null) {
             return (
                 <>
                     <Row className="main-grid">
                         {/* <LeftOutlined className="go-back-btn" style={{ fontSize: '24px' }} onClick={this.goBack} /> */}
                         <Col flex="1 0 66.6666666667%" className="left-panel" >
-                            <LeftPanel />
+                            <LeftPanel item={itemDetail} loading={loading} />
                         </Col>
                         <Col flex="1 0 27.7777777778%" className="right-panel">
                             <OrderPanel />
@@ -42,7 +43,7 @@ class ItemDetail extends React.Component {
                 </>
             );
         } else {
-            return null;
+            return <></>;   //return <DetailNotFound/>
         }
     }
 
@@ -56,13 +57,15 @@ ItemDetail.prototypes = {
     getItemDetail: PropTypes.func.isRequired,
     clickedId: PropTypes.string.isRequired,
     store: PropTypes.string.isRequired,
-    itemDetail: PropTypes.object.isRequired
+    itemDetail: PropTypes.object.isRequired,
+    loading: PropTypes.bool.isRequired
 }
 
 const mapStateToProps = (state) => ({
     clickedId: state.item.tableState.clickedId,
     store: state.item.tableState.store,
-    itemDetail: state.item.itemDetail
+    itemDetail: state.item.itemDetail,
+    loading: state.item.loading
 });
 //withRouter grant access to Router history, location...
 export default withRouter(connect(mapStateToProps, { getItemDetail })(ItemDetail));

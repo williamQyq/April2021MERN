@@ -1,8 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { Row, Typography, Spin, Skeleton } from 'antd';
 import { SyncOutlined } from '@ant-design/icons';
-import PropTypes from 'prop-types';
 import KeyStatistics from 'component/ItemDetail/ItemDetailStat.js';
 import PriceHistoryChart from 'component/ItemDetail/ItemDetailChart.jsx';
 import KeepaStatistics from 'component/KeepaStatistics.js';
@@ -11,8 +9,11 @@ import { ContentHeader } from 'component/utility/Layout';
 const { Title } = Typography;
 const antIcon = <SyncOutlined spin />;
 
-class LeftPanel extends React.Component {
-
+export default class LeftPanel extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {};
+    }
     getPriceDiffPercentage = (item) => {
         let percentage = 0;
 
@@ -24,7 +25,7 @@ class LeftPanel extends React.Component {
     }
 
     render() {
-        const item = this.props.itemDetail;
+        const { item } = this.props;
         return (
             <Skeleton loading={this.props.loading}>
                 <ContentHeader title={item.name} />
@@ -40,18 +41,3 @@ class LeftPanel extends React.Component {
         )
     }
 }
-
-
-LeftPanel.prototypes = {
-    // location: PropTypes.object.isRequired,
-    loading: PropTypes.bool.isRequired,
-    itemDetail: PropTypes.object.isRequired
-}
-
-//state contains reducers
-const mapStateToProps = (state) => ({
-    loading: state.item.loading,
-    itemDetail: state.item.itemDetail
-});
-
-export default connect(mapStateToProps, {})(LeftPanel);

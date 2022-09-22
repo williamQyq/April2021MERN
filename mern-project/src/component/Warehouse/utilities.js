@@ -174,7 +174,7 @@ export const searchReceivedShipmentColumns = [
         sorter: (a, b) => a.crtStmp - b.crtStmp,
     },
     {
-        title: "Shipped Time",
+        title: "Latest Modify Time",
         dataIndex: "mdfTm",
         searchable: true,
         sorter: (a, b) => a.mdfStmp - b.mdfStmp
