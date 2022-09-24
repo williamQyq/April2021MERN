@@ -2,16 +2,13 @@ import React from 'react';
 import './Home.scss';
 import 'antd/dist/antd.min.css';
 import { Layout } from 'antd';
-import {
-  BrowserRouter as Router,
-  withRouter
-} from "react-router-dom";
 import { loadUser, logout } from 'reducers/actions/authActions.js';
 import { connect } from 'react-redux';
 import HomeContent from 'component/Home/HomeContent.jsx';
 import HomeHeader from 'component/Home/HomeHeader.jsx';
 import HomeSider from 'component/Home/HomeSider.jsx';
 import { SocketContext } from 'component/socket/socketContext';
+import WithNavigate from 'component/auth/WithNavigate';
 
 class Home extends React.Component {
   static contextType = SocketContext
@@ -44,23 +41,21 @@ class Home extends React.Component {
 
 
   render() {
-    const { match: { path } } = this.props;
+    // const { location } = this.props
+    // const path = location.pathname;
     const { collapsed } = this.state;
-    return (
-      <Router>
-        <Layout className="main-layout" style={{ minHeight: "100vh" }}>
-          <HomeSider path={path} isCollapsed={collapsed} toggle={this.toggle} />
-          <Layout className="site-layout" style={{minWidth:"1400px"}}>
-            {/* Home Header  */}
-            <HomeHeader handleLogOut={this.handleLogOut} isCollapsed={collapsed} toggle={this.toggle} />
-            {/* Home Content */}
-            <HomeContent />
-          </Layout>
 
+    return (
+      <Layout className="main-layout" style={{ minHeight: "100vh" }}>
+        <HomeSider isCollapsed={collapsed} toggle={this.toggle} />
+        <Layout className="site-layout" style={{ minWidth: "1400px" }}>
+          <HomeHeader handleLogOut={this.handleLogOut} isCollapsed={collapsed} toggle={this.toggle} />
+          <HomeContent />
         </Layout>
-      </Router >
+
+      </Layout>
     );
   }
 }
 
-export default withRouter(connect(null, { logout, loadUser })(Home));
+export default WithNavigate(connect(null, { logout, loadUser })(Home));

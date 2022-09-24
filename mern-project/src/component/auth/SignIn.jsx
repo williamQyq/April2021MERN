@@ -2,12 +2,12 @@ import React from 'react';
 import { Layout, Form, Input, Button, Typography, message } from 'antd';
 import 'antd/dist/antd.min.css';
 import 'styles/login.scss';
-import { withRouter } from "react-router-dom";
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { login, register } from 'reducers/actions/authActions.js';
 import { clearErrors } from 'reducers/actions/errorActions.js';
+import WithNavigate from './WithNavigate.js';
 
 const { Sider, Content, } = Layout;
 const { Text, Title, Link } = Typography;
@@ -56,7 +56,7 @@ class SignIn extends React.Component {
     componentDidMount() {
         const { isAuthenticated } = this.props;
         if (isAuthenticated) {
-            this.props.history.push('/app/bestbuy-list');
+            this.props.navigate('app');
         }
     }
     componentDidUpdate(prevProps) {
@@ -72,7 +72,7 @@ class SignIn extends React.Component {
         if (isAuthenticated) {
             message.success('Sign in success!');
             this.props.clearErrors();
-            this.props.history.push('/app/bestbuy-list');
+            this.props.navigate('app');
         }
 
     }
@@ -161,5 +161,4 @@ const mapStateToProps = state => ({
     isLoading: state.auth.isLoading,
     error: state.error
 })
-
-export default withRouter(connect(mapStateToProps, { login, clearErrors, register })(SignIn));
+export default WithNavigate(connect(mapStateToProps, { login, clearErrors, register })(SignIn));

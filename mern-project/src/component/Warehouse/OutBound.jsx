@@ -1,7 +1,7 @@
 import React from 'react';
 import { ContentHeader } from 'component/utility/Layout.jsx';
 import { Card, Col, Row } from 'antd';
-import { Link, withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 
 const outboundMenuFeatures = [
@@ -22,7 +22,7 @@ const outboundMenuFeatures = [
     }
 ]
 
-class Outbound extends React.Component {
+export default class Outbound extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -31,8 +31,6 @@ class Outbound extends React.Component {
     }
 
     render() {
-        const { match: { path } } = this.props;
-
         return (
             <>
                 <ContentHeader title="Outbound" />
@@ -41,7 +39,7 @@ class Outbound extends React.Component {
                         outboundMenuFeatures.map((feature, i) => {
                             return (
                                 <Col key={i} xs={16} xl={8}>
-                                    <Link to={`${path}/${feature.key}`}>
+                                    <Link to={`${feature.key}`}>
                                         <Card hoverable title={feature.title}>
                                             <Card.Meta description={feature.description} />
                                         </Card>
@@ -51,11 +49,8 @@ class Outbound extends React.Component {
                         })
                     }
                 </Row>
-
             </>
         );
     }
 
 }
-
-export default withRouter(Outbound);

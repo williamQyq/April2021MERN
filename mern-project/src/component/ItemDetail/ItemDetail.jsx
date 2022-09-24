@@ -1,6 +1,4 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom'; // Link pass state props to leftPanel and sideitemDetail
-import 'antd/dist/antd.min.css';
 import 'component/ItemDetail/ItemDetail.scss';
 import { Col, Row } from 'antd';
 import { connect } from 'react-redux';
@@ -8,6 +6,7 @@ import PropTypes from 'prop-types';
 import LeftPanel from 'component/ItemDetail/ItemDetailLeftPanel'
 import OrderPanel from 'component/ItemDetail/ItemDetailOrderCard';
 import { getItemDetail } from 'reducers/actions/itemActions';
+import { useNavigate } from 'react-router-dom';
 
 class ItemDetail extends React.Component {
     constructor(props) {
@@ -22,7 +21,8 @@ class ItemDetail extends React.Component {
     }
 
     goBack = () => {
-        this.props.history.goBack();
+        const navigate = useNavigate();
+        navigate(-1);
     }
 
     render() {
@@ -31,12 +31,11 @@ class ItemDetail extends React.Component {
         if (itemDetail != null) {
             return (
                 <>
-                    <Row className="main-grid">
-                        {/* <LeftOutlined className="go-back-btn" style={{ fontSize: '24px' }} onClick={this.goBack} /> */}
-                        <Col flex="1 0 66.6666666667%" className="left-panel" >
+                    <Row style={{ "display": "flex", "justifyContent": "center" }} gutter={[48, 24]}>
+                        <Col span={12} className="left-panel" >
                             <LeftPanel item={itemDetail} loading={loading} />
                         </Col>
-                        <Col flex="1 0 27.7777777778%" className="right-panel">
+                        <Col span={6} className="right-panel">
                             <OrderPanel />
                         </Col>
                     </Row>
@@ -67,5 +66,5 @@ const mapStateToProps = (state) => ({
     itemDetail: state.item.itemDetail,
     loading: state.item.loading
 });
-//withRouter grant access to Router history, location...
-export default withRouter(connect(mapStateToProps, { getItemDetail })(ItemDetail));
+//@deprecated in react-router-dom v6: withRouter grant access to Router history, location...
+export default connect(mapStateToProps, { getItemDetail })(ItemDetail);

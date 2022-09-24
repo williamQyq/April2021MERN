@@ -1,15 +1,10 @@
 import React from 'react';
 import 'antd/dist/antd.min.css';
-import {
-  Switch,
-  Route,
-} from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import SignIn from 'component/auth/SignIn.jsx';
-import ErrorPage from 'component/utility/ErrorPage.jsx';
 import PrivateRoute from 'component/auth/PrivateRoute.js';
 import { connect } from 'react-redux';
 import Proptypes from 'prop-types';
-
 import Home from 'component/Home/Home.jsx';
 import HomeMobile from 'component/Home/HomeMobile.jsx';
 import { isBrowser } from 'react-device-detect';
@@ -17,6 +12,7 @@ import { SocketProvider } from 'component/socket/socketContext.js';
 import openAlertNotification from 'component/utility/errorAlert.js';
 import { clearErrors } from 'reducers/actions/errorActions';
 import { clearMessages } from 'reducers/actions/messageActions';
+import NotFound from 'component/utility/NotFound';
 
 class App extends React.Component {
 
@@ -39,17 +35,26 @@ class App extends React.Component {
 
   render() {
     return (
-      <Switch>
-        <Route exact path="/" component={SignIn} />
-        <PrivateRoute path="/app" isAuthenticated={this.props.isAuthenticated} >
-          {
-            isBrowser ?
-              <SocketProvider><Home /></SocketProvider> :
-              <HomeMobile />
+      <Routes>
+        <Route path="*" element={<NotFound />} />
+        <Route path="/" element={<SignIn />} />
+        <Route
+          path="app/*"
+          element={
+            <PrivateRoute isAuthenticated={this.props.isAuthenticated} >
+              {
+                isBrowser ? (
+                  <SocketProvider>
+                    <Home />
+                  </SocketProvider>
+                ) : (
+                  <HomeMobile />
+                )
+              }
+            </PrivateRoute>
           }
-        </PrivateRoute>
-        <Route component={ErrorPage} />
-      </Switch>
+        />
+      </Routes>
     );
   }
 }

@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import ChartMenu from 'component/ItemDetail/ItemDetailChartMenu.jsx';
 import { getKeepaStat } from 'reducers/actions/keepaActions';
+import { SubContentHeader } from './utility/Layout';
 
 const { Title } = Typography;
 const { Search } = Input;
@@ -128,8 +129,7 @@ class KeepaStat extends React.Component {
 
         return (
             <>
-                <Title level={4}> Keepa Search </Title>
-                <Divider />
+                <SubContentHeader title="Keepa Search" />
                 <Search
                     size='large'
                     placeholder="Enter Search Content"
@@ -137,12 +137,7 @@ class KeepaStat extends React.Component {
                     loading={this.props.loading}
                     onSearch={this.handleSearch}
                 />
-                {/* <Line
-                    data={config.data}
-                    options={config.options} /> */}
-                <Divider dashed={true} />
-                <ChartMenu />
-                <Divider />
+                {/* <canvas id="keepaChart" /> */}
             </>
         );
     }

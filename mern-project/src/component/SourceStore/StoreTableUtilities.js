@@ -17,7 +17,7 @@ import {
     ImportOutlined,
     LoadingOutlined,
 } from '@ant-design/icons';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { addItemSpec, getItemsOnlinePrice } from "reducers/actions/itemActions.js";
 import { setTableState } from "reducers/actions/itemActions.js";
@@ -122,7 +122,6 @@ const DropDownActions = (props) => {
     const { record, storeName } = props
     const dispatch = useDispatch();
     const prevTableState = useSelector(state => state.item.tableState, shallowEqual)
-    const { pathname } = useLocation();
 
     const stableAddItemSpecification = useCallback(() => {
         dispatch(addItemSpec(record, storeName));
@@ -135,7 +134,7 @@ const DropDownActions = (props) => {
     return (
         <Dropdown
             trigger={["click"]}
-            overlay={() => ActionMenu({ addItemSpecification: stableAddItemSpecification, pathname })}
+            overlay={() => ActionMenu({ addItemSpecification: stableAddItemSpecification })}
             placement="bottom"
         >
             <TypoLink onClick={stableSaveActionHistory}>
@@ -146,7 +145,7 @@ const DropDownActions = (props) => {
 
 }
 const ActionMenu = (props) => {
-    const { pathname, addItemSpecification } = props;
+    const { addItemSpecification } = props;
 
     const buttonSetting = {
         block: true,
@@ -161,7 +160,7 @@ const ActionMenu = (props) => {
         {
             label: (
                 <Button {...buttonSetting}>
-                    <Link to={`${pathname}/item-detail`} className="action-link">
+                    <Link to="item-detail" className="action-link">
                         <SearchOutlined />
                         Detail
                     </Link>

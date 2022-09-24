@@ -14,26 +14,31 @@ export default class LeftPanel extends React.Component {
         super(props);
         this.state = {};
     }
+
     getPriceDiffPercentage = (item) => {
         let percentage = 0;
 
         if (item.priceDiff != null) {
-            percentage = (item.priceDiff / item.currentPrice) * 100;
+            percentage = (item.priceDiff / item.currentPrice).toFixed(2) * 100;
         }
 
-        return parseFloat(percentage).toFixed(2);
+        return percentage
     }
 
     render() {
-        const { item } = this.props;
+        const { item, loading } = this.props;
+        let priceTS = item.price_timestamps;
+        let priceDiff = item.priceDiff ? item.priceDiff.toFixed(2) : "Not Available";
+        let latestUpdatedTime = priceTS.length > 0 ? priceTS[priceTS.length - 1].date : "Not Available";
         return (
-            <Skeleton loading={this.props.loading}>
+            <Skeleton loading={loading}>
                 <ContentHeader title={item.name} />
                 <Row className="price-row">
                     <Title level={5} className="price-row-price">${item.currentPrice}</Title>
                     <Spin indicator={antIcon} style={{ fontSize: 0, color: 'black' }} />
                 </Row>
-                <Title level={5}>${item.priceDiff} ({this.getPriceDiffPercentage(item)}%) Today</Title>
+                <Title level={5}>${priceDiff} ({this.getPriceDiffPercentage(item)}%)</Title>
+                <Title level={5}>{latestUpdatedTime} - Latest</Title>
                 <PriceHistoryChart />
                 <KeyStatistics />
                 <KeepaStatistics />

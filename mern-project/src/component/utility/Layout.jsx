@@ -1,21 +1,18 @@
 import { Divider, PageHeader, Typography } from "antd";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
-export const ContentHeader = ({ title, subTitle = "" }) => {
+export const ContentHeader = ({ title="", subTitle = "" }) => {
 
-    const history = useHistory();
+    const navigate = useNavigate();
 
     return (
         <PageHeader
             className="site-page-header"
-            onBack={() => history.goBack()}
+            onBack={() => navigate(-1)}
             title={
-                <Title
-                    style={{ margin: 0 }}
-                    level={2}
-                >
+                <Title style={{ margin: 0 }} level={2}>
                     {title}
                 </Title>
             }

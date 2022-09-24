@@ -1,77 +1,94 @@
+import NotFound from 'component/utility/NotFound';
 import { lazy } from 'react';
+
+const StoreBB = lazy(() => import('component/SourceStore/StoreBB.jsx'));
+const StoreMS = lazy(() => import('component/SourceStore/StoreMS.jsx'));
+const StoreWM = lazy(() => import('component/SourceStore/StoreWM.jsx'));
+const OperationProductList = lazy(() => import('component/Operation/OperationProductList.jsx'));
+const OutBound = lazy(() => import('component/Warehouse/OutBound.jsx'));
+const NeedToShip = lazy(() => import('component/Warehouse/NeedToShip.jsx'));
+const InventoryReceived = lazy(() => import('component/Warehouse/InventoryReceived.jsx'));
+const SearchRecords = lazy(() => import('component/Warehouse/SearchRecords.jsx'));
+const Configuration = lazy(() => import('component/Operation/Configuration'));
+const ItemDetail = lazy(() => import('component/ItemDetail/ItemDetail.jsx'));
 
 const routes = [
   {
-    path: 'app/bestbuy-list',
-    component: lazy(() => import('component/SourceStore/StoreBB.jsx')),
-    exact: true
+    path: "*",
+    element: <NotFound />
   },
   {
-    path: 'app/bestbuy-list/item-detail',
-    component: lazy(() => import('component/ItemDetail/ItemDetail.jsx')),
-    exact: true
+    path: '/',
+    element: <SearchRecords />
   },
   {
-    path: 'app/microsoft-list',
-    component: lazy(() => import('component/SourceStore/StoreMS.jsx')),
-    exact: true
+    path: "bestbuy-list",
+    children: [
+      {
+        index: true,
+        element: <StoreBB />
+      },
+      {
+        path: "item-detail",
+        element: <ItemDetail />
+      }
+    ]
   },
   {
-    path: 'app/microsoft-list/item-detail',
-    component: lazy(() => import('component/ItemDetail/ItemDetail.jsx')),
-    exact: true
+    path: "microsoft-list",
+    children: [
+      {
+        index: true,
+        element: <StoreMS />
+      },
+      {
+        path: "item-detail",
+        element: <ItemDetail />
+      }
+    ]
   },
   {
-    path: 'app/walmart-list',
-    component: lazy(() => import('component/SourceStore/StoreWM.jsx')),
-    exact: true
+    path: "walmart-list",
+    children: [
+      {
+        index: true,
+        element: <StoreWM />
+      },
+      {
+        path: "item-detail",
+        element: <ItemDetail />
+      }
+    ]
   },
   {
-    path: 'app/walmart-list/item-detail',
-    component: lazy(() => import('component/ItemDetail/ItemDetail.jsx')),
-    exact: true
+    path: "operation-products-list",
+    element: <OperationProductList />
   },
   {
-    path: 'app/operation-products-list',
-    component: lazy(() => import('component/Operation/OperationProductList.jsx')),
-    exact: true
+    path: "outbound",
+    children: [
+      {
+        index: true,
+        element: <OutBound />
+      },
+      {
+        path: "needToShip",
+        element: <NeedToShip />
+      },
+      {
+        path: "inventoryReceived",
+        element: <InventoryReceived />
+      },
+      {
+        path: "searchRecord",
+        element: <SearchRecords />
+      }
+    ]
   },
   {
-    path: 'app/Inbound',
-    component: lazy(() => import('component/Warehouse/OutBound.jsx')),
-    exact: true
-  },
-  {
-    path: 'app/outbound',
-    component: lazy(() => import('component/Warehouse/OutBound.jsx')),
-    exact: true
-  },
-  {
-    path: 'app/outbound/needToShip',
-    component: lazy(() => import('component/Warehouse/NeedToShip.jsx')),
-    exact: true
-  },
-  {
-    path: 'app/outbound/inventoryReceived',
-    component: lazy(() => import('component/Warehouse/InventoryReceived.jsx')),
-    exact: true
-  },
-  {
-    path: 'app/outbound/searchRecord',
-    component: lazy(() => import('component/Warehouse/SearchRecords.jsx')),
-    exact: true
-  },
-  {
-    path: 'app/configuration',
-    component: lazy(() => import('component/Operation/Configuration')),
-    exact: true
+    path: "configuration",
+    element: <Configuration />
   }
-
-  // {
-  //   path: 'app/price-alert',
-  //   component: lazy(() => import('component/PriceAlert')),
-  //   exact: true
-  // },
 ];
 
 export default routes;
