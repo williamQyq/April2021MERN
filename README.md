@@ -3,7 +3,7 @@
 ## If you found this project is helpful, please star me. Thank you! 💙
 
 *status*: under development...  
-*latest update: 4/11/2022*  
+*latest update: 9/26/2022*  
 
 author: Yuqing (William) Qiao  
 description: MERN stack project
@@ -12,7 +12,7 @@ description: MERN stack project
 
 ## What is this project for?
 ---
-This project has access to the **Mongo database** of the warehouse, the Amazon Seller Central via **Selling Partner API** and the **Walmart Open I/O**. Make it easier for small to medium company to maintain track and manage assets. 
+This project has access to the **Mongo database** of the warehouse, the Amazon Seller Central via **Selling Partner API**, the **Walmart Open I/O**, and google service. Make it easier for small to medium company to maintain track and manage assets. 
 
 ## Getting Started
 ---
@@ -445,3 +445,6 @@ To solve the error "The requested module does not provide an export named 'defau
 
         import {name} from './path'; //wrong, cannot find module
 ```
+
+## New Update today 09/26/22:
+1. Upgrade to latest React 18 & react-router-dom v6.

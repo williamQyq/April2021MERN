@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { login, register } from 'reducers/actions/authActions.js';
 import { clearErrors } from 'reducers/actions/errorActions.js';
 import WithNavigate from './WithNavigate.js';
+import { Navigate } from 'react-router-dom';
 
 const { Sider, Content, } = Layout;
 const { Text, Title, Link } = Typography;
@@ -54,10 +55,10 @@ class SignIn extends React.Component {
     }
 
     componentDidMount() {
-        const { isAuthenticated } = this.props;
-        if (isAuthenticated) {
-            this.props.navigate('app');
-        }
+        // const { isAuthenticated } = this.props;
+        // if (isAuthenticated) {
+        //     this.props.navigate('/app', { replace: true });
+        // }
     }
     componentDidUpdate(prevProps) {
         const { error, isAuthenticated } = this.props;
@@ -72,7 +73,7 @@ class SignIn extends React.Component {
         if (isAuthenticated) {
             message.success('Sign in success!');
             this.props.clearErrors();
-            this.props.navigate('app');
+            this.props.navigate('/app', { replace: true });
         }
 
     }
@@ -101,57 +102,58 @@ class SignIn extends React.Component {
     }
 
     render() {
-
+        const { isAuthenticated } = this.props;
         return (
-            <Layout className="login-layout" style={{ minHeight: "100vh" }}>
-                <Sider {...siderLayout} />
-                <Content className="login-content">
-                    <Form
-                        className="login-form"
-                        {...formLayout}
-                        onFinish={this.onFinish}
-                        onFinishFailed={this.onFinishFailed}
-                    >
-                        <Form.Item>
-                            <Title level={3}>Welcome to RockyStone</Title>
-                        </Form.Item>
-                        <Form.Item
-                            name="email"
-                            label="Email or Username"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Email or Username is required.'
-                                },
-                            ]}
-                            normalize={this.normalize}
+            isAuthenticated ?
+                <Navigate to="/app" replace={true} />
+                :
+                <Layout className="login-layout" style={{ minHeight: "100vh" }}>
+                    <Sider {...siderLayout} />
+                    <Content className="login-content">
+                        <Form
+                            className="login-form"
+                            {...formLayout}
+                            onFinish={this.onFinish}
+                            onFinishFailed={this.onFinishFailed}
                         >
-                            <Input prefix={<UserOutlined />} />
-                        </Form.Item>
-                        <Form.Item
-                            name="password"
-                            label="Password"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Password is required"
-                                },
-                            ]}
-                        >
-                            <Input.Password prefix={<LockOutlined />} />
-                        </Form.Item>
-                        <Form.Item>
-                            <Button className="sign-in-btn" type="primary" htmlType="submit">Sign In</Button>
-                            <Text>Not on RockyStone?</Text>
-                            <Link onClick={() => this.handleAccountRegister()}>Create an account</Link>
-                        </Form.Item>
+                            <Form.Item>
+                                <Title level={3}>Welcome to RockyStone</Title>
+                            </Form.Item>
+                            <Form.Item
+                                name="email"
+                                label="Email or Username"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Email or Username is required.'
+                                    },
+                                ]}
+                                normalize={this.normalize}
+                            >
+                                <Input prefix={<UserOutlined />} />
+                            </Form.Item>
+                            <Form.Item
+                                name="password"
+                                label="Password"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "Password is required"
+                                    },
+                                ]}
+                            >
+                                <Input.Password prefix={<LockOutlined />} />
+                            </Form.Item>
+                            <Form.Item>
+                                <Button className="sign-in-btn" type="primary" htmlType="submit">Sign In</Button>
+                                <Text>Not on RockyStone?</Text>
+                                <Link onClick={() => this.handleAccountRegister()}>Create an account</Link>
+                            </Form.Item>
 
 
-                    </Form>
-                </Content>
-            </Layout>
-
-
+                        </Form>
+                    </Content>
+                </Layout>
         );
     }
 

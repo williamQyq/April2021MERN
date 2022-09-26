@@ -18,7 +18,8 @@ const routes = [
     element: <NotFound />
   },
   {
-    path: '/',
+    index: true,
+    path: "/",
     element: <SearchRecords />
   },
   {

@@ -36,7 +36,6 @@ class App extends React.Component {
   render() {
     return (
       <Routes>
-        <Route path="*" element={<NotFound />} />
         <Route path="/" element={<SignIn />} />
         <Route
           path="app/*"
@@ -54,6 +53,7 @@ class App extends React.Component {
             </PrivateRoute>
           }
         />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     );
   }
