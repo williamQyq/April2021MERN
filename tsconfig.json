@@ -12,18 +12,20 @@
     "moduleResolution": "node",
     "types": ["node"],
     "outDir": "./server/dist",
-    "baseUrl": "./server"
-    // "paths": {
-    //   "@root/*":["/*"],
-    //   "@amazonSP/*":["bin/amazonSP/*"]
-    // }
+    "baseUrl": "./server",
+    "paths": {
+      "root/*":["./*"],
+      "bin/*":["./bin/*"],
+      "amazonSP/*":["./bin/amazonSP/*"]
+    }
   },
   "include": [
     "./server/**/*.ts",
-    // "./server/**/*.js"
+    "./server/config.js"
   ],
   "exclude": [
     "node_modules",
-    "./mern-project/**/*"
+    "./mern-project/**/*",
+    "./server/dist/**/*"
   ]
 }

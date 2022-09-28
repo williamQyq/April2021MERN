@@ -1,14 +1,12 @@
 import React from 'react';
 import UTILS from 'styles/Util.js';
-import { Divider, Typography, Input } from 'antd';
+import { Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import ChartMenu from 'component/ItemDetail/ItemDetailChartMenu.jsx';
-import { getKeepaStat } from 'reducers/actions/keepaActions';
+// import { getKeepaStat } from 'reducers/actions/keepaActions';
 import { SubContentHeader } from './utility/Layout';
 
-const { Title } = Typography;
 const { Search } = Input;
 
 class KeepaStat extends React.Component {
@@ -19,7 +17,7 @@ class KeepaStat extends React.Component {
         }
     }
     handleSearch = (value, e) => {
-        this.props.getKeepaStat(value);
+        // this.props.getKeepaStat(value);
     }
 
     //set price chart labels
@@ -146,7 +144,7 @@ class KeepaStat extends React.Component {
 
 KeepaStat.prototypes = {
     itemDetail: PropTypes.object.isRequired,
-    getKeepaStat: PropTypes.func.isRequired,
+    // getKeepaStat: PropTypes.func.isRequired,
     keepa: PropTypes.object.isRequired,
     loading: PropTypes.bool.isRequired
 }
@@ -157,4 +155,4 @@ const mapStateToProps = (state) => ({
     loading: state.keepa.loading
 });
 
-export default connect(mapStateToProps, { getKeepaStat })(KeepaStat);
+export default connect(mapStateToProps, null)(KeepaStat);

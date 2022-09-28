@@ -5,6 +5,7 @@ import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
 import { setTableState } from 'reducers/actions/itemActions';
 import 'styles/FormTable.scss';
+import { normalizeStringValue } from './helper';
 
 
 class FormTable extends React.Component {
@@ -136,9 +137,11 @@ class FormTable extends React.Component {
             filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
             onFilter: (value, record) => {
                 if (value === undefined) return false;  //if empty searchText, filter no data
-                let isValueIncluded = record[dataIndex]
-                    ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
-                    : '';
+                let isValueIncluded = record[dataIndex] ? (
+                    record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
+                ) : (
+                    false
+                );
                 return isValueIncluded
             },
             onFilterDropdownVisibleChange: visible => {
@@ -174,8 +177,9 @@ class FormTable extends React.Component {
 
     handleSearch = (selectedKeys, confirm, dataIndex) => {
         confirm();
+        let trimSearchText = normalizeStringValue(selectedKeys[0]);
         this.setState({
-            searchText: selectedKeys[0],
+            searchText: trimSearchText,
             searchedColumn: dataIndex,
         });
     };

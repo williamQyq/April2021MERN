@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
-// import path from 'path';
-// import { fileURLToPath } from 'url';
+import path from 'path';
+import { fileURLToPath } from 'url';
 // import fs from 'fs'
 
 
@@ -58,3 +58,7 @@ export const gCredentials = {
     client_x509_cert_url: process.env.client_x509_cert_url
 }
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+export const pdfGeneratorDirPath = path.join(__dirname, "bin", "pdfGenerator");
+console.log(`path:`,pdfGeneratorDirPath)

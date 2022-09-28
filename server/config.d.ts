@@ -18,3 +18,5 @@ export declare const wmsCollections: {
 export declare const AMZ_CREDENTIALS: Config.credentials;
 export declare const AMZ_REFRESH_TOKEN: Config.refresh_token
 export declare const REGION: Config.region
+
+export declare const pdfGeneratorDirPath:string

@@ -358,10 +358,12 @@ export class WMSDatabaseApis {
         let cursors = await collection.aggregate(GET_LOCINV_UPC_QTY_SUM_EXCLUDE_WMS(upc)).toArray();
 
         let hasQtyOnWMSOnly = cursors.length === 0 ? true : false;
-        // do nothing, if no location qty sum documents exclude “WMS" are found.
+        // do nothing, if no location qty sum documents exclude “WMS" are found. qty on WMS already being deducted.
         if (hasQtyOnWMSOnly) {
             return ({
                 action: "updateLocationInvQtyByUpc",
+                upc: upc,
+                reqProcQty: reqProcQty,
                 msg: "No location other than WMS exists, no action taken"
             });
         }
