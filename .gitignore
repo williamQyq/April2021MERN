@@ -6,6 +6,7 @@ server/unit_test.js
 *.env
 *.pem
 *.crt
+*.pdf
 credentials.json
 server/buildTS/*
 server/dist/*

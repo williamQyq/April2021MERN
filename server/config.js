@@ -60,5 +60,5 @@ export const gCredentials = {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-export const pdfGeneratorDirPath = path.join(__dirname, "bin", "pdfGenerator");
-console.log(`path:`,pdfGeneratorDirPath)
+export const pdfGeneratorDirPath = process.env.PDF_GENERATOR_PATH;
+// export const pdfGeneratorDirPath = path.join(__dirname, "bin", "pdfGenerator");
