@@ -1,18 +1,16 @@
 import mongoose from 'mongoose';
 import io from './index.js';    //socket io
 import wms from "./wms/wmsDatabase.js";    // @local wms server connection
-import startScrapeScheduler from './bin/scrapeScheduler.js';    //scripts scheduler, node-cron
+// import startScrapeScheduler from './bin/scrapeScheduler.js';    //scripts scheduler, node-cron
 import startAmazonScheduler from '#amz/amazonSchedule.js';
-// import unitTest from './unit_test.js'   //For testing functionalities
-import test from './dist/backend_control/test.js';
-
-(async function () {
-    try {
-        await test();
-    } catch (e) {
-        console.log(e)
-    }
-})();
+// import test from '#root/dist/backend_control/test.js';
+// (async function () {
+//     try {
+//         await test();
+//     } catch (e) {
+//         console.error(e);
+//     }
+// })();
 
 // @CREATE WMS CONNECTION
 wms.connect(() =>

@@ -19,4 +19,5 @@ export declare const AMZ_CREDENTIALS: Config.credentials;
 export declare const AMZ_REFRESH_TOKEN: Config.refresh_token
 export declare const REGION: Config.region
 
-export declare const pdfGeneratorDirPath:string
+export declare const pdfGeneratorDirPath: string
+export declare const JWT_SECRET: string

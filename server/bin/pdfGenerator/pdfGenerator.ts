@@ -21,7 +21,6 @@ export class PdfGenerator {
 
     async _compile(templateName: string, data: IPickUp): Promise<HTMLString> {
         const filePath = path.join(pdfGeneratorDirPath, "templates", `${templateName}.hbs`);
-        console.log("path: ", filePath);
         const html = await fs.readFile(filePath, 'utf8');
         return hbs.compile(html)(data);
     }

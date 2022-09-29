@@ -1,5 +1,6 @@
 import axios from 'axios';
 import fileDownload from 'js-file-download';
+import moment from 'moment';
 import { tokenConfig } from './authActions.js';
 import { clearErrors, returnErrors } from './errorActions.js';
 import {
@@ -71,6 +72,14 @@ export const downloadShipment = (requiredFields = {}) => (dispatch, getState) =>
         .then((res) => {
             fileDownload(res.data, 'shipmentRecords.xlsx')
         })
+}
+
+export const downloadPickUpListPDF = (pickUpRequiredFields) => (dispatch, getState) => {
+    const dateString = moment().format('MMMM-Do-YYYY-h:mm-a');
+    let fileName = dateString.concat("pickUp.pdf");
+
+    axios.post('/api/wms/shipment/v0/downloadPickUpPDF', { pickUpRequiredFields, responseType: "blob" })
+        .then((res) => { fileDownload(res.data, fileName); })
 }
 
 //axios get needtoship documents for inifite scroll

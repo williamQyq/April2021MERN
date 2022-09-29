@@ -7,7 +7,7 @@ export default async function test(): Promise<void> {
     const data: IPickUp = {
         tasks: [
             {
-                upc: "1",
+                upc: "123456789",
                 location: "1A-1",
                 qty: 2
             }

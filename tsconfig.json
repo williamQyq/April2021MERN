@@ -17,7 +17,11 @@
       "root/*":["./*"],
       "bin/*":["./bin/*"],
       "amazonSP/*":["./bin/amazonSP/*"]
-    }
+    },
+    "typeRoots": [
+      "./server/@types",
+      "./node_modules/@types",
+    ]
   },
   "include": [
     "./server/**/*.ts",

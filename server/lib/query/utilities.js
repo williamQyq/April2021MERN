@@ -368,15 +368,17 @@ export class WMSDatabaseApis {
             });
         }
 
-        let qtyOnLocExceptWMS = cursors[0].sum;
+        let qtyOnLocExceptWMS = cursors[0].sum; //upc qty on location except WMS
         let locHasEnoughQty = qtyOnLocExceptWMS >= unProcQty ? true : false;
 
         let locWMSQty = (await collection.aggregate(GET_LOCATION_QTY_BY_UPC_AND_LOC(upc, "WMS")).toArray())[0].qty;
 
+        //Whether WMS has enough qty after shipped qty on other location
         let locWMSHasEnoughQty = locWMSQty >= (reqProcQty - qtyOnLocExceptWMS) ? true : false;
 
         try {
             const upcLocQtyDocs = await collection.aggregate(GET_UPC_LOCATION_QTY_EXCEPT_WMS(upc)).toArray();
+            //locations do not have enough qty for shippment and WMS location do not have enough qty after deducted needed qty
             if (!locHasEnoughQty && !locWMSHasEnoughQty) {
                 throw new Error(`locInv: ${upc} does not have enought qty.\n Need ${unProcQty}`)
             }

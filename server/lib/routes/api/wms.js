@@ -304,7 +304,7 @@ router.post('/needToShip/v0/confirmShipment', auth, (req, res) => {
 
 router.post('/shipment/v0/getShipment', auth, (req, res) => {
     const { requiredFields } = req.body;
-    let wms = new WMSDatabaseApis();
+    const wms = new WMSDatabaseApis();
     wms.getShipment(requiredFields)
         .then(validShipment => {
             res.json(validShipment)
@@ -337,7 +337,7 @@ router.post('locationInventory/v0/downloadLocationInventoryXlsx', auth, (req, re
 
 router.post('/locationInventory/v0/getLocationInventory', auth, (req, res) => {
     const { requiredFields } = req.body;
-    let wms = new WMSDatabaseApis();
+    const wms = new WMSDatabaseApis();
     wms.getLocation(requiredFields)
         .then(validShipment => {
             res.json(validShipment)
@@ -352,7 +352,7 @@ router.post('/locationInventory/v0/getLocationInventory', auth, (req, res) => {
 
 router.post('/sellerInventory/v0/getSellerInventory', auth, (req, res) => {
     const { requiredFields } = req.body;
-    let wms = new WMSDatabaseApis();
+    const wms = new WMSDatabaseApis();
     wms.getSellerInventory(requiredFields)
         .then(validShipment => {
             res.json(validShipment)
