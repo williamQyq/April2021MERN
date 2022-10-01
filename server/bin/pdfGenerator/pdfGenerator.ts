@@ -2,7 +2,7 @@ import puppeteer, { Browser, Page, PDFOptions } from "puppeteer";
 import hbs from "handlebars";
 import fs from 'fs-extra';
 import path from "path";
-import { pdfGeneratorDirPath } from "../../config.js";
+import { pdfGeneratorDirPath } from "#root/config.js";
 
 type HTMLString = string;
 

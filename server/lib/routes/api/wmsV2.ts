@@ -3,7 +3,7 @@ import fs from 'fs-extra';
 import { ReadStream, Stats } from "fs";
 import auth from "#rootTS/lib/middleware/auth.js";
 import { PdfGenerator } from "#rootTS/bin/pdfGenerator/pdfGenerator.js";
-import { pdfGeneratorDirPath } from "#rootTS/config.js";
+import { pdfGeneratorDirPath } from "#root/config.js";
 import { WmsDBApis } from "#rootTS/lib/query/WmsDBApis.js";
 const router: Router = express.Router();
 

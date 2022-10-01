@@ -7,12 +7,12 @@
     "strict": true, /* Enable all strict type-checking options. */
     "skipLibCheck": true, /* Skip type checking all .d.ts files. */
     "allowJs": true,
-    "rootDir": "./server",
+    "rootDir": ".",
     "checkJs": true,
     "moduleResolution": "node",
     "types": ["node"],
-    "outDir": "./server/dist",
-    "baseUrl": "./server",
+    "outDir": "./dist",
+    "baseUrl": ".",
     "paths": {
       "#root/*":["./*"],
       "#rootTS/*":["./*"],
@@ -20,17 +20,15 @@
       "#amazonSPTS/*":["./bin/amazonSP/*"]
     },
     "typeRoots": [
-      "./server/@types",
+      "./@types",
       "./node_modules/@types",
     ]
   },
   "include": [
-    "./server/**/*.ts",
-    "./server/config.js",
+    "./**/*.ts"
   ],
   "exclude": [
     "node_modules",
-    "./mern-project/**/*",
-    "./server/dist/**/*"
+    "./dist/**/*"
   ]
 }

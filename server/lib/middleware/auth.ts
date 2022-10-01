@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET } from '#rootTS/config.js';
+import { JWT_SECRET } from '#root/config.js';
 import { IResponseErrorMessage } from '#rootTS/@types/types';
 
 export default function auth<T = any>(req: Request, res: Response, next: NextFunction): Response<T> | void {
