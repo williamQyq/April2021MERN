@@ -74,12 +74,24 @@ export const downloadShipment = (requiredFields = {}) => (dispatch, getState) =>
         })
 }
 
-export const downloadPickUpListPDF = (pickUpRequiredFields) => (dispatch, getState) => {
-    const dateString = moment().format('MMMM-Do-YYYY-h:mm-a');
+export const downloadPickUpListPDF = (requiredFields) => (dispatch, getState) => {
+    const dateString = moment().format('MMMM-Do-YYYY-h-mm-a-');
     let fileName = dateString.concat("pickUp.pdf");
-
-    axios.post('/api/wms/shipment/v0/downloadPickUpPDF', { pickUpRequiredFields, responseType: "blob" })
-        .then((res) => { fileDownload(res.data, fileName); })
+    requiredFields.fileName = fileName;
+    axios.post('/api/wmsV1/shipment/v1/downloadPickUpPDF', {
+        requiredFields, responseType: 'blob',
+    }, tokenConfig(getState))
+        .then((resp) => {
+            console.log(resp.config);
+            const url = window.URL.createObjectURL(new Blob([resp.data], { type: "application/pdf" }));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+            // const pdfBlob = new Blob([res.data], { type: "application/pdf" })
+            // fileDownload(pdfBlob, fileName);
+        })
 }
 
 //axios get needtoship documents for inifite scroll

@@ -3,11 +3,14 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { NeedToShipMenu } from 'component/Warehouse/Menus.jsx';
 import {
+    downloadPickUpListPDF,
     getNeedToShipFromShipmentWithLimit,
     getNeedToShipPendingAndTotalCount
 } from 'reducers/actions/outboundActions.js';
 import AwaitingShipmentList from './AwaitingShipmentList.jsx';
-import { ContentHeader } from 'component/utility/Layout.jsx';
+import { ContentHeader, SubContentHeader } from 'component/utility/Layout.jsx';
+import { Button, Col, Row } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
 
 class NeedToShip extends React.Component {
     // static contextType = SocketContext //This part is important to access context values which are socket
@@ -61,32 +64,53 @@ class NeedToShip extends React.Component {
         this.props.getNeedToShipFromShipmentWithLimit(docLimits, docSkip)
     }
 
+    handlePickUpDownload = (e) => {
+        e.preventDefault();
+        const requiredFields = {
+            fileName: "pickUp.pdf"
+        }
+        this.props.downloadPickUpListPDF(requiredFields);
+    }
+
     render() {
         const { data, shipmentInfo } = this.state;
         return (
+
             <>
                 <ContentHeader title="NeedToShip" />
                 <NeedToShipMenu shipmentInfo={shipmentInfo} />
-                <AwaitingShipmentList
-                    data={data}
-                    loadMore={this.loadMore}
-                    shipmentInfo={shipmentInfo}
-                />
+                <SubContentHeader title="Awaiting Shipment" />
+                <Row >
+                    <Col flex={3}>
+                        <AwaitingShipmentList
+                            data={data}
+                            loadMore={this.loadMore}
+                            shipmentInfo={shipmentInfo}
+                        />
+                    </Col>
+                    <Col flex={1}>
+                        <Button type="primary" icon={<DownloadOutlined />} onClick={this.handlePickUpDownload}>WMS PickUp PDF</Button>
+                    </Col>
+                </Row>
             </>
 
         );
     }
 }
-
 NeedToShip.prototypes = {
     needToShipItems: PropTypes.array.isRequired,
     needToShipItemsLoading: PropTypes.bool.isRequired,
     getNeedToShipFromShipmentWithLimit: PropTypes.func.isRequired,
-    getNeedToShipPendingAndTotalCount: PropTypes.func.isRequired
+    getNeedToShipPendingAndTotalCount: PropTypes.func.isRequired,
+    downloadPickUpListPDF: PropTypes.func.isRequired
 }
 const mapStateToProps = (state) => ({
     needToShipItems: state.warehouse.needToShip.items,
     needToshipItemsLoading: state.warehouse.needToShip.itemsLoading
 })
 
-export default connect(mapStateToProps, { getNeedToShipFromShipmentWithLimit, getNeedToShipPendingAndTotalCount })(NeedToShip);
+export default connect(mapStateToProps, {
+    getNeedToShipFromShipmentWithLimit,
+    getNeedToShipPendingAndTotalCount,
+    downloadPickUpListPDF
+})(NeedToShip);

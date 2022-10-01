@@ -290,13 +290,18 @@ export class WMSDatabaseApis {
     //Get all org pending shipment Info by default.
     async getPendingShipmentInfoByOrgNm(orgNm) {
         const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
-        let pendingShipmentCountByToday = await collection.aggregate(COUNT_SHIPMENT_BY_TODAY(orgNm)).toArray();
+        let docs = await collection.aggregate(COUNT_SHIPMENT_BY_TODAY(orgNm)).toArray();
 
+        const pendingShipmentCountByToday = docs[0];
         //handle no shipment document by today
-        if (pendingShipmentCountByToday.length === 0) {
+        if (!pendingShipmentCountByToday) {
             return ({ pending: 0, total: 0, confirm: 0 });
         }
-        return pendingShipmentCountByToday[0];
+
+        if (!pendingShipmentCountByToday.pending)   //missing field if aggregate not match found
+            return { ...pendingShipmentCountByToday, pending: 0 }
+
+        return pendingShipmentCountByToday;
     }
     async countNeedToShipFromShipment() {
         const collection = this.db.collection(WMSDatabaseApis._collection.shipment);

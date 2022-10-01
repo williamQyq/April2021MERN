@@ -15,7 +15,8 @@ export default function auth<T = any>(req: Request, res: Response, next: NextFun
 
     try {
         const decoded: string | jwt.JwtPayload = jwt.verify(token, JWT_SECRET);
-        req.user = decoded
+        req.user = decoded;
+        next();
     } catch (e) {
         let errMsg: IResponseErrorMessage = { msg: "Token is not valid" }
         res.status(400).json(errMsg);

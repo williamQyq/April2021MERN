@@ -593,7 +593,7 @@ export const GET_SELLER_INVENTORY_BY_COMPOUND_FILTER = (fields) => {
         }
     ]);
 
-    
+
     // if (fields["qty"]) {
     //     matchObj["qty"] = new RegExp(`.*${fields["qty"]}.*`);
     // }

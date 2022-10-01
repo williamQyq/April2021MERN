@@ -26,7 +26,7 @@
     "#middleware/*": "./lib/middleware/*",
     "#amz/*": "./bin/amazonSP/*",
     "#dist/*": "./dist/*",
-    "#routesV2/*": "./dist/lib/routes/*",
+    "#routesV1/*": "./dist/lib/routes/*",
     "#rootTS/*": "./dist/*"
   },
   "author": "William Q",

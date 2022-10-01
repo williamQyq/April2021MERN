@@ -6,7 +6,7 @@ import itemsRouter from '#routes/api/items.js';
 import usersRouter from '#routes/api/users.js';
 import authRouter from '#routes/api/auth.js';
 import wmsRouter from '#routes/api/wms.js';
-import wmsV2Router from "#routesV2/api/wmsV2.js";
+import wmsV1Router from "#routesV1/api/wmsV1.js";
 import operationRouter from '#routes/api/operation.js';
 
 import { Server } from 'socket.io';
@@ -34,7 +34,7 @@ app.use('/api/auth', authRouter);
 // app.use('/api/keepa', require('./routes/api/keepa'));
 app.use('/api/wms', wmsRouter);
 app.use('/api/operation', operationRouter);
-app.use('/api/wmsV2', wmsV2Router);
+app.use('/api/wmsV1', wmsV1Router);
 
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, '../mern-project/build')));

@@ -25,8 +25,8 @@ export class PdfGenerator {
         return hbs.compile(html)(data);
     }
 
-    async generatePickUpPDF(data: IPickUp) {
-        const pdfSavedPath: string = pdfGeneratorDirPath.concat('/pdf/pickUp.pdf');
+    async generatePickUpPDF(fileName: string, data: IPickUp) {
+        const pdfSavedPath: string = pdfGeneratorDirPath.concat('/pdf/', fileName);
         try {
             const browser: Browser = await puppeteer.launch();
             const page: Page = await browser.newPage();
