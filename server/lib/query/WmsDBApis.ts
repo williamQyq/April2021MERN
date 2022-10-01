@@ -1,7 +1,7 @@
 import moment from 'moment';
 import * as mongoDB from 'mongodb';
-import { IPickUp } from 'root/bin/pdfGenerator/pdfGenerator';
-import { wms } from "root/wms/wmsDatabase"
+import { IPickUp } from '#rootTS/bin/pdfGenerator/pdfGenerator';
+import wms from "#root/wms/wmsDatabase.js"
 
 interface IWmsCollection {
     [key: string]: string

@@ -4,10 +4,12 @@ import {
     wmsCollections,
 } from 'config';
 
-export declare const wms: {
+declare const wms: {
     connect: (callback: (any) => any) => void,
     close: () => void,
     getDatabase: () => mongoDB.Db,
     getCollections: () => wmsCollections,
     config: sshConfig
 }
+
+export default wms;

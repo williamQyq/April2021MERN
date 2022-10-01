@@ -1,5 +1,6 @@
 import moment from "moment";
-import { PdfGenerator, IPickUp } from "../bin/pdfGenerator/pdfGenerator.js";
+import { PdfGenerator, IPickUp } from "#rootTS/bin/pdfGenerator/pdfGenerator.js";
+// import { PdfGenerator, IPickUp } from "#binTS/pdfGenerator/pdfGenerator.js";
 
 export default async function test(): Promise<void> {
     const pdfGenerator = new PdfGenerator();

@@ -1,10 +1,10 @@
 import express, { Router } from "express";
 import fs from 'fs-extra';
 import { ReadStream, Stats } from "fs";
-import auth from "root/lib/middleware/auth";
-import { PdfGenerator } from "root/bin/pdfGenerator/pdfGenerator";
-import { pdfGeneratorDirPath } from "root/config";
-import { WmsDBApis } from "root/lib/query/WmsDBApis";
+import auth from "#rootTS/lib/middleware/auth.js";
+import { PdfGenerator } from "#rootTS/bin/pdfGenerator/pdfGenerator.js";
+import { pdfGeneratorDirPath } from "#rootTS/config.js";
+import { WmsDBApis } from "#rootTS/lib/query/WmsDBApis.js";
 const router: Router = express.Router();
 
 router.post('shipment/v1/downloadPickUpPDF', auth, (req, res) => {
@@ -35,3 +35,5 @@ router.post('shipment/v1/downloadPickUpPDF', auth, (req, res) => {
         })
 
 })
+
+export default router;

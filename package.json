@@ -26,7 +26,9 @@
     "#wms/*": "./server/wms/*",
     "#middleware/*": "./server/lib/middleware/*",
     "#amz/*": "./server/bin/amazonSP/*",
-    "#dist/*": "./server/dis/*"
+    "#dist/*": "./server/dist/*",
+    "#routesV2/*": "./server/dist/lib/routes/*",
+    "#rootTS/*":"./server/dist/*"
   },
   "author": "William Q",
   "license": "MIT",
