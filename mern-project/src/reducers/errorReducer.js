@@ -3,7 +3,8 @@ import { GET_ERRORS, CLEAR_ERRORS, GET_MESSAGES, CLEAR_MESSAGES } from './action
 const initialState = {
     msg: {},
     status: null,
-    id: null
+    id: null,
+    reason: null,
 }
 
 export default function Reducer(state = initialState, action) {
@@ -19,7 +20,8 @@ export default function Reducer(state = initialState, action) {
             return {
                 msg: {},
                 status: null,
-                id: null
+                id: null,
+                reason: null,
             };
         case GET_MESSAGES:
             return {

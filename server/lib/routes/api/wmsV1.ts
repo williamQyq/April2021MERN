@@ -6,6 +6,7 @@ import { PdfGenerator } from "#rootTS/bin/pdfGenerator/pdfGenerator.js";
 import { pdfGeneratorDirPath } from "#root/config.js";
 import { WmsDBApis } from "#rootTS/lib/query/WmsDBApis.js";
 import { IReqBodyShipmentDownloadPickUpPDF, IResponseErrorMessage } from "@types";
+import path from "path";
 const router: Router = Router();
 
 router.post('/shipment/v1/downloadPickUpPDF', auth, (req: Request, res: Response) => {
@@ -17,10 +18,9 @@ router.post('/shipment/v1/downloadPickUpPDF', auth, (req: Request, res: Response
             const pdfGenerator = new PdfGenerator();
             return pdfGenerator.generatePickUpPDF(fileName, pickUpData);
         })
-        .then(() => {
-            let pdfFilePath: string = pdfGeneratorDirPath.concat('/pdf/', fileName);
-            let file: ReadStream = fs.createReadStream(pdfFilePath);
-            let stat: Stats = fs.statSync(pdfFilePath);
+        .then((savedFilePath) => {
+            let file: ReadStream = fs.createReadStream(savedFilePath!);
+            let stat: Stats = fs.statSync(savedFilePath!);
             res.setHeader(
                 "Content-Type",
                 "application/pdf"

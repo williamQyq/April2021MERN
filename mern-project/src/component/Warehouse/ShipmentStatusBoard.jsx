@@ -7,7 +7,6 @@ const ShipmentStatusBoard = (props) => {
     const { pending, total } = props.shipmentInfo;
 
     const getFinishedPercent = (pending, total) => {
-        console.log(typeof (pending), pending);
         //if no shipment today
         if (total <= 0) {
             return 0;

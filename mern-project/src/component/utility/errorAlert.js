@@ -26,7 +26,6 @@ const openAlertNotification = (type, msg, handleAction, context) => {
             break;
     }
 
-    console.log(`context: `, context);
     notification[type]({
         message: <Text style={{ color }}>{msgSubject}</Text>,
         description:

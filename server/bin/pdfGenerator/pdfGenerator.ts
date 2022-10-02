@@ -1,6 +1,6 @@
 import puppeteer, { Browser, Page, PDFOptions } from "puppeteer";
 import hbs from "handlebars";
-import fs from 'fs-extra';
+import fs, { PathLike } from 'fs-extra';
 import path from "path";
 import { pdfGeneratorDirPath } from "#root/config.js";
 
@@ -25,8 +25,8 @@ export class PdfGenerator {
         return hbs.compile(html)(data);
     }
 
-    async generatePickUpPDF(fileName: string, data: IPickUp) {
-        const pdfSavedPath: string = pdfGeneratorDirPath.concat('/pdf/', fileName);
+    async generatePickUpPDF(fileName: string, data: IPickUp): Promise<PathLike | undefined> {
+        const pdfSavedPath: PathLike = path.join(pdfGeneratorDirPath, '/pdf/', fileName);
         try {
             const browser: Browser = await puppeteer.launch();
             const page: Page = await browser.newPage();
@@ -39,12 +39,14 @@ export class PdfGenerator {
                 printBackground: true,
             }
             await page.pdf(option);
-            console.log('done creating pickup pdf.');
+            console.log(`Done creating pickup pdf.\n**${fileName}**`);
 
             await browser.close();
             // process.exit();
-        } catch (e) {
+            return pdfSavedPath;
+        } catch (e: unknown) {
             console.error(e);
+            throw new Error("generatePickUpPDF Failed.");
         }
     }
 }

@@ -78,19 +78,28 @@ export const downloadPickUpListPDF = (requiredFields) => (dispatch, getState) =>
     const dateString = moment().format('MMMM-Do-YYYY-h-mm-a-');
     let fileName = dateString.concat("pickUp.pdf");
     requiredFields.fileName = fileName;
-    axios.post('/api/wmsV1/shipment/v1/downloadPickUpPDF', {
-        requiredFields, responseType: 'blob',
-    }, tokenConfig(getState))
+    const token = tokenConfig(getState);
+    axios.post('/api/wmsV1/shipment/v1/downloadPickUpPDF', { requiredFields }, { ...token, responseType: "blob", headers: { ...token.headers, "Accept": "application/pdf" } })
         .then((resp) => {
-            console.log(resp.config);
-            const url = window.URL.createObjectURL(new Blob([resp.data], { type: "application/pdf" }));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', fileName);
-            document.body.appendChild(link);
-            link.click();
-            // const pdfBlob = new Blob([res.data], { type: "application/pdf" })
-            // fileDownload(pdfBlob, fileName);
+            // const url = window.URL.createObjectURL(new Blob([resp.data], { type: "application/pdf" }));
+            // const link = document.createElement('a');
+            // link.href = url;
+            // link.setAttribute('download', fileName);
+            // document.body.appendChild(link);
+            // link.click();
+            const pdfBlob = new Blob([resp.data], { type: "application/pdf" })
+            fileDownload(pdfBlob, fileName);
+        })
+        .catch(err => {
+            let errBlob = err.response.data;
+            errBlob.text()
+                .then(content => JSON.parse(content))
+                .then((data => data.msg))
+                .then((msg) => {
+                    dispatch(clearErrors());
+                    dispatch(returnErrors(msg, err.response.status, GET_ERRORS))
+                })
+
         })
 }
 
