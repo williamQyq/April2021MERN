@@ -15,6 +15,6 @@ export default async function test(): Promise<void> {
         ],
         date: moment().format()
     }
-    await pdfGenerator.generatePickUpPDF(data);
+    await pdfGenerator.generatePickUpPDF("test.pdf", data);
 
 }

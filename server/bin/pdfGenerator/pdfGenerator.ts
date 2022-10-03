@@ -6,7 +6,7 @@ import { pdfGeneratorDirPath } from "#root/config.js";
 
 type HTMLString = string;
 
-interface IPickUpTask {
+export interface IPickUpTask {
     upc: string,
     location: string,
     qty: number

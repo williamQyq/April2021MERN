@@ -613,3 +613,34 @@ export const GET_SELLER_INVENTORY_BY_COMPOUND_FILTER = (fields) => {
 
     return compoundFilter;
 }
+
+export const GET_NEED_TO_SHIP_ITEMS_FOR_PICKUP_BY_TODAY = [
+    {
+        '$project': {
+            '_id': 0,
+            'tracking': "$_id",
+            'orgNm': 1,
+            'rcIts': 1,
+            'crtTm': 1,
+            'crtStmp': 1,
+            'status': 1,
+            'operStatus': 1,
+        }
+    }, {
+        '$match': {
+            'crtStmp': {
+                '$gte': getTodayDate()
+            },
+            'status': {
+                '$ne': 'shipped'
+            },
+            'operStatus': {
+                '$exists': false
+            }
+        }
+    }, {
+        '$sort': {
+            'crtStmp': 1
+        }
+    }
+]

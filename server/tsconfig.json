@@ -18,6 +18,7 @@
       "#root/*":["./*"],
       "#rootTS/*":["./*"],
       "#binTS/*":["./bin/*"],
+      "#query/*":["./lib/query/*"],
       "#amazonSPTS/*":["./bin/amazonSP/*"]
     },
     "typeRoots": [

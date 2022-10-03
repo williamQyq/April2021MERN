@@ -463,7 +463,7 @@ export class WMSDatabaseApis {
         let processedTrackings = new Set();
 
         allUnShipment.forEach((unShipment) => {
-            const { orgNm, trackingID, rcIts } = unShipment;
+            const { trackingID, rcIts } = unShipment;
             rcIts.forEach(([unShippedUpc, unShippedQty]) => {
 
                 unShippedQty = Number(unShippedQty);
@@ -474,7 +474,6 @@ export class WMSDatabaseApis {
                         {
                             ...prevRcIts,
                             unShippedQty: prevRcIts.unShippedQty + unShippedQty,
-                            orgNm: unShipment.orgNm,
                             trackings: [...prevRcIts.trackings, trackingID]
                         }
                     )
@@ -482,7 +481,6 @@ export class WMSDatabaseApis {
                     unShipmentHandler.set(unShippedUpc,
                         {
                             unShippedQty: unShippedQty,
-                            orgNm: orgNm,
                             trackings: [trackingID]
                         }
                     );

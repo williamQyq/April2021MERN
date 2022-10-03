@@ -18,6 +18,7 @@
   },
   "imports": {
     "#root/*": "./*",
+    "#rootTS/*": "./dist/*",
     "#bin/*": "./bin/*",
     "#models/*": "./lib/models/*",
     "#routes/*": "./lib/routes/*",
@@ -26,8 +27,7 @@
     "#middleware/*": "./lib/middleware/*",
     "#amz/*": "./bin/amazonSP/*",
     "#dist/*": "./dist/*",
-    "#routesV1/*": "./dist/lib/routes/*",
-    "#rootTS/*": "./dist/*"
+    "#routesV1/*": "./dist/lib/routes/*"
   },
   "author": "William Q",
   "license": "MIT",

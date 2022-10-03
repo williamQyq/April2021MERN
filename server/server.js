@@ -3,14 +3,6 @@ import io from './index.js';    //socket io
 import wms from "./wms/wmsDatabase.js";    // @local wms server connection
 // import startScrapeScheduler from './bin/scrapeScheduler.js';    //scripts scheduler, node-cron
 import startAmazonScheduler from '#amz/amazonSchedule.js';
-// import test from '#root/dist/backend_control/test.js';
-// (async function () {
-//     try {
-//         await test();
-//     } catch (e) {
-//         console.error(e);
-//     }
-// })();
 
 // @CREATE WMS CONNECTION
 wms.connect(() =>

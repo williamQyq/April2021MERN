@@ -227,7 +227,7 @@ router.post('/needToShip/v0/confirmShipment', auth, (req, res) => {
     Promise.allSettled(
         // update qty on location Inv
         Array.from(unShipmentHandler)
-            .map(([upc, { unShippedQty, orgNm, trackings }]) =>
+            .map(([upc, { unShippedQty, trackings }]) =>
                 new Promise((resolve, reject) => {
                     wms.updateLocationInvQtyByUpc(upc, Number(unShippedQty))
                         .then(updateRes => {
@@ -239,14 +239,13 @@ router.post('/needToShip/v0/confirmShipment', auth, (req, res) => {
                                 reason: err.message,
                                 rejectedUpc: upc,
                                 rejectedQty: Number(unShippedQty),
-                                rejectedTrackings: trackings,
-                                rejectedOrgNm: orgNm,
+                                rejectedTrackings: trackings
                             })
                         });
                 })
             )
     )
-        //     //update fulfilled shipment status 
+        //update fulfilled shipment status 
         .then(async (results) => {
 
             //get rejected trackings for fulfilled trackings filter
