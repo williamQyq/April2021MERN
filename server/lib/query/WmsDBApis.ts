@@ -75,7 +75,19 @@ export class WmsDBApis {
             let newTasks = await this.findPickUpLocationsByUnShippedUpcAndQty(upc, qty);
             return [...prev, ...newTasks]
         }, Promise.resolve([]))
-        return pickUpTasks;
+
+        const sorted: IPickUpTask[] = pickUpTasks.sort((first: IPickUpTask, second: IPickUpTask) => {
+            const extractShelveRegex = new RegExp(/^(\d+).*$/);
+            let firstLoc = first.location;
+            let secondLoc = second.location;
+            let firstShelves: number = Number(extractShelveRegex.exec(firstLoc)?.at(1));
+            let secondShelves: number = Number(extractShelveRegex.exec(secondLoc)?.at(1));
+            firstShelves = isNaN(firstShelves) ? 0 : firstShelves;
+            secondShelves = isNaN(secondShelves) ? 0 : secondShelves;
+
+            return firstShelves - secondShelves;
+        })
+        return sorted;
     }
 
     async findPickUpLocationsByUnShippedUpcAndQty(upc: string, qty: number): Promise<IPickUpTask[]> {
