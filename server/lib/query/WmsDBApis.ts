@@ -95,12 +95,13 @@ export class WmsDBApis {
             const isQtyOnLocationEnough: boolean = doc.qty >= unProcessedQty ? true : false;
             if (isQtyOnLocationEnough) {
                 pickUpTasks.push({ upc, qty: unProcessedQty, location: doc.loc })
-                break;
+                return pickUpTasks;
             }
             //qty on location smaller than request qty, keep pushing to pickUptasks
             pickUpTasks.push({ upc, qty: doc.qty, location: doc.loc });
+            unProcessedQty -= doc.qty;
         }
-        console.log(`unProcQTY: `,unProcessedQty)
+
         //all location qty not enough
         if (unProcessedQty > 0) {
             let wmsLocPickUpTask: IPickUpTask = { upc, location: "WMS", qty: unProcessedQty }

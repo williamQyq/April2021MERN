@@ -19,6 +19,7 @@ class NeedToShip extends React.Component {
         this.state = {
             initLoading: true,
             loading: false,
+            isDownloading: false,
             data: [],
             docLimits: 5,
             docSkip: 0,
@@ -38,16 +39,19 @@ class NeedToShip extends React.Component {
 
         this.props.getNeedToShipPendingAndTotalCount()  //set pending, total, and confirm count
             .then(shipmentInfo => { this.setState({ shipmentInfo }); })
+
     }
 
     componentDidUpdate(prevProps) {
-        const { docLimits, docSkip, data } = this.state;
-        if (prevProps.needToShipItems !== this.props.needToShipItems) {
-            this.setState({ data: [...data, ...this.props.needToShipItems], loading: false })
-            this.setState({ docSkip: docLimits + docSkip })
+        const { data } = this.state;
+        const prevItemsData = prevProps.needToShipItems;
+        const curItemsData = this.props.needToShipItems;
 
-            this.props.getNeedToShipPendingAndTotalCount()
-                .then(shipmentInfo => { this.setState({ shipmentInfo }); })
+        if (prevItemsData !== curItemsData && prevItemsData.length !== 0) {
+
+            this.setState({ data: [...data, ...curItemsData], loading: false })
+            this.setState({ docSkip: data.length + curItemsData.length })
+
         }
 
     }
@@ -69,11 +73,13 @@ class NeedToShip extends React.Component {
         const requiredFields = {
             fileName: "pickUp.pdf"
         }
-        this.props.downloadPickUpListPDF(requiredFields);
+        this.setState({ isDownloading: true })
+        this.props.downloadPickUpListPDF(requiredFields)
+            .then(() => this.setState({ isDownloading: false }))
     }
 
     render() {
-        const { data, shipmentInfo } = this.state;
+        const { data, shipmentInfo, isDownloading } = this.state;
         return (
 
             <>
@@ -89,7 +95,7 @@ class NeedToShip extends React.Component {
                         />
                     </Col>
                     <Col flex={1}>
-                        <Button type="primary" icon={<DownloadOutlined />} onClick={this.handlePickUpDownload}>WMS PickUp PDF</Button>
+                        <Button type="primary" loading={isDownloading} icon={<DownloadOutlined />} onClick={this.handlePickUpDownload}>WMS PickUp PDF</Button>
                     </Col>
                 </Row>
             </>

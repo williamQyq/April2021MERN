@@ -1,24 +1,12 @@
 import InfiniteScroll from 'react-infinite-scroll-component';
 import DescriptionCard from 'component/utility/DescriptionCard.jsx';
 import { Divider, List, Skeleton } from 'antd';
-import { useState, useEffect} from 'react';
 import ShipmentStatusBoard from './ShipmentStatusBoard.jsx';
 
 const AwaitingShipmentList = (props) => {
     const { data, loadMore, shipmentInfo } = props;
-    const [pending, SetPending] = useState(shipmentInfo.pending);
-    const [total, SetTotal] = useState(shipmentInfo.total);
-    const [awaitingShipment, SetAwaitingShipment] = useState(data);
-
-    useEffect(() => {
-        SetPending(Number(shipmentInfo.pending));
-        SetTotal(Number(shipmentInfo.total));
-    }, [shipmentInfo.pending, shipmentInfo.total])
-
-    useEffect(() => {
-        SetAwaitingShipment(data);
-    }, [data])
-
+    const { pending, total } = shipmentInfo;
+    
     return (
         <div
             id="scrollableDiv"
@@ -35,9 +23,9 @@ const AwaitingShipmentList = (props) => {
         >
             <ShipmentStatusBoard shipmentInfo={{ pending, total }} />
             <InfiniteScroll
-                dataLength={awaitingShipment.length}
+                dataLength={data.length}
                 next={loadMore}
-                hasMore={awaitingShipment.length !== 0 && awaitingShipment.length < total}
+                hasMore={data.length !== 0 && data.length < pending}
                 loader={
                     <Skeleton
                         paragraph={{
@@ -51,7 +39,7 @@ const AwaitingShipmentList = (props) => {
 
             >
                 <List
-                    dataSource={awaitingShipment}
+                    dataSource={data}
                     size="small"
                     renderItem={(item) => (
                         <List.Item>
