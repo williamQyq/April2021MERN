@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { NeedToShipMenu } from 'component/Warehouse/Menus.jsx';
 import {
     downloadPickUpListPDF,
-    getNeedToShipFromShipmentWithLimit,
     getNeedToShipPendingAndTotalCount
 } from 'reducers/actions/outboundActions.js';
 import AwaitingShipmentList from './AwaitingShipmentList.jsx';
@@ -17,12 +16,7 @@ class NeedToShip extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            initLoading: true,
-            loading: false,
             isDownloading: false,
-            data: [],
-            docLimits: 5,
-            docSkip: 0,
             shipmentInfo: {
                 pending: 0,
                 total: 0,
@@ -32,40 +26,14 @@ class NeedToShip extends React.Component {
     }
 
     componentDidMount() {
-        const { docLimits, docSkip } = this.state;
-
-        this.props.getNeedToShipFromShipmentWithLimit(docLimits, docSkip)   //get need to ship shipment
-            .then(() => { this.setState({ initLoading: false }); })
-
-        this.props.getNeedToShipPendingAndTotalCount()  //set pending, total, and confirm count
+        let orgNm = "M" //@Warning: get shipment count on orgNm no code yet
+        this.props.getNeedToShipPendingAndTotalCount(orgNm)  //set pending, total, and confirm count
             .then(shipmentInfo => { this.setState({ shipmentInfo }); })
-
     }
 
-    componentDidUpdate(prevProps) {
-        const { data } = this.state;
-        const prevItemsData = prevProps.needToShipItems;
-        const curItemsData = this.props.needToShipItems;
-
-        if (prevItemsData !== curItemsData && prevItemsData.length !== 0) {
-
-            this.setState({ data: [...data, ...curItemsData], loading: false })
-            this.setState({ docSkip: data.length + curItemsData.length })
-
-        }
-
-    }
     componentWillUnmount() {
         // let socket = this.context
         // socket.emit(`unsubscribe`, `OutboundRoom`)
-    }
-    loadMore = () => {
-        const { docLimits, docSkip, loading } = this.state;
-        if (loading) {
-            return;
-        }
-        this.setState({ loading: true })
-        this.props.getNeedToShipFromShipmentWithLimit(docLimits, docSkip)
     }
 
     handlePickUpDownload = (e) => {
@@ -79,22 +47,18 @@ class NeedToShip extends React.Component {
     }
 
     render() {
-        const { data, shipmentInfo, isDownloading } = this.state;
+        const { shipmentInfo, isDownloading } = this.state;
+        console.log(shipmentInfo)
         return (
-
             <>
                 <ContentHeader title="NeedToShip" />
                 <NeedToShipMenu shipmentInfo={shipmentInfo} />
                 <SubContentHeader title="Awaiting Shipment" />
                 <Row >
-                    <Col flex={3}>
-                        <AwaitingShipmentList
-                            data={data}
-                            loadMore={this.loadMore}
-                            shipmentInfo={shipmentInfo}
-                        />
+                    <Col xs={10} sm={12} md={14} lg={16} xl={18}>
+                        <AwaitingShipmentList shipmentInfo={shipmentInfo} />
                     </Col>
-                    <Col flex={1}>
+                    <Col xs={14} sm={12} md={10} lg={8} xl={6}>
                         <Button type="primary" loading={isDownloading} icon={<DownloadOutlined />} onClick={this.handlePickUpDownload}>WMS PickUp PDF</Button>
                     </Col>
                 </Row>
@@ -104,19 +68,11 @@ class NeedToShip extends React.Component {
     }
 }
 NeedToShip.prototypes = {
-    needToShipItems: PropTypes.array.isRequired,
-    needToShipItemsLoading: PropTypes.bool.isRequired,
-    getNeedToShipFromShipmentWithLimit: PropTypes.func.isRequired,
     getNeedToShipPendingAndTotalCount: PropTypes.func.isRequired,
     downloadPickUpListPDF: PropTypes.func.isRequired
 }
-const mapStateToProps = (state) => ({
-    needToShipItems: state.warehouse.needToShip.items,
-    needToshipItemsLoading: state.warehouse.needToShip.itemsLoading
-})
 
-export default connect(mapStateToProps, {
-    getNeedToShipFromShipmentWithLimit,
+export default connect(null, {
     getNeedToShipPendingAndTotalCount,
     downloadPickUpListPDF
 })(NeedToShip);

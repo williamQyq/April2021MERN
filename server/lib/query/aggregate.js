@@ -3,6 +3,7 @@ import moment from "moment";
 export const status = {
     shipment: {
         SUBSTANTIATED: "substantiated",
+        PICK_UP_CREATED: "pickUpCreated",
         READY: "ready",
         SHIPPED: "shipped",
         BACK_ORDER: "backOrder",
@@ -306,7 +307,10 @@ export const GET_UNVERIFIED_SHIPMENT = (startDateUnix) => [
                 // '$lt': dateMax
             },
             'status': { '$eq': "shipped" },
-            'operStatus': { "$eq": "unverified" }
+            '$or': [
+                { 'operStatus': { "$eq": "unverified" } },
+                { 'operStatus': { "$ne": "substantiated" } }
+            ]
         }
     }, {
         '$sort': {

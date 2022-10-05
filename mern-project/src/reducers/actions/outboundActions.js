@@ -4,6 +4,7 @@ import moment from 'moment';
 import { tokenConfig } from './authActions.js';
 import { clearErrors, returnErrors } from './errorActions.js';
 import {
+    setConfirmShipmentLoading,
     setInventoryReceivedLoading,
     setSearchShipmentLoading,
     setShipmentItemsLoading
@@ -130,7 +131,7 @@ export const getNeedToShipFromShipmentWithLimit = (docLimits, docSkip) => async 
         })
 }
 
-export const getNeedToShipPendingAndTotalCount = (orgNm = "M") => async (dispatch, getState) => {
+export const getNeedToShipPendingAndTotalCount = (orgNm) => async (dispatch, getState) => {
     let shipmentCountInfo = await axios.get(
         `/api/wms/shipment/v0/getPendingAndTotal/${orgNm}`, {
         ...tokenConfig(getState),
@@ -173,8 +174,10 @@ export const confirmShipmentAndSubTractQty = (unShipmentArr) => async (dispatch,
         dispatch(returnMessages("No Shipment selected", 202, SERVICE_UNAVAILABLE));
         return;
     }
+    dispatch(setConfirmShipmentLoading());
     return axios.post('/api/wms/needToShip/v0/confirmShipment', { allUnShipment: unShipmentArr }, tokenConfig(getState))
         .then((res) => {
+            dispatch({ type: CONFIRM_SHIPMENT });
             dispatch(returnMessages(res.data.msg, res.status, CONFIRM_SHIPMENT))
         })
         .catch(err => {

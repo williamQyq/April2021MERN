@@ -5,7 +5,7 @@ import wms from "./wms/wmsDatabase.js";    // @local wms server connection
 import startAmazonScheduler from '#amz/amazonSchedule.js';
 
 // @CREATE WMS CONNECTION
-wms.connect(() =>
+wms.connect.then(() =>
     console.log(`WMS Database Connected...`)
 );
 //@Mongoose connection; Connect to Mongo.

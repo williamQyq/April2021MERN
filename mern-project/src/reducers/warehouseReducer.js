@@ -1,4 +1,6 @@
 import {
+    CONFIRM_SHIPMENT,
+    CONFIRM_SHIPMENT_LOADING,
     GET_INVENTORY_RECEIVED_ITEMS,
     GET_SHIPMENT_ITEMS_WITH_LIMIT,
     GET_SHIPPED_NOT_VERIFIED_SHIPMENT,
@@ -21,6 +23,7 @@ const initialState = {
     needToShip: {
         items: [],
         itemsLoading: false,
+        confirmLoading: false,
         shippedNotVerifiedItems: []
     },
     shipmentSearch: {
@@ -95,6 +98,23 @@ export default function Reducer(state = initialState, action) {
                     itemsLoading: true
                 }
             }
+        case CONFIRM_SHIPMENT_LOADING:
+            return {
+                ...state,
+                needToShip: {
+                    ...state.needToShip,
+                    confirmLoading: true
+                }
+            }
+        case CONFIRM_SHIPMENT:
+            return {
+                ...state,
+                needToShip: {
+                    ...state.needToShip,
+                    confirmLoading: false
+                }
+            }
+
         case GET_SHIPPED_NOT_VERIFIED_SHIPMENT:
             return {
                 ...state,

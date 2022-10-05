@@ -1,6 +1,6 @@
 import moment from "moment";
 import { Table } from "antd";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import FormTable from "component/utility/FormTable.jsx";
 import { defaultSettings, needToShipColumns } from "component/Warehouse/utilities.js";
@@ -17,12 +17,17 @@ const NeedToShipTable = (props) => {
     const [selectedRows, setSelectedRows] = useState([]);
     const [selectedRowKeys, setSelectedRowkeys] = useState([]);
 
-    useEffect(() => {
-        let today = getUnixDate(0);
-        console.log(`Today date in unix: `, today)
-        let tommorrow = getUnixDate(1);
-        dispatch(getShippedNotVerifiedShipmentByDate([today, tommorrow]))//get unsubstantiated shipment from today to tomorrow excluded
+    const getNotVerifiedShipment = useCallback(() => {
+        const today = getUnixDate(0);
+        const tommorrow = getUnixDate(1);
+        dispatch(getShippedNotVerifiedShipmentByDate([today, tommorrow]))
+    }, [dispatch])
 
+    useEffect(() => {
+        getNotVerifiedShipment();
+    }, [getNotVerifiedShipment])
+
+    useEffect(() => {
         let hasRowData = shippedNotVerifiedItems.length > 0 ? true : false;
         let isAllRowsSelected = selectedRowKeys.length >= shippedNotVerifiedItems.length ? true : false;
         if (isAllRowsSelected && hasRowData) {
@@ -31,7 +36,7 @@ const NeedToShipTable = (props) => {
             setAllSelected(false)
         }
 
-    }, [selectedRowKeys, allSelected, shippedNotVerifiedItems.length, dispatch])
+    }, [selectedRowKeys, allSelected, shippedNotVerifiedItems])
 
 
     const rowSelection = {

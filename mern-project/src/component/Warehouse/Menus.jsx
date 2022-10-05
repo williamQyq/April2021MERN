@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { AreaChartOutlined, CloudSyncOutlined, DownloadOutlined, LoadingOutlined } from '@ant-design/icons';
 import {
     downloadInventoryReceivedUploadSample,
@@ -14,7 +14,7 @@ import FileUpload from 'component/utility/FileUpload.jsx';
 import NeedToShipTable from 'component/Warehouse/NeedToShipTable.jsx';
 
 export const NeedToShipMenu = (props) => {
-    const { shipmentInfo } = props;
+    const shipmentInfo = useMemo(() => props.shipmentInfo, [{ ...props.shipmentInfo }])
     const dispatch = useDispatch();
     const needToShipMenuItems = [
         {

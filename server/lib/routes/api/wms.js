@@ -95,7 +95,7 @@ router.get('/shipment/v0/getNeedToShipItems/limit/:docLimit/skip/:docSkip', auth
 router.get('/shipment/v0/getPendingAndTotal/:orgNm', auth, (req, res) => {
     const { orgNm } = req.params;
     let wms = new WMSDatabaseApis();
-    wms.getPendingShipmentInfoByOrgNm(orgNm)
+    wms.getShipmentCountByOrgNm(orgNm)
         .then((shipmentCountInfo) => {
             res.json(shipmentCountInfo)
         })

@@ -28,7 +28,7 @@ export class PdfGenerator {
     async generatePickUpPDF(fileName: string, data: IPickUp): Promise<PathLike | undefined> {
         const pdfSavedPath: PathLike = path.join(pdfGeneratorDirPath, '/pdf/', fileName);
         try {
-            const browser: Browser = await puppeteer.launch();
+            const browser: Browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
             const page: Page = await browser.newPage();
             const content: HTMLString = await this._compile('pickup', data);
 

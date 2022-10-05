@@ -1,30 +1,39 @@
 import tunnel from 'tunnel-ssh';
-import mongodb from 'mongodb';
-import { sshConfig, wmsCollections } from '#root/config.js';
+import * as mongodb from 'mongodb';
+import { sshConfig} from '#root/config.js';
 
 const { MongoClient } = mongodb;
 //when modules/instance being required in nodejs, it will only load once.
-let db;
 
-const connect = (callback) => {
-    const config = sshConfig;
-    tunnel(config, (error, server) => {
+const connect = new Promise((resolve, _) => {
+    tunnel(sshConfig, async (error, server) => {
         if (error) {
             console.log("SSH connection error: " + error);
         }
-        // let client = new MongoClient('mongodb://127.0.0.1:27017/wms', { useUnifiedTopology: true });
-        MongoClient.connect(
-            `mongodb://127.0.0.1:${config.localPort}/wms`,
-            { useUnifiedTopology: true }
-        ).then(client => {
-            db = client.db('wms');
-            callback();
-        }).catch(err => {
-            console.error(`WMS Connection failed: ${err}`)
+        server.on("error", () => {
+            console.log('**tunnel ssh err**\n\n');
+            server.close();
         });
+        // server.on('connection', console.log.bind(console, "**tunnel ssh server connected**:\n"));
 
-    });
-}
+        const mongoClient = new MongoClient(
+            `mongodb://127.0.0.1:${sshConfig.localPort}/wms`,
+            { useUnifiedTopology: true }
+        );
+
+        const client = await mongoClient.connect()
+        const db = client.db('wms');
+        resolve({ db });
+
+        client.on('error', console.error.bind(console, "***mongodb error***"))
+        client.on('error', (err) => {
+            console.log(`******mongodb client connection closed**********`)
+            client.close();
+        })
+    })
+});
+
+const { db } = await connect;
 
 const getDatabase = () => {
     return db;
@@ -35,15 +44,12 @@ const close = () => {
     console.log(`wms connection closed...`);
 }
 
-const getCollections = () => {
-    return wmsCollections;
-}
 
 const wms = {
-    connect,
+    db,
+    connect,    //promise get new mongodb client db wms
     close,
     getDatabase,
-    getCollections,
-    config: sshConfig
+    // getCollections,
 }
 export default wms;

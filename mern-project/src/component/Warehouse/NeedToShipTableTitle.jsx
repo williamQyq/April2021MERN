@@ -1,4 +1,5 @@
 import { Button, Typography } from "antd";
+import { useSelector } from "react-redux";
 const { Text } = Typography;
 
 const NeedToShipTableTitle = (props) => {
@@ -9,6 +10,8 @@ const NeedToShipTableTitle = (props) => {
         selectedCount,
         shipmentInfo,
     } = props;
+
+    const { confirmLoading } = useSelector(state => state.warehouse.needToShip);
 
     let hasPendingShipment = shipmentInfo.pending > 0 ? true : false;
     let titleType = hasPendingShipment ? "danger" : "success";
@@ -25,6 +28,7 @@ const NeedToShipTableTitle = (props) => {
                 }
             </Button>
             <Button
+                loading={confirmLoading}
                 style={{ marginRight: "8px" }}
                 type="primary"
                 onClick={() => handleShipmentConfirmClick()}
@@ -35,6 +39,7 @@ const NeedToShipTableTitle = (props) => {
                 }
             </Button>
             <Text
+                style={{ paddingLeft: "4px" }}
                 strong={true}
                 type={titleType}
             >
@@ -44,14 +49,18 @@ const NeedToShipTableTitle = (props) => {
                         "All unsubstantiated shipment loaded!"
                 }
             </Text>
-            <Text
+            
+            {
+            // confirm: today mdftm confirm shipment but contains day before.
+            /* <Text
+                style={{ paddingLeft: "4px" }}
                 strong={true}
                 type="success"
             >
                 {
                     shipmentInfo.confirm ? `Confirmed ${shipmentInfo.confirm} Shipment Today!` : null
                 }
-            </Text>
+            </Text> */}
         </>
     );
 }
