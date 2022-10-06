@@ -27,6 +27,7 @@ import {
     SEARCH_SELLER_INVENTORY
 } from 'reducers/actions/types.js';
 import { useCallback } from 'react';
+import { normalizeObjectStringValuesToLowerCase } from 'component/utility/helper.js';
 
 const SearchShipment = () => {
     const dispatch = useDispatch();
@@ -40,6 +41,7 @@ const SearchShipment = () => {
     //memorized stable fetchData function since dispatch is changing.
     const fetchDataOnSearchCategoryChange = useCallback((type, values) => {
         const handleDataOnSearchCategoryChange = (category, values) => {
+            category = typeof category === "string" ? category.toUpperCase() : category;
             switch (category) {
                 case SEARCH_OUTBOUND_SHIPMENT:
                     dispatch(getShipment(values));
@@ -104,8 +106,10 @@ const SearchShipment = () => {
     const onSubmit = () => {
         form.validateFields()
             .then((values) => {
-                console.log(`Form values:`, values)
+                //normalize values obj ignore values["type"]
+                values = normalizeObjectStringValuesToLowerCase(values);
                 setFormValues(values);
+                console.log(`Form values:`, values)
             })
             .catch(err => { })
     }

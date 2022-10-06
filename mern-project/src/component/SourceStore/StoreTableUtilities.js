@@ -201,7 +201,7 @@ export const MostViewedSearchBox = (props) => {
     const [status, setStatus] = useState('')
     const onSearch = (value) => {
         // let isValid = /^\d{7}$/.test(value) //regex way check valid
-        let output = value.split('').filter(ele => typeof (Number(ele)) === 'number');
+        let output = value.split('').filter(ele => !isNaN(ele));
         let isValid = output.length === 7
         if (isValid) {
             setStatus('')

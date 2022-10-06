@@ -11,3 +11,12 @@ export const getUnixDate = (offset) => {
 export const normalizeStringValue = (value) => {
     return value.replace(/^\s+|\s+$/g, "")
 }
+
+export function normalizeObjectStringValuesToLowerCase(obj) {
+    Object.keys(obj).forEach((key) => {
+        let value = obj[key];
+        if (typeof value === "string")
+            obj[key] = value.replace(/s+/g, "").toLowerCase();
+    })
+    return obj;
+}

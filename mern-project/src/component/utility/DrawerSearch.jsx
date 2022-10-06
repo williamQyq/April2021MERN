@@ -61,9 +61,7 @@ const DrawerSearch = (props) => {
         }
     };
 
-    const handleOrgNmInputChange = (value) => {
-        form.setFieldsValue({ orgNm: value.toUpperCase() })
-    }
+
 
     let isOrderIdInputEditable = searchCategory === SEARCH_OUTBOUND_SHIPMENT ? true : false;
     let isTrackingIdInputEditable =
@@ -72,7 +70,6 @@ const DrawerSearch = (props) => {
     let isOrgNmInputEditable = searchCategory !== SEARCH_LOCATION_INVENTORY ? true : false;
     let isUpcInputEditable = true;  //upc option is editable for all category
     let isSnInputEditable = searchCategory === SEARCH_OUTBOUND_SHIPMENT ? true : false;
-
 
     return (
         <>
@@ -96,7 +93,11 @@ const DrawerSearch = (props) => {
                     </Space>
                 }
             >
-                <Form layout="vertical" hideRequiredMark={false} form={form} initialValues={{ dateTime: value }}>
+                <Form layout="vertical"
+                    hideRequiredMark={false}
+                    form={form}
+                    initialValues={{ dateTime: value }}
+                >
                     <Row gutter={16}>
                         <Col span={12}>
                             <Form.Item
@@ -126,7 +127,6 @@ const DrawerSearch = (props) => {
                                     autoClearSearchValue
                                     disabled={!isOrgNmInputEditable}
                                     placeholder="Please select an organization"
-                                    onChange={(value) => { handleOrgNmInputChange(value) }}
                                 >
                                     <AutoComplete.Option value="M">M</AutoComplete.Option>
                                     <AutoComplete.Option value="R">R</AutoComplete.Option>

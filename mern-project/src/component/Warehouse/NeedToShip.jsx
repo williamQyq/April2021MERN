@@ -48,7 +48,6 @@ class NeedToShip extends React.Component {
 
     render() {
         const { shipmentInfo, isDownloading } = this.state;
-        console.log(shipmentInfo)
         return (
             <>
                 <ContentHeader title="NeedToShip" />

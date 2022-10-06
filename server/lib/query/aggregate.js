@@ -379,6 +379,7 @@ export const GET_LOCATION_QTY_BY_UPC_AND_LOC = (upc, loc) => [
     }
 ]
 
+/* @attention case insensitive: $toLower */
 export const GET_SHIPMENT_BY_COMPOUND_FILTER = (fields) => {
     let compoundFilter = [];
     let matchObj = {};
@@ -396,7 +397,9 @@ export const GET_SHIPMENT_BY_COMPOUND_FILTER = (fields) => {
                 }
             }, {
                 '$project': {
-                    '_id': 0,
+                    '_id': {
+                        '$concat': ["$_id", "-", "$rcIts.UPC"]
+                    },
                     'trackingID': '$_id',
                     'orderID': 1,
                     'orgNm': 1,
@@ -410,6 +413,7 @@ export const GET_SHIPMENT_BY_COMPOUND_FILTER = (fields) => {
                     'mdfStmp': 1,
                     'status': 1,
                     'UPCandSN': 1,
+                    'sn': '$UPCandSN.SN',
                     'rcIts': 1,
                     'compare': {
                         '$cmp': [
@@ -429,8 +433,8 @@ export const GET_SHIPMENT_BY_COMPOUND_FILTER = (fields) => {
                     'trackingID': 1,
                     'orderID': 1,
                     'orgNm': 1,
-                    'upc': '$rcIts.UPC',
-                    'qty': '$rcIts.qty',
+                    'upc': 1,
+                    'qty': 1,
                     'userID': 1,
                     'shipBy': 1,
                     'crtTm': 1,
@@ -438,26 +442,33 @@ export const GET_SHIPMENT_BY_COMPOUND_FILTER = (fields) => {
                     'mdfTm': 1,
                     'mdfStmp': 1,
                     'status': 1,
-                    'sn': '$UPCandSN.SN'
+                    'sn': 1,
+                    'upcLower': { "$toLower": "$upc" },
+                    'trackingIDLower': { "$toLower": "$trackingID" },
+                    'orderIDLower': { "$toLower": "$orderID" },
+                    'orgNmLower': { "$toLower": "$orgNm" },
+                    'userIDLower': { "$toLower": "$userID" },
+                    'shipByLower': { "$toLower": "$shipBy" },
+                    'snLower': { "$toLower": "$sn" },
                 }
             }
         ]
     );
 
     if (fields["OrderId"]) {
-        matchObj["orderID"] = new RegExp(`.*${fields["OrderId"]}.*`);
+        matchObj["orderIDLower"] = new RegExp(`.*${fields["OrderId"]}.*`);
     }
     if (fields["trackingId"]) {
-        matchObj["trackingID"] = new RegExp(`.*${fields["trackingId"]}.*`);
+        matchObj["trackingIDLower"] = new RegExp(`.*${fields["trackingId"]}.*`);
     }
     if (fields["orgNm"]) {
-        matchObj["orgNm"] = new RegExp(`.*${fields["orgNm"]}.*`);
+        matchObj["orgNmLower"] = new RegExp(`.*${fields["orgNm"]}.*`);
     }
     if (fields["upc"]) {
-        matchObj["upc"] = new RegExp(`.*${fields["upc"]}.*`);
+        matchObj["upcLower"] = new RegExp(`.*${fields["upc"]}.*`);
     }
     if (fields["sn"]) {
-        matchObj['sn'] = fields["sn"];
+        matchObj['snLower'] = new RegExp(`^${fields["sn"]}.*`);
     }
 
     if (fields["dateTime"]) {
@@ -479,6 +490,7 @@ export const GET_SHIPMENT_BY_COMPOUND_FILTER = (fields) => {
     return compoundFilter;
 }
 
+/* @attention case insensitive: $toLower */
 export const GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER = (fields) => {
     let compoundFilter = [];
     let matchObj = {};
@@ -503,18 +515,23 @@ export const GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER = (fields) => {
                 'mdfTm': 1,
                 'mdfStmp': 1,
                 'status': 1,
+                'upcLower': { "$toLower": "$rcIts.UPC" },
+                'trackingIDLower': { "$toLower": "$trNo" },
+                'orgNmLower': { "$toLower": "$orgNm" },
+                'userIDLower': { "$toLower": "$userID" },
+                'shipByLower': { "$toLower": "$shipBy" }
             }
         }
     ]);
 
     if (fields["trackingId"]) {
-        matchObj["trackingID"] = new RegExp(`.*${fields["trackingId"]}.*`);
+        matchObj["trackingIDLower"] = new RegExp(`.*${fields["trackingId"]}.*`);
     }
     if (fields["orgNm"]) {
-        matchObj["orgNm"] = new RegExp(`.*${fields["orgNm"]}.*`);
+        matchObj["orgNmLower"] = new RegExp(`.*${fields["orgNm"]}.*`);
     }
     if (fields["upc"]) {
-        matchObj["upc"] = new RegExp(`.*${fields["upc"]}.*`);
+        matchObj["upcLower"] = new RegExp(`.*${fields["upc"]}.*`);
     }
 
     if (fields["dateTime"]) {
@@ -537,7 +554,7 @@ export const GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER = (fields) => {
     return compoundFilter;
 }
 
-
+/* @attention case insensitive: $toLower */
 export const GET_INVENTORY_LOCATION_BY_COMPOUND_FILTER = (fields) => {
     let compoundFilter = [];
     let matchObj = {};
@@ -551,19 +568,21 @@ export const GET_INVENTORY_LOCATION_BY_COMPOUND_FILTER = (fields) => {
                 'loc': '$_id.loc',
                 'qty': 1,
                 'mdfTm': 1,
-                'mdfStmp': 1
+                'mdfStmp': 1,
+                'locLower': { "$toLower": "$_id.loc" },
+                'upcLower': { "$toLower": '$_id.UPC' }
             }
         }
     ]);
 
     if (fields["loc"]) {
-        matchObj["loc"] = new RegExp(`.*${fields["loc"]}.*`);
+        matchObj["locLower"] = new RegExp(`.*${fields["loc"]}.*`);
     }
     // if (fields["qty"]) {
     //     matchObj["qty"] = new RegExp(`.*${fields["qty"]}.*`);
     // }
     if (fields["upc"]) {
-        matchObj["upc"] = new RegExp(`.*${fields["upc"]}.*`);
+        matchObj["upcLower"] = new RegExp(`.*${fields["upc"]}.*`);
     }
 
     if (fields["dateTime"]) {
@@ -579,6 +598,7 @@ export const GET_INVENTORY_LOCATION_BY_COMPOUND_FILTER = (fields) => {
     return compoundFilter;
 }
 
+/* @attention case insensitive: $toLower */
 export const GET_SELLER_INVENTORY_BY_COMPOUND_FILTER = (fields) => {
     let compoundFilter = [];
     let matchObj = {};
@@ -592,7 +612,9 @@ export const GET_SELLER_INVENTORY_BY_COMPOUND_FILTER = (fields) => {
                 'qty': 1,
                 'org': '$_id.org',
                 'mdfTm': 1,
-                'mdfStmp': 1
+                'mdfStmp': 1,
+                'upcLower': { "$toLower": "$_id.UPC" },
+                'orgLower': { "$toLower": "$_id.org" }
             }
         }
     ]);
@@ -602,7 +624,7 @@ export const GET_SELLER_INVENTORY_BY_COMPOUND_FILTER = (fields) => {
     //     matchObj["qty"] = new RegExp(`.*${fields["qty"]}.*`);
     // }
     if (fields["upc"]) {
-        matchObj["upc"] = new RegExp(`.*${fields["upc"]}.*`);
+        matchObj["upcLower"] = new RegExp(`.*${fields["upc"]}.*`);
     }
 
     if (fields["dateTime"]) {
