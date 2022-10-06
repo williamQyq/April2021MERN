@@ -13,8 +13,8 @@ import { syncInventoryReceivedWithGsheet } from 'reducers/actions/outboundAction
 import FileUpload from 'component/utility/FileUpload.jsx';
 import NeedToShipTable from 'component/Warehouse/NeedToShipTable.jsx';
 
-export const NeedToShipMenu = (props) => {
-    const shipmentInfo = useMemo(() => props.shipmentInfo, [{ ...props.shipmentInfo }])
+export const NeedToShipMenu = ({ shipmentInfo }) => {
+    const shipmentCount = useMemo(() => shipmentInfo, [shipmentInfo]);
     const dispatch = useDispatch();
     const needToShipMenuItems = [
         {
@@ -50,7 +50,7 @@ export const NeedToShipMenu = (props) => {
     const handleContentSwitch = (key) => {
         switch (key) {
             case 'unstantiatedShipment':
-                return <NeedToShipTable shipmentInfo={shipmentInfo} />
+                return <NeedToShipTable shipmentInfo={shipmentCount} />
             case 'uploadNeedToShip':
                 return <FileUpload customizedUpload={uploadNeedToShip} />
             case 'loadFromGsheet':

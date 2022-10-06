@@ -146,8 +146,7 @@ export const getLocationInventory = (requiredFields) => (dispatch, getState) => 
 
 export const getSellerInventory = (requiredFields) => (dispatch, getState) => {
     dispatch(setSearchShipmentLoading());
-
-    axios.post(`/api/wms/sellerInventory/v0/getSellerInventory`, { requiredFields }, tokenConfig(getState))
+    axios.post(`/api/wms/sellerInventory/v0/getSellerInventory`, {requiredFields}, tokenConfig(getState))
         .then(res => {
             dispatch({
                 type: SEARCH_SELLER_INVENTORY,

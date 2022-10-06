@@ -611,6 +611,11 @@ export const GET_SELLER_INVENTORY_BY_COMPOUND_FILTER = (fields) => {
         matchObj["mdfStmp"] = { '$gte': startDateUnix, '$lte': endDateUnix }
     }
 
+    // careful "0" in js
+    if (fields["gt"] >= 0) {
+        matchObj["qty"] = { "$gt": fields["gt"] };
+    }
+
     if (Object.entries(matchObj).length > 0) {
         compoundFilter.push({ '$match': matchObj })
     }

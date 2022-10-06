@@ -72,7 +72,7 @@ const SearchShipment = () => {
     //prevent refetch wms shipment if has info
     useEffect(() => {
         if (!category) {
-            dispatch(getSellerInventory()); //dispatch default get seller inventory when did mount
+            dispatch(getSellerInventory({ gt: 0 })); //dispatch default get seller inventory when did mount
         } else {
             handleColumnsOnSearchCategoryChange(category);
         }

@@ -27,6 +27,7 @@ router.post('/sellerInv/v0/quantity/upcs', auth, (req, res) => {
             res.json(result)
         })
         .catch(err => {
+            console.error(err.message);
             res.status(502).json({ msg: "WMS connection error" })
         })
 
@@ -46,6 +47,7 @@ router.post('/inventoryReceive/v0/getInventoryReceived', auth, (req, res) => {
     wms.getInventoryReceive(requiredFields)
         .then(validRecItems => { res.json(validRecItems) })
         .catch(err => {
+            console.error(err.message);
             res.status(400).json({ msg: "Fail to get Inventory Received", reason: err.message })
         })
 })
@@ -75,6 +77,7 @@ router.get('/inventoryReceive/v0/getInventoryReceiveInHalfMonth/updateGsheet', a
         .then(values => gsheet.updateSheet(GsheetApis._forUploadSpreadSheet, values))
         .then(() => { res.json("success") })
         .catch(err => {
+            console.error(err.message);
             res.status(500).json({ msg: "Fail to get Inventory Received or Update Gsheet" })
         })
 
@@ -89,6 +92,7 @@ router.get('/shipment/v0/getNeedToShipItems/limit/:docLimit/skip/:docSkip', auth
                 .then((totalShipmentCount) => res.json({ shipment: needToShipItems, totalShipmentCount }))
         })
         .catch((err => {
+            console.error(err.message);
             res.status(500).json({ msg: "Fail to get Shipment" })
         }))
 })
@@ -113,8 +117,9 @@ router.post('/inventoryReceive/v0/updateRecOnTracking', auth, (req, res) => {
             }
 
         })
-        .catch(e => {
-            res.status(400).json({ msg: `Upload File contains Invalid Input\n\n${e}` })
+        .catch(err => {
+            console.error(err.message);
+            res.status(400).json({ msg: `Upload File contains Invalid Input\n\n${err}` })
         })
 })
 
@@ -207,6 +212,7 @@ router.get('/shipment/v0/getNotVerifiedShipment/dateMin/:dateMin/dateMax/:dateMa
             res.json(formattedShipmentArr)
         })
         .catch(err => {
+            console.error(err.message);
             res.status(500).json({ msg: `Unable to get unsubstantiated Shipment\n\n${err}` })
         })
 })
@@ -309,6 +315,7 @@ router.post('/shipment/v0/getShipment', auth, (req, res) => {
             res.json(validShipment)
         })
         .catch(err => {
+            console.error(err.message);
             res.status(400).json({
                 msg: `Reject get shipment by required fields`,
                 reasoon: err.message
@@ -342,6 +349,7 @@ router.post('/locationInventory/v0/getLocationInventory', auth, (req, res) => {
             res.json(validShipment)
         })
         .catch(err => {
+            console.error(err.message);
             res.status(400).json({
                 msg: `Reject get shipment by required fields`,
                 reasoon: err.message
@@ -357,6 +365,7 @@ router.post('/sellerInventory/v0/getSellerInventory', auth, (req, res) => {
             res.json(validShipment)
         })
         .catch(err => {
+            console.error(err.message);
             res.status(400).json({
                 msg: `Reject get Seller Inventory by required fields`,
                 reasoon: err.message

@@ -49,10 +49,11 @@ const NeedToShipTableTitle = (props) => {
                         "All unsubstantiated shipment loaded!"
                 }
             </Text>
-            
+
             {
-            // confirm: today mdftm confirm shipment but contains day before.
-            /* <Text
+                // confirm: today mdftm confirm shipment but contains day before.
+            }
+            <Text
                 style={{ paddingLeft: "4px" }}
                 strong={true}
                 type="success"
@@ -60,7 +61,7 @@ const NeedToShipTableTitle = (props) => {
                 {
                     shipmentInfo.confirm ? `Confirmed ${shipmentInfo.confirm} Shipment Today!` : null
                 }
-            </Text> */}
+            </Text>
         </>
     );
 }

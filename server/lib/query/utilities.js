@@ -547,34 +547,34 @@ export class WMSDatabaseApis {
     }
 
     async getShipment(fields) {
-        let requiredFields = Object.assign({}, fields);
-        delete requiredFields.type;
+        // let requiredFields = Object.assign({}, fields);
+        // delete requiredFields.type;
         const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
-        let shipmentRecordsByReqFields = await collection.aggregate(GET_SHIPMENT_BY_COMPOUND_FILTER(requiredFields)).toArray();
+        let shipmentRecordsByReqFields = await collection.aggregate(GET_SHIPMENT_BY_COMPOUND_FILTER(fields)).toArray();
         return shipmentRecordsByReqFields;
     }
 
     async getInventoryReceive(fields) {
-        let requiredFields = Object.assign({}, fields);
-        delete requiredFields.type;
+        // let requiredFields = Object.assign({}, fields);
+        // delete requiredFields.type;
         const collection = this.db.collection(WMSDatabaseApis._collection.inventoryReceive);
-        let invRecRecords = await collection.aggregate(GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER(requiredFields)).toArray();
+        let invRecRecords = await collection.aggregate(GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER(fields)).toArray();
         return invRecRecords;
     }
 
     async getLocation(fields) {
-        let requiredFields = Object.assign({}, fields);
-        delete requiredFields.type;
+        // let requiredFields = Object.assign({}, fields);
+        // delete requiredFields.type;
         const collection = this.db.collection(WMSDatabaseApis._collection.locationInv);
-        let locationRecordsByReqFields = await collection.aggregate(GET_INVENTORY_LOCATION_BY_COMPOUND_FILTER(requiredFields)).toArray();
+        let locationRecordsByReqFields = await collection.aggregate(GET_INVENTORY_LOCATION_BY_COMPOUND_FILTER(fields)).toArray();
         return locationRecordsByReqFields;
     }
 
     async getSellerInventory(fields) {
-        let requiredFields = Object.assign({}, fields);
-        delete requiredFields.type;
+        // let requiredFields = Object.assign({}, fields);
+        // delete requiredFields.type;
         const collection = this.db.collection(WMSDatabaseApis._collection.sellerInv);
-        let sellerInvRecordsByReqFields = await collection.aggregate(GET_SELLER_INVENTORY_BY_COMPOUND_FILTER(requiredFields)).toArray();
+        let sellerInvRecordsByReqFields = await collection.aggregate(GET_SELLER_INVENTORY_BY_COMPOUND_FILTER(fields)).toArray();
         return sellerInvRecordsByReqFields;
     }
 

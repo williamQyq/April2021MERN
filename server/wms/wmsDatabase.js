@@ -1,6 +1,6 @@
 import tunnel from 'tunnel-ssh';
-import * as mongodb from 'mongodb';
-import { sshConfig} from '#root/config.js';
+import mongodb from 'mongodb';
+import { sshConfig } from '#root/config.js';
 
 const { MongoClient } = mongodb;
 //when modules/instance being required in nodejs, it will only load once.
@@ -11,17 +11,21 @@ const connect = new Promise((resolve, _) => {
             console.log("SSH connection error: " + error);
         }
         server.on("error", () => {
-            console.log('**tunnel ssh err**\n\n');
-            server.close();
+            console.log('**tunnel ssh err**\n\n', error);
+            // server.close();
         });
         // server.on('connection', console.log.bind(console, "**tunnel ssh server connected**:\n"));
 
-        const mongoClient = new MongoClient(
+        const client = new MongoClient(
             `mongodb://127.0.0.1:${sshConfig.localPort}/wms`,
-            { useUnifiedTopology: true }
+            {
+                useUnifiedTopology: true,
+                socketTimeoutMS: 360000,
+                connectTimeoutMS: 360000,
+                keepAlive: true
+            }
         );
-
-        const client = await mongoClient.connect()
+        await client.connect();
         const db = client.db('wms');
         resolve({ db });
 
