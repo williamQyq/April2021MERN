@@ -47,11 +47,12 @@ export class WmsDBApis {
         this.db = wms.db;
     }
 
-    async createPickUpFromReadyShipment(): Promise<{ pickUpData: IPickUp, processedTrackings: Set<string> }> {
+    async createPickUpFromReadyShipment(specialTrackings: Set<string | undefined>): Promise<{ pickUpData: IPickUp, processedTrackings: Set<string> }> {
         const pickUpDocs: PickUpItemsDoc[] = await this.getPickUpFromShipment(0, 0)
         const { unShipmentHandler, processedTrackings } = this.createUnShipmentMapping(pickUpDocs);
         const pickUptasks: IPickUpTask[] = await this.createPickUpTasks(unShipmentHandler);
         console.log(unShipmentHandler);
+        console.log(`special trackings:`, specialTrackings)
         //pickUpData for return
         let pickUpData: IPickUp = {
             tasks: pickUptasks,

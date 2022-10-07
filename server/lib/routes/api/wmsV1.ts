@@ -9,6 +9,7 @@ import {
     IResponseErrorMessage,
     IUpdateShipmentStatusErrorMessage,
 } from "@types";
+import { GSheetNeedToShip } from "#rootTS/bin/gsheet/gsheet.js";
 
 const router: Router = Router();
 
@@ -16,29 +17,32 @@ router.post('/shipment/v1/downloadPickUpPDF', auth, (req: Request, res: Response
     const reqBody: IReqBodyShipmentDownloadPickUpPDF = req.body;
     const { fileName } = reqBody.requiredFields;
     const wms = new WmsDBApis();
-    wms.createPickUpFromReadyShipment()
-        .then(({ pickUpData, processedTrackings }) => {
-            const pdfGenerator = new PdfGenerator();
-            pdfGenerator.generatePickUpPDF(fileName, pickUpData)
-                .then(savedFilePath => {
-                    let file: ReadStream = fs.createReadStream(savedFilePath!);
-                    let stat: Stats = fs.statSync(savedFilePath!);
-                    res.setHeader(
-                        "Content-Type",
-                        "application/pdf"
-                    );
-                    res.setHeader(
-                        "Content-Length",
-                        stat.size
-                    );
-                    res.setHeader(
-                        "Content-Disposition",
-                        "attachment; filename=" + fileName
-                    );
-                    file.pipe(res); //res end() event being callled automatically.
-                });
-            return processedTrackings;
-        })
+    const gsheet = new GSheetNeedToShip();
+    gsheet.getNeedToShipUpgradeTasks()
+        .then((needUpgradeTrackings) => wms.createPickUpFromReadyShipment(needUpgradeTrackings))
+        // //create pickup pdf...
+        // .then(({ pickUpData, processedTrackings }) => {
+        //     const pdfGenerator = new PdfGenerator();
+        //     pdfGenerator.generatePickUpPDF(fileName, pickUpData)
+        //         .then(savedFilePath => {
+        //             let file: ReadStream = fs.createReadStream(savedFilePath!);
+        //             let stat: Stats = fs.statSync(savedFilePath!);
+        //             res.setHeader(
+        //                 "Content-Type",
+        //                 "application/pdf"
+        //             );
+        //             res.setHeader(
+        //                 "Content-Length",
+        //                 stat.size
+        //             );
+        //             res.setHeader(
+        //                 "Content-Disposition",
+        //                 "attachment; filename=" + fileName
+        //             );
+        //             file.pipe(res); //res end() event being callled automatically.
+        //         });
+        //     return processedTrackings;
+        // })
         // .then(processedTrackings => wms.updateAllShipmentStatus(processedTrackings, shipmentStatus.PICK_UP_CREATED))
         // .then(result => console.log(result))
         .catch(err => {
