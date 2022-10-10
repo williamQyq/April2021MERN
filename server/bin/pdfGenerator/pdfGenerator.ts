@@ -8,11 +8,12 @@ type HTMLString = string;
 
 export interface IPickUpTask {
     upc: string,
+    qty: number,
     location: string,
-    qty: number
 }
 export interface IPickUp {
-    tasks: Array<IPickUpTask>,
+    origTasks: IPickUpTask[],
+    upgradeTasks: IPickUpTask[];
     date: string
 }
 export class PdfGenerator {

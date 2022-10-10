@@ -3,8 +3,8 @@ import * as mongoDB from 'mongodb';
 import { IPickUp, IPickUpTask } from '#rootTS/bin/pdfGenerator/pdfGenerator';
 import wms from "#root/wms/wmsDatabase.js"
 import {
-    IUnShipment,
-    IUnShipmentMap,
+    IAwaitingShipment,
+    IAwaitingShipmentMap,
     IUpdateShipmentStatusErrorMessage,
     IUpdateShipmentStatusResponse,
     LocationDoc,
@@ -47,15 +47,29 @@ export class WmsDBApis {
         this.db = wms.db;
     }
 
-    async createPickUpFromReadyShipment(specialTrackings: Set<string | undefined>): Promise<{ pickUpData: IPickUp, processedTrackings: Set<string> }> {
+    async createPickUpFromReadyShipment(forUpgradeTrackings: Set<string | undefined>): Promise<{ pickUpData: IPickUp, processedTrackings: Set<string> }> {
+        //get all items that need picked up
         const pickUpDocs: PickUpItemsDoc[] = await this.getPickUpFromShipment(0, 0)
-        const { unShipmentHandler, processedTrackings } = this.createUnShipmentMapping(pickUpDocs);
-        const pickUptasks: IPickUpTask[] = await this.createPickUpTasks(unShipmentHandler);
-        console.log(unShipmentHandler);
-        console.log(`special trackings:`, specialTrackings)
+
+        //create Mapping: all need picked up upc map qty location
+
+        const forUpgrade = this.createNeedShippingMapping(pickUpDocs, forUpgradeTrackings);
+        const forOrig = this.createNeedShippingMapping(pickUpDocs, forUpgrade.unPorcessedTrackings)
+
+        //seperate need upgrade upc tasks on needUpgradeTrackings
+        const origTasks: IPickUpTask[] = await this.createPickUpTasks(forOrig.awaitingShipmentMapping);
+        const upgradeTasks: IPickUpTask[] = await this.createPickUpTasks(forUpgrade.awaitingShipmentMapping);
+
+        const processedTrackings = new Set([...forOrig.processedTrackings, ...forUpgrade.processedTrackings]);
+        console.log(`Orig Map: \n`, forOrig.awaitingShipmentMapping);
+        console.log(`Upgrade Map: \n`, forUpgrade.awaitingShipmentMapping);
+
+        console.log(`special trackings:`, forUpgradeTrackings)
+        console.log(origTasks)
         //pickUpData for return
         let pickUpData: IPickUp = {
-            tasks: pickUptasks,
+            origTasks,
+            upgradeTasks,
             date: moment().format()
         }
 
@@ -69,42 +83,56 @@ export class WmsDBApis {
         return pickUpDocs;
     }
 
-    createUnShipmentMapping(docs: PickUpItemsDoc[]): IUnShipment {
-        const unShipmentHandler: IUnShipmentMap = new Map();
+    createNeedShippingMapping(docs: PickUpItemsDoc[], awaitShipmentTrackings: Set<string | undefined>): IAwaitingShipment {
+        // const needShippingAllMapping: IUnShipmentMap
+        const awaitingShipmentMapping: IAwaitingShipmentMap = new Map();
         const processedTrackings = new Set<string>();
+        const unPorcessedTrackings = new Set<string>();
 
-        docs.forEach(notShippedDoc => {
-            const { tracking, rcIts } = notShippedDoc;
-            rcIts.forEach(({ UPC, qty }) => {
-                let hasUnShippedUpc: boolean = unShipmentHandler.get(UPC) === undefined ? false : true;
-                if (hasUnShippedUpc) {
-                    let prevRcIts = unShipmentHandler.get(UPC);
-                    unShipmentHandler.set(UPC, {
-                        ...prevRcIts,
-                        qty: prevRcIts!.qty + qty,
-                        trackings: [...prevRcIts!.trackings, tracking]
-                    })
-                } else {
-                    unShipmentHandler.set(UPC, {
-                        qty: qty,
-                        trackings: [tracking]
-                    })
-                }
-            })
-            processedTrackings.add(tracking);
+        docs.forEach(awaitingShipmentDoc => {
+            const { tracking, rcIts } = awaitingShipmentDoc;
+
+            let isAwaitShipment = awaitShipmentTrackings.has(tracking);
+            if (isAwaitShipment) {
+                //create upc, await shipment qty Mapping
+                rcIts.forEach(({ UPC, qty }) => {
+                    let hasUpc: boolean = awaitingShipmentMapping.has(UPC);
+                    if (hasUpc) {
+                        let prevRcIts = awaitingShipmentMapping.get(UPC)!;
+                        awaitingShipmentMapping.set(UPC, {
+                            ...prevRcIts,
+                            qty: prevRcIts.qty + qty,
+                            trackings: [...prevRcIts.trackings, tracking]
+                        })
+                    } else {
+                        awaitingShipmentMapping.set(UPC, {
+                            qty,
+                            trackings: [tracking],
+                        })
+                    }
+                })
+                processedTrackings.add(tracking);
+            } else {
+                unPorcessedTrackings.add(tracking);
+            }
+
         })
-        return { unShipmentHandler, processedTrackings }
+
+        return { awaitingShipmentMapping, processedTrackings, unPorcessedTrackings }
     }
 
-    async createPickUpTasks(unShipmentMap: IUnShipmentMap): Promise<IPickUpTask[]> {
+    async createPickUpTasks(awaitingShipmentMap: IAwaitingShipmentMap): Promise<IPickUpTask[]> {
         let pickUpTasks: IPickUpTask[];
-        pickUpTasks = await Array.from(unShipmentMap).reduce<Promise<IPickUpTask[]>>(async (prevPromise, [upc, { qty }]) => {
-            let prev = await prevPromise;
-            let newTasks = await this.findPickUpLocationsByUnShippedUpcAndQty(upc, qty);
-            return [...prev, ...newTasks]
-        }, Promise.resolve([]))
+        pickUpTasks = await Array.from(awaitingShipmentMap)
+            .reduce<Promise<IPickUpTask[]>>(
+                async (prevPromise, [upc, { qty }]) => {
+                    let prev = await prevPromise;
+                    let newTasks: IPickUpTask[] = await this.findPickUpLocationsByUpcAndQty(upc, qty);
+                    return [...prev, ...newTasks]
+                }, Promise.resolve([]))
 
-        const sorted: IPickUpTask[] = pickUpTasks.sort((first: IPickUpTask, second: IPickUpTask) => {
+        //sort pick up tasks on location
+        const sortedPickUpTasks: IPickUpTask[] = pickUpTasks.sort((first: IPickUpTask, second: IPickUpTask) => {
             const extractShelveRegex = /^(\d+).*$/
             const naRegex = /not available/i
             let firstLoc = first.location;
@@ -124,17 +152,17 @@ export class WmsDBApis {
 
             return firstShelves - secondShelves;
         })
-        return sorted;
+        return sortedPickUpTasks;
     }
 
-    async findPickUpLocationsByUnShippedUpcAndQty(upc: string, qty: number): Promise<IPickUpTask[]> {
+    async findPickUpLocationsByUpcAndQty(upc: string, qty: number): Promise<IPickUpTask[]> {
         let pickUpTasks: IPickUpTask[] = new Array()
         const collection: mongoDB.Collection = this.db.collection(WmsDBApis._collection.locationInv);
         let upcLocQtyDocs: LocationDoc[] = await collection.aggregate(GET_UPC_LOCATION_QTY_EXCEPT_WMS(upc)).toArray() as LocationDoc[];
 
-        //upc not exists in db
+        //upc location not exists in db
         if (upcLocQtyDocs.length === 0) {
-            let NotAvailablePickUpTask: IPickUpTask[] = new Array({ upc, qty, location: "Not Available" })
+            let NotAvailablePickUpTask: IPickUpTask[] = new Array({ upc, qty, location: "Not Available", backUpLocs: [] })
             return NotAvailablePickUpTask;
         }
 

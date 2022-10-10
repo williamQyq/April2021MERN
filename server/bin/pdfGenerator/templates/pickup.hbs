@@ -11,9 +11,30 @@
 
 <body>
     <style>
-        .title{
+        @media print {
+            .container {
+                page-break-after: always;
+            }
+        }
+
+        .container {
+            page-break-after: always;
+        }
+
+        .title {
             font-size: 32px;
         }
+
+        .table {
+            height: 100%;
+            page-break-inside: auto;
+        }
+
+        .tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
         .table td {
             font-size: 28px;
         }
@@ -21,36 +42,80 @@
         .table th {
             font-size: 24px;
         }
-        .tiny{
+
+        .tiny {
             font-size: 8px;
         }
     </style>
     <div class="container">
+        <table class="table">
+            <thead>
+                <h2 class="text-center title">
+                    Pick Up -- For Upgrade
+                </h2>
+                <h6 class="text-center">{{date}}</h6>
+                <h6 class="text-center notice">pick up routes not optimized</h6>
+                <tr>
+                    <th>UPC</th>
+                    <th>Qty</th>
+                    <th>Location</th>
+                    <th>Back Up Loc</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each origTasks as | task |}}
+                <tr>
+                    <td>{{task.upc}}</td>
+                    <td>{{task.qty}}</td>
+                    <td>{{task.location}}</td>
+                    <td>
+                        <ul>
+                            {{#each task.backUpLocs}}
+                            <li>{{this}}</li>
+                            {{/each}}
+                        </ul>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+    <div class="container">
         <h2 class="text-center title">
-            Pick Up
+            Pick Up -- For Orig
         </h2>
         <h6 class="text-center">{{date}}</h6>
         <h6 class="text-center notice">pick up routes not optimized</h6>
-        <p class="text-center tiny">W @copyright 2022</p>
         <table class="table">
             <thead>
                 <tr>
                     <th>UPC</th>
+                    <th>Qty</th>
                     <th>Location</th>
-                    <th>Pick Up Qty</th>
+                    <th>Back Up Loc</th>
                 </tr>
             </thead>
             <tbody>
-                {{#each tasks as | task |}}
+                {{#each upgradeTasks as | task |}}
                 <tr>
                     <td>{{task.upc}}</td>
-                    <td>{{task.location}}</td>
                     <td>{{task.qty}}</td>
+                    <td>{{task.location}}</td>
+                    <td>
+                        <ul>
+                            {{#each task.backUpLocs}}
+                            <li>{{this}}</li>
+                            {{/each}}
+                        </ul>
+                    </td>
                 </tr>
                 {{/each}}
             </tbody>
         </table>
     </div>
 </body>
+<footer>
+    <p class="text-center tiny">W @copyright 2022</p>
+</footer>
 
 </html>

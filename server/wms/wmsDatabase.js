@@ -11,7 +11,7 @@ const connect = new Promise((resolve, _) => {
             console.log("SSH connection error: " + error);
         }
         server.on("error", () => {
-            console.log('**tunnel ssh err**\n\n', error);
+            // console.log('**tunnel ssh err**\n\n', error);
             // server.close();
         });
         // server.on('connection', console.log.bind(console, "**tunnel ssh server connected**:\n"));
@@ -27,11 +27,11 @@ const connect = new Promise((resolve, _) => {
         );
         await client.connect();
         const db = client.db('wms');
-        resolve({ db });
+        resolve({ db });    //db connection built.
 
         client.on('error', console.error.bind(console, "***mongodb error***"))
         client.on('error', (err) => {
-            console.log(`******mongodb client connection closed**********`)
+            console.error(`******mongodb client connection closed**********`)
             client.close();
         })
     })

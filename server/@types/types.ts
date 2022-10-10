@@ -34,14 +34,21 @@ export interface LocationDoc extends Document {
     qty: number
 }
 
-export interface IUnShipment<upc = string, tracking = string> {
-    unShipmentHandler: Map<upc, { qty: number, trackings: Array<string> }>,
+export interface IAwaitingShipment<tracking = string> {
+    awaitingShipmentMapping: IAwaitingShipmentMap,
     processedTrackings: Set<tracking>
+    unPorcessedTrackings: Set<tracking>
 }
 
 export interface INeedToShipMap<upc = string, qty = number> extends Map<upc, qty> { }
 
-export interface IUnShipmentMap<upc = string> extends Map<upc, { qty: number, trackings: Array<string> }> { };
+export interface IAwaitingShipmentMapValue {
+    qty: number,
+    trackings: Array<string>,
+}
+
+export interface IAwaitingShipmentMap<upc = string> extends
+    Map<upc, IAwaitingShipmentMapValue> { };
 
 /* 
     @desc: express router error message & Db query error message

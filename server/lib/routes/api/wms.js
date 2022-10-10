@@ -218,7 +218,7 @@ router.get('/shipment/v0/getNotVerifiedShipment/dateMin/:dateMin/dateMax/:dateMa
 })
 
 router.post('/needToShip/v0/confirmShipment', auth, (req, res) => {
-    console.log(`*************confirm Shipment*************`);
+    console.log(`*************confirm Shipment*************\n`, moment().format());
 
     const { allUnShipment } = req.body;
 
@@ -292,9 +292,8 @@ router.post('/needToShip/v0/confirmShipment', auth, (req, res) => {
 
             if (allRejectedShipment.length > 0) {
                 res.status(400).json({ msg: `Rejected Shipment Occurs`, reason: allRejectedShipment })
-            } else {
-                res.json({ msg: `All Shipment fullfilled.` })
             }
+            res.json({ msg: `All Shipment fullfilled.` })
         })
         .catch(err => {
             console.log(`err: `, err)
