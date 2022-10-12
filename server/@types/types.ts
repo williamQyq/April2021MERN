@@ -1,7 +1,11 @@
 import { Document } from "mongoose";
 
 type T = any;
-
+type upc = string;
+type location = string;
+type qty = number;
+type tracking = string;
+type trackings = tracking[];
 /* 
 
     @source: express router receive axios request body
@@ -33,6 +37,10 @@ export interface LocationDoc extends Document {
     loc: string,
     qty: number
 }
+export interface BackUpLocationDoc extends Document {
+    _id: upc,
+    backUpLocs: location[]
+}
 
 export interface IAwaitingShipment<tracking = string> {
     awaitingShipmentMapping: IAwaitingShipmentMap,
@@ -40,7 +48,7 @@ export interface IAwaitingShipment<tracking = string> {
     unPorcessedTrackings: Set<tracking>
 }
 
-export interface INeedToShipMap<upc = string, qty = number> extends Map<upc, qty> { }
+export interface INeedToShipMap extends Map<upc, qty> { }
 
 export interface IAwaitingShipmentMapValue {
     qty: number,

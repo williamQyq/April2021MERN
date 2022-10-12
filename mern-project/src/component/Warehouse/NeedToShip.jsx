@@ -8,7 +8,7 @@ import {
 } from 'reducers/actions/outboundActions.js';
 import AwaitingShipmentList from './AwaitingShipmentList.jsx';
 import { ContentHeader, SubContentHeader } from 'component/utility/Layout.jsx';
-import { Button, Col, Row } from 'antd';
+import { Button, Col, Progress, Row } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 
 class NeedToShip extends React.Component {
@@ -16,7 +16,8 @@ class NeedToShip extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isDownloading: false,
+            initDownloading: false,
+            isDownloading: this.props.isDownloading,
             shipmentInfo: {
                 pending: 0,
                 total: 0,
@@ -41,13 +42,28 @@ class NeedToShip extends React.Component {
         const requiredFields = {
             fileName: "pickUp.pdf"
         }
-        this.setState({ isDownloading: true })
-        this.props.downloadPickUpListPDF(requiredFields)
-            .then(() => this.setState({ isDownloading: false }))
+        this.setState({ initDownloading: true });
+        this.props.downloadPickUpListPDF(requiredFields);
+    }
+    getDownloadPercent = (downloadStatus) => {
+        const { receivedBytes, totalBytes } = downloadStatus;
+        console.log(`received: `, receivedBytes);
+        let curPercent = totalBytes !== undefined ?
+            (receivedBytes / totalBytes).toFixed(2) * 100
+            : 0;
+
+        if (curPercent === 100) {
+            setTimeout(() => {
+                this.setState({ initDownloading: false });
+            }, 1000);
+        }
+        console.log(curPercent)
+        return curPercent;
     }
 
     render() {
-        const { shipmentInfo, isDownloading } = this.state;
+        const { shipmentInfo, initDownloading, isDownloading } = this.state;
+        const { downloadStatus } = this.props;
         return (
             <>
                 <ContentHeader title="NeedToShip" />
@@ -58,7 +74,24 @@ class NeedToShip extends React.Component {
                         <AwaitingShipmentList shipmentInfo={shipmentInfo} />
                     </Col>
                     <Col xs={14} sm={12} md={10} lg={8} xl={6}>
-                        <Button type="primary" loading={isDownloading} icon={<DownloadOutlined />} onClick={this.handlePickUpDownload}>WMS PickUp PDF</Button>
+                        <Button
+                            type="primary"
+                            loading={isDownloading}
+                            icon={<DownloadOutlined />}
+                            onClick={this.handlePickUpDownload}
+                        >
+                            WMS PickUp PDF
+                        </Button>
+                        {(
+                            initDownloading ?
+                                <Progress
+                                    percent={this.getDownloadPercent(downloadStatus)}
+                                    size="small"
+                                    showInfo={false}
+                                    success={{ percent: 100, strokeColor: "#52c41a" }}
+                                />
+                                : <></>
+                        )}
                     </Col>
                 </Row>
             </>
@@ -70,8 +103,11 @@ NeedToShip.prototypes = {
     getNeedToShipPendingAndTotalCount: PropTypes.func.isRequired,
     downloadPickUpListPDF: PropTypes.func.isRequired
 }
+const mapStateToProps = state => ({
+    downloadStatus: state.warehouse.needToShip.download
+})
 
-export default connect(null, {
+export default connect(mapStateToProps, {
     getNeedToShipPendingAndTotalCount,
     downloadPickUpListPDF
 })(NeedToShip);

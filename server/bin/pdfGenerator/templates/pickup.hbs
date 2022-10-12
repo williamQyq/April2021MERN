@@ -18,6 +18,7 @@
 
         @media print {
             .container {
+                margin-top: 32px;
                 position: inherit;
                 display: block;
                 min-height: 100%;
@@ -38,7 +39,7 @@
 
         .table {
             page-break-inside: auto;
-            margin: 16px 32px;
+            margin: 16px 32px 48px 32px;
         }
 
         .tr {
@@ -47,11 +48,15 @@
         }
 
         .table td {
-            font-size: 28px;
+            font-size: 22px;
         }
 
         .table th {
             font-size: 24px;
+        }
+
+        .middle {
+            font-size: 16px;
         }
 
         .tiny {
@@ -65,7 +70,7 @@
                     Pick Up -- For Upgrade
                 </h2>
                 <h6 class="text-center">{{date}}</h6>
-                <h6 class="text-center notice">pick up routes not optimized</h6>
+                <h6 class="text-center notice">current pick up routes not properly optimized, implementd partition number instead. </h6>
                 <tr>
                     <th>UPC</th>
                     <th>Qty</th>
@@ -82,7 +87,9 @@
                     <td>
                         <ul>
                             {{#each task.backUpLocs}}
-                            <li>{{this}}</li>
+                            <li>
+                                <p class="middle">{{this}}</p>
+                            </li>
                             {{/each}}
                         </ul>
                     </td>
@@ -118,7 +125,9 @@
                     <td>
                         <ul>
                             {{#each task.backUpLocs}}
-                            <li>{{this}}</li>
+                            <li>
+                                <p class="middle">{{this}}</p>
+                            </li>
                             {{/each}}
                         </ul>
                     </td>

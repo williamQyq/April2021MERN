@@ -362,6 +362,42 @@ export const GET_UPC_LOCATION_QTY_EXCEPT_WMS = (upc) => [
         }
     }
 ]
+export const GET_UPC_BACK_UP_LOCS_FOR_PICK_UP = (upc) => [
+    {
+        '$match': {
+            '_id.UPC': upc,
+            '_id.loc': {
+                '$ne': 'WMS'
+            },
+            'qty': {
+                '$gt': 0
+            }
+        }
+    }, {
+        '$limit': 3
+    }, {
+        '$sort': {
+            'qty': 1
+        }
+    }, {
+        '$addFields': {
+            'qtyStr': {
+                '$toString': '$qty'
+            }
+        }
+    }, {
+        '$group': {
+            '_id': '$_id.UPC',
+            'backUpLocs': {
+                '$push': {
+                    '$concat': [
+                        '$_id.loc', '--', '$qtyStr'
+                    ]
+                }
+            }
+        }
+    }
+]
 
 export const GET_LOCATION_QTY_BY_UPC_AND_LOC = (upc, loc) => [
     {

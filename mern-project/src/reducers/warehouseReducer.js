@@ -1,6 +1,8 @@
 import {
     CONFIRM_SHIPMENT,
     CONFIRM_SHIPMENT_LOADING,
+    FILE_DOWNLOADED,
+    FILE_DOWNLOADING,
     GET_INVENTORY_RECEIVED_ITEMS,
     GET_SHIPMENT_ITEMS_WITH_LIMIT,
     GET_SHIPPED_NOT_VERIFIED_SHIPMENT,
@@ -24,7 +26,12 @@ const initialState = {
         items: [],
         itemsLoading: false,
         confirmLoading: false,
-        shippedNotVerifiedItems: []
+        shippedNotVerifiedItems: [],
+        download: {
+            isDownloading: false,
+            receievedBytes: undefined,
+            totalBytes: undefined,
+        }
     },
     shipmentSearch: {
         items: [],
@@ -125,6 +132,30 @@ export default function Reducer(state = initialState, action) {
                 }
 
             }
+        case FILE_DOWNLOADED:
+            return {
+                ...state,
+                needToShip: {
+                    ...state.needToShip,
+                    download: {
+                        ...state.needToShip.download,
+                        isDownloading: false
+                    }
+                }
+            }
+        case FILE_DOWNLOADING:
+            return {
+                ...state,
+                needToShip: {
+                    ...state.needToShip,
+                    download: {
+                        isDownloading: true,
+                        receivedBytes: action.payload.receivedBytes,
+                        totalBytes: action.payload.totalBytes
+                    }
+                }
+            }
+
         default:
             return Object.assign({}, state, {
                 needToShip: Object.assign({}, state.needToShip)

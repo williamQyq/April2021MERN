@@ -3,6 +3,7 @@ import * as mongoDB from 'mongodb';
 import { IPickUp, IPickUpTask } from '#rootTS/bin/pdfGenerator/pdfGenerator';
 import wms from "#root/wms/wmsDatabase.js"
 import {
+    BackUpLocationDoc,
     IAwaitingShipment,
     IAwaitingShipmentMap,
     IUpdateShipmentStatusErrorMessage,
@@ -10,7 +11,8 @@ import {
     LocationDoc,
     PickUpItemsDoc
 } from '@types';
-import { GET_NEED_TO_SHIP_ITEMS_FOR_PICKUP_BY_TODAY, GET_UPC_LOCATION_QTY_EXCEPT_WMS } from '#query/aggregate.js';
+import { GET_NEED_TO_SHIP_ITEMS_FOR_PICKUP_BY_TODAY, GET_UPC_BACK_UP_LOCS_FOR_PICK_UP, GET_UPC_LOCATION_QTY_EXCEPT_WMS } from '#query/aggregate.js';
+import getTempLoc from './locationTemp.js'; //bad practice pay attention.
 
 interface IWmsCollection {
     [key: string]: string
@@ -132,25 +134,38 @@ export class WmsDBApis {
                 }, Promise.resolve([]))
 
         //sort pick up tasks on location
+        const tempLocMap: Map<string, string> = getTempLoc();
         const sortedPickUpTasks: IPickUpTask[] = pickUpTasks.sort((first: IPickUpTask, second: IPickUpTask) => {
-            const extractShelveRegex = /^(\d+).*$/
-            const naRegex = /not available/i
-            let firstLoc = first.location;
-            let secondLoc = second.location;
-            let firstShelvesMatch = extractShelveRegex.exec(firstLoc);
-            let secondShelvesMatch = extractShelveRegex.exec(secondLoc);
 
-            let firstShelves: number = firstShelvesMatch == null ? -1 : Number(firstShelvesMatch[1]);
-            let secondShelves: number = secondShelvesMatch == null ? -1 : Number(secondShelvesMatch[1]);
+            // const extractShelveRegex = /^(\d+).*$/
+            // const naRegex = /not available/i
+            // let firstLoc = first.location;
+            // let secondLoc = second.location;
+            // let firstShelvesMatch = extractShelveRegex.exec(firstLoc);
+            // let secondShelvesMatch = extractShelveRegex.exec(secondLoc);
 
-            //could have better method...
-            if (firstShelvesMatch == null)
-                firstShelves = naRegex.exec(firstLoc) == null ? firstShelves : -2
+            // let firstShelves: number = firstShelvesMatch == null ? -1 : Number(firstShelvesMatch[1]);
+            // let secondShelves: number = secondShelvesMatch == null ? -1 : Number(secondShelvesMatch[1]);
 
-            if (secondShelvesMatch == null)
-                secondShelves = naRegex.exec(secondLoc) == null ? secondShelves : -2
+            // //could have better method...
+            // if (firstShelvesMatch == null)
+            //     firstShelves = naRegex.exec(firstLoc) == null ? firstShelves : -2
 
-            return firstShelves - secondShelves;
+            // if (secondShelvesMatch == null)
+            //     secondShelves = naRegex.exec(secondLoc) == null ? secondShelves : -2
+
+            // return firstShelves - secondShelves;
+            let firstLocValue = -1;
+            if (tempLocMap.has(first.location)) {
+                firstLocValue = Number(tempLocMap.get(first.location));
+            }
+            let secondLocValue = -1;
+            if (tempLocMap.has(second.location)) {
+                secondLocValue = Number(tempLocMap.get(second.location));
+            }
+
+            return firstLocValue - secondLocValue;
+
         })
         return sortedPickUpTasks;
     }
@@ -159,6 +174,14 @@ export class WmsDBApis {
         let pickUpTasks: IPickUpTask[] = new Array()
         const collection: mongoDB.Collection = this.db.collection(WmsDBApis._collection.locationInv);
         let upcLocQtyDocs: LocationDoc[] = await collection.aggregate(GET_UPC_LOCATION_QTY_EXCEPT_WMS(upc)).toArray() as LocationDoc[];
+        let backUpLocsDoc: BackUpLocationDoc = (await collection.aggregate(GET_UPC_BACK_UP_LOCS_FOR_PICK_UP(upc)).toArray()).pop() as BackUpLocationDoc;
+
+        let backUpLocs: Array<string | undefined>;
+        if (backUpLocsDoc === undefined) {
+            backUpLocs = [];
+        } else {
+            backUpLocs = backUpLocsDoc.backUpLocs;   //back up location for upc pick up
+        }
 
         //upc location not exists in db
         if (upcLocQtyDocs.length === 0) {
@@ -171,17 +194,17 @@ export class WmsDBApis {
         for (const doc of upcLocQtyDocs) {
             const isQtyOnLocationEnough: boolean = doc.qty >= unProcessedQty ? true : false;
             if (isQtyOnLocationEnough) {
-                pickUpTasks.push({ upc, qty: unProcessedQty, location: doc.loc })
+                pickUpTasks.push({ upc, qty: unProcessedQty, location: doc.loc, backUpLocs })
                 return pickUpTasks;
             }
             //qty on location smaller than request qty, keep pushing to pickUptasks
-            pickUpTasks.push({ upc, qty: doc.qty, location: doc.loc });
+            pickUpTasks.push({ upc, qty: doc.qty, location: doc.loc, backUpLocs });
             unProcessedQty -= doc.qty;
         }
 
         //all location qty not enough
         if (unProcessedQty > 0) {
-            let wmsLocPickUpTask: IPickUpTask = { upc, location: "WMS", qty: unProcessedQty }
+            let wmsLocPickUpTask: IPickUpTask = { upc, location: "WMS", qty: unProcessedQty, backUpLocs: [] }
             pickUpTasks.push(wmsLocPickUpTask);
         }
 

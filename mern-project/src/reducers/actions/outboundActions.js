@@ -5,6 +5,7 @@ import { tokenConfig } from './authActions.js';
 import { clearErrors, returnErrors } from './errorActions.js';
 import {
     setConfirmShipmentLoading,
+    setFileDownloading,
     setInventoryReceivedLoading,
     setSearchShipmentLoading,
     setShipmentItemsLoading
@@ -12,6 +13,7 @@ import {
 import { clearMessages, returnMessages } from './messageActions.js';
 import {
     CONFIRM_SHIPMENT,
+    FILE_DOWNLOADED,
     GET_ERRORS,
     GET_SHIPMENT_ITEMS_WITH_LIMIT,
     GET_SHIPPED_NOT_VERIFIED_SHIPMENT,
@@ -76,32 +78,70 @@ export const downloadShipment = (requiredFields = {}) => (dispatch, getState) =>
 }
 
 export const downloadPickUpListPDF = (requiredFields) => async (dispatch, getState) => {
+
     const dateString = moment().format('MMMM-Do-YYYY-h-mm-a-');
     let fileName = dateString.concat("pickUp.pdf");
     requiredFields.fileName = fileName;
     const token = tokenConfig(getState);
-    return axios.post('/api/wmsV1/shipment/v1/downloadPickUpPDF', { requiredFields }, { ...token, responseType: "blob", headers: { ...token.headers, "Accept": "application/pdf" } })
-        .then((resp) => {
-            // const url = window.URL.createObjectURL(new Blob([resp.data], { type: "application/pdf" }));
-            // const link = document.createElement('a');
-            // link.href = url;
-            // link.setAttribute('download', fileName);
-            // document.body.appendChild(link);
-            // link.click();
-            const pdfBlob = new Blob([resp.data], { type: "application/pdf" })
-            fileDownload(pdfBlob, fileName);
-        })
-        .catch(err => {
-            let errBlob = err.response.data;
-            errBlob.text()
-                .then(content => JSON.parse(content))
-                .then((data => data.msg))
-                .then((msg) => {
-                    dispatch(clearErrors());
-                    dispatch(returnErrors(msg, err.response.status, GET_ERRORS))
-                })
 
-        })
+    //fetch send post download pdf, and dispatch stream byte for downloading process bar
+    return fetch('/api/wmsV1/shipment/v1/downloadPickUpPDF', {
+        method: "POST",
+        ...token,
+        headers: {
+            ...token.headers,
+            'Accept': 'application/pdf'
+        },
+        body: JSON.stringify({ requiredFields })
+    }).then(async (response) => {
+        const stream = response.body.getReader();
+        const chunks = [];
+        let value, done;
+        let receivedBytes = 0;
+        let totalBytes = response.headers.get("content-length");
+        while (!done) {
+            ({ value, done } = await stream.read());
+            if (done) {
+                dispatch({
+                    type: FILE_DOWNLOADED
+                })
+                return chunks;    //readStream done return data chunks.
+            }
+            receivedBytes += value.length;
+            chunks.push(value);
+            dispatch(setFileDownloading(receivedBytes, totalBytes));
+        }
+
+    }).then(dataChunks => {
+        const pdfBlob = new Blob(dataChunks, { type: "application/pdf" })
+        fileDownload(pdfBlob, fileName);
+    })
+
+    /*  @desc axios support responseType 'stream', but xhr adpater that axios used does not have a enum type of stream. Use fetch instead
+    // return axios.post('/api/wmsV1/shipment/v1/downloadPickUpPDF', { requiredFields }, { ...token, responseType: "blob", headers: { ...token.headers, "Accept": "application/pdf" } })
+    //     .then((resp) => {
+    //         /* 
+    //         const url = window.URL.createObjectURL(new Blob([resp.data], { type: "application/pdf" }));
+    //         const link = document.createElement('a');
+    //         link.href = url;
+    //         link.setAttribute('download', fileName);
+    //         document.body.appendChild(link);
+    //         link.click(); 
+    //         */
+    //         const pdfBlob = new Blob([resp.data], { type: "application/pdf" })
+    //         fileDownload(pdfBlob, fileName);
+    //     })
+    //     .catch(err => {
+    //         let errBlob = err.response.data;
+    //         errBlob.text()
+    //             .then(content => JSON.parse(content))
+    //             .then((data => data.msg))
+    //             .then((msg) => {
+    //                 dispatch(clearErrors());
+    //                 dispatch(returnErrors(msg, err.response.status, GET_ERRORS))
+    //             })
+
+    //     }) */
 }
 
 //axios get needtoship documents for inifite scroll

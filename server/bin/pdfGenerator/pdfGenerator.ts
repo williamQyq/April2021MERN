@@ -10,7 +10,9 @@ export interface IPickUpTask {
     upc: string,
     qty: number,
     location: string,
+    backUpLocs?: Array<string | undefined>
 }
+
 export interface IPickUp {
     origTasks: IPickUpTask[],
     upgradeTasks: IPickUpTask[];
