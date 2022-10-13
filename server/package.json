@@ -6,7 +6,7 @@
   "scripts": {
     "client-install": "cd ../mern-project && npm install",
     "server-install": "npm install",
-    "server": "nodemon server.js",
+    "server": "nodemon server.js && npm run watch",
     "client": "cd ../mern-project && npm start",
     "start": "node server.js",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
