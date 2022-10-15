@@ -1,35 +1,40 @@
 # RockyStone ERP - William
 
-## If you found this project is helpful, please star me. Thank you! 💙
+## If you found this project is helpful, please star me. Thank you! 😃
 
 *status*: under development...  
-*latest update: 9/26/2022*  
+*latest update: 10/13/2022*  
 
 author: Yuqing (William) Qiao  
 description: MERN stack project
-
-
+<br/>
+<br/>
 
 ## What is this project for?
 ---
-This project has access to the **Mongo database** of the warehouse, the Amazon Seller Central via **Selling Partner API**, the **Walmart Open I/O**, and google service. Make it easier for small to medium company to maintain track and manage assets. 
-
+This project has access to the **Mongo database** of the warehouse, the Amazon Seller Central via **Selling Partner API**, the **Walmart Open I/O**, and google service. Make it easier for small to medium company to maintain track and manage assets. Typescript and ESNext Module supported.
+<br/>
+<br/>
 ## Getting Started
 ---
 
-## Pre-requested config files - ***not provided***:
+## Important .env, config files - ***not provided***:
 ### 1. **#root/server/.env** contains Mongo URI, WMS credentials, Amazon credentials, and jwtSecret.  
 <br/>
-Environment variables are exported from #root/config.js, Otherwise, you might need to config dotenv.config(/PATH_TO_.ENV) to get access to process.env.KEY
-
+Environment variables are exported from server/config.js. Or you might need to config dotenv.config(/PATH_TO_.ENV) to get access to process.env.KEY.  
+<br/>
+<br/>
 
 Note: You may also store relative sensitive information in config.json. Personally, config.json files might be used to store data particular to the application as a whole.
 
 ### 2. To connect to ***local database*** using ssh(or other existing local services...) 
 
 ```c
+        import mongodb from 'mongodb';
         import tunnel from 'tunnel-ssh';
         import fs from 'fs';
+
+        const {MongoClient} = mongodb;
 
         const config = {
                 agent: <AGENT>, //optional
@@ -44,17 +49,31 @@ Note: You may also store relative sensitive information in config.json. Personal
                 keepAlive: true
         }
 
-        const connect = (config, callback)=>{
+        const connect = new Promise((resolve, _) => {
+                tunnel(sshConfig, async (error, server) => {
 
-                tunnel(config,(error,server)=>{
-                        if (error) {
-                                console.log("SSH connection error: " + error);
+                        const client = new MongoClient(
+                        `mongodb://127.0.0.1:27017/${DB}`,
+                        {
+                                useUnifiedTopology: true,
+                                socketTimeoutMS: 360000,
+                                connectTimeoutMS: 360000,
+                                keepAlive: true
                         }
+                        );
+                        await client.connect();
+                        const db = client.db(DATABASE);
+                        resolve({ db });    //db connection built.
 
-                        //db connection...
-                        //callback()
-                });
-        }
+                        client.on('error', console.error.bind(console, "***mongodb error***"))
+                        client.on('error', (err) => {
+                        console.error(`******mongodb client connection closed**********`)
+                        client.close();
+                        })
+                })
+        });
+
+        const { db } = await connect;
         
 ```
 
@@ -206,6 +225,13 @@ After installed nginx, edit below files.
 ---
 ### Q: Unable to git push to repository using **SourceTree** because of git auth token expired?  
 
+Recommend method:  
+manually clear stored credentials by emptying those files:
+
+        %LocalAppData%\Atlassian\SourceTree\passwd  
+        %LocalAppData%\Atlassian\SourceTree\userhost
+
+Other Option:  
 Reset and regenerate git tokens. Edit project files: ***/.git/config/origin***.  
 Replace the token part of url with regenerated tokens from github developer setting.
 
@@ -406,14 +432,14 @@ const getProductById = async (productId) => {
 - docker cluster
 - PID control algorithm based smart bidding strategy
 
-## New knowledge today 03/01/22:
+## Note 03/01/22:
 
 - elastic search (AWS OpenSearch derived from elasticsearch)
 - Ngram search
 - hexo.io  - npm framework for creating blog page
 - smart bidding Reading Wechat blog: PID Control fundamental and implementation on Python
 
-## New knowledge today 03/02/22:
+## Note 03/02/22:
 ### Working on Bulk Data with MongoDB
 
         collection.find(query).stream()
@@ -427,7 +453,7 @@ const getProductById = async (productId) => {
         // final callback
         });
 
-## New knowledge today 03/22/22:
+## Note 03/22/22:
 1. exports, export default, module.exports  
 To solve the error "The requested module does not provide an export named 'default'", be consistent with your ES6 imports and exports. If a value is exported as a default export, it has to be imported as a default import and if it's exported as a named export, it has to be imported as a named import.
 
@@ -446,5 +472,5 @@ To solve the error "The requested module does not provide an export named 'defau
         import {name} from './path'; //wrong, cannot find module
 ```
 
-## New Update today 09/26/22:
-1. Upgrade to latest React 18 & react-router-dom v6.
+## Note 09/26/22:
+1. Upgraded to latest React 18 & react-router-dom v6.

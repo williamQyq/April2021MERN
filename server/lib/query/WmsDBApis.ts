@@ -63,15 +63,20 @@ export class WmsDBApis {
         const upgradeTasks: IPickUpTask[] = await this.createPickUpTasks(forUpgrade.awaitingShipmentMapping);
 
         const processedTrackings = new Set([...forOrig.processedTrackings, ...forUpgrade.processedTrackings]);
-        console.log(`Orig Map: \n`, forOrig.awaitingShipmentMapping);
-        console.log(`Upgrade Map: \n`, forUpgrade.awaitingShipmentMapping);
 
-        console.log(`special trackings:`, forUpgradeTrackings)
-        console.log(origTasks)
+        const processedTrackingsArr = Array.from(processedTrackings);
+        console.log(`===Orig Map===: \n`, forOrig.awaitingShipmentMapping, `\n\n`);
+        console.log(`===Upgrade Map===: \n`, forUpgrade.awaitingShipmentMapping, `\n\n`);
+
+        console.log(`===special trackings===:`, forUpgradeTrackings, `\n\n`)
+
+        console.log(`===origTasks===:\n`, origTasks, `\n\n`)
+        console.log(`===upgradeTasks===:\n`, upgradeTasks, `\n\n`)
         //pickUpData for return
         let pickUpData: IPickUp = {
             origTasks,
             upgradeTasks,
+            processedTrackings:processedTrackingsArr,
             date: moment().format()
         }
 

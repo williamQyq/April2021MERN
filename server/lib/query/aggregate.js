@@ -7,7 +7,8 @@ export const status = {
         READY: "ready",
         SHIPPED: "shipped",
         BACK_ORDER: "backOrder",
-        EXCEPTION: "exception"
+        EXCEPTION: "exception",
+        UNVERIFIED: "unverified"
     }
 }
 
@@ -149,6 +150,7 @@ export const GET_NEED_TO_SHIP_ITEMS_BY_TODAY = (limit, skip) => [
             'crtTm': 1,
             'crtStmp': 1,
             'status': 1,
+            'operStatus': { $ifNull: ["$operStatus", status.shipment.UNVERIFIED] }
             // 'crtTm': {
             //     '$dateToString': {
             //         // 'format': '%Y-%m-%d T %HH%MM%SS',
@@ -162,9 +164,10 @@ export const GET_NEED_TO_SHIP_ITEMS_BY_TODAY = (limit, skip) => [
     }, {
         '$match': {
             'crtStmp': {
-                '$gte': getTodayDate()
+                '$gte': getPastDateInUnix(7)    //one week ago in unix number
             },
-            'status': { "$ne": "shipped" }
+            'status': { "$ne": status.shipment.SHIPPED },
+            'operStatus': { "$eq": status.shipment.UNVERIFIED }
         }
     }, {
         '$sort': {
@@ -256,7 +259,7 @@ export const COUNT_SHIPMENT_BY_TODAY = () =>
                                 '$gte': getTodayDate()
                             },
                             'operStatus': {
-                                '$eq': 'substantiated'
+                                '$eq': status.shipment.SUBSTANTIATED
                             }
                         }
                     }, {
@@ -284,8 +287,11 @@ export const COUNT_SHIPMENT_BY_TODAY = () =>
             }
         }
     ]
-//@params dateMax, dateMin: Unix date
-export const GET_UNVERIFIED_SHIPMENT = (startDateUnix) => [
+
+/* 
+    @desc get shipped docs for comfirmation to deduct locInv qty
+ */
+export const GET_UNVERIFIED_SHIPMENT = [
     {
         '$project': {
             '_id': 0,
@@ -298,18 +304,18 @@ export const GET_UNVERIFIED_SHIPMENT = (startDateUnix) => [
             'mdfTm': 1,
             'mdfStmp': 1,
             'status': 1,
-            'operStatus': { $ifNull: ["$operStatus", "unverified"] }
+            'operStatus': { $ifNull: ["$operStatus", status.shipment.UNVERIFIED] }
         }
     }, {
         '$match': {
             'mdfStmp': {
-                '$gte': startDateUnix,
+                '$gte': 1660622400000, //@Warning: 2022-08-16 00:00:00 since then, get all unsubstantiated shipment
                 // '$lt': dateMax
             },
             'status': { '$eq': "shipped" },
             '$or': [
-                { 'operStatus': { "$eq": "unverified" } },
-                { 'operStatus': { "$ne": "substantiated" } }
+                { 'operStatus': { "$eq": status.shipment.UNVERIFIED } },
+                { 'operStatus': { "$ne": status.shipment.SUBSTANTIATED } }
             ]
         }
     }, {
@@ -691,19 +697,17 @@ export const GET_NEED_TO_SHIP_ITEMS_FOR_PICKUP_BY_TODAY = [
             'crtTm': 1,
             'crtStmp': 1,
             'status': 1,
-            'operStatus': 1,
+            'operStatus': { $ifNull: ["$operStatus", status.shipment.UNVERIFIED] }
         }
     }, {
         '$match': {
             'crtStmp': {
-                '$gte': getTodayDate()
+                '$gte': getPastDateInUnix(7)    //all non pick up created in one week
             },
             'status': {
                 '$ne': 'shipped'
             },
-            'operStatus': {
-                '$exists': false
-            }
+            'operStatus': { "$eq": status.shipment.UNVERIFIED }
         }
     }, {
         '$sort': {

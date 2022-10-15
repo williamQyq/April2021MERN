@@ -16,6 +16,7 @@ export interface IPickUpTask {
 export interface IPickUp {
     origTasks: IPickUpTask[],
     upgradeTasks: IPickUpTask[];
+    processedTrackings: string[];
     date: string
 }
 export class PdfGenerator {

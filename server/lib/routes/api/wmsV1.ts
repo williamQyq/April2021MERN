@@ -27,7 +27,7 @@ router.post('/shipment/v1/downloadPickUpPDF', auth, (req: Request, res: Response
             const pdfGenerator = new PdfGenerator();
             pdfGenerator.generatePickUpPDF(fileName, pickUpData)
                 .then(savedFilePath => {
-                    let file: ReadStream = fs.createReadStream(savedFilePath!,{highWaterMark:64*1024});
+                    let file: ReadStream = fs.createReadStream(savedFilePath!, { highWaterMark: 64 * 1024 });
                     let stat: Stats = fs.statSync(savedFilePath!);
                     res.setHeader(
                         "Content-Type",
@@ -43,10 +43,10 @@ router.post('/shipment/v1/downloadPickUpPDF', auth, (req: Request, res: Response
                     );
                     file.pipe(res); //res end() event being callled automatically.
                 });
+            console.log(`processedTrackings: \n`, processedTrackings, `\n\n`)
             return processedTrackings;
         })
         // .then(processedTrackings => wms.updateAllShipmentStatus(processedTrackings, shipmentStatus.PICK_UP_CREATED))
-        // .then(result => console.log(result))
         .catch(err => {
             console.error(err)
             let errorMsg: IResponseErrorMessage = { msg: "Create PickUp PDF Failed.", reason: err.message };

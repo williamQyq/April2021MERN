@@ -321,7 +321,7 @@ export class WMSDatabaseApis {
     //@desc: get shipped status and operStatus unverified shipment docs
     async getShippedNotVerifiedShipment(startDateUnix) {
         const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
-        let unverifiedShipment = await collection.aggregate(GET_UNVERIFIED_SHIPMENT(startDateUnix)).toArray();
+        let unverifiedShipment = await collection.aggregate(GET_UNVERIFIED_SHIPMENT).toArray();
         return unverifiedShipment;
     }
     async updateSellerInvQtyByUpcAndOrgNm(upc, orgNm, qty) {

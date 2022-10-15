@@ -24,6 +24,10 @@
                 min-height: 100%;
                 page-break-after: always;
             }
+
+            .trackings-list {
+                columns: 100px 3;
+            }
         }
 
         footer {
@@ -43,6 +47,7 @@
         }
 
         .tr {
+            margin-top: 18px;
             page-break-inside: avoid;
             page-break-after: auto;
         }
@@ -63,6 +68,7 @@
             font-size: 8px;
         }
     </style>
+    {{#if upgradeTasks.length}}
     <div class="container">
         <table class="table">
             <thead>
@@ -70,9 +76,50 @@
                     Pick Up -- For Upgrade
                 </h2>
                 <h6 class="text-center">{{date}}</h6>
-                <h6 class="text-center notice">current pick up routes not properly optimized, implementd partition number instead. </h6>
+                <h6 class="text-center notice">current pick up routes not properly optimized, implementd partition
+                    number instead. </h6>
                 <tr>
-                    <th>UPC</th>
+                    <th>UPC Upgrade</th>
+                    <th>Qty</th>
+                    <th>Location</th>
+                    <th>Back Up Loc</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each upgradeTasks as | task |}}
+                <tr>
+                    <td>{{task.upc}}</td>
+                    <td>{{task.qty}}</td>
+                    <td>{{task.location}}</td>
+                    <td>
+                        <ul>
+                            {{#each task.backUpLocs}}
+                            <li>
+                                <p class="middle">{{this}}</p>
+                            </li>
+                            {{/each}}
+                        </ul>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        <footer>
+            <p class="text-center tiny">W @copyright 2022</p>
+        </footer>
+    </div>
+    {{/if}}
+    {{#if origTasks.length}}
+    <div class="container">
+        <h2 class="text-center title">
+            Pick Up -- For Orig
+        </h2>
+        <h6 class="text-center">{{date}}</h6>
+        <h6 class="text-center notice">pick up routes not optimized</h6>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>UPC Orig</th>
                     <th>Qty</th>
                     <th>Location</th>
                     <th>Back Up Loc</th>
@@ -101,40 +148,22 @@
             <p class="text-center tiny">W @copyright 2022</p>
         </footer>
     </div>
+    {{/if}}
     <div class="container">
         <h2 class="text-center title">
-            Pick Up -- For Orig
+            Pick Up -- Processed Trackings
         </h2>
         <h6 class="text-center">{{date}}</h6>
-        <h6 class="text-center notice">pick up routes not optimized</h6>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>UPC</th>
-                    <th>Qty</th>
-                    <th>Location</th>
-                    <th>Back Up Loc</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#each upgradeTasks as | task |}}
-                <tr>
-                    <td>{{task.upc}}</td>
-                    <td>{{task.qty}}</td>
-                    <td>{{task.location}}</td>
-                    <td>
-                        <ul>
-                            {{#each task.backUpLocs}}
-                            <li>
-                                <p class="middle">{{this}}</p>
-                            </li>
-                            {{/each}}
-                        </ul>
-                    </td>
-                </tr>
-                {{/each}}
-            </tbody>
-        </table>
+
+
+        <ul class="trackings-list">
+            {{#each processedTrackings}}
+            <li>
+                <p class="middle">{{this}}</p>
+            </li>
+            {{/each}}
+        </ul>
+
         <footer>
             <p class="text-center tiny">W @copyright 2022</p>
         </footer>

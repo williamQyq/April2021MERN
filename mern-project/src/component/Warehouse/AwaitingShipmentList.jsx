@@ -19,6 +19,7 @@ const AwaitingShipmentList = ({ shipmentInfo }) => {
 
     const docLimits = 5;
 
+    //get limit number of new Awaiting shipment docs
     const updateItems = useCallback(() => {
         dispatch(getNeedToShipFromShipmentWithLimit(docLimits, skip))
         setSkip(skip + docLimits)
