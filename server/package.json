@@ -15,7 +15,7 @@
     "tsc": "tsc",
     "watch": "tsc --watch",
     "clean": "rm -rf node_modules package-lock.json",
-    "rmPdf":"cd ./bin/pdfGenerator/pdf && rm ./*"
+    "rmPdf": "cd ./bin/pdfGenerator/pdf && rm ./*"
   },
   "imports": {
     "#root/*": "./*",

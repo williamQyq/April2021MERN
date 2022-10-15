@@ -21,8 +21,8 @@ const AwaitingShipmentList = ({ shipmentInfo }) => {
 
     //get limit number of new Awaiting shipment docs
     const updateItems = useCallback(() => {
-        dispatch(getNeedToShipFromShipmentWithLimit(docLimits, skip))
-        setSkip(skip + docLimits)
+        dispatch(getNeedToShipFromShipmentWithLimit(docLimits, skip));
+        setSkip(skip + docLimits);
         if (initLoading === true)
             setInitLoading(false);
     }, [dispatch, docLimits, skip, initLoading])
@@ -34,7 +34,7 @@ const AwaitingShipmentList = ({ shipmentInfo }) => {
         setData([...data, ...items])
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [updateItems, skip, items])
+    }, [data, items])
 
 
 

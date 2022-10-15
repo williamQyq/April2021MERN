@@ -89,6 +89,14 @@ Using openssl
 To extract public key from the generated private key:
 - $openssl rsa -in my_rsa_key_pair.pem -pubout > mykey.pub
 
+**Generate EC2 Key pair**:  
+1. create new key pair .pem
+2. change file read permision  
+   
+        Icacls "william-dev-linux.pem" /Inheritance:r
+        Icacls "william-dev-linux.pem" /Grant:r "%Username%":"(R)"
+3. get public key from .pem: **ssh-keygen -y -f "C:\Users\h2s\Desktop\AWS EC2.pem"**
+4. add public key to EC2 from AWS console: ***sudo nano .ssh/authorized_keys***
 ## To build
 ---
 

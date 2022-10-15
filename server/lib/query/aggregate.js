@@ -177,8 +177,7 @@ export const GET_NEED_TO_SHIP_ITEMS_BY_TODAY = (limit, skip) => [
         '$skip': skip
     }, {
         '$limit': limit
-    },
-
+    }
 ]
 
 export const COUNT_NEED_TO_SHIP_ITEMS_BY_TODAY = [
@@ -287,6 +286,80 @@ export const COUNT_SHIPMENT_BY_TODAY = () =>
             }
         }
     ]
+
+/* 
+@desc count created label, non created label
+*/
+export const COUNT_CREATED_PICKUP_LABEL = [
+    {
+        '$facet': {
+            'total': [
+                {
+                    '$match': {
+                        'orderID': {
+                            '$exists': true
+                        },
+                        'mdfStmp': {
+                            '$gte': getPastDateInUnix(7)
+                        }
+                    }
+                }, {
+                    '$count': 'total'
+                }
+            ],
+            'nonCreated': [
+                {
+                    '$match': {
+                        'orderID': {
+                            '$exists': true
+                        },
+                        'mdfStmp': {
+                            '$gte': getPastDateInUnix(7)
+                        },
+                        'operStatus': { '$exists': false }
+                    }
+                }, {
+                    '$count': 'nonCreated'
+                }
+            ],
+            'createdNonSubstantiated': [
+                {
+                    '$match': {
+                        'orderID': {
+                            '$exists': true
+                        },
+                        'mdfStmp': {
+                            '$gte': getTodayDate()
+                        },
+                        'operStatus': {
+                            '$eq': status.shipment.PICK_UP_CREATED
+                        }
+                    }
+                }, {
+                    '$count': 'createdNonSubstantiated'
+                }
+            ]
+        }
+    }, {
+        '$project': {
+            'total': {
+                '$arrayElemAt': [
+                    '$total.total', 0
+                ]
+            },
+            'nonCreated': {
+                '$arrayElemAt': [
+                    '$nonCreated.nonCreated', 0
+                ]
+            },
+            'createdNonSubstantiated': {
+                '$arrayElemAt': [
+                    '$createdNonSubstantiated.createdNonSubstantiated', 0
+                ]
+            }
+        }
+    }
+]
 
 /* 
     @desc get shipped docs for comfirmation to deduct locInv qty
