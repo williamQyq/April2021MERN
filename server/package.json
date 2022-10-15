@@ -14,7 +14,8 @@
     "deploy": "cd ../deploy && node cmd.js",
     "tsc": "tsc",
     "watch": "tsc --watch",
-    "clean": "rm -rf node_modules package-lock.json"
+    "clean": "rm -rf node_modules package-lock.json",
+    "rmPdf":"cd ./bin/pdfGenerator/pdf && rm ./*"
   },
   "imports": {
     "#root/*": "./*",

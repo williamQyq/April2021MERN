@@ -17,7 +17,6 @@ class NeedToShip extends React.Component {
         super(props);
         this.state = {
             initDownloading: false,
-            isDownloading: this.props.isDownloading,
             shipmentInfo: {
                 pending: 0,
                 total: 0,
@@ -45,25 +44,23 @@ class NeedToShip extends React.Component {
         this.setState({ initDownloading: true });
         this.props.downloadPickUpListPDF(requiredFields);
     }
-    getDownloadPercent = (downloadStatus) => {
-        const { receivedBytes, totalBytes } = downloadStatus;
+    getDownloadPercent = (isDownloading, receivedBytes, totalBytes) => {
         console.log(`received: `, receivedBytes);
         let curPercent = totalBytes !== undefined ?
             (receivedBytes / totalBytes).toFixed(2) * 100
             : 0;
 
-        if (curPercent === 100) {
+        if (curPercent === 100 && isDownloading === false) {
             setTimeout(() => {
                 this.setState({ initDownloading: false });
             }, 1000);
         }
-        console.log(curPercent)
         return curPercent;
     }
 
     render() {
-        const { shipmentInfo, initDownloading, isDownloading } = this.state;
-        const { downloadStatus } = this.props;
+        const { shipmentInfo, initDownloading } = this.state;
+        const { isDownloading, receivedBytes, totalBytes } = this.props;
         return (
             <>
                 <ContentHeader title="NeedToShip" />
@@ -75,6 +72,7 @@ class NeedToShip extends React.Component {
                     </Col>
                     <Col xs={14} sm={12} md={10} lg={8} xl={6}>
                         <Button
+                            style={{width:"200px"}}
                             type="primary"
                             loading={isDownloading}
                             icon={<DownloadOutlined />}
@@ -85,7 +83,8 @@ class NeedToShip extends React.Component {
                         {(
                             initDownloading ?
                                 <Progress
-                                    percent={this.getDownloadPercent(downloadStatus)}
+                                    style={{width:"200px"}}
+                                    percent={this.getDownloadPercent(isDownloading, receivedBytes, totalBytes)}
                                     size="small"
                                     showInfo={false}
                                     success={{ percent: 100, strokeColor: "#52c41a" }}
@@ -103,9 +102,14 @@ NeedToShip.prototypes = {
     getNeedToShipPendingAndTotalCount: PropTypes.func.isRequired,
     downloadPickUpListPDF: PropTypes.func.isRequired
 }
-const mapStateToProps = state => ({
-    downloadStatus: state.warehouse.needToShip.download
-})
+const mapStateToProps = state => {
+    const { isDownloading, receivedBytes, totalBytes } = state.warehouse.needToShip.download;
+    return ({
+        isDownloading,
+        receivedBytes,
+        totalBytes
+    })
+}
 
 export default connect(mapStateToProps, {
     getNeedToShipPendingAndTotalCount,

@@ -102,9 +102,6 @@ export const downloadPickUpListPDF = (requiredFields) => async (dispatch, getSta
         while (!done) {
             ({ value, done } = await stream.read());
             if (done) {
-                dispatch({
-                    type: FILE_DOWNLOADED
-                })
                 return chunks;    //readStream done return data chunks.
             }
             receivedBytes += value.length;
@@ -114,7 +111,16 @@ export const downloadPickUpListPDF = (requiredFields) => async (dispatch, getSta
 
     }).then(dataChunks => {
         const pdfBlob = new Blob(dataChunks, { type: "application/pdf" })
-        fileDownload(pdfBlob, fileName);
+        fileDownload(pdfBlob, fileName);    //pdf downloaded
+        dispatch({
+            type: FILE_DOWNLOADED
+        })
+    }).catch(err => {
+        dispatch({
+            type: FILE_DOWNLOADED
+        })
+        dispatch(clearErrors());
+        dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS));
     })
 
     /*  @desc axios support responseType 'stream', but xhr adpater that axios used does not have a enum type of stream. Use fetch instead
