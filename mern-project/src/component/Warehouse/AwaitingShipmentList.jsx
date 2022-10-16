@@ -5,15 +5,15 @@ import ShipmentStatusBoard from './ShipmentStatusBoard.jsx';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    getNeedToShipFromShipmentWithLimit,
+    getNeedToShipFromShipmentWithLimit
 } from 'reducers/actions/outboundActions.js';
 
 const AwaitingShipmentList = ({ shipmentInfo }) => {
-    const { pending, total } = shipmentInfo;
+    const { pickUpPending } = shipmentInfo;
+    console.log(shipmentInfo)
     const dispatch = useDispatch();
     const { items, itemsLoading } = useSelector((state) => state.warehouse.needToShip);
 
-    const [initLoading, setInitLoading] = useState(true);
     const [data, setData] = useState([]);
     const [skip, setSkip] = useState(0);
 
@@ -23,23 +23,36 @@ const AwaitingShipmentList = ({ shipmentInfo }) => {
     const updateItems = useCallback(() => {
         dispatch(getNeedToShipFromShipmentWithLimit(docLimits, skip));
         setSkip(skip + docLimits);
-        if (initLoading === true)
-            setInitLoading(false);
-    }, [dispatch, docLimits, skip, initLoading])
+    }, [dispatch, docLimits, skip])
 
+
+    //avoid duplicate request append to data state
     useEffect(() => {
-        if (skip === 0) {
-            updateItems();
-        }
-        setData([...data, ...items])
+        let lastDataDoc = data.at(-1);
+        let lastNewDataDoc = items.at(-1);
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        //init new data to data state
+        if (lastDataDoc === undefined && lastNewDataDoc) {
+            setData([...items]);
+            return;
+        }
+
+        //compare if last data object orderID and the last new data object orderID are same.
+        if (lastNewDataDoc) {
+            let compare = data.at(-1).orderID === items.at(-1).orderID ? true : false
+            if (!compare)
+                setData([...data, ...items]);
+        }
     }, [data, items])
 
+    useEffect(() => {
+        updateItems();
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     const loadMore = () => {
-        if (initLoading || itemsLoading) {
+        if (itemsLoading) {
             return;
         }
         updateItems();
@@ -47,7 +60,7 @@ const AwaitingShipmentList = ({ shipmentInfo }) => {
 
     return (
         <div style={{ maxWidth: "80%", margin: "auto" }}>
-            <ShipmentStatusBoard shipmentInfo={{ pending, total }} />
+            <ShipmentStatusBoard shipmentInfo={shipmentInfo} />
             <div
                 id='scrollableDiv'
                 style={{
@@ -60,7 +73,7 @@ const AwaitingShipmentList = ({ shipmentInfo }) => {
                 <InfiniteScroll
                     dataLength={data.length}
                     next={loadMore}
-                    hasMore={data.length !== 0 && data.length < pending}
+                    hasMore={data.length !== 0 && data.length < pickUpPending}
                     loader={
                         <Skeleton
                             paragraph={{

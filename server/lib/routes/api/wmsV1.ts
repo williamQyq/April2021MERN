@@ -7,7 +7,6 @@ import { shipmentStatus, WmsDBApis } from "#rootTS/lib/query/WmsDBApis.js";
 import {
     IReqBodyShipmentDownloadPickUpPDF,
     IResponseErrorMessage,
-    IUpdateShipmentStatusErrorMessage,
 } from "@types";
 import { GSheetNeedToShip } from "#rootTS/bin/gsheet/gsheet.js";
 
@@ -53,6 +52,19 @@ router.post('/shipment/v1/downloadPickUpPDF', auth, (req: Request, res: Response
             res.status(400).json(errorMsg);
         })
 
+})
+
+router.get('/shipment/v1/getPickUpPendingAndTotal', auth, (req: Request, res: Response) => {
+    const wms = new WmsDBApis();
+    wms.countNeedToShipPickUpFromShipment()
+        .then(pickUpCount => {
+            res.json(pickUpCount)
+        })
+        .catch(err => {
+            console.error(err)
+            let errorMsg: IResponseErrorMessage = { msg: "Count PickUp Failed.", reason: err.message };
+            res.status(400).json(errorMsg);
+        })
 })
 
 export default router;

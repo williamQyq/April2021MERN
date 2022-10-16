@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 import { NeedToShipMenu } from 'component/Warehouse/Menus.jsx';
 import {
     downloadPickUpListPDF,
-    getNeedToShipPendingAndTotalCount
+    getNeedToShipPendingAndTotalCount,
+    getNeedToShipPickUpPendingAndTotalCount
 } from 'reducers/actions/outboundActions.js';
 import AwaitingShipmentList from './AwaitingShipmentList.jsx';
 import { ContentHeader, SubContentHeader } from 'component/utility/Layout.jsx';
@@ -20,15 +21,22 @@ class NeedToShip extends React.Component {
             shipmentInfo: {
                 pending: 0,
                 total: 0,
-                confirm: 0
+                confirm: 0,
+                pickUpPending: 0,
+                pickUpCreated: 0
             }
         };
     }
 
     componentDidMount() {
         let orgNm = "M" //@Warning: get shipment count on orgNm no code yet
-        this.props.getNeedToShipPendingAndTotalCount(orgNm)  //set pending, total, and confirm count
-            .then(shipmentInfo => { this.setState({ shipmentInfo }); })
+
+        //set pending, total, pickUpPending and confirm count
+        this.props.getNeedToShipPendingAndTotalCount(orgNm).then(shipmentInfo => {
+            this.props.getNeedToShipPickUpPendingAndTotalCount().then(pickUpCount => {
+                this.setState({ shipmentInfo: { ...shipmentInfo, ...pickUpCount } })
+            })
+        })
     }
 
     componentWillUnmount() {
@@ -72,7 +80,7 @@ class NeedToShip extends React.Component {
                     </Col>
                     <Col xs={14} sm={12} md={10} lg={8} xl={6}>
                         <Button
-                            style={{width:"200px"}}
+                            style={{ width: "200px" }}
                             type="primary"
                             loading={isDownloading}
                             icon={<DownloadOutlined />}
@@ -83,7 +91,7 @@ class NeedToShip extends React.Component {
                         {(
                             initDownloading ?
                                 <Progress
-                                    style={{width:"200px"}}
+                                    style={{ width: "200px" }}
                                     percent={this.getDownloadPercent(isDownloading, receivedBytes, totalBytes)}
                                     size="small"
                                     showInfo={false}
@@ -100,6 +108,7 @@ class NeedToShip extends React.Component {
 }
 NeedToShip.prototypes = {
     getNeedToShipPendingAndTotalCount: PropTypes.func.isRequired,
+    getNeedToShipPickUpPendingAndTotalCount: PropTypes.func.isRequired,
     downloadPickUpListPDF: PropTypes.func.isRequired
 }
 const mapStateToProps = state => {
@@ -110,8 +119,8 @@ const mapStateToProps = state => {
         totalBytes
     })
 }
-
 export default connect(mapStateToProps, {
     getNeedToShipPendingAndTotalCount,
+    getNeedToShipPickUpPendingAndTotalCount,
     downloadPickUpListPDF
 })(NeedToShip);

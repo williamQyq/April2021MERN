@@ -3,20 +3,21 @@ import { useMemo } from 'react';
 const { Text } = Typography;
 
 
-const ShipmentStatusBoard = (props) => {
-    const { pending, total } = props.shipmentInfo;
-
+const ShipmentStatusBoard = ({ shipmentInfo }) => {
+    const { pending, total, pickUpPending, pickUpCreated } = shipmentInfo;
     const getFinishedPercent = (nume, denom) => {
         //if no shipment today
         if (denom === undefined || denom <= 0) {
             return 0;
         }
-
-        return Math.round(((denom - nume) / denom).toFixed(2) * 100)
+        let scale = denom/100;
+        
+        return Math.round(((denom - nume*denom/100) / denom).toFixed(2) * 100)
 
     }
     const shipmentFulfilledPercentByToday = useMemo(() => getFinishedPercent(pending, total), [pending, total]);
-
+    const pickUpCreatedPercent = useMemo(() => getFinishedPercent(pickUpPending, pickUpCreated), [pickUpPending, pickUpCreated]);
+    console.log(pickUpCreatedPercent)
     return (
         <>
             <Row gutter={[8, 8]} justify="start">
@@ -30,11 +31,11 @@ const ShipmentStatusBoard = (props) => {
                 </Col>
             </Row >
             <Row gutter={[8, 8]} justify="start">
-                <Col span={6}><Progress showInfo={false} percent={shipmentFulfilledPercentByToday}></Progress></Col>
+                <Col span={6}><Progress showInfo={false} percent={pickUpCreatedPercent}></Progress></Col>
                 <Col >
                     <Text strong={true} italic={true}>
                         {
-                            `${pending > 0 ? pending : 0} pending Pick Up Label`
+                            `${pickUpPending > 0 ? pickUpPending : 0} pending Pick Up Label`
                         }
                     </Text>
                 </Col>

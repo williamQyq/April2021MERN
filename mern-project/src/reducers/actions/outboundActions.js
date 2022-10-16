@@ -185,9 +185,27 @@ export const getNeedToShipPendingAndTotalCount = (orgNm) => async (dispatch, get
             orgNm
         }
     })
-        .then(res => res.data);
+        .then(res => res.data)
+        .catch(err => {
+            dispatch(clearErrors());
+            dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS))
+        })
 
     return shipmentCountInfo;
+}
+
+export const getNeedToShipPickUpPendingAndTotalCount = () => async (dispatch, getState) => {
+    let pickUpCount = await axios.get(
+        `/api/wmsV1/shipment/v1/getPickUpPendingAndTotal`, {
+        ...tokenConfig(getState)
+    })
+        .then(res => res.data)
+        .catch(err => {
+            dispatch(clearErrors());
+            dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS))
+        })
+
+    return pickUpCount;
 }
 
 

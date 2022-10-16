@@ -293,21 +293,7 @@ export const COUNT_SHIPMENT_BY_TODAY = () =>
 export const COUNT_CREATED_PICKUP_LABEL = [
     {
         '$facet': {
-            'total': [
-                {
-                    '$match': {
-                        'orderID': {
-                            '$exists': true
-                        },
-                        'mdfStmp': {
-                            '$gte': getPastDateInUnix(7)
-                        }
-                    }
-                }, {
-                    '$count': 'total'
-                }
-            ],
-            'nonCreated': [
+            'pickUpPending': [
                 {
                     '$match': {
                         'orderID': {
@@ -319,42 +305,39 @@ export const COUNT_CREATED_PICKUP_LABEL = [
                         'operStatus': { '$exists': false }
                     }
                 }, {
-                    '$count': 'nonCreated'
+                    '$count': 'pickUpPending'
                 }
             ],
-            'createdNonSubstantiated': [
+            'pickUpCreated': [
                 {
                     '$match': {
                         'orderID': {
                             '$exists': true
                         },
                         'mdfStmp': {
-                            '$gte': getTodayDate()
+                            '$gte': getPastDateInUnix(7)
                         },
-                        'operStatus': {
-                            '$eq': status.shipment.PICK_UP_CREATED
-                        }
+                        "$or":
+                            [
+                                { 'operStatus': { '$eq': status.shipment.PICK_UP_CREATED } },
+                                { 'operStatus': { '$eq': status.shipment.SUBSTANTIATED } }
+                            ]
                     }
                 }, {
-                    '$count': 'createdNonSubstantiated'
+                    '$count': 'pickUpCreated'
                 }
             ]
         }
     }, {
         '$project': {
-            'total': {
+            'pickUpPending': {
                 '$arrayElemAt': [
-                    '$total.total', 0
+                    '$pickUpPending.pickUpPending', 0
                 ]
             },
-            'nonCreated': {
+            'pickUpCreated': {
                 '$arrayElemAt': [
-                    '$nonCreated.nonCreated', 0
-                ]
-            },
-            'createdNonSubstantiated': {
-                '$arrayElemAt': [
-                    '$createdNonSubstantiated.createdNonSubstantiated', 0
+                    '$pickUpCreated.pickUpCreated', 0
                 ]
             }
         }

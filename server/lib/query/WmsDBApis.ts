@@ -6,13 +6,14 @@ import {
     BackUpLocationDoc,
     IAwaitingShipment,
     IAwaitingShipmentMap,
+    IPickUpCountDoc,
     IUpdateShipmentStatusErrorMessage,
     IUpdateShipmentStatusResponse,
     LocationDoc,
     PickUpItemsDoc
 } from '@types';
-import { GET_NEED_TO_SHIP_ITEMS_FOR_PICKUP_BY_TODAY, GET_UPC_BACK_UP_LOCS_FOR_PICK_UP, GET_UPC_LOCATION_QTY_EXCEPT_WMS } from '#query/aggregate.js';
-import getTempLoc from './locationTemp.js'; //bad practice pay attention.
+import { COUNT_CREATED_PICKUP_LABEL, GET_NEED_TO_SHIP_ITEMS_FOR_PICKUP_BY_TODAY, GET_UPC_BACK_UP_LOCS_FOR_PICK_UP, GET_UPC_LOCATION_QTY_EXCEPT_WMS } from '#query/aggregate.js';
+import getTempLoc from '#root/lib/query/locationTemp.js'; //bad practice pay attention.
 
 interface IWmsCollection {
     [key: string]: string
@@ -76,7 +77,7 @@ export class WmsDBApis {
         let pickUpData: IPickUp = {
             origTasks,
             upgradeTasks,
-            processedTrackings:processedTrackingsArr,
+            processedTrackings: processedTrackingsArr,
             date: moment().format()
         }
 
@@ -139,7 +140,7 @@ export class WmsDBApis {
                 }, Promise.resolve([]))
 
         //sort pick up tasks on location
-        const tempLocMap: Map<string, string> = getTempLoc();
+        const tempLocMap: Map<string, string> = getTempLoc();   //Extremely bad practice, but requested by the leader, bfs or dfs is suggested.
         const sortedPickUpTasks: IPickUpTask[] = pickUpTasks.sort((first: IPickUpTask, second: IPickUpTask) => {
 
             // const extractShelveRegex = /^(\d+).*$/
@@ -282,6 +283,13 @@ export class WmsDBApis {
                     })
                 )
         )
+    }
+
+    async countNeedToShipPickUpFromShipment(): Promise<IPickUpCountDoc> {
+        const collection = this.db.collection(WmsDBApis.Collection.Shipment)
+        let pickUpCountDoc = (await collection.aggregate(COUNT_CREATED_PICKUP_LABEL).toArray()).at(0) as IPickUpCountDoc;
+
+        return pickUpCountDoc;
     }
 
 }
