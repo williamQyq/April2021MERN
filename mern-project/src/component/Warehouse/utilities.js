@@ -108,40 +108,42 @@ export const searchShipmentColumns = [
         title: "Qty",
         dataIndex: "qty",
         editable: false,
-        width: "5%"
     },
     {
         title: "SN",
         dataIndex: "sn",
-        searchable: true
+        searchable: true,
     },
     {
         title: "Create Time",
         dataIndex: "crtTm",
         searchable: true,
         sorter: (a, b) => a.crtStmp - b.crtStmp,
+        responsive: ["xxl"]
     },
     {
         title: "Shipped Time",
         dataIndex: "mdfTm",
         searchable: true,
         sorter: (a, b) => a.mdfStmp - b.mdfStmp,
+        responsive: ["xxl"]
     },
     {
         title: "Orgnization",
         dataIndex: "orgNm",
         searchable: true,
-        width: "8%"
     },
     {
         title: "Ship By",
         dataIndex: "shipBy",
-        searchable: true
+        searchable: true,
+        responsive: ["xxl"]
     },
     {
         title: "status",
         dataIndex: "status",
-        searchable: true
+        searchable: true,
+        responsive:["xxl"]
     }
 ]
 
@@ -246,6 +248,6 @@ export const searchSellerInventoryColumns = [
         dataIndex: "mdfTm",
         searchable: true,
         sorter: (a, b) => a.mdfStmp - b.mdfStmp,
-        align: 'center'
+        align: 'center',
     },
 ]

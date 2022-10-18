@@ -10,14 +10,13 @@ const ShipmentStatusBoard = ({ shipmentInfo }) => {
         if (denom === undefined || denom <= 0) {
             return 0;
         }
-        let scale = denom/100;
-        
-        return Math.round(((denom - nume*denom/100) / denom).toFixed(2) * 100)
+
+        return Math.round(((denom - nume ) / denom).toFixed(2) * 100)
 
     }
     const shipmentFulfilledPercentByToday = useMemo(() => getFinishedPercent(pending, total), [pending, total]);
     const pickUpCreatedPercent = useMemo(() => getFinishedPercent(pickUpPending, pickUpCreated), [pickUpPending, pickUpCreated]);
-    console.log(pickUpCreatedPercent)
+
     return (
         <>
             <Row gutter={[8, 8]} justify="start">

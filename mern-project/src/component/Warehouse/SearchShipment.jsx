@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Form } from 'antd';
+import { Col, Form, Row } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import DrawerSearch from 'component/utility/DrawerSearch.jsx';
 import FormTable from 'component/utility/FormTable.jsx';
@@ -34,7 +34,10 @@ const SearchShipment = () => {
     const [form] = Form.useForm();
     const [visible, setVisible] = useState(false);
     const [columns, setColumns] = useState(searchSellerInventoryColumns);
-    const [style, setStyle] = useState({ maxWidth: "60%" });
+    const [style, setStyle] = useState({
+        col1: { xl: 16, xxl: 16 },
+        col2: { xl: 2, xxl: 4 }
+    });
     const { items, category, itemsLoading } = useSelector((state) => state.warehouse.shipmentSearch)
     const [formValues, setFormValues] = useState(null);
 
@@ -84,19 +87,31 @@ const SearchShipment = () => {
         switch (category) {
             case SEARCH_OUTBOUND_SHIPMENT:
                 setColumns(searchShipmentColumns);
-                setStyle({ maxWidth: "100%" })
+                setStyle({
+                    col2: { xs: 2, xl: 2, xxl: 0 },
+                    col1: { xs: 18, xl: 18, xxl: 24 },
+                })
                 break;
             case SEARCH_RECEIVAL_SHIPMENT:
                 setColumns(searchReceivedShipmentColumns);
-                setStyle({ maxWidth: "100%" })
+                setStyle({
+                    col2: { xs: 2, xl: 2, xxl: 0 },
+                    col1: { xs: 18, xl: 18, xxl: 24 },
+                })
                 break;
             case SEARCH_LOCATION_INVENTORY:
                 setColumns(searchLocationInventoryColumns);
-                setStyle({ maxWidth: "60%" })
+                setStyle({
+                    ...style,
+                    col1: { xs: 16, xl: 16, xxl: 16 },
+                })
                 break;
             case SEARCH_SELLER_INVENTORY:
                 setColumns(searchSellerInventoryColumns);
-                setStyle({ maxWidth: "60%" });
+                setStyle({
+                    ...style,
+                    col1: { xs: 16, xl: 16, xxl: 16 },
+                })
                 break;
             default:
                 return;
@@ -133,30 +148,32 @@ const SearchShipment = () => {
                 }
             })
     }
-
     return (
-        // <div style={{ width: "100%", display: "flex", alignItem: "center" }}>
-        <FormTable
-            style={style}
-            data={items}
-            columns={columns}
-            loading={itemsLoading}
-            tableSettings={{
-                ...defaultSettings,
-                title: () =>
-                    <div style={{ width: "100%" }}>
-                        <DrawerSearch
-                            visible={visible}
-                            title="Search my Bean Brain"
-                            onSubmit={onSubmit}
-                            setVisible={setVisible}
-                            form={form}
-                        />
-                        <DownloadOutlined onClick={handleDownload} style={{ alignSelf: "center", float: "right", lineHeight: "32px" }} />
-                    </div>
-            }}
-        />
-        // </div>
+        <Row>
+            <Col xs={style.col2.xs} xl={style.col2.xl} xxl={style.col2.xxl}></Col>
+            <Col xs={style.col1.xs} xl={style.col1.xl} xxl={style.col1.xxl}>
+                <FormTable
+                    data={items}
+                    columns={columns}
+                    loading={itemsLoading}
+                    tableSettings={{
+                        ...defaultSettings,
+                        title: () =>
+                            <>
+                                <DrawerSearch
+                                    visible={visible}
+                                    title="Search my Bean Brain"
+                                    onSubmit={onSubmit}
+                                    setVisible={setVisible}
+                                    form={form}
+                                />
+                                <DownloadOutlined onClick={handleDownload} style={{ alignSelf: "center", float: "right", lineHeight: "32px" }} />
+                            </>
+                    }}
+                />
+            </Col>
+            <Col xs={style.col1.xs} xl={style.col2.xl} xxl={style.col2.xxl}></Col>
+        </Row>
     );
 
 }

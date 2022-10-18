@@ -9,13 +9,12 @@ import {
 } from 'reducers/actions/outboundActions.js';
 
 const AwaitingShipmentList = ({ shipmentInfo }) => {
-    const { pickUpPending } = shipmentInfo;
-    console.log(shipmentInfo)
     const dispatch = useDispatch();
-    const { items, itemsLoading } = useSelector((state) => state.warehouse.needToShip);
-
     const [data, setData] = useState([]);
     const [skip, setSkip] = useState(0);
+
+    const { items, itemsLoading } = useSelector((state) => state.warehouse.needToShip);
+    const { pickUpPending } = shipmentInfo;
 
     const docLimits = 5;
 
