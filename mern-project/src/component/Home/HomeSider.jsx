@@ -40,20 +40,21 @@ const HomeSider = (props) => {
                     label: (<Link to="bestbuy-list">BestBuy</Link>)
                 },
                 {
-                    disabled: true,
-                    key: 'costco-list',
-                    icon: <ShoppingOutlined />,
-                    label: (<Link to="costco-list">CostCo</Link>)
-                },
-                {
                     key: 'microsoft-list',
                     icon: <ShoppingOutlined />,
                     label: (<Link to="microsoft-list">Microsoft</Link>)
                 },
                 {
+                    disabled: true,
                     key: 'walmart-list',
                     icon: <ShoppingOutlined />,
                     label: (<Link to="walmart-list">Walmart</Link>)
+                },
+                {
+                    disabled: true,
+                    key: 'costco-list',
+                    icon: <ShoppingOutlined />,
+                    label: (<Link to="costco-list">CostCo</Link>)
                 },
                 {
                     disabled: true,

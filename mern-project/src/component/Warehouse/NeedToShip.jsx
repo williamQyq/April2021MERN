@@ -1,13 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { NeedToShipMenu } from 'component/Warehouse/Menus.jsx';
 import {
     downloadPickUpListPDF,
     getNeedToShipPendingAndTotalCount,
     getNeedToShipPickUpPendingAndTotalCount
 } from 'reducers/actions/outboundActions.js';
 import AwaitingShipmentList from './AwaitingShipmentList.jsx';
+import NeedToShipControlPanel from 'component/Warehouse/NeedToShipControlPanel.jsx';
 import { ContentHeader, SubContentHeader } from 'component/utility/Layout.jsx';
 import { Button, Col, Progress, Row } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
@@ -72,13 +72,13 @@ class NeedToShip extends React.Component {
         return (
             <>
                 <ContentHeader title="NeedToShip" />
-                <NeedToShipMenu shipmentInfo={shipmentInfo} />
+                <NeedToShipControlPanel shipmentInfo={shipmentInfo} />
                 <SubContentHeader title="Awaiting Shipment" />
                 <Row >
-                    <Col xs={10} sm={12} md={14} lg={16} xl={18}>
+                    <Col xs={12} lg={12} xl={18}>
                         <AwaitingShipmentList shipmentInfo={shipmentInfo} />
                     </Col>
-                    <Col xs={14} sm={12} md={10} lg={8} xl={6}>
+                    <Col xs={4} sm={8} md={10} lg={12} xl={6}>
                         <Button
                             style={{ width: "200px" }}
                             type="primary"
