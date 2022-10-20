@@ -12,18 +12,16 @@ const AwaitingShipmentList = ({ shipmentInfo }) => {
     const dispatch = useDispatch();
     const [data, setData] = useState([]);
     const [skip, setSkip] = useState(0);
+    const { pendingPickUp } = shipmentInfo;
 
     const { items, itemsLoading } = useSelector((state) => state.warehouse.needToShip);
-    const { pickUpPending } = shipmentInfo;
-
-    const docLimits = 5;
+    const docLimits = 10;
 
     //get limit number of new Awaiting shipment docs
     const updateItems = useCallback(() => {
         dispatch(getNeedToShipFromShipmentWithLimit(docLimits, skip));
         setSkip(skip + docLimits);
     }, [dispatch, docLimits, skip])
-
 
     //avoid duplicate request append to data state
     useEffect(() => {
@@ -72,7 +70,7 @@ const AwaitingShipmentList = ({ shipmentInfo }) => {
                 <InfiniteScroll
                     dataLength={data.length}
                     next={loadMore}
-                    hasMore={data.length !== 0 && data.length < pickUpPending}
+                    hasMore={data.length !== 0 && data.length < pendingPickUp}
                     loader={
                         <Skeleton
                             paragraph={{

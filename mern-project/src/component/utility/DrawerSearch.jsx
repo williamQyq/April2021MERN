@@ -1,8 +1,8 @@
-import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
 import { AutoComplete, Button, Col, DatePicker, Drawer, Form, Input, Row, Select, Space } from 'antd';
 import { SEARCH_LOCATION_INVENTORY, SEARCH_OUTBOUND_SHIPMENT, SEARCH_RECEIVAL_SHIPMENT, SEARCH_SELLER_INVENTORY } from 'reducers/actions/types.js';
+import moment from 'moment/moment';
 
 const { Option } = Select;
 
@@ -10,14 +10,12 @@ const DrawerSearch = (props) => {
     const { title, onSubmit, setVisible, visible, form } = props;
     const [searchCategory, setCategory] = useState("");
 
-    const [hackValue, setHackValue] = useState(null);
-    const [value, setValue] = useState(null);
-    const [dates, setDates] = useState(null);
+    const [dates, setDates] = useState([null, null]);
 
     const dateFormat = 'YYYY-MM-DD';
 
     useEffect(() => {
-        setValue([getOffDate(-30), getOffDate(0)])
+        setDates([null, null]);
     }, [searchCategory])
 
     const showDrawer = () => {
@@ -32,41 +30,20 @@ const DrawerSearch = (props) => {
         setCategory(category);
     }
 
-    const getOffDate = (offDays = 0) => {
-        let d = new Date();
-        let day = d.getDate();
-        d.setDate(day + offDays);
-
-        return moment(d, dateFormat);
-    }
-
-    const disabledDate = (current) => {
-        if (!dates) {
-            return false;
-        }
-
-        const tooLate = dates[0] && current.diff(dates[0], 'days') > 90;
-        const tooEarly = dates[1] && dates[1].diff(current, 'days') > 90;
-        return !!tooEarly || !!tooLate;
+    const disabledDate = (currentDate) => {
+        let today = moment();
+        let isCurrentDateNotValid = today.diff(currentDate, 'days') < 0;
+        return isCurrentDateNotValid;
     };
 
     const onOpenChange = (open) => {
-        if (open) {
-            setHackValue([null, null]);
-            setDates([null, null]);
-            form.setFieldsValue({ dateTime: [null, null] });    //clear datePicker values
 
-        } else {
-            setHackValue(null);
-        }
     };
 
-
-
+    //editable control
     let isOrderIdInputEditable = searchCategory === SEARCH_OUTBOUND_SHIPMENT ? true : false;
-    let isTrackingIdInputEditable =
-        searchCategory === SEARCH_OUTBOUND_SHIPMENT ? true : false ||
-            searchCategory === SEARCH_RECEIVAL_SHIPMENT ? true : false;
+    let isTrackingIdInputEditable = searchCategory === SEARCH_OUTBOUND_SHIPMENT ? true : false ||
+        searchCategory === SEARCH_RECEIVAL_SHIPMENT ? true : false;
     let isOrgNmInputEditable = searchCategory !== SEARCH_LOCATION_INVENTORY ? true : false;
     let isUpcInputEditable = true;  //upc option is editable for all category
     let isSnInputEditable = searchCategory === SEARCH_OUTBOUND_SHIPMENT ? true : false;
@@ -93,11 +70,7 @@ const DrawerSearch = (props) => {
                     </Space>
                 }
             >
-                <Form layout="vertical"
-                    hideRequiredMark={false}
-                    form={form}
-                    initialValues={{ dateTime: value }}
-                >
+                <Form layout="vertical" hideRequiredMark={false} form={form}>
                     <Row gutter={16}>
                         <Col span={12}>
                             <Form.Item
@@ -185,10 +158,10 @@ const DrawerSearch = (props) => {
                                     style={{
                                         width: '100%',
                                     }}
-                                    value={hackValue || value}
-                                    disabledDate={disabledDate}
+                                    value={dates}
+                                    disabledDate={(currentDate) => disabledDate(currentDate)}
                                     onCalendarChange={(val) => setDates(val)}
-                                    onChange={(val) => setValue(val)}
+                                    onChange={(val) => setDates(val)}
                                     onOpenChange={onOpenChange}
                                     // defaultValue={value}
                                     format={dateFormat}

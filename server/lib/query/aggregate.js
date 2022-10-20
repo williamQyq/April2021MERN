@@ -137,7 +137,7 @@ export function getTodayDate() {
     return getPastDateInUnix(0)
 }
 
-export const GET_NEED_TO_SHIP_ITEMS_BY_TODAY = (limit, skip) => [
+export const GET_NEED_TO_SHIP_ITEMS_SINCE_LAST_WEEK = (limit, skip) => [
     {
         '$project': {
             '_id': 0,
@@ -180,7 +180,7 @@ export const GET_NEED_TO_SHIP_ITEMS_BY_TODAY = (limit, skip) => [
     }
 ]
 
-export const COUNT_NEED_TO_SHIP_ITEMS_BY_TODAY = [
+export const COUNT_NEED_TO_SHIP_ITEMS = [
     {
         '$project': {
             '_id': 0,
@@ -192,7 +192,8 @@ export const COUNT_NEED_TO_SHIP_ITEMS_BY_TODAY = [
             'shipBy': 1,
             'crtTm': 1,
             'crtStmp': 1,
-            'status': 1
+            'status': 1,
+            'operStatus': { $ifNull: ["$operStatus", status.shipment.UNVERIFIED] }
             // 'crtTm': {
             //     '$dateToString': {
             //         // 'format': '%Y-%m-%d T %HH%MM%SS',
@@ -206,9 +207,10 @@ export const COUNT_NEED_TO_SHIP_ITEMS_BY_TODAY = [
     }, {
         '$match': {
             'crtStmp': {
-                '$gte': getTodayDate()
+                '$gte': getPastDateInUnix(7)
             },
-            'status': { "$ne": "shipped" }
+            'status': { "$ne": "shipped" },
+            'operStatus': { "$eq": status.shipment.UNVERIFIED }
         }
     }, {
         '$count': "shipmentCount"
@@ -299,7 +301,7 @@ export const COUNT_CREATED_PICKUP_LABEL = [
                         'orderID': {
                             '$exists': true
                         },
-                        'mdfStmp': {
+                        'crtStmp': {
                             '$gte': getPastDateInUnix(7)
                         },
                         'operStatus': { '$exists': false }
@@ -314,7 +316,7 @@ export const COUNT_CREATED_PICKUP_LABEL = [
                         'orderID': {
                             '$exists': true
                         },
-                        'mdfStmp': {
+                        'crtStmp': {
                             '$gte': getPastDateInUnix(7)
                         },
                         "$or":

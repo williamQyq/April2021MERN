@@ -219,7 +219,6 @@ export const searchLocationInventoryColumns = [
 ]
 
 export const searchSellerInventoryColumns = [
-
     {
         title: "Orgnization",
         dataIndex: "org",

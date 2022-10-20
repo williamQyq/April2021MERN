@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Col, Form, Row } from 'antd';
@@ -32,126 +31,85 @@ import { normalizeObjectStringValuesToLowerCase } from 'component/utility/helper
 const SearchShipment = () => {
     const dispatch = useDispatch();
     const [form] = Form.useForm();
-    const [visible, setVisible] = useState(false);
-    const [columns, setColumns] = useState(searchSellerInventoryColumns);
-    const [style, setStyle] = useState({
-        col1: { xl: 16, xxl: 16 },
-        col2: { xl: 2, xxl: 4 }
-    });
-    const { items, category, itemsLoading } = useSelector((state) => state.warehouse.shipmentSearch)
     const [formValues, setFormValues] = useState(null);
 
+    const [visible, setVisible] = useState(false);
+    const [columns, setColumns] = useState(searchSellerInventoryColumns);
+    const { items, category, itemsLoading } = useSelector((state) => state.warehouse.shipmentSearch)
+
+
+    useEffect(() => {
+        dispatch(getSellerInventory({ gt: 0 }));
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
     //memorized stable fetchData function since dispatch is changing.
-    const fetchDataOnSearchCategoryChange = useCallback((type, values) => {
-        const handleDataOnSearchCategoryChange = (category, values) => {
-            category = typeof category === "string" ? category.toUpperCase() : category;
+    const handleSearchCategoryChange = useCallback((values) => {
+        (() => {
+            let category = typeof values.type === "string" ? values.type.toUpperCase() : values.type;
             switch (category) {
                 case SEARCH_OUTBOUND_SHIPMENT:
                     dispatch(getShipment(values));
+                    setColumns(searchShipmentColumns);
                     break;
                 case SEARCH_RECEIVAL_SHIPMENT:
                     dispatch(getInventoryReceivedFromSearch(values))
+                    setColumns(searchReceivedShipmentColumns);
                     break;
                 case SEARCH_LOCATION_INVENTORY:
                     dispatch(getLocationInventory(values));
+                    setColumns(searchLocationInventoryColumns);
                     break;
                 case SEARCH_SELLER_INVENTORY:
                     dispatch(getSellerInventory(values));
+                    setColumns(searchSellerInventoryColumns);
                     break;
                 default:
+                    console.warn('Unknow search category: ', category)
                     return;
             }
-        }
-        handleDataOnSearchCategoryChange(type, values);
+        })();
     }, [dispatch])
 
-    //fetch wms data on search with formValues changed
+    //rerender on redux searchCategory or new formValues changed.
     useEffect(() => {
         if (formValues) {
-            handleColumnsOnSearchCategoryChange(formValues.type)
-            fetchDataOnSearchCategoryChange(formValues.type, formValues);   //fetch corresponding data
-            setVisible(false)   //set drawer invisible
+            handleSearchCategoryChange(formValues);
         }
-    }, [formValues, fetchDataOnSearchCategoryChange])
-
-    //prevent refetch wms shipment if has info
-    useEffect(() => {
-        if (!category) {
-            dispatch(getSellerInventory({ gt: 0 })); //dispatch default get seller inventory when did mount
-        } else {
-            handleColumnsOnSearchCategoryChange(category);
-        }
-    }, [category, dispatch])
-
-    const handleColumnsOnSearchCategoryChange = (category) => {
-        switch (category) {
-            case SEARCH_OUTBOUND_SHIPMENT:
-                setColumns(searchShipmentColumns);
-                setStyle({
-                    col2: { xs: 2, xl: 2, xxl: 0 },
-                    col1: { xs: 18, xl: 18, xxl: 24 },
-                })
-                break;
-            case SEARCH_RECEIVAL_SHIPMENT:
-                setColumns(searchReceivedShipmentColumns);
-                setStyle({
-                    col2: { xs: 2, xl: 2, xxl: 0 },
-                    col1: { xs: 18, xl: 18, xxl: 24 },
-                })
-                break;
-            case SEARCH_LOCATION_INVENTORY:
-                setColumns(searchLocationInventoryColumns);
-                setStyle({
-                    ...style,
-                    col1: { xs: 16, xl: 16, xxl: 16 },
-                })
-                break;
-            case SEARCH_SELLER_INVENTORY:
-                setColumns(searchSellerInventoryColumns);
-                setStyle({
-                    ...style,
-                    col1: { xs: 16, xl: 16, xxl: 16 },
-                })
-                break;
-            default:
-                return;
-        }
-    }
+    }, [category, formValues, handleSearchCategoryChange])
 
     const onSubmit = () => {
         form.validateFields()
             .then((values) => {
                 //normalize values obj ignore values["type"]
-                values = normalizeObjectStringValuesToLowerCase(values);
-                setFormValues(values);
-                console.log(`Form values:`, values)
+                let normalizeValues = normalizeObjectStringValuesToLowerCase(values);
+                setFormValues(normalizeValues);
+                setVisible(false);
+                console.log(`Form values:`, normalizeValues)
             })
-            .catch(err => { })
+            .catch(err => { console.error(err) })
     }
 
-    const handleDownload = () => {
-        form.validateFields()
-            .then((values) => {
-                let category = values.type;
-                switch (category) {
-                    case SEARCH_OUTBOUND_SHIPMENT:
-                        dispatch(downloadShipment(values));
-                        break;
-                    case SEARCH_RECEIVAL_SHIPMENT:
-                        dispatch(downloadInventoryReceived(values));
-                        break;
-                    case SEARCH_LOCATION_INVENTORY:
-                        dispatch(downloadLocationInventory(values));
-                        break;
-                    default:
-                        return;
-                }
-            })
-    }
+    const handleDownload = useCallback(() => {
+        switch (category) {
+            case SEARCH_OUTBOUND_SHIPMENT:
+                dispatch(downloadShipment(formValues));
+                break;
+            case SEARCH_RECEIVAL_SHIPMENT:
+                dispatch(downloadInventoryReceived(formValues));
+                break;
+            case SEARCH_LOCATION_INVENTORY:
+                dispatch(downloadLocationInventory(formValues));
+                break;
+            default:
+                return;
+        }
+    }, [dispatch, category, formValues])
+
     return (
         <Row>
-            <Col xs={style.col2.xs} xl={style.col2.xl} xxl={style.col2.xxl}></Col>
-            <Col xs={style.col1.xs} xl={style.col1.xl} xxl={style.col1.xxl}>
+            <Col xs={16} md={18} lg={20} xl={22} xxl={24}>
                 <FormTable
                     data={items}
                     columns={columns}
@@ -167,12 +125,18 @@ const SearchShipment = () => {
                                     setVisible={setVisible}
                                     form={form}
                                 />
-                                <DownloadOutlined onClick={handleDownload} style={{ alignSelf: "center", float: "right", lineHeight: "32px" }} />
+                                <DownloadOutlined
+                                    style={{
+                                        alignSelf: "center",
+                                        float: "right",
+                                        lineHeight: "32px"
+                                    }}
+                                    onClick={handleDownload}
+                                />
                             </>
                     }}
                 />
             </Col>
-            <Col xs={style.col1.xs} xl={style.col2.xl} xxl={style.col2.xxl}></Col>
         </Row>
     );
 

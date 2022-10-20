@@ -84,7 +84,6 @@ export default function Reducer(state = initialState, action) {
                 needToShip: {
                     ...state.needToShip,
                     items: action.payload.shipment,
-                    totalShipmentCount: action.payload.totalShipmentCount,
                     itemsLoading: false
                 }
             }

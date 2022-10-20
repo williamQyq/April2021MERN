@@ -14,8 +14,8 @@ import {
     LOOKUP_ITEM_SPEC,
     LAST_PRICE,
     GET_INVENTORY_RECEIVED_HALF_MONTH_AGO,
-    GET_NEED_TO_SHIP_ITEMS_BY_TODAY,
-    COUNT_NEED_TO_SHIP_ITEMS_BY_TODAY,
+    GET_NEED_TO_SHIP_ITEMS_SINCE_LAST_WEEK,
+    COUNT_NEED_TO_SHIP_ITEMS,
     COUNT_SHIPMENT_BY_TODAY,
     GET_UNVERIFIED_SHIPMENT,
     GET_LOCINV_UPC_QTY_SUM_EXCLUDE_WMS,
@@ -283,8 +283,8 @@ export class WMSDatabaseApis {
 
     async getNeedToShipFromShipment(docLimits = 10, docSkip = 0) {
         const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
-        let needToShipItemsByToday = await collection.aggregate(GET_NEED_TO_SHIP_ITEMS_BY_TODAY(docLimits, docSkip)).toArray();
-        return needToShipItemsByToday;
+        let needToShipItems = await collection.aggregate(GET_NEED_TO_SHIP_ITEMS_SINCE_LAST_WEEK(docLimits, docSkip)).toArray();
+        return needToShipItems;
     }
 
     //Get all org pending shipment Info by default.
@@ -303,10 +303,11 @@ export class WMSDatabaseApis {
 
         return shipmentCountByToday;
     }
+
     async countNeedToShipFromShipment() {
         const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
-        let shipmentCountByToday = await collection.aggregate(COUNT_NEED_TO_SHIP_ITEMS_BY_TODAY).toArray();
-        let count = shipmentCountByToday.length > 0 ? shipmentCountByToday[0].shipmentCount : 0
+        let docs = await collection.aggregate(COUNT_NEED_TO_SHIP_ITEMS).toArray();
+        let count = docs.length > 0 ? docs[0].shipmentCount : 0
         return count;
     }
 

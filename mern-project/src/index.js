@@ -13,7 +13,7 @@ const persistor = persistStore(store);
 function render() {
   const root = createRoot(document.getElementById('root'))
   root.render(
-    <React.StrictMode>
+    // <React.StrictMode> //cause component install twice: install, unstall, install
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <Router>
@@ -21,7 +21,7 @@ function render() {
           </Router>
         </PersistGate>
       </Provider>
-    </React.StrictMode>
+    // </React.StrictMode>
   )
 }
 render();

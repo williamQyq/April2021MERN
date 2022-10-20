@@ -88,8 +88,7 @@ router.get('/shipment/v0/getNeedToShipItems/limit/:docLimit/skip/:docSkip', auth
     let wms = new WMSDatabaseApis();
     wms.getNeedToShipFromShipment(Number(docLimit), Number(docSkip))// params in req are strings, mongodb limit query accepts number only
         .then(needToShipItems => {
-            wms.countNeedToShipFromShipment()
-                .then((totalShipmentCount) => res.json({ shipment: needToShipItems, totalShipmentCount }))
+            res.json({ shipment: needToShipItems })
         })
         .catch((err => {
             console.error(err.message);
