@@ -1,5 +1,5 @@
 import React from 'react';
-import './Operation.scss';
+import 'styles/Operation.scss';
 import { useState } from 'react';
 import { Menu, Tree } from 'antd';
 import { AreaChartOutlined, DownOutlined } from '@ant-design/icons';

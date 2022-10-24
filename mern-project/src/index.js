@@ -1,6 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import './index.css';
+import 'styles/index.css';
 import App from './App.jsx';
 // import reportWebVitals from './reportWebVitals';
 import store from './reducers/store/store.js';
@@ -14,13 +14,13 @@ function render() {
   const root = createRoot(document.getElementById('root'))
   root.render(
     // <React.StrictMode> //cause component install twice: install, unstall, install
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <Router>
-            <App />
-          </Router>
-        </PersistGate>
-      </Provider>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <Router>
+          <App />
+        </Router>
+      </PersistGate>
+    </Provider>
     // </React.StrictMode>
   )
 }

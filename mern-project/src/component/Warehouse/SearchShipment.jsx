@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Col, Form, Row } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
@@ -25,8 +25,8 @@ import {
     SEARCH_RECEIVAL_SHIPMENT,
     SEARCH_SELLER_INVENTORY
 } from 'reducers/actions/types.js';
-import { useCallback } from 'react';
 import { normalizeObjectStringValuesToLowerCase } from 'component/utility/helper.js';
+import 'styles/SearchShipment.scss';
 
 const SearchShipment = () => {
     const dispatch = useDispatch();
@@ -70,6 +70,7 @@ const SearchShipment = () => {
                     return;
             }
         })();
+
     }, [dispatch])
 
     //rerender on redux searchCategory or new formValues changed.
@@ -109,14 +110,14 @@ const SearchShipment = () => {
 
     return (
         <Row>
-            <Col xs={16} md={18} lg={20} xl={22} xxl={24}>
+            <Col id={`${category}`}>
                 <FormTable
                     data={items}
                     columns={columns}
                     loading={itemsLoading}
                     tableSettings={{
                         ...defaultSettings,
-                        title: () =>
+                        title: () => (
                             <>
                                 <DrawerSearch
                                     visible={visible}
@@ -134,6 +135,7 @@ const SearchShipment = () => {
                                     onClick={handleDownload}
                                 />
                             </>
+                        )
                     }}
                 />
             </Col>

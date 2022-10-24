@@ -1,5 +1,5 @@
 import React from "react";
-import './Configuration.scss';
+import 'styles/Configuration.scss';
 import { Divider, Steps, Typography } from 'antd';
 import { CheckCircleOutlined, LoadingOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 const { Step } = Steps;

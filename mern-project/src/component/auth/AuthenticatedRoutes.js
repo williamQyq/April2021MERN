@@ -1,6 +1,6 @@
-import NotFound from 'component/utility/NotFound';
 import { lazy } from 'react';
-
+import NotFound from 'component/utility/NotFound';
+import ServiceMaintain from 'component/utility/ServiceMaintain.tsx';
 const StoreBB = lazy(() => import('component/SourceStore/StoreBB.jsx'));
 const StoreMS = lazy(() => import('component/SourceStore/StoreMS.jsx'));
 const StoreWM = lazy(() => import('component/SourceStore/StoreWM.jsx'));
@@ -11,6 +11,9 @@ const InventoryReceived = lazy(() => import('component/Warehouse/InventoryReceiv
 const SearchRecords = lazy(() => import('component/Warehouse/SearchRecords.jsx'));
 const Configuration = lazy(() => import('component/Operation/Configuration'));
 const ItemDetail = lazy(() => import('component/ItemDetail/ItemDetail.jsx'));
+const Operation = lazy(() => import('component/Operation/Operation.tsx'));
+const Alert = lazy(() => import('component/SourceStore/Alert.tsx'));
+
 
 const routes = [
   {
@@ -23,47 +26,68 @@ const routes = [
     element: <SearchRecords />
   },
   {
-    path: "bestbuy-list",
+    path: "deal-alert",
     children: [
       {
         index: true,
-        element: <StoreBB />
+        element: <Alert />
       },
       {
-        path: "item-detail",
-        element: <ItemDetail />
+        path: "bestbuy-list",
+        element: <StoreBB />,
+        children: [
+          {
+            path: "item-detail",
+            element: <ItemDetail />
+          }
+        ]
+      },
+      {
+        path: "microsoft-list",
+        element: <StoreMS />,
+        children: [
+          {
+            path: "item-detail",
+            element: <ItemDetail />
+          }
+        ]
+      },
+      {
+        path: "walmart-list",
+        element: <StoreWM />,
+        children: [
+          {
+            path: "item-detail",
+            element: <ItemDetail />
+          }
+        ]
       }
     ]
   },
   {
-    path: "microsoft-list",
+    path: "operation",
     children: [
       {
         index: true,
-        element: <StoreMS />
+        element: <Operation />
       },
       {
-        path: "item-detail",
-        element: <ItemDetail />
-      }
-    ]
-  },
-  {
-    path: "walmart-list",
-    children: [
-      {
-        index: true,
-        element: <StoreWM />
+        path: "amazon-products-list",
+        element: <OperationProductList />
       },
       {
-        path: "item-detail",
-        element: <ItemDetail />
+        path: "amazon-surveillance",
+        element: <ServiceMaintain />
+      },
+      {
+        path: "amazon-listing-template",
+        element: <ServiceMaintain />
+      },
+      {
+        path: "configuration",
+        element: <Configuration />
       }
     ]
-  },
-  {
-    path: "operation-products-list",
-    element: <OperationProductList />
   },
   {
     path: "outbound",
@@ -85,10 +109,6 @@ const routes = [
         element: <SearchRecords />
       }
     ]
-  },
-  {
-    path: "configuration",
-    element: <Configuration />
   }
 ];
 

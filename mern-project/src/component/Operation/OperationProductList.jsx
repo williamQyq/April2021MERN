@@ -1,5 +1,5 @@
 import React from 'react';
-import './Operation.scss';
+import 'styles/Operation.scss';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Form } from 'antd';

@@ -2,7 +2,7 @@ import { Button, message, Result, Row } from 'antd';
 import { Content } from 'antd/lib/layout/layout';
 import React from 'react';
 import { connect } from 'react-redux';
-import './HomeMobile.scss';
+import 'styles/HomeMobile.scss';
 import { getInvReceivedWithWrongAdds } from 'reducers/actions/inboundActions.js';
 import { logout } from 'reducers/actions/authActions.js';
 

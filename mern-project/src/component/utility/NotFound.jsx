@@ -7,7 +7,7 @@ const NotFound = () => {
         <Empty
             description={
                 <>
-                    <Title level={3}>You Wish! Hacker!</Title>
+                    <Title level={3}>The page you visited does not exist!</Title>
                     <Title level={1} >404 Not Found</Title>
                 </>
             }

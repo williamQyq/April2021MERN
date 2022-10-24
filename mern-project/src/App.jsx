@@ -1,5 +1,4 @@
 import React from 'react';
-import 'antd/dist/antd.min.css';
 import { Route, Routes } from "react-router-dom";
 import SignIn from 'component/auth/SignIn.jsx';
 import PrivateRoute from 'component/auth/PrivateRoute.js';
@@ -12,7 +11,7 @@ import { SocketProvider } from 'component/socket/socketContext.js';
 import openAlertNotification from 'component/utility/errorAlert.js';
 import { clearErrors } from 'reducers/actions/errorActions';
 import { clearMessages } from 'reducers/actions/messageActions';
-import NotFound from 'component/utility/NotFound';
+import NotFound from 'component/utility/NotFound.jsx';
 
 class App extends React.Component {
 

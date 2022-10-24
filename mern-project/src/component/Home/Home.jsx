@@ -1,5 +1,5 @@
 import React from 'react';
-import './Home.scss';
+import 'styles/Home.scss';
 import 'antd/dist/antd.min.css';
 import { Layout } from 'antd';
 import { loadUser, logout } from 'reducers/actions/authActions.js';
