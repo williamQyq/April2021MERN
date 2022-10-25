@@ -4,3 +4,10 @@ export interface MenuOption {
     description: string,
     cover: React.ReactNode
 }
+
+export enum StepStatus {
+    error = 'error',
+    process = 'process',
+    finish = 'finish',
+    wait = 'wait'
+}

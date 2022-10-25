@@ -1,6 +1,5 @@
 import React from 'react';
 import { Layout, Form, Input, Button, Typography, message } from 'antd';
-import 'antd/dist/antd.min.css';
 import 'styles/login.scss';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
@@ -108,7 +107,7 @@ class SignIn extends React.Component {
                 <Navigate to="/app" replace={true} />
                 :
                 <Layout className="login-layout" style={{ minHeight: "100vh" }}>
-                    <Sider {...siderLayout} />
+                    <Sider id='image-sider' {...siderLayout} />
                     <Content className="login-content">
                         <Form
                             className="login-form"

@@ -9,11 +9,11 @@ const OutBound = lazy(() => import('component/Warehouse/OutBound.jsx'));
 const NeedToShip = lazy(() => import('component/Warehouse/NeedToShip.jsx'));
 const InventoryReceived = lazy(() => import('component/Warehouse/InventoryReceived.jsx'));
 const SearchRecords = lazy(() => import('component/Warehouse/SearchRecords.jsx'));
-const Configuration = lazy(() => import('component/Operation/Configuration'));
+// const Configuration = lazy(() => import('component/Operation/Configuration'));
 const ItemDetail = lazy(() => import('component/ItemDetail/ItemDetail.jsx'));
 const Operation = lazy(() => import('component/Operation/Operation.tsx'));
 const Alert = lazy(() => import('component/SourceStore/Alert.tsx'));
-
+const ProcessStreamStartUp = lazy(() => import('component/Operation/ProcessStreamStartUp.tsx'));
 
 const routes = [
   {
@@ -84,8 +84,8 @@ const routes = [
         element: <ServiceMaintain />
       },
       {
-        path: "configuration",
-        element: <Configuration />
+        path: "product-start-up",
+        element: <ProcessStreamStartUp />
       }
     ]
   },

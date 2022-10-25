@@ -2,7 +2,8 @@ import React from 'react';
 import { GrAmazon } from 'react-icons/gr';
 import { TbHeartRateMonitor } from 'react-icons/tb';
 import { RiUploadCloud2Line } from 'react-icons/ri';
-import IconCover from 'component/utility/IconCover.jsx'
+import { MdOutlineTipsAndUpdates } from 'react-icons/md';
+import IconCover from 'component/utility/IconCover.jsx';
 import { ContentHeader } from 'component/utility/Layout.jsx';
 import { Row, Col, Card } from 'antd';
 import { Link } from 'react-router-dom';
@@ -27,6 +28,12 @@ const operationFeatures: MenuOption[] = [
         title: "Amazon Listing Template",
         description: "Generate Amazon Listing Upload Template",
         cover: <IconCover Icon={RiUploadCloud2Line} />
+    },
+    {
+        key: "product-start-up",
+        title: "Get Started",
+        description: "Start Creating a new Product",
+        cover: <IconCover Icon={MdOutlineTipsAndUpdates} />
     }
 ]
 
