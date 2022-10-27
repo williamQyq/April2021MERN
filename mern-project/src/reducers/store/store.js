@@ -13,9 +13,11 @@ const persistConfig = {
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const initialState = {};
-const middleware = [thunk, createStateSyncMiddleware({
-    blacklist: ["persist/PERSIST", "persist/REHYDRATE"],
-})
+const middleware = [
+    thunk,
+    createStateSyncMiddleware({
+        blacklist: ["persist/PERSIST", "persist/REHYDRATE"],
+    }),
 ];
 
 const store = createStore(persistedReducer, initialState, compose(

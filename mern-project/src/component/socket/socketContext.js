@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext } from "react";
 import {
     ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE,
     ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE,
@@ -8,6 +8,7 @@ import {
 import { io } from "socket.io-client";
 
 const socket = io();
+
 socket.on('connect', () => {
     console.log(`${socket.id} connected.\n`)
 })
@@ -29,6 +30,9 @@ export const socketType = {
     RETRIEVE_MS_ITEMS_ONLINE_PRICE_ERROR
 }
 export const SocketProvider = (props) => {
+
+    const socket = io();
+
     return (
         <SocketContext.Provider value={socket}>
             {props.children}

@@ -151,11 +151,12 @@ export const downloadPickUpListPDF = (requiredFields) => async (dispatch, getSta
 }
 
 //axios get needtoship documents for inifite scroll
-export const getNeedToShipFromShipmentWithLimit = (docLimits, docSkip) => async (dispatch, getState) => {
+export const getNeedToShipFromShipmentWithLimit = (abortSignal, docLimits, docSkip) => async (dispatch, getState) => {
     dispatch(setShipmentItemsLoading());
     return axios.get(
         `/api/wms/shipment/v0/getNeedToShipItems/limit/${docLimits}/skip/${docSkip}`, {
         ...tokenConfig(getState),
+        signal: abortSignal,
         params: {
             docLimits,
             docSkip

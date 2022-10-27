@@ -18,10 +18,12 @@ const AwaitingShipmentList = ({ shipmentInfo }) => {
     const docLimits = 10;
 
     //get limit number of new Awaiting shipment docs
-    const updateItems = useCallback(() => {
-        dispatch(getNeedToShipFromShipmentWithLimit(docLimits, skip));
+    const updateItems = useCallback((abortSignal) => {
+        dispatch(getNeedToShipFromShipmentWithLimit(abortSignal, docLimits, skip));
         setSkip(skip + docLimits);
-    }, [dispatch, docLimits, skip])
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [docLimits, skip])
 
     //avoid duplicate request append to data state
     useEffect(() => {
@@ -43,7 +45,10 @@ const AwaitingShipmentList = ({ shipmentInfo }) => {
     }, [data, items])
 
     useEffect(() => {
-        updateItems();
+        const controller = new AbortController();
+        updateItems(controller.signal);
+
+        return () => controller.abort();
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])

@@ -42,20 +42,20 @@ const ProcessStreamStartUp: React.FC = () => {
     const steps = [
         {
             key: "product-specification",
-            title: 'Product Specification',
-            description: "Input Detail of CPU, RAM, GPU, Screen...",
+            title: 'Specification',
+            description: "CPU, RAM, GPU, Screen...",
             icon: <MdOutlineTipsAndUpdates />,
             content: <ProductSpecInput />
         },
         {
             key: "asin-mapping",
-            title: "SKU Producer",
+            title: "SKU",
             description: "Generate SKU for AWS Selling Partner",
             icon: <SiAmazonaws />,
             content: <AsinMappingInput />
         },
         {
-            key: "finish",
+            key: "Done",
             title: "All Set",
             icon: <ImSmile />,
             content: <Finish />
@@ -66,24 +66,6 @@ const ProcessStreamStartUp: React.FC = () => {
         <>
             <ContentHeader title="Init New Product" />
             <Row gutter={[8, 16]}>
-                <Col span={4}>
-                    <Steps
-                        style={{ marginTop: "36px", height: "70vh" }}
-                        direction='vertical'
-                        current={currentStep}
-                        onChange={(current: number) => setCurrentStep(current)}
-                    >
-                        {
-                            steps.map((step, index) => {
-                                let status = getStatus(index);
-
-                                return (
-                                    <Step status={status} {...step} />
-                                );
-                            })
-                        }
-                    </Steps>
-                </Col>
                 <Col span={20}>
                     <div className='steps-content'>
                         <Row justify='center'>
@@ -116,6 +98,24 @@ const ProcessStreamStartUp: React.FC = () => {
                             </Col>
                         </Row>
                     </div>
+                </Col>
+                <Col span={4}>
+                    <Steps
+                        style={{ marginTop: "36px", height: "70vh" }}
+                        direction='vertical'
+                        current={currentStep}
+                        onChange={(current: number) => setCurrentStep(current)}
+                    >
+                        {
+                            steps.map((step, index) => {
+                                let status = getStatus(index);
+
+                                return (
+                                    <Step status={status} {...step} />
+                                );
+                            })
+                        }
+                    </Steps>
                 </Col>
             </Row>
         </>

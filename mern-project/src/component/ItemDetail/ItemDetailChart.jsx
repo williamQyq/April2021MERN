@@ -15,9 +15,7 @@ const PriceHistoryChart = () => {
 
     useEffect(() => {
         let myChart = new Chart('chart', config)
-        return () => {
-            myChart.destroy();
-        }
+        return () => myChart.destroy();
     }, [])
 
     return (
