@@ -23,7 +23,7 @@ const routes = [
   {
     index: true,
     path: "/",
-    element: <SearchRecords />
+    element: <OutBound />
   },
   {
     path: "deal-alert",

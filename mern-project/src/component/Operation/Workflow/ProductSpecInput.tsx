@@ -5,14 +5,19 @@ import {
     ProFormDatePicker,
     ProFormDateRangePicker,
     ProFormDigit,
+    ProFormRadio,
     ProFormSelect,
     ProFormText,
     StepsForm,
 } from '@ant-design/pro-components';
-import { Button, message, Steps } from 'antd';
-import React from 'react';
+import { Button, FormInstance, message, Steps } from 'antd';
+import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 
 import { IoHardwareChipOutline } from 'react-icons/io5';
+import { FcInspection } from 'react-icons/fc';
+import { TbListDetails } from 'react-icons/tb';
+import { AiOutlineCloudDownload } from 'react-icons/ai';
+import FileUpload from 'component/utility/FileUpload';
 
 const waitTime = (time: number = 100) => {
     return new Promise((resolve) => {
@@ -21,25 +26,102 @@ const waitTime = (time: number = 100) => {
         }, time);
     });
 };
+interface IProps {
+    nextCatag?: () => void;
+    prevCatag?: () => void;
+}
 
-const ProductSpecInput: React.FC = () => {
+const ProductSpecInput: React.FC<IProps> = (props: IProps) => {
+    const { nextCatag } = props;
     const ramOptions: string[] = ["Empty", "DDR4-4L", "DDR4-8L", "DDR4-16L", "DDR5-8L", "DDR5-16L"]
     const ssdOptions: string[] = ["Empty", "PCIE-512", "PCIE-1024"]
+    const hddOptions: string[] = ["Empty", "1TB", "2TB"]
     const osOptions: string[] = ["Windows 10 Home", "Windows 10 Pro", "Windows 11 Home", "Windows 11 Pro"]
+
+    const [currentStep, setCurrentForm] = useState(0);
+    const next = (currentStep: number) => {
+        setCurrentForm(currentStep + 1);
+    }
+    const prev = () => {
+        setCurrentForm(currentStep - 1);
+    }
+
+    const handlePictureUpload = () => {
+
+    }
+
+    const steps = [
+        {
+            name: "detachableSpecs",
+            title: "Detachable Specs",
+            icon: <IoHardwareChipOutline />
+        }, {
+            name: "keySpecs",
+            title: "Key Specs",
+            icon: <TbListDetails />
+        }, {
+            name: "Download SKU",
+            title: "Download SKU",
+            icon: <AiOutlineCloudDownload />
+        }, {
+            name: "done",
+            title: "Done",
+            icon: <FcInspection />
+        }
+    ]
+    const renderSubmitter = (form: FormInstance<any> | undefined): ReactNode[] => {
+        const handleSubmit = async () => {
+            form?.submit?.();
+            await waitTime(2000);
+            nextCatag?.();
+        }
+        const handleNext = async () => {
+            form?.validateFields()
+                .then(() => next(currentStep))
+        }
+
+        let submitterGroup: ReactNode[] = [];
+        const NextBtn = () => <Button type="primary" onClick={() => handleNext()}>Next</Button>
+        const PrevBtn = () => <Button type="ghost" onClick={() => prev()}>Prev</Button>
+        // const ResetBtn = () => <Button type="primary" onClick={() => form?.resetFields()}>Reset</Button>
+        const DoneBtn = () => <Button type="primary" onClick={() => handleSubmit()}>Done</Button>
+
+        const hasNext = currentStep < steps.length ? true : false;
+        const hasPrev = currentStep > 0 ? true : false;
+        const isLastStep = currentStep === steps.length - 1 ? true : false;
+
+        if (hasNext && !isLastStep)
+            submitterGroup.push(<NextBtn key="next" />);
+        if (hasPrev)
+            submitterGroup.push(<PrevBtn key="prev" />);
+        if (isLastStep) {
+            submitterGroup.push(<DoneBtn key="done" />);
+        }
+
+        return submitterGroup;
+    }
 
     return (
         <>
             <StepsForm
-                stepsRender={(steps, dom) => {
+                submitter={{
+                    render: (props, dom) => renderSubmitter(props.form)
+                }}
+                current={currentStep}
+                stepsRender={(_, dom) => {
                     return (
-                        <Steps>{
-                            steps.map(step => <Steps.Step {...step} icon={<IoHardwareChipOutline />} />)
-                        }
+                        <Steps current={currentStep}>
+                            {
+                                steps.map(step => <Steps.Step key={step.name}{...step} />)
+                            }
                         </Steps>
                     )
                 }}
                 onFinish={async (values) => {
-                    console.log(values);
+                    /*
+                    save form values to db
+                    ....
+                    */
                     await waitTime(1000);
                     message.success('Submit Success');
                 }}
@@ -50,9 +132,13 @@ const ProductSpecInput: React.FC = () => {
                 }}
             >
                 <StepsForm.StepForm
-                    name="detachable specs"
+                    name="detachableSpecs"
                     title="Detachable Specs"
-
+                    initialValues={{
+                        ramOnboard: 'None',
+                        hdd: ["Empty"]
+                    }}
+                    isKeyPressSubmit={true}
                     onFinish={async () => {
                         await waitTime(2000);
                         return true;
@@ -71,7 +157,7 @@ const ProductSpecInput: React.FC = () => {
                     >
                         <ProFormText
                             name="upc"
-                            width="md"
+                            width="lg"
                             label="UPC"
                             tooltip="Product UPC"
                             placeholder="Enter product upc"
@@ -85,11 +171,18 @@ const ProductSpecInput: React.FC = () => {
                             }}
                             width="lg"
                             placeholder={"Pick RAM"}
-                            // initialValue={['smart boss', 'sofa potatoes']}
+                            rules={[{ required: true }]}
                             options={ramOptions.map((ram) => ({
                                 label: ram,
                                 value: ram,
                             }))}
+                        />
+                        <ProFormRadio.Group
+                            name="ramOnboard"
+                            label="RAM Onboard"
+                            width="lg"
+                            options={['None', '4GB', '8GB', '16GB']}
+                            rules={[{ required: true }]}
                         />
                         <ProFormSelect
                             name="ssd"
@@ -99,10 +192,24 @@ const ProductSpecInput: React.FC = () => {
                             }}
                             width="lg"
                             placeholder={"Pick SSD"}
-                            // initialValue={['smart boss', 'sofa potatoes']}
-                            options={ssdOptions.map((ssd) => ({
-                                label: ssd,
-                                value: ssd
+                            rules={[{ required: true }]}
+                            options={ssdOptions.map((option) => ({
+                                label: option,
+                                value: option
+                            }))}
+                        />
+                        <ProFormSelect
+                            name="hdd"
+                            label="HDD"
+                            fieldProps={{
+                                mode: 'tags',
+                            }}
+                            width="lg"
+                            placeholder={"Pick HDD"}
+                            rules={[{ required: true }]}
+                            options={hddOptions.map((option) => ({
+                                label: option,
+                                value: option
                             }))}
                         />
                         <ProFormSelect
@@ -113,17 +220,12 @@ const ProductSpecInput: React.FC = () => {
                             }}
                             width="lg"
                             placeholder={"Pick Operating System"}
-                            // initialValue={['smart boss', 'sofa potatoes']}
+                            rules={[{ required: true }]}
                             options={osOptions.map((option) => ({
                                 label: option,
                                 value: option
                             }))}
                         />
-
-                        {/* <ProForm.Group title="节点" size={8}>
-                            <ProFormSelect width="sm" name="source" placeholder="选择来源节点" />
-                            <ProFormSelect width="sm" name="target" placeholder="选择目标节点" />
-                        </ProForm.Group> */}
                     </ProCard>
 
                     <ProCard
@@ -136,20 +238,10 @@ const ProductSpecInput: React.FC = () => {
                             marginBlockEnd: 16,
                         }}
                     >
-                        {/* <ProFormDigit
-                            name="xs"
-                            label="XS号表单"
-                            initialValue={9999}
-                            tooltip="悬浮出现的气泡。"
-                            placeholder="请输入名称"
-                            width="xs"
-                        /> */}
-                        {/* <ProFormText name="s" label="S号表单" placeholder="请输入名称" width="sm" /> */}
-                        {/* <ProFormDateRangePicker name="m" label="M 号表单" /> */}
-
+                        <FileUpload customizedUpload={() => handlePictureUpload} />
                     </ProCard>
                 </StepsForm.StepForm>
-                <StepsForm.StepForm name="Key Specs" title="Key Specs">
+                <StepsForm.StepForm name="keySpecs" title="Key Specs">
                     <ProCard
                         style={{
                             minWidth: 800,
@@ -157,24 +249,9 @@ const ProductSpecInput: React.FC = () => {
                             maxWidth: '100%',
                         }}
                     >
-                        <ProFormCheckbox.Group
-                            name="checkbox"
-                            label="迁移类型"
-                            width="lg"
-                            options={['结构迁移', '全量迁移', '增量迁移', '全量校验']}
-                        />
-                        <ProForm.Group>
-                            <ProFormText name="dbname" label="业务 DB 用户名" />
-                            <ProFormDatePicker name="datetime" label="记录保存时间" width="sm" />
-                        </ProForm.Group>
-                        <ProFormCheckbox.Group
-                            name="checkbox"
-                            label="迁移类型"
-                            options={['完整 LOB', '不同步 LOB', '受限制 LOB']}
-                        />
                     </ProCard>
                 </StepsForm.StepForm>
-                <StepsForm.StepForm name="generateSKU" title="Download created SKU">
+                <StepsForm.StepForm name="downloadSKU" title="Download SKU">
                     <ProCard
                         style={{
                             marginBlockEnd: 16,
@@ -182,47 +259,16 @@ const ProductSpecInput: React.FC = () => {
                             maxWidth: '100%',
                         }}
                     >
-                        <ProFormCheckbox.Group
-                            name="checkbox"
-                            label="部署单元"
-                            rules={[
-                                {
-                                    required: true,
-                                },
-                            ]}
-                            options={['部署单元1', '部署单元2', '部署单元3']}
-                        />
-                        <ProFormSelect
-                            label="部署分组策略"
-                            name="remark"
-                            rules={[
-                                {
-                                    required: true,
-                                },
-                            ]}
-                            width="md"
-                            initialValue="1"
-                            options={[
-                                {
-                                    value: '1',
-                                    label: '策略一',
-                                },
-                                { value: '2', label: '策略二' },
-                            ]}
-                        />
-                        <ProFormSelect
-                            label="Pod 调度策略"
-                            name="remark2"
-                            width="md"
-                            initialValue="2"
-                            options={[
-                                {
-                                    value: '1',
-                                    label: '策略一',
-                                },
-                                { value: '2', label: '策略二' },
-                            ]}
-                        />
+                    </ProCard>
+                </StepsForm.StepForm>
+                <StepsForm.StepForm name="done" title="Done">
+                    <ProCard
+                        style={{
+                            marginBlockEnd: 16,
+                            minWidth: 800,
+                            maxWidth: '100%',
+                        }}
+                    >
                     </ProCard>
                 </StepsForm.StepForm>
             </StepsForm>

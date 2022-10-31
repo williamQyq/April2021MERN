@@ -1,5 +1,5 @@
 import React from 'react';
-import { CiShoppingTag } from 'react-icons/ci';
+import { AiOutlineShopping } from 'react-icons/ai';
 import IconCover from 'component/utility/IconCover.jsx'
 import { ContentHeader } from 'component/utility/Layout.jsx';
 import { Row, Col, Card } from 'antd';
@@ -11,19 +11,19 @@ const alertFeatures: MenuOption[] = [
         key: "bestbuy-list",
         title: "Bestbuy Deal",
         description: "Bestbuy Deal Lookup",
-        cover: <IconCover Icon={CiShoppingTag} />
+        cover: <IconCover Icon={AiOutlineShopping} />
     },
     {
         key: "microsoft-list",
         title: "Microsoft Deal",
         description: "MicroSoft Deal Lookup",
-        cover: <IconCover Icon={CiShoppingTag} />
+        cover: <IconCover Icon={AiOutlineShopping} />
     },
     {
         key: "walmart-list",
         title: "Walmart Deal",
         description: "Walmart Deal Lookup",
-        cover: <IconCover Icon={CiShoppingTag} />
+        cover: <IconCover Icon={AiOutlineShopping} />
     }
 ]
 

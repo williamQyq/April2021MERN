@@ -7,7 +7,6 @@ import Proptypes from 'prop-types';
 import Home from 'component/Home/Home.jsx';
 import HomeMobile from 'component/Home/HomeMobile.jsx';
 import { isBrowser } from 'react-device-detect';
-import { SocketProvider } from 'component/socket/socketContext.js';
 import openAlertNotification from 'component/utility/errorAlert.js';
 import { clearErrors } from 'reducers/actions/errorActions';
 import { clearMessages } from 'reducers/actions/messageActions';
@@ -42,9 +41,7 @@ class App extends React.Component {
             <PrivateRoute isAuthenticated={this.props.isAuthenticated} >
               {
                 isBrowser ? (
-                  <SocketProvider>
-                    <Home />
-                  </SocketProvider>
+                  <Home />
                 ) : (
                   <HomeMobile />
                 )

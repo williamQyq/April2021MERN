@@ -42,10 +42,10 @@ export default class Outbound extends React.Component {
                     {
                         outboundMenuFeatures.map((feature, i) => {
                             return (
-                                <Col key={i} span={8}>
+                                <Col key={i} span={6}>
                                     <Link to={`${feature.key}`}>
                                         <Card
-                                            style={{ width: 400, height: 500, borderRadius: "8px" }}
+                                            style={{ width: 300, height: 400, borderRadius: "8px" }}
                                             hoverable
                                             cover={feature.cover}
                                         >

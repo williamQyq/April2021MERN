@@ -3,8 +3,7 @@ const IconCover = (props) => {
     return (
         <div
             style={{
-                width: 400,
-                height: 400,
+                height: 280,
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center"

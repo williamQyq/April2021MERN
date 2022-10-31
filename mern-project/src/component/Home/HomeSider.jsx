@@ -13,7 +13,7 @@ import {
     DownloadOutlined
 } from "@ant-design/icons";
 import { GrAmazon } from 'react-icons/gr';
-import { CiShoppingTag } from 'react-icons/ci';
+import { AiOutlineShopping } from 'react-icons/ai';
 import { Layout, Menu } from "antd";
 const { Sider } = Layout;
 
@@ -38,8 +38,8 @@ const HomeSider = (props) => {
             children: [
                 {
                     key: "alert",
-                    icon: <CiShoppingTag />,
-                    label:<Link to="deal-alert">Deal Alert</Link>
+                    icon: <AiOutlineShopping />,
+                    label: <Link to="deal-alert">Deal Alert</Link>
                 }
             ]
         },

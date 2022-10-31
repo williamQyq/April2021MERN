@@ -8,17 +8,20 @@ import { Provider } from 'react-redux';
 import persistStore from 'redux-persist/es/persistStore';
 import { PersistGate } from 'redux-persist/integration/react';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { SocketProvider } from './component/socket/socketContext.js';
 const persistor = persistStore(store);
 
 function render() {
   const root = createRoot(document.getElementById('root'))
   root.render(
-    <React.StrictMode> //cause component install twice: install, unstall, install
+    <React.StrictMode>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <Router>
-            <App />
-          </Router>
+          <SocketProvider>
+            <Router>
+              <App />
+            </Router>
+          </SocketProvider>
         </PersistGate>
       </Provider>
     </React.StrictMode>

@@ -45,8 +45,8 @@ if (process.env.NODE_ENV === 'production') {
 
 // @Socket IO listner
 const io = new Server(server, {
-    pingTimeout: 7000,
-    pingInterval: 5000,
+    pingTimeout: 25000,
+    pingInterval: 25000,
     cors: {
         origin: "http://localhost:3000",
         methods: ["GET", "POST"],
