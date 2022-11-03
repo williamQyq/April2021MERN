@@ -60,8 +60,8 @@ const ProductSpecInput: React.FC<IProps> = (props: IProps) => {
             title: "Key Specs",
             icon: <TbListDetails />
         }, {
-            name: "Download SKU",
-            title: "Download SKU",
+            name: "Verify SKU",
+            title: "Verify SKU",
             icon: <AiOutlineCloudDownload />
         }, {
             name: "done",
@@ -251,7 +251,7 @@ const ProductSpecInput: React.FC<IProps> = (props: IProps) => {
                     >
                     </ProCard>
                 </StepsForm.StepForm>
-                <StepsForm.StepForm name="downloadSKU" title="Download SKU">
+                <StepsForm.StepForm name="verifySKU" title="Verify SKU">
                     <ProCard
                         style={{
                             marginBlockEnd: 16,

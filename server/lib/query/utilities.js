@@ -431,7 +431,6 @@ export class WMSDatabaseApis {
                 procQty: reqProcQty - unProcQty
             })
         } catch (err) {
-            console.log(`locInv err: `, JSON.stringify(err, null, 4))
             throw new Error(`locationInv: unable to get loc qty for upc ${upc}`)
         }
     }

@@ -1,4 +1,5 @@
 import { lazy } from 'react';
+import { Navigate } from 'react-router-dom';
 import NotFound from 'component/utility/NotFound';
 import ServiceMaintain from 'component/utility/ServiceMaintain.tsx';
 const StoreBB = lazy(() => import('component/SourceStore/StoreBB.jsx'));
@@ -23,7 +24,7 @@ const routes = [
   {
     index: true,
     path: "/",
-    element: <OutBound />
+    element: <Navigate to="/app/outbound" replace />
   },
   {
     path: "deal-alert",

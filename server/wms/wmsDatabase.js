@@ -1,8 +1,7 @@
 import tunnel from 'tunnel-ssh';
-import mongodb from 'mongodb';
+import { MongoClient } from 'mongodb';
 import { sshConfig } from '#root/config.js';
 
-const { MongoClient } = mongodb;
 //when modules/instance being required in nodejs, it will only load once.
 
 const connect = new Promise((resolve, _) => {

@@ -57,7 +57,7 @@ const DrawerSearch = (props) => {
                 title="Search Shipment"
                 width={720}
                 onClose={onClose}
-                visible={visible}
+                open={visible}
                 bodyStyle={{
                     paddingBottom: 80,
                 }}

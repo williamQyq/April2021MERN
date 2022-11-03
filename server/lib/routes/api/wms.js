@@ -285,19 +285,19 @@ router.post('/needToShip/v0/confirmShipment', auth, (req, res) => {
             return results;
         })
         .then((results) => {
-            console.log(`results: `, JSON.stringify(results, null, 4))
+            // console.log(`results: `, JSON.stringify(results, null, 4))
             let allRejectedShipment = results.filter(res => res.status === "rejected")
-            // console.log(`rejected promise results: `, allRejectedShipment)
-
+            console.log(JSON.stringify(allRejectedShipment));
             if (allRejectedShipment.length > 0) {
-                res.status(400).json({ msg: `Rejected Shipment Occurs`, reason: allRejectedShipment })
+                console.log(`Error: Rejected promise results: `, JSON.stringify(allRejectedShipment, null, 4))
+                throw new Error(JSON.stringify(allRejectedShipment));
             }
             res.json({ msg: `All Shipment fullfilled.` })
         })
         .catch(err => {
-            console.log(`err: `, err)
-            res.status(500).json({
-                msg: `Reject updating sellerInv qty or locInv qty on Upc`,
+            // console.log(`err: `, err.message)
+            res.status(400).json({
+                msg: `Reject updating sellerInv qty or locInv qty on upc`,
                 reason: err.message
             })
         })
