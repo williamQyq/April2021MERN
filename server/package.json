@@ -24,7 +24,7 @@
     "#models/*": "./lib/models/*",
     "#routes/*": "./lib/routes/*",
     "#query/*": "./lib/query/*",
-    "#wms/*": "./wms/*",
+    "#wmsTS/*": "./dist/wms/*",
     "#middleware/*": "./lib/middleware/*",
     "#amz/*": "./bin/amazonSP/*",
     "#dist/*": "./dist/*",

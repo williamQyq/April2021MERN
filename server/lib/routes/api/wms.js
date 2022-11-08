@@ -1,8 +1,8 @@
 import express from 'express';
 import auth from '#middleware/auth.js';
 import excel from 'exceljs';
-import { WMSDatabaseApis, GsheetApis } from '../../query/utilities.js';
-import { status } from '../../query/aggregate.js';
+import { WMSDatabaseApis, GsheetApis } from '#query/utilities.js';
+import { status } from '#query/aggregate.js';
 import moment from 'moment';
 const router = express.Router();
 
@@ -54,15 +54,16 @@ router.post('/inventoryReceive/v0/getInventoryReceived', auth, (req, res) => {
 
 //@route GET api/wms
 router.get('/inventoryReceive/v0/getWrongAdds', auth, (req, res) => {
-    const db = wms.getDatabase();
-    const collection = db.collection('inventoryReceive');
+    res.status(400).json({ msg: "deprecated" })
+    // const db = wms;
+    // const collection = db.collection('inventoryReceive');
 
-    collection.find({ 'orgNm': 'wrongadds' }).toArray()
-        .then(docs => {
-            console.log(`[routes] receive inventoryReceive wrongadds GET request...`)
-            res.json(docs)
-            // return docs;
-        })
+    // collection.find({ 'orgNm': 'wrongadds' }).toArray()
+    //     .then(docs => {
+    //         console.log(`[routes] receive inventoryReceive wrongadds GET request...`)
+    //         res.json(docs)
+    //         // return docs;
+    //     })
 });
 
 

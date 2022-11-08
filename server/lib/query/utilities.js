@@ -2,7 +2,7 @@ import ItemSpec from '../models/Spec.js';
 import BestbuyAlertModel from "../models/BBItem.js";
 import MicrosoftAlertModel from "../models/MsItem.js";
 import { AmzProdPricing, AmzIdentifier } from '../models/Amz.js';
-import wms from '#wms/wmsDatabase.js';
+import wms from '#wmsTS/wmsDatabase.js';
 import mongoose from 'mongoose';
 
 const { ObjectId } = mongoose.Types;
@@ -260,7 +260,7 @@ export class WMSDatabaseApis {
         locationInv: "locationInv"
     }
     constructor() {
-        this.db = wms.getDatabase();
+        this.db = wms;
     }
     async findUpcQtyOnOrg(upc, org = "M") {
         const collection = this.db.collection(WMSDatabaseApis._collection.sellerInv);

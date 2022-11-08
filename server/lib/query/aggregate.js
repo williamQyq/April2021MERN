@@ -615,6 +615,7 @@ export const GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER = (fields) => {
                 'mdfTm': 1,
                 'mdfStmp': 1,
                 'status': 1,
+                'usrID':1,
                 'upcLower': { "$toLower": "$rcIts.UPC" },
                 'trackingIDLower': { "$toLower": "$trNo" },
                 'orgNmLower': { "$toLower": "$orgNm" },

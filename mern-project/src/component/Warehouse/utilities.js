@@ -185,6 +185,10 @@ export const searchReceivedShipmentColumns = [
         title: "Orgnization",
         dataIndex: "orgNm",
         width: "8%"
+    },
+    {
+        title:"Executor",
+        dataIndex:"usrID"
     }
 ]
 

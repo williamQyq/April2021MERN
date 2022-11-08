@@ -68,16 +68,8 @@ const ProcessStreamStartUp: React.FC = () => {
             <Row gutter={[8, 16]}>
                 <Col span={20}>
                     <div className='steps-content'>
-                        <Row gutter={[12, 12]} justify='start'>
-                            <Col span={4}>
-                                <Title level={3}> {steps[currentStep].title} </Title>
-                            </Col>
-                        </Row>
-                        <Row justify='center'>
-                            <Col >
-                                {steps[currentStep].content}
-                            </Col>
-                        </Row>
+                        <Title level={3}> {steps[currentStep].title} </Title>
+                        {steps[currentStep].content}
                     </div>
                 </Col>
                 <Col span={4}>
