@@ -1,6 +1,6 @@
 import { Form, Radio, Switch, Typography } from 'antd';
-import OperationNestedTable from 'component/Operation/OperationProductListNestedTable.jsx';
-import { EditableCell } from './OperationEditableEle.js';
+import OperationNestedTable from 'component/Operation/SkuManagement/OperationProductListNestedTable.jsx';
+import { EditableCell } from 'component/Operation/SkuManagement/OperationEditableEle.jsx';
 
 const { Title } = Typography;
 

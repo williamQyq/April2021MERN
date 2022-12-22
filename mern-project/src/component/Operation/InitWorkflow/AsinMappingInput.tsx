@@ -1,24 +1,34 @@
 import React, { useState } from 'react';
-import { ProCard, ProForm, ProFormCheckbox, ProFormSelect, StepsForm } from '@ant-design/pro-components';
+import { ProCard, ProFormCheckbox, ProFormRadio, ProFormSelect, ProFormSlider, StepsForm } from '@ant-design/pro-components';
 import { GoUnverified } from 'react-icons/go';
 import { FcInspection } from 'react-icons/fc';
 import { FaWpforms } from 'react-icons/fa';
-import { EditableSkuCreatTable, Submitter, waitTime } from './utilities';
-import { message, Steps } from 'antd';
+import { MySteps, Submitter, waitTime } from './utilities';
+import { message } from 'antd';
+import { StepComponentProps, IMyStep } from './types';
+import CreateSkuEditableTable from './SkuEditableTable';
 
 const { StepForm } = StepsForm;
 
-const AsinMappingInput: React.FC = () => {
+const defaultData = {
+    amzAccts: ["RS", "PRO"],
+    shippingTemplate: "USPrime"
+}
+const AsinMappingInput: React.FC<StepComponentProps> = (props: StepComponentProps) => {
+    const { nextCatag, prevCatag } = props;
 
     const [currentStep, setCurrentForm] = useState(0);
+    const [skuInfo, setSkuInfo] = useState();
+
     const next = (currentStep: number) => {
         setCurrentForm(currentStep + 1);
     }
+
     const prev = () => {
         setCurrentForm(currentStep - 1);
     }
 
-    const steps = [
+    const steps: IMyStep[] = [
         {
             name: "collectInfo",
             title: "Collect Info",
@@ -38,31 +48,23 @@ const AsinMappingInput: React.FC = () => {
 
     return (
         <StepsForm
-            submitter={{
-                render: (props, _) => Submitter({
-                    form: props.form,
-                    stepsCount: steps.length,
-                    curStep: props.step,
-                    next,
-                    prev,
-                })
-            }}
             current={currentStep}
-            stepsRender={(_) =>
-                <Steps current={currentStep}>{
-                    steps.map(step =>
-                        <Steps.Step key={step.name}{...step} />
-                    )
-                }</Steps>
-            }
-            onFinish={async (values) => {
-                /*
-                save form values to db
-                ....
-                */
-                await waitTime(1000);
-                message.success('Submit Success');
+            submitter={{
+                render:
+                    (props, _) => Submitter({
+                        form: props.form,
+                        stepsCount: steps.length,
+                        curStep: props.step,
+                        next,
+                        prev,
+                    })
             }}
+            stepsRender={(_) =>
+                MySteps({
+                    current: currentStep,
+                    steps: steps
+                })
+            }
             formProps={{
                 validateMessages: {
                     required: 'Info is required',
@@ -73,14 +75,14 @@ const AsinMappingInput: React.FC = () => {
                 name="collectInfo"
                 title="Collect Info"
                 isKeyPressSubmit={true}
-                onFinish={async () => {
-                    await waitTime(2000);
+                onFinish={async (values) => {
+                    console.log(`collect info`, values);
+                    await waitTime(1000);
+                    message.success('Submit Success');
                     return true;
                 }}
                 request={async () => {
-                    return {
-                        "amzAccts": ["RS", "PRO"]
-                    }
+                    return defaultData;
                 }}
             >
                 <ProCard
@@ -94,7 +96,7 @@ const AsinMappingInput: React.FC = () => {
                         maxWidth: '100%',
                     }}
                 >
-                    <EditableSkuCreatTable />
+                    <CreateSkuEditableTable />
                 </ProCard>
                 <ProCard
                     title="Extra"
@@ -103,6 +105,7 @@ const AsinMappingInput: React.FC = () => {
                     collapsible
                     style={{
                         minWidth: 800,
+                        maxWidth: "100%",
                         marginBlockEnd: 16,
                     }}
                 >
@@ -110,6 +113,33 @@ const AsinMappingInput: React.FC = () => {
                         name="amzAccts"
                         label="RS or/and Pro"
                         options={['RS', 'PRO']}
+                        tooltip="These skus are created for which store?"
+                        rules={[
+                            { required: true, message: "Must create for at least one store.", type: 'array' }
+                        ]}
+                    />
+                    <ProFormSlider
+                        name="profitRate"
+                        label="Profit Rate"
+                        width="md"
+                        min={0}
+                        max={25}
+                        marks={{
+                            0: '0%',
+                            7: "7%",
+                            15: '15%',
+                            20: "20%",
+                            25: '25%',
+                        }}
+                    />
+                    <ProFormRadio.Group
+                        name="shippingTemplate"
+                        label="Shipping Template"
+                        options={['USPrime', 'Regular']}
+                        tooltip="Sku for Prime?"
+                        rules={[
+                            { required: true, message: "Must select one template.", type: 'string' }
+                        ]}
                     />
                     <ProFormSelect.SearchSelect
                         name="addon"
@@ -131,6 +161,7 @@ const AsinMappingInput: React.FC = () => {
                 </ProCard>
             </StepForm>
             <StepForm>
+
             </StepForm>
 
         </StepsForm>

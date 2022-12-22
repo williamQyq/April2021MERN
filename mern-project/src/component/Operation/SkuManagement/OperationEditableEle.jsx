@@ -1,6 +1,6 @@
 import { InputNumber, Input, Form} from "antd";
-import { StatusBadge } from "component/Operation/OperationStatusBadge.jsx";
-import ActionMenu from "component/Operation/OperationAction.jsx";
+import { StatusBadge } from "component/Operation/SkuManagement/OperationStatusBadge.jsx";
+import ActionMenu from "component/Operation/SkuManagement/OperationAction.jsx";
 /*
  *  @usage: Nested child table elements
  */

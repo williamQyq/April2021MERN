@@ -10,7 +10,13 @@ import { Link } from 'react-router-dom';
 import { MenuOption } from 'types';
 
 
-const operationFeatures: MenuOption[] = [
+const operationFeaturesMenu: MenuOption[] = [
+    {
+        key: "product-start-up",
+        title: "Get Started",
+        description: "Start Creating a new Product",
+        cover: <IconCover Icon={MdOutlineTipsAndUpdates} />
+    },
     {
         key: "amazon-products-list",
         title: "Amazon Management",
@@ -28,12 +34,6 @@ const operationFeatures: MenuOption[] = [
         title: "Amazon Listing Template",
         description: "Generate Amazon Listing Upload Template",
         cover: <IconCover Icon={RiUploadCloud2Line} />
-    },
-    {
-        key: "product-start-up",
-        title: "Get Started",
-        description: "Start Creating a new Product",
-        cover: <IconCover Icon={MdOutlineTipsAndUpdates} />
     }
 ]
 
@@ -43,7 +43,7 @@ const Operation: React.FC = () => {
             <ContentHeader title="Amazon" />
             <Row gutter={[8, 12]}>
                 {
-                    operationFeatures.map((feature, i) => {
+                    operationFeaturesMenu.map((feature, i) => {
                         return (
                             <Col key={i} span={6}>
                                 <Link to={`${feature.key}`}>

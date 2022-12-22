@@ -12,9 +12,8 @@ class Wms {
         this._client = new MongoClient(
             `mongodb://127.0.0.1:${sshConfig.localPort}/wms`,
             {
-                // useUnifiedTopology: true,
-                socketTimeoutMS: 360000,
-                connectTimeoutMS: 360000,
+                socketTimeoutMS: 10000,
+                connectTimeoutMS: 8000,
                 keepAlive: true
             }
         );

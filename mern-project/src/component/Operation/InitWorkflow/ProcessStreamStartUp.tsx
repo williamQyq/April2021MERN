@@ -5,9 +5,9 @@ import { MdOutlineTipsAndUpdates } from 'react-icons/md';
 import { SiAmazonaws } from 'react-icons/si';
 import { ImSmile } from 'react-icons/im';
 import { StepStatus } from 'types';
-import ProductSpecInput from './Workflow/ProductSpecInput';
-import Finish from './Workflow/Finish';
-import AsinMappingInput from './Workflow/AsinMappingInput';
+import ProductSpecInput from './ProductSpecInput';
+import Finish from './Finish';
+import AsinMappingInput from './AsinMappingInput';
 import { Typography, Row, Col, Button, message, Steps } from 'antd';
 
 
@@ -52,7 +52,7 @@ const ProcessStreamStartUp: React.FC = () => {
             title: "SKU",
             description: "Generate SKU for AWS Selling Partner",
             icon: <SiAmazonaws />,
-            content: <AsinMappingInput />
+            content: <AsinMappingInput nextCatag={next} prevCatag={prev} />
         },
         {
             key: "Done",

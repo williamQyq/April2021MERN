@@ -3,7 +3,7 @@
 ## If you found this project is helpful, please star me. Thank you! 😃
 
 *status*: under development...  
-*latest update: 10/13/2022*  
+*latest update: 12/17/2022*  
 
 author: Yuqing (William) Qiao  
 description: MERN stack project
@@ -390,6 +390,8 @@ For more information of using React Context with Socket.io, refer to [alex hays 
 ```
 ---
 ## Walmart I/O
+<br/>
+
 [walmart.io quick start](https://www.walmart.io/docs/affiliate/quick-start-guide)  
 **To create signed signature using crypto** - Attn: ***node-rsa module not working-encoding too long error***
 
@@ -431,7 +433,20 @@ const getProductById = async (productId) => {
         return detail
 };
 ```
+---
+## Docker
+<br/>
 
+| Docker Action         | CMD                                                                                   |
+| ----------------------| --------------------------------------------------------------------------------------|
+| build image           | docker build -t NAME:VERSION .                                                        |
+| list containers       | docker ps -a                                                                          |
+| list images           | docker images                                                                         |
+| run images            | docker run --name ASIGNED_NAME -p LOCAL_PORT:CONTAINER_PORT -d --restart always       |
+| rm all images         | docker rm -f $(docker ps -aq)                                                         |
+| rm single image       | docker rmi IMAGE_NAME                                                                 |
+| tag image             | docker image tag myimage registry-host:5000/myname/myimage:latest                     |
+| push image            | docker image push --all-tags registry-host:5000/myname/myimage                        |
 
 ## Software Architecture that can be improved in future
 ---

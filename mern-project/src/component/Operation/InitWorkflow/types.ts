@@ -7,6 +7,15 @@ export type DataSourceType = {
     ram?: string[];
     children?: DataSourceType[];
 };
+export interface IMyStep {
+    name: string,
+    title: string,
+    icon: React.ReactNode
+}
+export interface IMyStepsProps {
+    current: number,
+    steps: IMyStep[]
+}
 
 export enum RAM {
     DDR4_4 = "4GB",
@@ -33,10 +42,15 @@ export enum OS {
 }
 
 interface OptionEnum {
-    [key: string]: { text: RAM | SSD | HDD | OS; status: "Success" }
+    [key: string]: RAM | SSD | HDD | OS
 }
 
 export interface RamEnum extends OptionEnum { }
 export interface SsdEnum extends OptionEnum { }
 export interface HddEnum extends OptionEnum { }
 export interface OsEnum extends OptionEnum { }
+
+export interface StepComponentProps {
+    nextCatag?: () => void;
+    prevCatag?: () => void;
+}

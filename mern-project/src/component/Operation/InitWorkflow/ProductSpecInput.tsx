@@ -12,24 +12,32 @@ import { FcInspection } from 'react-icons/fc';
 import { TbListDetails } from 'react-icons/tb';
 import FileUpload from 'component/utility/FileUpload';
 import { Submitter, waitTime } from './utilities';
-import { HDD, OS, RAM, SSD } from './types';
+import { DataSourceType, HDD, OS, RAM, SSD, StepComponentProps } from './types';
 
-interface IProps {
-    nextCatag?: () => void;
-    prevCatag?: () => void;
+
+
+const defaultData = {
+    upc: "987654",
+    ram: [RAM.DDR4_4, RAM.DDR4_8],
+    ramOnboard: "None",
+    ssd: [SSD.PCIE_128],
+    hdd: [HDD.HDD_1TB],
+    os: [OS.W10H]
 }
 
-const ProductSpecInput: React.FC<IProps> = (props: IProps) => {
+const ProductSpecInput: React.FC<StepComponentProps> = (props: StepComponentProps) => {
     const { nextCatag } = props;
     const ramOptions: RAM[] = [RAM.DDR4_4, RAM.DDR4_8, RAM.DDR4_16, RAM.DDR4_32];
     const ssdOptions: SSD[] = [SSD.PCIE_128, SSD.PCIE_256];
     const hddOptions: HDD[] = [HDD.HDD_1TB, HDD.HDD_2TB];
     const osOptions: OS[] = [OS.W10H, OS.W10P];
-
+    const [sourceData, setSourceData] = useState<Record<string, any>>(defaultData);
     const [currentStep, setCurrentForm] = useState(0);
+
     const next = (currentStep: number) => {
         setCurrentForm(currentStep + 1);
     }
+
     const prev = () => {
         setCurrentForm(currentStep - 1);
     }
@@ -54,6 +62,7 @@ const ProductSpecInput: React.FC<IProps> = (props: IProps) => {
         }
     ]
 
+
     return (
         <StepsForm
             //cutomize next prev
@@ -75,14 +84,6 @@ const ProductSpecInput: React.FC<IProps> = (props: IProps) => {
                     )
                 }</Steps>
             }
-            onFinish={async (values) => {
-                /*
-                save form values to db
-                ....
-                */
-                await waitTime(1000);
-                message.success('Submit Success');
-            }}
             formProps={{
                 validateMessages: {
                     required: 'Info is required',
@@ -92,13 +93,19 @@ const ProductSpecInput: React.FC<IProps> = (props: IProps) => {
             <StepsForm.StepForm
                 name="detachableSpecs"
                 title="Detachable Specs"
-                initialValues={{
-                    ramOnboard: 'None',
-                    hdd: ["Empty"]
+                request={async () => {
+                    return sourceData;
                 }}
                 isKeyPressSubmit={true}
-                onFinish={async () => {
+                onFinish={async (values) => {
+                    /*
+                    save form values to db
+                    ....
+                    */
+                    console.log(`set Data Source detach values:\n`, values)
+                    setSourceData(values);
                     await waitTime(2000);
+                    message.success('Submit Success');
                     return true;
                 }}
             >
@@ -198,7 +205,20 @@ const ProductSpecInput: React.FC<IProps> = (props: IProps) => {
                     <FileUpload customizedUpload={() => handlePictureUpload} />
                 </ProCard>
             </StepsForm.StepForm>
-            <StepsForm.StepForm name="keySpecs" title="Key Specs">
+            <StepsForm.StepForm
+                name="keySpecs"
+                title="Key Specs"
+                onFinish={async (values) => {
+                    /*
+                    save form values to db
+                    ....
+                    */
+                    console.log(`set Key Spec values:\n`, values)
+                    await waitTime(2000);
+                    message.success('Submit Success');
+                    return true;
+                }}
+            >
                 <ProCard
                     style={{
                         minWidth: 800,

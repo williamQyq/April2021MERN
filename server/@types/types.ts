@@ -30,9 +30,9 @@ export interface PickUpItemsDoc extends Document {
     operStatus: string
 }
 
-export interface IPickUpCountDoc extends Document{
-    pickUpPending:number,
-    pickUpCreated:number
+export interface IPickUpCountDoc extends Document {
+    pickUpPending: number,
+    pickUpCreated: number
 }
 /* 
     @desc: For locationInv DB docs

@@ -1,4 +1,4 @@
-import { EditableCell } from "component/Operation/OperationEditableEle"
+import { EditableCell } from "component/Operation/SkuManagement/OperationEditableEle.jsx"
 
 
 export const defaultSettings = {
@@ -143,7 +143,7 @@ export const searchShipmentColumns = [
         title: "status",
         dataIndex: "status",
         searchable: true,
-        responsive:["xxl"]
+        responsive: ["xxl"]
     }
 ]
 
@@ -187,8 +187,8 @@ export const searchReceivedShipmentColumns = [
         width: "8%"
     },
     {
-        title:"Executor",
-        dataIndex:"usrID"
+        title: "Executor",
+        dataIndex: "usrID"
     }
 ]
 

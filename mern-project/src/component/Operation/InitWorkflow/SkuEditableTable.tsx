@@ -3,179 +3,40 @@ import {
     EditableProTable,
     ProCard,
     ProFormField,
-    ProFormRadio
+    EditableFormInstance
 } from '@ant-design/pro-components';
-import { FormInstance, Button } from "antd";
-import React, { useState } from "react";
-import { ReactNode } from "react";
+import React, { useRef, useState } from 'react';
 import { DataSourceType, HDD, HddEnum, OS, OsEnum, RAM, RamEnum, SSD, SsdEnum } from './types';
 
-export const waitTime = (time: number = 100) => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(true);
-        }, time);
-    });
-};
-
-interface SubmitterProps {
-    form?: FormInstance<any>,
-    stepsCount: number,
-    curStep: number,
-    next: (step: number) => void,
-    prev: () => void,
-    nextCatag?: () => void
-}
-
-export const Submitter = (props: SubmitterProps): ReactNode => {
-    const { form, curStep, stepsCount, next, prev, nextCatag } = props;
-
-    const handleSubmit = async () => {
-        form?.submit();
-        await waitTime(2000);
-        nextCatag?.();
-    }
-    const handleNext = async () => {
-        form?.validateFields()
-            .then(() => next(curStep))
-    }
-    const handlePrev = () => {
-        prev();
-    }
-
-    const hasNext = curStep < stepsCount ? true : false;
-    const hasPrev = curStep > 0 ? true : false;
-    const isLastStep = curStep === stepsCount - 1 ? true : false;
-    return (
-        <>
-            {
-                hasNext && !isLastStep && <Button type="primary" onClick={handleNext}>Next </Button>
-            }
-            {
-                hasPrev && <Button type="primary" onClick={handlePrev}>Prev</Button>
-            }
-            {
-                isLastStep && <Button type="primary" onClick={handleSubmit}>Done</Button>
-            }
-        </>
-    );
-}
-
-export const EditableSkuCreatTable: React.FC = () => {
+const CreateSkuEditableTable: React.FC = () => {
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
     const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
+    const editableFormRef = useRef<EditableFormInstance>();
 
     const defaultData: DataSourceType[] = [
         {
             id: 624748504,
             upc: "123",
             asin: "BAA",
-            ram: ["16_st"]
+            ram: ["4_st"]
         },
-        {
-            id: 624748503,
-            upc: "123",
-            asin: "BAA",
-            ram: ["16_st"]
-        },
-        {
-            id: 624748502,
-            upc: "123",
-            asin: "BAA",
-            ram: ["16_st"]
-        },
-        {
-            id: 624748501,
-            upc: "123",
-            asin: "BAA",
-            ram: ["16_st"]
-        }
+
     ];
     const ramEnum: RamEnum = {
-        "4_st": {
-            text: RAM.DDR4_4,
-            status: 'Success'
-        },
-        "4_nd": {
-            text: RAM.DDR4_4,
-            status: 'Success'
-        },
-        "8_st": {
-            text: RAM.DDR4_8,
-            status: 'Success',
-        },
-        "8_nd": {
-            text: RAM.DDR4_8,
-            status: 'Success',
-        },
-        "16_st": {
-            text: RAM.DDR4_16,
-            status: 'Success',
-        },
-        "16_nd": {
-            text: RAM.DDR4_16,
-            status: 'Success',
-        },
-        "32_st": {
-            text: RAM.DDR4_32,
-            status: 'Success'
-        },
-        "32_nd": {
-            text: RAM.DDR4_32,
-            status: 'Success'
-        }
+        "4_st": RAM.DDR4_4,
+        "4_nd": RAM.DDR4_4,
+        "4_rd": RAM.DDR4_4,
+        "4_th": RAM.DDR4_4,
+        "4_5": RAM.DDR4_4
     }
-
     const ssdEnum: SsdEnum = {
-        "128": {
-            text: SSD.PCIE_128,
-            status: "Success"
-        },
-        "256": {
-            text: SSD.PCIE_256,
-            status: "Success"
-        },
-        "512": {
-            text: SSD.PCIE_512,
-            status: "Success"
-        },
-        "1024": {
-            text: SSD.PCIE_1024,
-            status: "Success"
-        },
-        "2048": {
-            text: SSD.PCIE_2048,
-            status: "Success"
-        }
+        "128": SSD.PCIE_128
     }
     const hddEnum: HddEnum = {
-        "1": {
-            text: HDD.HDD_1TB,
-            status: "Success"
-        },
-        "2": {
-            text: HDD.HDD_2TB,
-            status: "Success"
-        }
+        "1": HDD.HDD_1TB
     }
     const osEnum: OsEnum = {
-        W10H: {
-            text: OS.W10H,
-            status: "Success"
-        },
-        W10P: {
-            text: OS.W10P,
-            status: "Success"
-        },
-        W11H: {
-            text: OS.W11H,
-            status: "Success"
-        },
-        W11P: {
-            text: OS.W11P,
-            status: "Success"
-        },
-
+        "w10H": OS.W10H
     }
 
     const columns: ProColumns<DataSourceType>[] = [
@@ -271,10 +132,27 @@ export const EditableSkuCreatTable: React.FC = () => {
         <>
             <EditableProTable<DataSourceType>
                 rowKey="id"
+                editableFormRef={editableFormRef}
                 maxLength={5}
-                // scroll={{
-                //     x: 960,
-                // }}
+                // controlled
+                scroll={{
+                    x: true,
+                }}
+                formItemProps={{
+                    rules: [
+                        {
+                            validator: async (_, value) => {
+                                if (value.length < 1) {
+                                    throw new Error('请至少添加一个题库');
+                                }
+
+                                if (value.length > 5) {
+                                    throw new Error('最多可以设置五个题库');
+                                }
+                            },
+                        }
+                    ]
+                }}
                 columnsState={{ persistenceType: "localStorage" }}
                 recordCreatorProps={{
                     position: "bottom",
@@ -297,6 +175,7 @@ export const EditableSkuCreatTable: React.FC = () => {
                     },
                     onChange: setEditableRowKeys,
                 }}
+
             />
             <ProCard title="table data" headerBordered collapsible defaultCollapsed>
                 <ProFormField
@@ -314,3 +193,5 @@ export const EditableSkuCreatTable: React.FC = () => {
         </>
     )
 }
+
+export default CreateSkuEditableTable;
