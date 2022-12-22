@@ -12,7 +12,7 @@ import { MenuOption } from 'types';
 
 const operationFeaturesMenu: MenuOption[] = [
     {
-        key: "product-start-up",
+        key: "init-new-product",
         title: "Get Started",
         description: "Start Creating a new Product",
         cover: <IconCover Icon={MdOutlineTipsAndUpdates} />

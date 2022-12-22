@@ -1,24 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import 'styles/ProcessStreamStartUp.scss';
 import { ContentHeader } from 'component/utility/Layout';
+import { StepStatus } from 'types';
+import ProdDetachSpecInput from './ProdDetachSpecInput';
+import InitSkuAsinMapping from './InitSkuAsinMapping';
+
 import { MdOutlineTipsAndUpdates } from 'react-icons/md';
 import { SiAmazonaws } from 'react-icons/si';
-import { ImSmile } from 'react-icons/im';
-import { StepStatus } from 'types';
-import ProductSpecInput from './ProductSpecInput';
-import Finish from './Finish';
-import AsinMappingInput from './AsinMappingInput';
-import { Typography, Row, Col, Button, message, Steps } from 'antd';
+import { IoHardwareChipOutline } from 'react-icons/io5';
+import { TbListDetails } from 'react-icons/tb';
+
+import { Typography, Row, Col, Steps } from 'antd';
+import ProdKeySpecInput from './ProdKeySpecInput';
 
 
-const { Text, Title } = Typography;
+const { Title } = Typography;
 const { Step } = Steps;
 
-const ProcessStreamStartUp: React.FC = () => {
+const InitNewProdWorkflow: React.FC = () => {
     const [currentStep, setCurrentStep] = useState(0);
 
     //Set current Step status: error, process finish,wait
-    const getStatus = (index: number): StepStatus => {
+    const getStepStatus = (index: number): StepStatus => {
         let status = StepStatus.error;
         if (index < currentStep) {
             status = StepStatus.finish;
@@ -38,33 +41,41 @@ const ProcessStreamStartUp: React.FC = () => {
         if (currentStep - 1 >= 0)
             setCurrentStep(currentStep - 1);
     }
-
     const steps = [
         {
-            key: "product-specification",
-            title: 'Specification',
-            description: "CPU, RAM, GPU, Screen...",
-            icon: <MdOutlineTipsAndUpdates />,
-            content: <ProductSpecInput nextCatag={next} prevCatag={prev} />
+            key: "init-product-detachable-spec",
+            title: 'Detachable Specification',
+            description: "RAM Slots, SSD Slots...",
+            icon: <IoHardwareChipOutline />,
+            content: <ProdDetachSpecInput nextCatag={next} prevCatag={prev} />
         },
         {
-            key: "asin-mapping",
-            title: "SKU",
+            key: "init-product-key-spec",
+            title: 'Key Specification',
+            description: "CPU, GPU, Screen...",
+            icon: <TbListDetails />,
+            content: <ProdKeySpecInput nextCatag={next} prevCatag={prev} />
+        },
+        {
+            key: "init-sku",
+            title: "Init Amazon SKU",
             description: "Generate SKU for AWS Selling Partner",
             icon: <SiAmazonaws />,
-            content: <AsinMappingInput nextCatag={next} prevCatag={prev} />
-        },
-        {
-            key: "Done",
-            title: "All Set",
-            icon: <ImSmile />,
-            content: <Finish />
+            content: <InitSkuAsinMapping nextCatag={next} prevCatag={prev} />
         }
     ]
 
     return (
         <>
-            <ContentHeader title="Init New Product" />
+            <Row align='middle'>
+                <Col>
+                    <ContentHeader title="Init New Product" />
+                </Col>
+                <Col>
+                    <MdOutlineTipsAndUpdates />
+                </Col>
+            </Row>
+
             <Row gutter={[8, 16]}>
                 <Col span={20}>
                     <div className='steps-content'>
@@ -81,8 +92,7 @@ const ProcessStreamStartUp: React.FC = () => {
                     >
                         {
                             steps.map((step, index) => {
-                                let status = getStatus(index);
-
+                                let status = getStepStatus(index);
                                 return (
                                     <Step status={status} {...step} />
                                 );
@@ -95,4 +105,4 @@ const ProcessStreamStartUp: React.FC = () => {
     );
 
 }
-export default ProcessStreamStartUp;
+export default InitNewProdWorkflow;

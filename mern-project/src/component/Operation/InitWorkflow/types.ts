@@ -5,6 +5,7 @@ export type DataSourceType = {
     asin?: string;
     decs?: string;
     ram?: string[];
+    ramOnboard?: string;
     children?: DataSourceType[];
 };
 export interface IMyStep {

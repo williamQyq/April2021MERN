@@ -13,7 +13,7 @@ const SearchRecords = lazy(() => import('component/Warehouse/SearchRecords.jsx')
 // const Configuration = lazy(() => import('component/Operation/Configuration'));
 const ItemDetail = lazy(() => import('component/ItemDetail/ItemDetail.jsx'));
 const OperationCategory = lazy(() => import('component/Operation/Category.tsx'));
-const ProcessStreamStartUp = lazy(() => import('component/Operation/InitWorkflow/ProcessStreamStartUp.tsx'));
+const InitNewProdWorkflow = lazy(() => import('component/Operation/InitWorkflow/InitWorkflow.tsx'));
 const OperationProductList = lazy(() => import('component/Operation/SkuManagement/OperationProductList.jsx'));
 
 
@@ -73,8 +73,8 @@ const routes = [
         index: true,
         element: <OperationCategory />
       }, {
-        path: "product-start-up",
-        element: <ProcessStreamStartUp />
+        path: "init-new-product",
+        element: <InitNewProdWorkflow />
       }, {
         path: "amazon-products-list",
         element: <OperationProductList />

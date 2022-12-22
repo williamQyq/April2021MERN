@@ -70,19 +70,3 @@ export const MySteps = (props: IMyStepsProps): React.ReactNode => {
         </Steps>
     );
 }
-
-export class InfoCollectionStep extends React.Component {
-    constructor(props: any) {
-        super(props);
-    }
-
-
-
-}
-
-export class verificationStep extends React.Component {
-    constructor(props: any) {
-        super(props);
-    }
-
-}

@@ -1,10 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ProCard, ProFormCheckbox, ProFormRadio, ProFormSelect, ProFormSlider, StepsForm } from '@ant-design/pro-components';
-import { GoUnverified } from 'react-icons/go';
-import { FcInspection } from 'react-icons/fc';
-import { FaWpforms } from 'react-icons/fa';
-import { MySteps, Submitter, waitTime } from './utilities';
 import { message } from 'antd';
+import { waitTime } from './utilities';
 import { StepComponentProps, IMyStep } from './types';
 import CreateSkuEditableTable from './SkuEditableTable';
 
@@ -14,57 +11,12 @@ const defaultData = {
     amzAccts: ["RS", "PRO"],
     shippingTemplate: "USPrime"
 }
-const AsinMappingInput: React.FC<StepComponentProps> = (props: StepComponentProps) => {
-    const { nextCatag, prevCatag } = props;
 
-    const [currentStep, setCurrentForm] = useState(0);
-    const [skuInfo, setSkuInfo] = useState();
-
-    const next = (currentStep: number) => {
-        setCurrentForm(currentStep + 1);
-    }
-
-    const prev = () => {
-        setCurrentForm(currentStep - 1);
-    }
-
-    const steps: IMyStep[] = [
-        {
-            name: "collectInfo",
-            title: "Collect Info",
-            icon: <FaWpforms />
-        },
-        {
-            name: "verifySKU",
-            title: "Verify SKU",
-            icon: <GoUnverified />
-        },
-        {
-            name: "done",
-            title: "Done",
-            icon: <FcInspection />
-        }
-    ];
+const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
 
     return (
         <StepsForm
-            current={currentStep}
-            submitter={{
-                render:
-                    (props, _) => Submitter({
-                        form: props.form,
-                        stepsCount: steps.length,
-                        curStep: props.step,
-                        next,
-                        prev,
-                    })
-            }}
-            stepsRender={(_) =>
-                MySteps({
-                    current: currentStep,
-                    steps: steps
-                })
-            }
+            stepsRender={(_) => <></>}
             formProps={{
                 validateMessages: {
                     required: 'Info is required',
@@ -160,12 +112,53 @@ const AsinMappingInput: React.FC<StepComponentProps> = (props: StepComponentProp
                     />
                 </ProCard>
             </StepForm>
-            <StepForm>
+            <StepForm
+                name="verifySku"
+                title="Verify SKU"
+                isKeyPressSubmit={true}
+                onFinish={async (values) => {
+                    console.log(`collect info`, values);
+                    await waitTime(1000);
+                    message.success('Submit Success');
+                    return true;
+                }}
+                request={async () => {
+                    return defaultData;
+                }}
+            >
+                <ProCard
+                    title="Verify SKU"
+                    bordered
+                    headerBordered
+                    style={{
+                        marginBlockEnd: 16,
+                        minWidth: 800,
+                        maxWidth: '100%',
+                    }}
+                >
 
+                </ProCard>
             </StepForm>
+            <StepForm
+                name="done"
+                title="Done"
+                onFinish={async () => {
+                    message.success("Downloaded Generated SKU Success");
+                }}
+            >
+                <ProCard
+                    style={{
+                        marginBlockEnd: 16,
+                        minWidth: 800,
+                        maxWidth: '100%',
+                        minHeight: 600
+                    }}
+                >
 
+                </ProCard>
+            </StepForm>
         </StepsForm>
     );
 };
 
-export default AsinMappingInput;
+export default InitSkuAsinMapping;
