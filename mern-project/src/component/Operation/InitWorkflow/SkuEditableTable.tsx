@@ -10,7 +10,7 @@ import { DataSourceType, HDD, HddEnum, OS, OsEnum, RAM, RamEnum, SSD, SsdEnum } 
 
 const CreateSkuEditableTable: React.FC = () => {
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
-    const [dataSource, setDataSource] = useState<DataSourceType[]>([]);
+    const [dataSource, setDataSource] = useState<readonly DataSourceType[]>([]);
     const editableFormRef = useRef<EditableFormInstance>();
 
     const defaultData: DataSourceType[] = [

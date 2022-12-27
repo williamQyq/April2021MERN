@@ -1,5 +1,5 @@
 import React from 'react';
-import 'antd/dist/antd.min.css';
+// import 'antd/dist/antd.min.css';
 import { Table, Form } from 'antd';
 import { EditableCell, nestedColumns } from 'component/Operation/SkuManagement/OperationEditableEle.jsx';
 

@@ -39,7 +39,7 @@ export class WmsDBApis {
     static readonly Collection = Collection;
     readonly Collection = WmsDBApis.Collection;
 
-    private readonly db: mongoDB.Db;
+    private readonly db: mongoDB.Db | void;
     static _collection: IWmsCollection = {
         shipment: "shipment",
         sellerInv: "sellerInv",
@@ -85,7 +85,7 @@ export class WmsDBApis {
     }
 
     async getPickUpFromShipment(limit: number, skip: number): Promise<PickUpItemsDoc[]> {
-        const collection: mongoDB.Collection<PickUpItemsDoc> = this.db.collection(WmsDBApis._collection.shipment);
+        const collection: mongoDB.Collection<PickUpItemsDoc> = this.db!.collection(WmsDBApis._collection.shipment);
         let pickUpDocs: PickUpItemsDoc[] = (await collection.aggregate(GET_NEED_TO_SHIP_ITEMS_FOR_PICKUP_BY_TODAY).toArray()) as PickUpItemsDoc[];
 
         return pickUpDocs;
@@ -178,7 +178,7 @@ export class WmsDBApis {
 
     async findPickUpLocationsByUpcAndQty(upc: string, qty: number): Promise<IPickUpTask[]> {
         let pickUpTasks: IPickUpTask[] = new Array()
-        const collection: mongoDB.Collection = this.db.collection(WmsDBApis._collection.locationInv);
+        const collection: mongoDB.Collection = this.db!.collection(WmsDBApis._collection.locationInv);
         let upcLocQtyDocs: LocationDoc[] = await collection.aggregate(GET_UPC_LOCATION_QTY_EXCEPT_WMS(upc)).toArray() as LocationDoc[];
         let backUpLocsDoc: BackUpLocationDoc = (await collection.aggregate(GET_UPC_BACK_UP_LOCS_FOR_PICK_UP(upc)).toArray()).pop() as BackUpLocationDoc;
 
@@ -226,7 +226,7 @@ export class WmsDBApis {
         let update = { $set: { "operStatus": newStatus } }
 
         try {
-            const collection: mongoDB.Collection = this.db.collection(WmsDBApis.Collection.Shipment);
+            const collection: mongoDB.Collection = this.db!.collection(WmsDBApis.Collection.Shipment);
             const updateResult: mongoDB.UpdateResult = await collection.updateOne(query, update);
             let isUpdated: boolean = updateResult.modifiedCount === 1 ? true : false;
             const updateQueryResp: IUpdateShipmentStatusResponse = {
@@ -286,7 +286,7 @@ export class WmsDBApis {
     }
 
     async countNeedToShipPickUpFromShipment(): Promise<IPickUpCountDoc> {
-        const collection = this.db.collection(WmsDBApis.Collection.Shipment)
+        const collection = this.db!.collection(WmsDBApis.Collection.Shipment)
         let pickUpCountDoc = (await collection.aggregate(COUNT_CREATED_PICKUP_LABEL).toArray()).at(0) as IPickUpCountDoc;
 
         return pickUpCountDoc;

@@ -9,7 +9,7 @@
     "server": "nodemon server.js",
     "client": "cd ../mern-project && npm start",
     "start": "node server.js",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "dev": "concurrently \"npm run server\" \"npm run client\" \"npm run watch\"",
     "prod": "concurrently \"npm run start\" \"npm run client\"",
     "deploy": "cd ../deploy && node cmd.js",
     "watch": "tsc --watch",

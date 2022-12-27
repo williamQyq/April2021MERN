@@ -11,7 +11,7 @@ mongoose.connect(mongoURI, {
     useCreateIndex: true
 })
     .then(() => console.log('Atlas MongoDB Connected...'))
-    .catch(err => console.log(err));
+    .catch(err => console.error('\nMongoCloud Error: \n\n', err));
 
 const db = mongoose.connection;  //set up mongoose connection
 db.once('open', () => {

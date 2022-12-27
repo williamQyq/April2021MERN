@@ -18,14 +18,16 @@ class Wms {
             }
         );
     }
-    async connect(): Promise<Db> {
-        return new Promise((resolve, _path) => {
+    async connect(): Promise<Db | void> {
+        return new Promise((resolve, reject) => {
+
             tunnel(sshConfig, async (error, server) => {
                 if (error) {
-                    console.log("SSH connection error: " + error);
+                    console.log("SSH connection error: \n\n", error);
                 }
-                server.on("error", () => {
-                    // console.log('**tunnel ssh err**\n\n', error);
+                //**IMPORTANT! Don't comment out below code. */
+                server.on("error", (_) => {
+                    // console.log('**tunnel ssh err**\n\n', err);
                     // server.close();
                 });
                 // server.on('connection', console.log.bind(console, "**tunnel ssh server connected**:\n"));
@@ -35,10 +37,10 @@ class Wms {
 
                 this._client.on('error', console.error.bind(console, "***mongodb error***"))
                 this._client.on('error', (err) => {
-                    console.error(`******mongodb client connection closed**********`)
+                    console.error(`******wms client connection closed**********`)
                     this._client.close();
                 })
-            })
+            });
         })
     }
 
@@ -51,10 +53,13 @@ class Wms {
 const wms = new Wms();
 
 // @CREATE WMS CONNECTION
-const db = await wms.connect().then((db) => {
-    console.log(`WMS Database Connected...`);
-    return db;
-});
+const db = await wms.connect()
+    .then(db => {
+        console.log(`WMS Database Connected...`);
+        return db;
+    }).catch(() => {
+        console.error("\n***wms client not connected.***\n\n");
+    })
 
 
 export default db;

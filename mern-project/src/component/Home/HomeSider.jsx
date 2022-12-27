@@ -15,8 +15,8 @@ import {
 import { GrAmazon } from 'react-icons/gr';
 import { AiOutlineShopping } from 'react-icons/ai';
 import { Layout, Menu } from "antd";
-const { Sider } = Layout;
 
+const { Sider } = Layout;
 
 const HomeSider = (props) => {
     const { isCollapsed, toggle } = props;

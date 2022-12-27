@@ -1,14 +1,14 @@
 import React from 'react';
 import 'styles/Home.scss';
-import 'antd/dist/antd.min.css';
+// import 'antd/dist/antd.min.css';
 import { Layout } from 'antd';
 import { loadUser, logout } from 'reducers/actions/authActions.js';
 import { connect } from 'react-redux';
 import HomeContent from 'component/Home/HomeContent.jsx';
 import HomeHeader from 'component/Home/HomeHeader.jsx';
 import HomeSider from 'component/Home/HomeSider.jsx';
-import { SocketContext } from 'component/socket/socketContext';
-import WithNavigate from 'component/auth/WithNavigate';
+import { SocketContext } from 'component/socket/socketContext.js';
+import WithNavigate from 'component/auth/WithNavigate.js';
 
 class Home extends React.Component {
   static contextType = SocketContext

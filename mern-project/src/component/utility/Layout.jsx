@@ -1,9 +1,10 @@
-import { Divider, PageHeader, Typography } from "antd";
+import { Divider, Typography } from "antd";
+import { PageHeader } from "@ant-design/pro-components";
 import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
-export const ContentHeader = ({ title="", subTitle = "" }) => {
+export const ContentHeader = ({ title = "", subTitle = "" }) => {
 
     const navigate = useNavigate();
 

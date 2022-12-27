@@ -13,7 +13,7 @@ export const sshConfig = {
     username: process.env.WMS_USERNAME,
     password: process.env.WMS_PASSWORD,
     host: process.env.WMS_HOST,
-    port: process.env.WMS_PORT,
+    port: process.env.SSH_PORT,
     dstPort: process.env.WMS_DST_PORT,
     // privateKey: require('fs').readFileSync('/path/to/key'),
     localPort: process.env.PORT || process.env.WMS_LOCAL_PORT,
