@@ -25,7 +25,7 @@ const routes = [
   {
     index: true,
     path: "/",
-    element: <Navigate to="/app/outbound" replace />
+    element: <Navigate to="/app/operation" replace />
   },
   {
     path: "deal-alert",

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Row, Typography, Spin, Skeleton } from 'antd';
 import { SyncOutlined } from '@ant-design/icons';
-import KeyStatistics from 'component/ItemDetail/ItemDetailStat.js';
+import KeyStatistics from 'component/ItemDetail/ItemDetailStat';
 import PriceHistoryChart from 'component/ItemDetail/ItemDetailChart.jsx';
 import KeepaStatistics from 'component/KeepaStatistics.js';
 import { ContentHeader } from 'component/utility/Layout';

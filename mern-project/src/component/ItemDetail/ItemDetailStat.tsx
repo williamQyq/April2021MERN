@@ -1,9 +1,10 @@
 import { Row, Col, Divider, Typography } from 'antd';
 import React from 'react';
+
 const { Title, Text } = Typography;
 
 
-const KeyStat = () => {
+const KeyStat: React.FC = () => {
     return (
         <div className='card'>
             <Row>

@@ -144,7 +144,7 @@ class FormTable extends React.Component {
                 );
                 return isValueIncluded
             },
-            onFilterDropdownVisibleChange: visible => {
+            onFilterDropdownOpenChange: visible => {
                 if (visible) {
                     setTimeout(() => this.searchInput.select(), 100);
                 }
@@ -191,7 +191,7 @@ class FormTable extends React.Component {
 
 
     render() {
-        const { data, loading, columns, tableSettings} = this.props
+        const { data, loading, columns, tableSettings } = this.props
         const searchPropsColumns = this.addSearchPropsToColumns(columns, this.getColumnSearchProps);
 
         return (

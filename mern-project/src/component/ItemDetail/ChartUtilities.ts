@@ -1,6 +1,14 @@
 import UTILS from "styles/Util"
 
-export const setChartData = (labels, datapoints, borderColor) => {
+type Labels = any[];
+type DataPoints = Labels;
+type Color = string;
+interface ChartData {
+    labels: Labels,
+    datasets: any[]
+}
+
+export const setChartData = (labels: Labels, datapoints: DataPoints, borderColor: string) => {
     return ({
 
         labels: labels,
@@ -21,7 +29,7 @@ export const setChartData = (labels, datapoints, borderColor) => {
         ]
     })
 }
-export const setChartConfig = (data) => {
+export const setChartConfig = (data: ChartData) => {
     return ({
         type: 'line',
         data: data,
@@ -66,7 +74,7 @@ export const setChartConfig = (data) => {
     })
 }
 
-export function setLabels(priceTimeStamps) {
+export function setLabels(priceTimeStamps: any[]) {
     let labels = [];
     labels = priceTimeStamps.map(ts => {
         return ts.date;
@@ -76,7 +84,7 @@ export function setLabels(priceTimeStamps) {
 }
 
 //set price chart datapoints
-export function setDataPoints(priceTimeStamps) {
+export function setDataPoints(priceTimeStamps: any[]) {
 
     let datapoints = [];
     const first_ts = priceTimeStamps[0];
@@ -88,7 +96,7 @@ export function setDataPoints(priceTimeStamps) {
     return datapoints;
 }
 
-export function setColorOnPriceUpOrDrop(priceDiff) {
+export function setColorOnPriceUpOrDrop(priceDiff: number) {
     let borderColor = UTILS.COLORS_RGB.BLACK;
 
     if (priceDiff > 0) {

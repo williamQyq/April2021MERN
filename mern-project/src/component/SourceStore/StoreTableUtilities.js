@@ -134,7 +134,7 @@ const DropDownActions = (props) => {
     return (
         <Dropdown
             trigger={["click"]}
-            overlay={() => ActionMenu({ addItemSpecification: stableAddItemSpecification })}
+            menu={() => ActionMenu({ addItemSpecification: stableAddItemSpecification })}
             placement="bottom"
         >
             <TypoLink onClick={stableSaveActionHistory}>
