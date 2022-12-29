@@ -1,13 +1,15 @@
-import { Form, Radio, Switch, Typography } from 'antd';
+import { Form, Radio, Switch, TableProps, Typography } from 'antd';
+import React from 'react';
 import OperationNestedTable from 'component/Operation/SkuManagement/OperationProductListNestedTable.jsx';
 import { EditableCell } from 'component/Operation/SkuManagement/OperationEditableEle.jsx';
+import { ExpandableConfig } from 'antd/es/table/interface';
 
 const { Title } = Typography;
 
 export const title = () => <Title level={4}>All Products</Title>
 export const footer = () => 'Here is footer';
 
-export const expandable = {
+const expandable: ExpandableConfig<any> = {
     expandRowByClick: true,
     expandedRowRender: record => (<OperationNestedTable record={record} />)
 };
@@ -35,23 +37,34 @@ export const defaultSettings = {
     }
 }
 
+interface MyTableProps extends TableProps<any> {
+    handler: any;
+    yScroll: string | number;
+    xScroll: string | number;
+    hasData: boolean;
+    ellipsis: any;
+    top: boolean;
+    bottom: boolean;
+}
 
-export const Settings = ({
-    handler,
-    bordered,
-    title,
-    showHeader,
-    footer,
-    rowSelection,
-    yScroll,
-    xScroll,
-    hasData,
-    ellipsis,
-    size,
-    tableLayout,
-    top,
-    bottom,
-}) => {
+export const Settings = (props: MyTableProps) => {
+    const {
+        handler,
+        bordered,
+        title,
+        showHeader,
+        footer,
+        rowSelection,
+        yScroll,
+        xScroll,
+        hasData,
+        ellipsis,
+        size,
+        tableLayout,
+        top,
+        bottom,
+    } = props;
+
     return (
         <Form
             layout="inline"

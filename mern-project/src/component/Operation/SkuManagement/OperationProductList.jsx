@@ -3,7 +3,7 @@ import 'styles/Operation.scss';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Form } from 'antd';
-import { defaultSettings, title, footer } from 'component/Operation/Settings.js';
+import { defaultSettings, title, footer } from 'component/Operation/_Settings';
 import { mainColumns } from 'component/Operation/SkuManagement/OperationEditableEle.jsx';
 import { getProductPricing } from 'reducers/actions/operationActions.js';
 import OperationMenu from 'component/Operation/SkuManagement/OperationMenu.jsx';
@@ -91,70 +91,6 @@ class OperationProductList extends React.Component {
 
     }
 
-    handler = {
-        handleToggle: prop => enable => {
-            this.setState({ [prop]: enable });
-        },
-
-        handleSizeChange: e => {
-            this.setState({ size: e.target.value });
-        },
-
-        handleTableLayoutChange: e => {
-            this.setState({ tableLayout: e.target.value });
-        },
-
-        // handleExpandChange = enable => {
-        //     this.setState({ expandable: enable ? this.state.expandable : undefined });
-        // };
-
-        handleEllipsisChange: enable => {
-            this.setState({ ellipsis: enable });
-        },
-
-        handleTitleChange: enable => {
-            this.setState({ title: enable ? title : undefined });
-        },
-
-        handleHeaderChange: enable => {
-            this.setState({ showHeader: enable ? true : false });
-        },
-
-        handleFooterChange: enable => {
-            this.setState({ footer: enable ? footer : undefined });
-        },
-
-        handleRowSelectionChange: enable => {
-            this.setState({ rowSelection: enable ? {} : undefined });
-        },
-
-        handleYScrollChange: enable => {
-            this.setState({ yScroll: enable });
-            let scroll = { ...this.state.scroll };
-            if (enable) {
-                scroll.y = "calc(100vh - 335px)"
-                this.setState({ scroll })
-            }
-        },
-
-        handleXScrollChange: e => {
-            this.setState({ xScroll: e.target.value });
-            // if (xScroll) {
-            //     scroll.x = '100vw';
-            // }
-        },
-
-        handleDataChange: hasData => {
-            this.setState({ hasData });
-        },
-        handlePaginationTopChange: e => {
-            this.setState({ top: e.target.value })
-        },
-        handlePaginationBottomChange: e => {
-            this.setState({ bottom: e.target.value })
-        },
-    }
-
     handleSearch = (selectedKeys, confirm, dataIndex) => {
         confirm();
         this.setState({
@@ -187,7 +123,7 @@ class OperationProductList extends React.Component {
         return (
             <>
                 <ContentHeader title="All Listed Products" />
-                <OperationMenu handler={this.handler} {...this.state} />
+                <OperationMenu {...this.state} />
                 <Form ref={this.formRef} component={false}>
                     <FormTable
                         loading={loading}

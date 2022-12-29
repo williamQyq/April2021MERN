@@ -10,7 +10,7 @@ class Wms {
 
     constructor() {
         this._client = new MongoClient(
-            `mongodb://127.0.0.1:${sshConfig.localPort}/wms`,
+            `mongodb://127.0.0.1:${sshConfig.localPort}/`,
             {
                 socketTimeoutMS: 10000,
                 connectTimeoutMS: 8000,
@@ -24,6 +24,7 @@ class Wms {
             tunnel(sshConfig, async (error, server) => {
                 if (error) {
                     console.log("SSH connection error: \n\n", error);
+                    reject();
                 }
                 //**IMPORTANT! Don't comment out below code. */
                 server.on("error", (_) => {
@@ -53,13 +54,13 @@ class Wms {
 const wms = new Wms();
 
 // @CREATE WMS CONNECTION
-const db = await wms.connect()
-    .then(db => {
-        console.log(`WMS Database Connected...`);
-        return db;
-    }).catch(() => {
-        console.error("\n***wms client not connected.***\n\n");
-    })
+const db = await wms.connect().then(db => {
+    console.log(`WMS Database Connected...`);
+    return db;
+}).catch(() => {
+    console.error("\n***wms client not connected.***\n\n");
+    return;
+})
 
 
 export default db;

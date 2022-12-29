@@ -78,10 +78,8 @@ const InitNewProdWorkflow: React.FC = () => {
 
             <Row gutter={[8, 16]}>
                 <Col span={20}>
-                    <div className='steps-content'>
-                        <Title level={3}> {steps[currentStep].title} </Title>
-                        {steps[currentStep].content}
-                    </div>
+                    <Title level={3}> {steps[currentStep].title} </Title>
+                    {steps[currentStep].content}
                 </Col>
                 <Col span={4}>
                     <Steps

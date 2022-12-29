@@ -4,7 +4,6 @@ import SignIn from 'component/auth/SignIn.jsx';
 import PrivateRoute from 'component/auth/PrivateRoute.js';
 import { connect } from 'react-redux';
 import Proptypes from 'prop-types';
-import Home from 'component/Home/Home.jsx';
 import ProHome from 'component/Home/ProHome.tsx';
 import HomeMobile from 'component/Home/HomeMobile.jsx';
 import { isBrowser } from 'react-device-detect';
@@ -42,7 +41,6 @@ class App extends React.Component {
             <PrivateRoute isAuthenticated={this.props.isAuthenticated} >
               {
                 isBrowser ? (
-                  // <Home />
                   <ProHome />
                 ) : (
                   <HomeMobile />

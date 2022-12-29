@@ -3,7 +3,6 @@ import 'styles/Operation.scss';
 import { useState } from 'react';
 import { Menu, Tree } from 'antd';
 import { AreaChartOutlined, DownOutlined } from '@ant-design/icons';
-// import { Settings } from 'component/Operation/Settings'
 import FileUpload from 'component/utility/FileUpload.jsx';
 import { uploadAsinsMapping } from 'reducers/actions/operationActions';
 

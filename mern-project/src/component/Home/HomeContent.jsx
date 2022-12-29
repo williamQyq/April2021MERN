@@ -4,7 +4,7 @@ const { Content } = Layout;
 
 const HomeContent = () => {
     return (
-        < Content className="site-layout-content" >
+        < Content >
             <ProtectedRoutes />
         </Content >
     )
