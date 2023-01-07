@@ -442,11 +442,22 @@ const getProductById = async (productId) => {
 | build image           | docker build -t NAME:VERSION .                                                        |
 | list containers       | docker ps -a                                                                          |
 | list images           | docker images                                                                         |
-| run images            | docker run --name ASIGNED_NAME -p LOCAL_PORT:CONTAINER_PORT -d --restart always       |
+| run images            | docker run --name ASIGNED_NAME IMAGE -d -p LOCAL_PORT:CONTAINER_PORT --restart always |
 | rm all images         | docker rm -f $(docker ps -aq)                                                         |
 | rm single image       | docker rmi IMAGE_NAME                                                                 |
 | tag image             | docker image tag myimage registry-host:5000/myname/myimage:latest                     |
 | push image            | docker image push --all-tags registry-host:5000/myname/myimage                        |
+| enter containers      | docker exec -it <container_name> bash                                                 |
+
+run image in container procedures:
+1. docker stop CONTAINER_NAME
+2. docker rm CONTAINER_NAME
+3. docker run --name ASSIGN_CTR_NAME -p 5000:5000 -d IMAGE:TAG(default: latest) --restart always
+
+build and push procedures:
+1. docker build -t NAME:VERSION .
+2. docker tag IMAGE dockerwilliamqiao/mern_server:latest
+3. docker push dockerwilliamqiao/mern_server:latest
 
 ## Software Architecture that can be improved in future
 ---

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Routes } from "react-router-dom";
-import SignIn from 'component/auth/SignIn.jsx';
+import SignIn from 'component/auth/SignIn';
 import PrivateRoute from 'component/auth/PrivateRoute.js';
 import { connect } from 'react-redux';
 import Proptypes from 'prop-types';

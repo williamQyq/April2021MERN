@@ -41,6 +41,11 @@ router.post('/shipment/v1/downloadPickUpPDF', auth, (req: Request, res: Response
                         "attachment; filename=" + fileName
                     );
                     file.pipe(res); //res end() event being callled automatically.
+                })
+                .catch((err: Error) => {
+                    console.error(err.message);
+                    let errorMsg: IResponseErrorMessage = { msg: "Failed to generate PDF", reason: err.message }
+                    res.status(400).json(errorMsg);
                 });
             console.log(`processedTrackings: \n`, processedTrackings, `\n\n`)
             return processedTrackings;

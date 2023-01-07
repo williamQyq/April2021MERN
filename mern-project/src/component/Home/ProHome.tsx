@@ -30,6 +30,7 @@ interface IProHomeProps {
 };
 
 interface IState {
+    lightThemeToggle: boolean;
     settings: Partial<ProSettings | undefined>;
     pathname: string
 }
@@ -40,13 +41,13 @@ class ProHome extends React.Component<IProHomeProps, IState>{
     constructor(props: IProHomeProps) {
         super(props)
         this.state = {
+            lightThemeToggle: false,
             settings: {
                 fixSiderbar: true,
                 layout: 'mix',
+                navTheme: 'realDark',
                 splitMenus: true,
-                navTheme: "realDark",
                 contentWidth: "Fluid",
-                colorPrimary: "#1890ff",
                 siderMenuType: "sub"
             },
             pathname: "/app/operation"
@@ -57,6 +58,7 @@ class ProHome extends React.Component<IProHomeProps, IState>{
     }
     setSetting = (changeSettings: Partial<ProSettings>) => {
         this.setState({ settings: changeSettings })
+        // this.setState({ lightThemeToggle: !this.state.lightThemeToggle })
     }
 
     navigateTo = (pathname: string | undefined) => {
@@ -66,8 +68,7 @@ class ProHome extends React.Component<IProHomeProps, IState>{
 
     render() {
         const { pathname, settings } = this.state;
-        const { navigate, logout } = this.props;
-
+        const { logout } = this.props;
         return (
             <div
                 id="test-pro-layout"
