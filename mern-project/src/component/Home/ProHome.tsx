@@ -19,46 +19,37 @@ import MenuCard from 'component/Home/MenuCard';
 import SearchInput from 'component/Home/Search';
 import HomeContent from 'component/Home/HomeContent.jsx';
 import { loadUser, logout } from 'reducers/actions/authActions';
-import { Avatar, Button } from 'antd';
+import { Avatar, Button, Switch } from 'antd';
 import { Location, NavigateFunction } from 'react-router-dom';
+import { CgSun, CgMoon } from 'react-icons/cg';
+import { ThemeContext } from 'context';
 
 interface IProHomeProps {
-    navigate: NavigateFunction,
-    location: Location,
+    navigate: NavigateFunction;
+    location: Location;
     logout: () => void;
 
 };
 
 interface IState {
-    lightThemeToggle: boolean;
-    settings: Partial<ProSettings | undefined>;
-    pathname: string
+    // settings: Partial<ProSettings | undefined>;
+    pathname: string;
 }
-
 
 class ProHome extends React.Component<IProHomeProps, IState>{
 
+    static contextType = ThemeContext;
+    context!: React.ContextType<typeof ThemeContext>;
+
     constructor(props: IProHomeProps) {
-        super(props)
+        super(props);
         this.state = {
-            lightThemeToggle: false,
-            settings: {
-                fixSiderbar: true,
-                layout: 'mix',
-                navTheme: 'realDark',
-                splitMenus: true,
-                contentWidth: "Fluid",
-                siderMenuType: "sub"
-            },
-            pathname: "/app/operation"
+            pathname: "/app/operation",
         }
     }
+
     setPathname = (pathname: string) => {
         this.setState({ pathname });
-    }
-    setSetting = (changeSettings: Partial<ProSettings>) => {
-        this.setState({ settings: changeSettings })
-        // this.setState({ lightThemeToggle: !this.state.lightThemeToggle })
     }
 
     navigateTo = (pathname: string | undefined) => {
@@ -67,8 +58,10 @@ class ProHome extends React.Component<IProHomeProps, IState>{
     }
 
     render() {
-        const { pathname, settings } = this.state;
+        const { pathname } = this.state;
+        const settings = this.context?.themeSettings;
         const { logout } = this.props;
+        console.log(`context: `, this.context)
         return (
             <div
                 id="test-pro-layout"
@@ -127,6 +120,11 @@ class ProHome extends React.Component<IProHomeProps, IState>{
                                 <InfoCircleFilled key="InfoCircleFilled" />,
                                 <QuestionCircleFilled key="QuestionCircleFilled" />,
                                 <GithubFilled key="GithubFilled" />,
+                                <Switch
+                                    checkedChildren={<CgSun />}
+                                    unCheckedChildren={<CgMoon />}
+                                    onChange={this.context?.toggleTheme}
+                                />
                             ];
                         }}
                         headerTitleRender={(logo, title, _) => {
@@ -197,7 +195,7 @@ class ProHome extends React.Component<IProHomeProps, IState>{
                             getContainer={() => document.getElementById('test-pro-layout')}
                             settings={settings}
                             onSettingChange={(changeSetting) => {
-                                this.setSetting(changeSetting);
+                                this.context?.setThemeSetting(changeSetting)
                             }}
                             disableUrlParams={false}
                         />

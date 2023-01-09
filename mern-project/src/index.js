@@ -1,7 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import 'styles/index.css';
-import App from './App.jsx';
+import App from './App.tsx';
 // import reportWebVitals from './reportWebVitals';
 import store from './reducers/store/store.js';
 import { Provider } from 'react-redux';

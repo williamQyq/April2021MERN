@@ -96,7 +96,7 @@
   "include": [
     "./src/**/*.tsx",
     "./src/**/*.ts"
-  ],
+, "src/component/PriceAlert.jsx"  ],
   "exclude": [
     "node_modules"
   ]

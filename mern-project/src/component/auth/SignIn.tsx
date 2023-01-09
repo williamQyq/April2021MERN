@@ -3,13 +3,14 @@ import { Layout, Form, Input, Button, Typography, message, SiderProps } from 'an
 // import 'styles/login.scss';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import { login, register } from 'reducers/actions/authActions.js';
 import { clearErrors } from 'reducers/actions/errorActions.js';
 import WithNavigate from './WithNavigate.js';
 import { Navigate, NavigateFunction } from 'react-router-dom';
 import { FormProps } from 'antd/es/form/Form.js';
 import background from 'styles/assets/background.png';
+import { ThemeContext } from 'context';
 
 const { Sider, Content, } = Layout;
 const { Text, Title, Link } = Typography;
@@ -94,11 +95,16 @@ interface ReduxStateSignIn {
 }
 
 class SignIn extends React.Component<IProps, IState> {
+    static contextType = ThemeContext;
+    context!: React.Context<typeof ThemeContext>;
 
-    state = {
-        email: "",
-        password: "",
-        msg: null
+    constructor(props: IProps) {
+        super(props);
+        this.state = {
+            email: "",
+            password: "",
+            msg: null
+        }
     }
     // static propTypes = {
     //     isAuthenticated: PropTypes.bool,
