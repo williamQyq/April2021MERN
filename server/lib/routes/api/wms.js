@@ -4,6 +4,8 @@ import excel from 'exceljs';
 import { WMSDatabaseApis, GsheetApis } from '#query/utilities.js';
 import { status } from '#query/aggregate.js';
 import moment from 'moment';
+import connectionTimeout from '#rootTS/lib/middleware/connectionTimeout.js';
+
 const router = express.Router();
 
 //@route GET api/wms
@@ -17,7 +19,7 @@ router.get('/sellerInv/v0/quantity/upc/:upc', (req, res) => {
 
 //@route POST api/wms
 //@desc get warehouse quantity on multiple upcs
-router.post('/sellerInv/v0/quantity/upcs', auth, (req, res) => {
+router.post('/sellerInv/v0/quantity/upcs', auth, connectionTimeout(), (req, res) => {
     const { upcArr } = req.body;
     let result = [];
     let wms = new WMSDatabaseApis();
@@ -28,7 +30,7 @@ router.post('/sellerInv/v0/quantity/upcs', auth, (req, res) => {
         })
         .catch(err => {
             console.error(err.message);
-            res.status(502).json({ msg: "WMS connection error" })
+            res.status(404).json({ msg: "WMS connection error" })
         })
 
 })

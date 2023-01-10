@@ -1,10 +1,8 @@
 import React from 'react';
 import { AiOutlineShopping } from 'react-icons/ai';
 import IconCover from 'component/utility/IconCover.jsx'
-import { ContentHeader } from 'component/utility/Layout.jsx';
-import { Row, Col, Card } from 'antd';
-import { Link } from 'react-router-dom';
 import { MenuOption } from 'types';
+import Category from 'component/utility/Category';
 
 const alertFeatures: MenuOption[] = [
     {
@@ -27,31 +25,10 @@ const alertFeatures: MenuOption[] = [
     }
 ]
 
-const Alert: React.FC = () => {
+const AlertCtg: React.FC = () => {
     return (
-        <>
-            <ContentHeader title="Deal Alert" />
-            <Row gutter={[8, 12]}>
-                {
-                    alertFeatures.map((feature, i) => {
-                        return (
-                            <Col key={i} span={8}>
-                                <Link to={`${feature.key}`}>
-                                    <Card
-                                        style={{ width: 400, height: 500, borderRadius: "8px" }}
-                                        hoverable
-                                        cover={feature.cover}
-                                    >
-                                        <Card.Meta title={feature.title} description={feature.description} />
-                                    </Card>
-                                </Link>
-                            </Col>
-                        )
-                    })
-                }
-            </Row>
-        </>
+        <Category title="Deal Alert" categories={alertFeatures} />
     );
 }
 
-export default Alert;
+export default AlertCtg;

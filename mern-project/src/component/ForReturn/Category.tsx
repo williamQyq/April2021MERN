@@ -4,13 +4,11 @@ import { TbHeartRateMonitor } from 'react-icons/tb';
 import { RiUploadCloud2Line } from 'react-icons/ri';
 import { MdOutlineTipsAndUpdates } from 'react-icons/md';
 import IconCover from 'component/utility/IconCover.jsx';
-import { ContentHeader } from 'component/utility/Layout';
-import { Row, Col, Card } from 'antd';
-import { Link } from 'react-router-dom';
 import { MenuOption } from 'types';
+import Category from 'component/utility/Category';
 
 
-const operationFeatures: MenuOption[] = [
+const forReturnFeatures: MenuOption[] = [
     {
         key: "product-start-up",
         title: "Get Started",
@@ -37,31 +35,10 @@ const operationFeatures: MenuOption[] = [
     }
 ]
 
-const Operation: React.FC = () => {
+const ForReturnCtg: React.FC = () => {
     return (
-        <>
-            <ContentHeader title="Amazon" />
-            <Row gutter={[8, 12]}>
-                {
-                    operationFeatures.map((feature, i) => {
-                        return (
-                            <Col key={i} span={6}>
-                                <Link to={`${feature.key}`}>
-                                    <Card
-                                        style={{ width: 300, height: 400, borderRadius: "8px" }}
-                                        hoverable
-                                        cover={feature.cover}
-                                    >
-                                        <Card.Meta title={feature.title} description={feature.description} />
-                                    </Card>
-                                </Link>
-                            </Col>
-                        )
-                    })
-                }
-            </Row>
-        </>
+        <Category title="For Return" categories={forReturnFeatures} />
     );
 }
 
-export default Operation;
+export default ForReturnCtg;

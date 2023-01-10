@@ -19,7 +19,7 @@ import MenuCard from 'component/Home/MenuCard';
 import SearchInput from 'component/Home/Search';
 import HomeContent from 'component/Home/HomeContent.jsx';
 import { loadUser, logout } from 'reducers/actions/authActions';
-import { Avatar, Button, Switch } from 'antd';
+import { Avatar, Button, ConfigProvider, Switch } from 'antd';
 import { Location, NavigateFunction } from 'react-router-dom';
 import { CgSun, CgMoon } from 'react-icons/cg';
 import { ThemeContext } from 'context';
@@ -69,7 +69,8 @@ class ProHome extends React.Component<IProHomeProps, IState>{
                     height: '100vh',
                 }}
             >
-                <ProConfigProvider hashed={false}>
+
+                <ConfigProvider>
                     <ProLayout
                         logo={
                             <Avatar src="https://images-rocky-public.s3.amazonaws.com/logo.jpg" />
@@ -106,7 +107,7 @@ class ProHome extends React.Component<IProHomeProps, IState>{
                         avatarProps={{
                             src: 'https://images-rocky-public.s3.amazonaws.com/kisspng-rick-sanchez-morty-srick.jpg',
                             size: 'default',
-                            title: 'Poppy Butthole',
+                            title: 'Poppy Rick',
                             // onClick(e) {
                             //     e?.preventDefault();
                             // },
@@ -200,7 +201,7 @@ class ProHome extends React.Component<IProHomeProps, IState>{
                             disableUrlParams={false}
                         />
                     </ProLayout>
-                </ProConfigProvider>
+                </ConfigProvider>
             </div>
         );
     }

@@ -1,3 +1,6 @@
+/*
+    Category Option
+*/
 export interface MenuOption {
     key: string,
     title: string,

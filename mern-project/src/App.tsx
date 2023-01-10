@@ -103,7 +103,7 @@ class App extends React.Component<IProps, IState> {
       >
         <ConfigProvider
           theme={{
-            inherit: true,
+            // inherit: true,
             token: themeSettings.navTheme === 'light' ? lightTheme : darkTheme,
             components: themeSettings.navTheme === 'light' ? lightThemeCmpt : darkThemeCmpt,
           }}

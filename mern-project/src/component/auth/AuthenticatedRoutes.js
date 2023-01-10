@@ -6,7 +6,7 @@ const Alert = lazy(() => import('component/SourceStore/Alert.tsx'));
 const StoreBB = lazy(() => import('component/SourceStore/StoreBB.jsx'));
 const StoreMS = lazy(() => import('component/SourceStore/StoreMS.jsx'));
 const StoreWM = lazy(() => import('component/SourceStore/StoreWM.jsx'));
-const OutBound = lazy(() => import('component/Warehouse/OutBound.jsx'));
+const OutBound = lazy(() => import('component/Warehouse/OutBound.tsx'));
 const NeedToShip = lazy(() => import('component/Warehouse/NeedToShip.jsx'));
 const InventoryReceived = lazy(() => import('component/Warehouse/InventoryReceived.jsx'));
 const SearchRecords = lazy(() => import('component/Warehouse/SearchRecords.jsx'));

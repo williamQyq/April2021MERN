@@ -25,7 +25,7 @@ export const getProductPricing = () => (dispatch, getState) => {
             })
             return res.data
         })
-        .then(prods =>
+        .then(prods =>                         //!Warning abuse using async here, improve later
             dispatch(getWmsProdQty(prods))    //append warehouse qty to prod list.
         )
         .then(warehouseData => {
