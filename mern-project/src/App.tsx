@@ -55,7 +55,8 @@ class App extends React.Component<IProps, IState> {
         navTheme: 'realDark',
         splitMenus: true,
         contentWidth: "Fluid",
-        siderMenuType: "sub"
+        siderMenuType: "sub",
+        colorPrimary:"#1677FF"
       },
     }
 

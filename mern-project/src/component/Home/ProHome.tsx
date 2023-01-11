@@ -61,7 +61,6 @@ class ProHome extends React.Component<IProHomeProps, IState>{
         const { pathname } = this.state;
         const settings = this.context?.themeSettings;
         const { logout } = this.props;
-        console.log(`context: `, this.context)
         return (
             <div
                 id="test-pro-layout"
@@ -70,7 +69,7 @@ class ProHome extends React.Component<IProHomeProps, IState>{
                 }}
             >
 
-                <ConfigProvider>
+                <ProConfigProvider>
                     <ProLayout
                         logo={
                             <Avatar src="https://images-rocky-public.s3.amazonaws.com/logo.jpg" />
@@ -178,6 +177,7 @@ class ProHome extends React.Component<IProHomeProps, IState>{
                                     danger
                                     onClick={() => logout()}
                                 >Log Out</Button>,
+                                
                             ]}
                         >
                             <ProCard
@@ -201,7 +201,7 @@ class ProHome extends React.Component<IProHomeProps, IState>{
                             disableUrlParams={false}
                         />
                     </ProLayout>
-                </ConfigProvider>
+                </ProConfigProvider>
             </div>
         );
     }
