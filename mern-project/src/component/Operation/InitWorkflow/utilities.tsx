@@ -1,9 +1,7 @@
 
-import { FormInstance, Button, Steps } from "antd";
+import { FormInstance, Button } from "antd";
 import React, { ReactNode } from "react";
-import {
-    IMyStepsProps
-} from './types';
+import { Accessories } from "./types";
 
 export const waitTime = (time: number = 100) => {
     return new Promise((resolve) => {
@@ -39,7 +37,7 @@ export const Submitter = (props: SubmitterProps): ReactNode => {
     const handlePrev = () => {
         prev();
     }
- 
+
     const hasNext = curStep < stepsCount ? true : false;
     const hasPrev = curStep > 0 ? true : false;
     const isLastStep = curStep === stepsCount - 1 ? true : false;
@@ -58,15 +56,13 @@ export const Submitter = (props: SubmitterProps): ReactNode => {
     );
 }
 
-export const MySteps = (props: IMyStepsProps): React.ReactNode => {
-    const { current, steps } = props
-    return (
-        <Steps current={current}>
-            {
-                steps.map(step =>
-                    <Steps.Step key={step.name}{...step} />
-                )
-            }
-        </Steps>
-    );
+// create duplicate valueEnum select options for ProColumn 
+export function createAccessoriesEnumObj<T = Accessories>(accsOptions: T[]): Record<string, T | "None"> {
+    let valueEnum: Record<string, T | "None"> = {};
+    accsOptions.forEach(value => {
+        valueEnum[`${value}_0`] = value;
+        valueEnum[`${value}_1`] = value;
+    })
+    valueEnum["None"] = "None";
+    return valueEnum;
 }

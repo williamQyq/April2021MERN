@@ -23,7 +23,7 @@ const ActionMenu = ({ actions, record }) => {
             >
                 Edit
             </Link>
-            <Dropdown trigger={["click"]} overlay={DropDownMoreActionMenu}>
+            <Dropdown trigger={["click"]} menu={DropDownMoreActionMenu}>
                 <Link>More <DownOutlined /></Link>
             </Dropdown>
         </Space>

@@ -9,6 +9,7 @@ import persistStore from 'redux-persist/es/persistStore';
 import { PersistGate } from 'redux-persist/integration/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { SocketProvider } from './component/socket/socketContext.js';
+import { ThemeProvider } from './component/Home/ThemeProvider';
 const persistor = persistStore(store);
 
 function render() {
@@ -18,9 +19,11 @@ function render() {
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <SocketProvider>
-            <Router>
-              <App />
-            </Router>
+            <ThemeProvider>
+              <Router>
+                <App />
+              </Router>
+            </ThemeProvider>
           </SocketProvider>
         </PersistGate>
       </Provider>

@@ -508,3 +508,37 @@ To solve the error "The requested module does not provide an export named 'defau
 
 ## Note 09/26/22:
 1. Upgraded to latest React 18 & react-router-dom v6.
+
+## Note 01/12/23:
+NFS server & client:
+
+on Windows:
+1. netsh interface portproxy show all
+2. ip addr show | grep eth0
+3. ```c
+        netsh interface portproxy add v4tov4 listenport=443 listenaddress=0.0.0.0 connectport=443 connectaddress=<inet>
+        netsh interface portproxy add v4tov4 listenport=2049 listenaddress=0.0.0.0 connectport=2049 connectaddress=
+        netsh interface portproxy add v4tov4 listenport=111 listenaddress=0.0.0.0 connectport=111 connectaddress=
+
+        netsh advfirewall firewall delete rule name="TCP Port 6624" protocol=TCP localport=6624
+on Host WSL:
+1. config /etc/exports
+2. sudo exportfs -a
+3. sudo service nfs-kernel-server start
+
+on Ubuntu Client:
+```
+        sudo mount -t nfs4 192.168.1.24:/partimg /home/partimg -o noatime
+```
+
+- ifconfig eth0 169.254.7.44 broadcast 169.254.255.255 netmask 255.255.0.0
+
+start nfs deamon:  
+- sudo service rpcbind start  
+- sudo service nfs-kernel-server restart  
+
+restart network:  
+- sudo /etc/init.d/networking start
+
+config network:  
+- sudo vi /etc/network/interfaces

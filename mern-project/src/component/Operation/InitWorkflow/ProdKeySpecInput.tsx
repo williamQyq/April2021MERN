@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StepComponentProps } from "./types";
 import {
     ProCard,
@@ -11,6 +11,12 @@ import { message } from 'antd';
 import { waitTime } from './utilities';
 
 const sourceTextForm = [
+    {
+        name: 'upc',
+        width: 'lg',
+        label: 'UPC',
+        required: [{ required: true }]
+    },
     {
         name: 'cpu',
         width: 'lg',
@@ -54,28 +60,24 @@ const ProdKeySpecInput: React.FC<StepComponentProps> = (props: StepComponentProp
             >
                 <ProCard
                     title="Key Specification"
+                    bordered
+                    headerBordered
                     style={{
                         minWidth: 800,
                         marginBlockEnd: 16,
                         maxWidth: '100%',
                     }}
                 >
-                    <ProFormText
-                        name="upc"
-                        width="lg"
-                        label="UPC"
-                        tooltip="Product UPC"
-                        placeholder="Enter product upc"
-                        rules={[{ required: true }]}
-                    />
-
                     {
                         sourceTextForm.map(textForm => {
                             return (
                                 <ProFormText
+                                    key={textForm.name}
                                     name={textForm.name}
                                     width={textForm.width as 'lg'}
                                     label={textForm.label}
+                                    placeholder={`Enter ${textForm.name}`}
+                                    rules={textForm.required ? textForm.required : undefined}
                                 />
                             )
                         })

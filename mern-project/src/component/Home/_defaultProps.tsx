@@ -1,4 +1,5 @@
 import { AlertOutlined, ChromeFilled, CrownFilled, DownloadOutlined, ScanOutlined, SmileFilled, TabletFilled } from '@ant-design/icons';
+import { ProLayoutProps } from '@ant-design/pro-layout';
 import React from 'react';
 import { AiOutlineShopping } from 'react-icons/ai';
 import { GrAmazon } from 'react-icons/gr';
@@ -57,13 +58,47 @@ export default {
                         path: '/app/operation',
                         name: 'Operation',
                         icon: <CrownFilled />,
-                        component: './Welcome',
+                        // component: './Welcome',
+                        routes: [
+                            {
+                                path: 'init-new-product',
+                                name: "Init Product",
+                                icon: <CrownFilled />
+                            },
+                            {
+                                path: 'amazon-products-list',
+                                name: "Amazon Central",
+                                icon: <CrownFilled />
+                            },
+                            {
+                                path: 'amazon-surveillance',
+                                name: "Amazon Surveillance",
+                                icon: <CrownFilled />
+                            }
+                        ]
                     },
                     {
                         path: '/app/outbound',
                         name: 'Outbound',
                         icon: <CrownFilled />,
-                        component: './Welcome',
+                        // component: './Welcome',
+                        routes: [
+                            {
+                                path: 'needToShip',
+                                name: "Shipping Central",
+                                icon: <CrownFilled />
+                            },
+                            {
+                                path: 'inventoryReceived',
+                                name: "inventoryReceived",
+                                icon: <CrownFilled />
+                            },
+                            {
+                                path: 'searchRecord',
+                                name: "Record Searching",
+                                icon: <CrownFilled />
+                            }
+                        ]
                     },
                 ],
             },
@@ -94,7 +129,7 @@ export default {
             url: '',
         },
         {
-            icon: <DownloadOutlined style={{ fontSize: "48px" }}/>,
+            icon: <DownloadOutlined style={{ fontSize: "48px" }} />,
             title: 'Download',
             desc: 'download xlsx, csv, pdf',
             url: '',

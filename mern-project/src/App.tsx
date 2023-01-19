@@ -14,11 +14,8 @@ import NotFound from 'component/utility/NotFound.jsx';
 import { IReduxAuth, IReduxError } from 'reducers/types';
 import { Dispatch } from '@reduxjs/toolkit';
 import { AnyAction } from 'redux';
-import { ConfigProvider } from 'antd';
-import { AliasToken } from 'antd/es/theme/internal';
-import { OverrideToken } from 'antd/es/theme/interface';
-import { ThemeContext } from 'context';
-import { ProSettings } from '@ant-design/pro-layout';
+import { ThemeContext } from 'component/Home/ThemeProvider';
+import { ConfigProvider, theme } from 'antd';
 
 interface IProps extends IReduxAuth {
   error: IReduxError;
@@ -26,40 +23,14 @@ interface IProps extends IReduxAuth {
   handleErrors: () => void;
 }
 
-interface IState {
-  themeSettings: Partial<ProSettings>;
-}
-
-type Theme = Partial<AliasToken>;
-type CmptTheme = OverrideToken;
-const darkTheme: Theme = {
-
-}
-const lightTheme: Theme = {
-
-}
-const darkThemeCmpt: CmptTheme = {
-
-}
-const lightThemeCmpt: CmptTheme = {
-
-}
+interface IState { };
 
 class App extends React.Component<IProps, IState> {
+  static contextType = ThemeContext;
+  context!: React.ContextType<typeof ThemeContext>;
+
   constructor(props: IProps) {
     super(props);
-    this.state = {
-      themeSettings: {
-        fixSiderbar: true,
-        layout: 'mix',
-        navTheme: 'realDark',
-        splitMenus: true,
-        contentWidth: "Fluid",
-        siderMenuType: "sub",
-        colorPrimary:"#1677FF"
-      },
-    }
-
   }
   // static propTypes = {
   //   isAuthenticated: Proptypes.bool
@@ -77,58 +48,33 @@ class App extends React.Component<IProps, IState> {
       openAlertNotification('success', msg, this.props.handleMessages, reason)
     }
   }
-
-  setThemeSetting = (changeSettings: Partial<ProSettings | undefined>) => {
-    if (changeSettings)
-      this.setState({ themeSettings: changeSettings });
-  }
-
-  toggleTheme = () => {
-    const { themeSettings } = this.state;
-    console.log(themeSettings);
-    themeSettings.navTheme === "light" ?
-      this.setState({ themeSettings: { ...themeSettings, navTheme: "realDark" } }) :
-      this.setState({ themeSettings: { ...themeSettings, navTheme: "light" } });
-  }
-
   render() {
-    const { themeSettings } = this.state;
-
+    const isDark = this.context?.isDark;
     return (
-      <ThemeContext.Provider
-        value={{
-          themeSettings: themeSettings,
-          toggleTheme: this.toggleTheme,
-          setThemeSetting: this.setThemeSetting,
+      <ConfigProvider
+        theme={{
+          algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
         }}
       >
-        <ConfigProvider
-          theme={{
-            // inherit: true,
-            token: themeSettings.navTheme === 'light' ? lightTheme : darkTheme,
-            components: themeSettings.navTheme === 'light' ? lightThemeCmpt : darkThemeCmpt,
-          }}
-        >
-          <Routes>
-            <Route path="/" element={<SignIn />} />
-            <Route
-              path="app/*"
-              element={
-                <PrivateRoute isAuthenticated={this.props.isAuthenticated} >
-                  {
-                    isBrowser ? (
-                      <ProHome />
-                    ) : (
-                      <HomeMobile />
-                    )
-                  }
-                </PrivateRoute>
-              }
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </ConfigProvider>
-      </ThemeContext.Provider >
+        <Routes>
+          <Route path="/" element={<SignIn />} />
+          <Route
+            path="app/*"
+            element={
+              <PrivateRoute isAuthenticated={this.props.isAuthenticated} >
+                {
+                  isBrowser ? (
+                    <ProHome />
+                  ) : (
+                    <HomeMobile />
+                  )
+                }
+              </PrivateRoute>
+            }
+          />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </ConfigProvider>
     );
   }
 }

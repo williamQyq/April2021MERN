@@ -5,6 +5,9 @@ export type DataSourceType = {
     asin?: string;
     decs?: string;
     ram?: string[];
+    ssd?: SSD[] | "None";
+    hdd?: HDD | "None";
+    os?: OS;
     ramOnboard?: string;
     children?: DataSourceType[];
 };
@@ -33,7 +36,8 @@ export enum SSD {
 }
 export enum HDD {
     HDD_1TB = "1TB",
-    HDD_2TB = "2TB"
+    HDD_2TB = "2TB",
+    HDD_3TB = "3TB"
 }
 export enum OS {
     W10H = "W10H",
@@ -41,17 +45,17 @@ export enum OS {
     W10P = "W10P",
     W11P = "W11P"
 }
+export type Accessories = RAM | SSD | HDD;
+type AccessoriesOptionEnum = Record<string, RAM | SSD | HDD | OS | "None">;
 
-interface OptionEnum {
-    [key: string]: RAM | SSD | HDD | OS
-}
-
-export interface RamEnum extends OptionEnum { }
-export interface SsdEnum extends OptionEnum { }
-export interface HddEnum extends OptionEnum { }
-export interface OsEnum extends OptionEnum { }
+export interface RamEnum extends AccessoriesOptionEnum { };
+export interface SsdEnum extends AccessoriesOptionEnum { };
+export interface HddEnum extends AccessoriesOptionEnum { };
+export interface OsEnum extends AccessoriesOptionEnum { };
 
 export interface StepComponentProps {
     nextCatag?: () => void;
     prevCatag?: () => void;
 }
+
+export type ShippingTemplate = "USPrime" | "Regular";

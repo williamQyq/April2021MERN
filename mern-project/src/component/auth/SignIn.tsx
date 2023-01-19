@@ -1,6 +1,5 @@
 import React, { CSSProperties } from 'react';
 import { Layout, Form, Input, Button, Typography, message, SiderProps } from 'antd';
-// import 'styles/login.scss';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 // import PropTypes from 'prop-types';
@@ -10,7 +9,6 @@ import WithNavigate from './WithNavigate.js';
 import { Navigate, NavigateFunction } from 'react-router-dom';
 import { FormProps } from 'antd/es/form/Form.js';
 import background from 'styles/assets/background.png';
-import { ThemeContext } from 'context';
 
 const { Sider, Content, } = Layout;
 const { Text, Title, Link } = Typography;
@@ -95,9 +93,6 @@ interface ReduxStateSignIn {
 }
 
 class SignIn extends React.Component<IProps, IState> {
-    static contextType = ThemeContext;
-    context!: React.Context<typeof ThemeContext>;
-
     constructor(props: IProps) {
         super(props);
         this.state = {
@@ -106,20 +101,7 @@ class SignIn extends React.Component<IProps, IState> {
             msg: null
         }
     }
-    // static propTypes = {
-    //     isAuthenticated: PropTypes.bool,
-    //     isLoading: PropTypes.bool,
-    //     error: PropTypes.object.isRequired,
-    //     login: PropTypes.func.isRequired,
-    //     clearErrors: PropTypes.func.isRequired
-    // }
 
-    componentDidMount() {
-        // const { isAuthenticated } = this.props;
-        // if (isAuthenticated) {
-        //     this.props.navigate('/app', { replace: true });
-        // }
-    }
     componentDidUpdate(prevProps: IProps) {
         const { error, isAuthenticated } = this.props;
         if (error !== prevProps.error) {
@@ -146,7 +128,6 @@ class SignIn extends React.Component<IProps, IState> {
         }
         this.props.login(user);
 
-
     }
     onFinishFailed = (errorInfo: unknown) => {
         message.error("Sign in failed!")
@@ -164,9 +145,9 @@ class SignIn extends React.Component<IProps, IState> {
     render() {
         const { isAuthenticated } = this.props;
         return (
-            isAuthenticated ?
+            isAuthenticated ? (
                 <Navigate to="/app" replace={true} />
-                :
+            ) : (
                 <Layout style={{ minHeight: "100vh" }}>
                     <Sider {...siderLayout} />
                     <Content style={contentLayout}>
@@ -217,6 +198,7 @@ class SignIn extends React.Component<IProps, IState> {
                         </Form>
                     </Content>
                 </Layout>
+            )
         );
     }
 

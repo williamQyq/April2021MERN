@@ -1,18 +1,42 @@
-import React from 'react';
-import { ProCard, ProFormCheckbox, ProFormRadio, ProFormSelect, ProFormSlider, StepsForm } from '@ant-design/pro-components';
+import React, { useState } from 'react';
+import { ProDescriptions, ProFormCheckbox, ProFormRadio, ProFormSelect, ProFormSlider, StepsForm } from '@ant-design/pro-components';
 import { message } from 'antd';
 import { waitTime } from './utilities';
-import { StepComponentProps, IMyStep } from './types';
-import CreateSkuEditableTable from './SkuEditableTable';
+import { DataSourceType, ShippingTemplate, StepComponentProps } from './types';
+import SkuEditableCreationTable from './SkuEditableTable';
+import MyProCard from 'component/utility/MyProCard';
 
 const { StepForm } = StepsForm;
 
-const defaultData = {
-    amzAccts: ["RS", "PRO"],
+const defaultStepsData: Partial<StepsFormDataType> = {
+    amzAccts: ["RS"],
     shippingTemplate: "USPrime"
 }
-
+interface StepsFormDataType {
+    dataSource: readonly DataSourceType[];
+    amzAccts: string[];
+    shippingTemplate: ShippingTemplate;
+    profitRate: number;
+    addon: any[];
+}
 const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
+    const [dataSource, setDataSource] = useState<readonly DataSourceType[]>([]);
+    const [stepsFormData, setStepsFormData] = useState<Partial<StepsFormDataType> | null>(null);
+
+    //stepsFormData combine each step form field data and sku editableTable datasource
+    const collectInfoOnFinish = (values: Partial<StepsFormDataType>): void => {
+        setStepsFormData({ ...values, dataSource: dataSource });
+    }
+    // const createDescriptionColumns = (skuRowData: Partial<DataSourceType>) => {
+    //     return Object.entries(skuRowData).map(([key, value]) => (
+    //         {
+    //             title: value,
+    //             key: key,
+    //             dataIndex: key,
+    //             copyable: true
+    //         }
+    //     ));
+    // }
 
     return (
         <StepsForm
@@ -28,42 +52,22 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                 title="Collect Info"
                 isKeyPressSubmit={true}
                 onFinish={async (values) => {
-                    console.log(`collect info`, values);
                     await waitTime(1000);
-                    message.success('Submit Success');
+                    message.success('Init SKU Finished');
+                    collectInfoOnFinish(values);
                     return true;
                 }}
                 request={async () => {
-                    return defaultData;
+                    return defaultStepsData;
                 }}
             >
-                <ProCard
-                    title="Create SKU"
-                    bordered
-                    headerBordered
-                    collapsible
-                    style={{
-                        marginBlockEnd: 16,
-                        minWidth: 800,
-                        maxWidth: '100%',
-                    }}
-                >
-                    <CreateSkuEditableTable />
-                </ProCard>
-                <ProCard
-                    title="Extra"
-                    bordered
-                    headerBordered
-                    collapsible
-                    style={{
-                        minWidth: 800,
-                        maxWidth: "100%",
-                        marginBlockEnd: 16,
-                    }}
-                >
+                <MyProCard title="Create SKU">
+                    <SkuEditableCreationTable dataSource={dataSource} setDataSource={setDataSource} />
+                </MyProCard>
+                <MyProCard title="Create SKU">
                     <ProFormCheckbox.Group
                         name="amzAccts"
-                        label="RS or/and Pro"
+                        label="Amazon Accounts"
                         options={['RS', 'PRO']}
                         tooltip="These skus are created for which store?"
                         rules={[
@@ -110,52 +114,52 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                             });
                         }}
                     />
-                </ProCard>
+                </MyProCard>
             </StepForm>
             <StepForm
                 name="verifySku"
                 title="Verify SKU"
                 isKeyPressSubmit={true}
-                onFinish={async (values) => {
-                    console.log(`collect info`, values);
+                onFinish={async () => {
                     await waitTime(1000);
-                    message.success('Submit Success');
+                    message.success("Downloaded Generated SKU Success");
+                    console.log(`values: `, stepsFormData)
                     return true;
                 }}
-                request={async () => {
-                    return defaultData;
-                }}
             >
-                <ProCard
-                    title="Verify SKU"
-                    bordered
-                    headerBordered
-                    style={{
-                        marginBlockEnd: 16,
-                        minWidth: 800,
-                        maxWidth: '100%',
-                    }}
-                >
+                <MyProCard title="Verify SKU">
+                    {
+                        stepsFormData?.dataSource?.map(skuRowData => {
+                            // let columns = createDescriptionColumns(skuRowData);
+                            return (
+                                <ProDescriptions
+                                    key={skuRowData.id}
+                                    dataSource={skuRowData}
+                                    column={6}
+                                    colon={false}
+                                    columns={[
+                                        {
+                                            // title: skuRowData.asin,
+                                            key: "asin",
+                                            dataIndex: "asin",
+                                            copyable: true
+                                        },
+                                        {
+                                            key: "upc",
+                                            dataIndex: "upc",
+                                            copyable: true
+                                        },
+                                        {
+                                            title: "RAM",
+                                            key: "ram",
+                                            dataIndex: "ram",
+                                        },
+                                    ]}
+                                />
+                            )
+                        })}
 
-                </ProCard>
-            </StepForm>
-            <StepForm
-                name="done"
-                title="Done"
-                onFinish={async () => {
-                    message.success("Downloaded Generated SKU Success");
-                }}
-            >
-                <ProCard
-                    style={{
-                        marginBlockEnd: 16,
-                        minWidth: 800,
-                        maxWidth: '100%',
-                        minHeight: 600
-                    }}
-                >
-
-                </ProCard>
+                </MyProCard>
             </StepForm>
         </StepsForm>
     );

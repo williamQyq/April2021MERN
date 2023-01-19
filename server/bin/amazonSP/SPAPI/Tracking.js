@@ -1,4 +1,7 @@
 import { sellingPartner } from "../RateLimiter.js";
+// import SellingPartner from 'amazon-sp-api';
+
+// import { AMZ_CREDENTIALS, AMZ_REFRESH_TOKEN, REGION } from '#root/config.js';
 const RATE_PER_SEC = 1;
 const BURST = 1;
 
@@ -14,7 +17,7 @@ export default class Tracking {
             operation: "getTrackingInformation",
             endpoint: "shipping",
             path: {
-                trackingId:"1Z575RW12990360508"
+                trackingId: "1Z14V36V4201373377"
             }
             // operation: "getOrderItems",
             // endpoint: "orders",
@@ -106,6 +109,11 @@ export default class Tracking {
         this.sellingPartner = sellingPartner();
     }
 
+    async getTracking() {
+        // console.log(this.param);
+        let res = await this.sellingPartner.callAPI(this.param);
+        console.log(`tracking: \n`, res);
+    }
     // @overload
     createAndAddTasksToBucket(bucket, trackingId) {
         bucket.addTask(() => this.#taskPromise(trackingId))
@@ -133,4 +141,12 @@ export default class Tracking {
 
 
 
+}
+
+let service = new Tracking();
+// console.log(REGION)
+try {
+    await service.getTracking();
+} catch (err) {
+    console.error(`***err: \n`, err.details);
 }

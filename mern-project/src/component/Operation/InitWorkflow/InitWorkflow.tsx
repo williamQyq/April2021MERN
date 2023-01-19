@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import 'styles/ProcessStreamStartUp.scss';
 import { ContentHeader } from 'component/utility/Layout';
-import { StepStatus } from 'types';
+// import { StepStatus } from 'types';
 import ProdDetachSpecInput from './ProdDetachSpecInput';
 import InitSkuAsinMapping from './InitSkuAsinMapping';
 
@@ -15,24 +15,23 @@ import ProdKeySpecInput from './ProdKeySpecInput';
 
 
 const { Title } = Typography;
-const { Step } = Steps;
 
 const InitNewProdWorkflow: React.FC = () => {
     const [currentStep, setCurrentStep] = useState(0);
 
     //Set current Step status: error, process finish,wait
-    const getStepStatus = (index: number): StepStatus => {
-        let status = StepStatus.error;
-        if (index < currentStep) {
-            status = StepStatus.finish;
-        } else if (index === currentStep) {
-            status = StepStatus.process;
-        } else if (index > currentStep) {
-            status = StepStatus.wait;
-        }
+    // const getStepStatus = (index: number): StepStatus => {
+    //     let status = StepStatus.error;
+    //     if (index < currentStep) {
+    //         status = StepStatus.finish;
+    //     } else if (index === currentStep) {
+    //         status = StepStatus.process;
+    //     } else if (index > currentStep) {
+    //         status = StepStatus.wait;
+    //     }
 
-        return status;
-    }
+    //     return status;
+    // }
     const next = () => {
         if (currentStep + 1 < steps.length)
             setCurrentStep(currentStep + 1);
@@ -87,16 +86,8 @@ const InitNewProdWorkflow: React.FC = () => {
                         direction='vertical'
                         current={currentStep}
                         onChange={(current: number) => setCurrentStep(current)}
-                    >
-                        {
-                            steps.map((step, index) => {
-                                let status = getStepStatus(index);
-                                return (
-                                    <Step status={status} {...step} />
-                                );
-                            })
-                        }
-                    </Steps>
+                        items={steps}
+                    />
                 </Col>
             </Row>
         </>
