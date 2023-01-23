@@ -5,7 +5,7 @@ export type DataSourceType = {
     asin?: string;
     decs?: string;
     ram?: string[];
-    ssd?: SSD[] | "None";
+    ssd?: string[];
     hdd?: HDD | "None";
     os?: OS;
     ramOnboard?: string;

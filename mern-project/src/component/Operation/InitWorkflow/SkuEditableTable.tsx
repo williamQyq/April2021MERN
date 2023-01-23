@@ -8,18 +8,23 @@ import {
 } from '@ant-design/pro-components';
 import { Rule } from 'antd/es/form';
 import React, { useRef, useState } from 'react';
-import { DataSourceType, HDD, HddEnum, OS, OsEnum, RAM, SSD } from './types';
-import { createAccessoriesEnumObj } from './utilities';
+import { Accessories, DataSourceType, HDD, HddEnum, OS, OsEnum, RAM, SSD } from './types';
 
 interface IProps {
     dataSource: readonly DataSourceType[];
-    setDataSource: React.Dispatch<React.SetStateAction<readonly DataSourceType[]>>
+    setDataSource: React.Dispatch<React.SetStateAction<readonly DataSourceType[]>>;
+    accessoriesValueEnum: {
+        ramValueEnum: Map<string, RAM | "None">;
+        ssdValueEnum: Map<string, SSD | "None">;
+    }
 }
 
 const SkuEditableTable: React.FC<IProps> = (props) => {
-    const { dataSource, setDataSource } = props;
+    const { dataSource, setDataSource, accessoriesValueEnum } = props;
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
     const editableFormRef = useRef<EditableFormInstance>();
+
+    const { ramValueEnum, ssdValueEnum } = accessoriesValueEnum;
 
     const defaultData: DataSourceType[] = [
         {
@@ -27,15 +32,12 @@ const SkuEditableTable: React.FC<IProps> = (props) => {
             upc: "123",
             asin: "BAA",
             ram: ["8GB_0", "8GB_1"],
-            ssd: [SSD.PCIE_1024],
+            ssd: ["PCIE_1024_0"],
             hdd: "None",
             os: OS.W11H
         },
 
     ];
-
-    const ramValueEnum = createAccessoriesEnumObj([RAM.DDR4_4, RAM.DDR4_8, RAM.DDR4_16, RAM.DDR4_32]);
-    const ssdValueEnum = createAccessoriesEnumObj([SSD.PCIE_2048, SSD.PCIE_1024, SSD.PCIE_512, SSD.PCIE_256, SSD.PCIE_128]);
 
     const hddValueEnum: HddEnum = {
         "1TB": HDD.HDD_1TB,

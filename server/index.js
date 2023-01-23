@@ -1,13 +1,14 @@
 import express from 'express';
 import bbItemsRouter from '#routes/api/bb_items.js';
 import msItemsRouter from '#routes/api/ms_items.js';
-import wmItemsRouter from '#routes/api/wm_items.js';
+// import wmItemsRouter from '#routes/api/wm_items.js';
 import itemsRouter from '#routes/api/items.js';
 import usersRouter from '#routes/api/users.js';
 import authRouter from '#routes/api/auth.js';
 import wmsRouter from '#routes/api/wms.js';
 import wmsV1Router from "#routesV1/api/wmsV1.js";
 import operationRouter from '#routes/api/operation.js';
+import operationV1Router from '#routesV1/api/operationV1.js';
 
 import { Server } from 'socket.io';
 import cors from 'cors';
@@ -33,8 +34,10 @@ app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
 // app.use('/api/keepa', require('./routes/api/keepa'));
 app.use('/api/wms', wmsRouter);
-app.use('/api/operation', operationRouter);
 app.use('/api/wmsV1', wmsV1Router);
+app.use('/api/operation', operationRouter);
+app.use('/api/operationV1', operationV1Router);
+
 
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, '../mern-project/build')));

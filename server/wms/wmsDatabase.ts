@@ -20,7 +20,6 @@ class Wms {
     }
     async connect(): Promise<Db | void> {
         return new Promise((resolve, reject) => {
-
             tunnel(sshConfig, async (error, server) => {
                 if (error) {
                     console.log("SSH connection error: \n\n", error);
@@ -32,15 +31,19 @@ class Wms {
                     // server.close();
                 });
                 // server.on('connection', console.log.bind(console, "**tunnel ssh server connected**:\n"));
-                await this._client.connect();
-                const db = this._client.db('wms');
-                resolve(db);    //db connection built.
+                try {
+                    await this._client.connect();
+                    const db = this._client.db('wms');
+                    resolve(db);    //db connection built.
 
-                this._client.on('error', console.error.bind(console, "***mongodb error***"))
-                this._client.on('error', (err) => {
-                    console.error(`******wms client connection closed**********`)
-                    this._client.close();
-                })
+                    this._client.on('error', console.error.bind(console, "***mongodb error***"))
+                    this._client.on('error', (err) => {
+                        console.error(`******wms client connection closed**********`)
+                        this._client.close();
+                    })
+                } catch (err) {
+                    reject();
+                }
             });
         })
     }

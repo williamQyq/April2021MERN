@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { ProDescriptions, ProFormCheckbox, ProFormRadio, ProFormSelect, ProFormSlider, StepsForm } from '@ant-design/pro-components';
-import { message } from 'antd';
-import { waitTime } from './utilities';
-import { DataSourceType, ShippingTemplate, StepComponentProps } from './types';
+import { message, Typography } from 'antd';
+import { createAccessoriesEnumObj, waitTime } from './utilities';
+import { Accessories, DataSourceType, HDD, RAM, ShippingTemplate, SSD, StepComponentProps } from './types';
 import SkuEditableCreationTable from './SkuEditableTable';
 import MyProCard from 'component/utility/MyProCard';
 
@@ -22,6 +22,10 @@ interface StepsFormDataType {
 const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
     const [dataSource, setDataSource] = useState<readonly DataSourceType[]>([]);
     const [stepsFormData, setStepsFormData] = useState<Partial<StepsFormDataType> | null>(null);
+
+    //Accessories key, type Map, e.g <4GB_0, 4GB>
+    const ramValueEnum = createAccessoriesEnumObj([RAM.DDR4_4, RAM.DDR4_8, RAM.DDR4_16, RAM.DDR4_32]);
+    const ssdValueEnum = createAccessoriesEnumObj([SSD.PCIE_2048, SSD.PCIE_1024, SSD.PCIE_512, SSD.PCIE_256, SSD.PCIE_128]);
 
     //stepsFormData combine each step form field data and sku editableTable datasource
     const collectInfoOnFinish = (values: Partial<StepsFormDataType>): void => {
@@ -62,7 +66,14 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                 }}
             >
                 <MyProCard title="Create SKU">
-                    <SkuEditableCreationTable dataSource={dataSource} setDataSource={setDataSource} />
+                    <SkuEditableCreationTable
+                        dataSource={dataSource}
+                        setDataSource={setDataSource}
+                        accessoriesValueEnum={{
+                            ramValueEnum,
+                            ssdValueEnum
+                        }}
+                    />
                 </MyProCard>
                 <MyProCard title="Create SKU">
                     <ProFormCheckbox.Group
@@ -126,11 +137,20 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                     console.log(`values: `, stepsFormData)
                     return true;
                 }}
+                // request={async () => {
+                //     return true;
+                // }}
             >
-                <MyProCard title="Verify SKU">
+                <MyProCard title="Generated SKU and Price">
+
+
+                </MyProCard>
+
+                <MyProCard title="Last Input Data Info">
                     {
                         stepsFormData?.dataSource?.map(skuRowData => {
                             // let columns = createDescriptionColumns(skuRowData);
+                            console.log(skuRowData);
                             return (
                                 <ProDescriptions
                                     key={skuRowData.id}
@@ -153,6 +173,33 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                                             title: "RAM",
                                             key: "ram",
                                             dataIndex: "ram",
+                                            render: (values) => {
+                                                let accsValues = values as Exclude<Accessories, HDD>[];
+                                                return accsValues.map((accs) => (
+                                                    <Typography.Text key={accs}>{accs} </Typography.Text>
+                                                ))
+                                            }
+                                        },
+                                        {
+                                            title: "SSD",
+                                            key: "ssd",
+                                            dataIndex: "ssd",
+                                            render: (values) => {
+                                                let accsValues = values as Exclude<Accessories, HDD>[];
+                                                return accsValues.map((accs) => (
+                                                    <Typography.Text key={accs}>{accs} </Typography.Text>
+                                                ))
+                                            }
+                                        },
+                                        {
+                                            title: "HDD",
+                                            key: "hdd",
+                                            dataIndex: "hdd",
+                                        },
+                                        {
+                                            title: "OS",
+                                            key: "os",
+                                            dataIndex: "os",
                                         },
                                     ]}
                                 />

@@ -56,13 +56,17 @@ export const Submitter = (props: SubmitterProps): ReactNode => {
     );
 }
 
-// create duplicate valueEnum select options for ProColumn 
-export function createAccessoriesEnumObj<T = Accessories>(accsOptions: T[]): Record<string, T | "None"> {
-    let valueEnum: Record<string, T | "None"> = {};
+// Create duplicate valueEnum select options for ProColumn 
+export function createAccessoriesEnumObj<T = Accessories>(accsOptions: T[]): Map<string, T | "None"> {
+    let keyAccsMap = new Map<string, T | "None">();
+    // let valueEnum: Record<string, T | "None"> = {};
+
     accsOptions.forEach(value => {
-        valueEnum[`${value}_0`] = value;
-        valueEnum[`${value}_1`] = value;
+        keyAccsMap.set(`${value}_0`, value);
+        keyAccsMap.set(`${value}_1`, value);
     })
-    valueEnum["None"] = "None";
-    return valueEnum;
+
+    keyAccsMap.set("None", "None");
+
+    return keyAccsMap;
 }
