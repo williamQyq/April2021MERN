@@ -151,7 +151,7 @@ const ProdDetachSpecInput: React.FC<StepComponentProps> = (props: StepComponentP
                         marginBlockEnd: 16,
                     }}
                 >
-                    <FileUpload customizedUpload={() => handlePictureUpload} />
+                    <FileUpload customizedUpload={handlePictureUpload} />
                 </ProCard>
             </StepsForm.StepForm>
             <StepsForm.StepForm

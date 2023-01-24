@@ -71,7 +71,7 @@ const SearchShipment = () => {
             }
         })();
 
-    }, [dispatch])
+    }, [])
 
     //rerender on redux searchCategory or new formValues changed.
     useEffect(() => {
@@ -106,7 +106,7 @@ const SearchShipment = () => {
             default:
                 return;
         }
-    }, [dispatch, category, formValues])
+    }, [category, formValues])
 
     return (
         <Row>

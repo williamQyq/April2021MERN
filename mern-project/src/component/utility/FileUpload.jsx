@@ -23,7 +23,7 @@ const FileUpload = ({ customizedUpload }) => {
             }
         },
         customRequest: ({ file, onSuccess, onError }) => {
-            dispatch(customizedUpload(file, onSuccess, onError))
+            dispatch(customizedUpload({ file, onSuccess, onError }))
         },
         onDrop(e) {
             console.log('Dropped files', e.dataTransfer.files);

@@ -1,10 +1,12 @@
-import { createStore, applyMiddleware, compose } from 'redux';
+import { applyMiddleware } from 'redux';
 import { createStateSyncMiddleware, initMessageListener } from 'redux-state-sync';
 import thunk from 'redux-thunk';
 import rootReducer from 'reducers/index.js';
 import { persistReducer } from 'redux-persist';
 // import storage from 'redux-persist/lib/storage';
 import localforage from 'localforage';
+import { composeWithDevTools } from '@reduxjs/toolkit/dist/devtoolsExtension';
+import { configureStore } from '@reduxjs/toolkit';
 
 const persistConfig = {
     key: "root",
@@ -19,13 +21,20 @@ const middleware = [
         blacklist: ["persist/PERSIST", "persist/REHYDRATE"],
     }),
 ];
+const middlewareEnhancer = applyMiddleware(...middleware);
+const enhancers = [middlewareEnhancer];
+const composedEnhancers = composeWithDevTools(...enhancers);
 
-const store = createStore(persistedReducer, initialState, compose(
-    applyMiddleware(...middleware),
-    window.__REDUX_DEVTOOLS_EXTENSION__
-        ? window.__REDUX_DEVTOOLS_EXTENSION__()
-        : f => f
-));
+const store = configureStore({
+    reducer: persistedReducer,
+    devTools: process.env.NODE_ENV !== 'production',
+    preloadedState: initialState,
+    enhancers: [...enhancers]
+});
 
 initMessageListener(store);
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+
 export default store;

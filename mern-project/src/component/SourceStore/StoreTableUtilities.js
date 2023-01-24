@@ -125,11 +125,11 @@ const DropDownActions = (props) => {
 
     const stableAddItemSpecification = useCallback(() => {
         dispatch(addItemSpec(record, storeName));
-    }, [record, storeName, dispatch])
+    }, [record, storeName])
 
     const stableSaveActionHistory = useCallback(() => {
         dispatch(setTableState({ ...prevTableState, store: storeName, clickedId: record._id }));
-    }, [prevTableState, record, storeName, dispatch])
+    }, [prevTableState, record, storeName])
 
     return (
         <Dropdown

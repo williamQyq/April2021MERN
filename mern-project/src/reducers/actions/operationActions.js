@@ -58,7 +58,9 @@ export const getWmsProdQty = (prods) => async (dispatch, getState) => {
 
 }
 
-export const uploadAsinsMapping = (file, onSuccess, onError) => dispatch => {
+export const uploadAsinsMapping = (options) => dispatch => {
+    const { file, onSuccess, onError } = options; //type UploadRequestionOptions from rc-upload/lib/interface
+
     dispatch(setResLoading());
     Papa.parse(file, {
         complete: (results) => {

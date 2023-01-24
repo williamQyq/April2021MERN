@@ -5,6 +5,11 @@ import { createAccessoriesEnumObj, waitTime } from './utilities';
 import { Accessories, DataSourceType, HDD, RAM, ShippingTemplate, SSD, StepComponentProps } from './types';
 import SkuEditableCreationTable from './SkuEditableTable';
 import MyProCard from 'component/utility/MyProCard';
+import FileUpload from 'component/utility/FileUpload';
+import { UploadRequestOption } from 'rc-upload/lib/interface';
+import { uploadItemsPrimeCost } from 'reducers/actions/operationAction';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from 'reducers/store/store';
 
 const { StepForm } = StepsForm;
 
@@ -22,6 +27,7 @@ interface StepsFormDataType {
 const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
     const [dataSource, setDataSource] = useState<readonly DataSourceType[]>([]);
     const [stepsFormData, setStepsFormData] = useState<Partial<StepsFormDataType> | null>(null);
+    const dispatch: AppDispatch = useDispatch();
 
     //Accessories key, type Map, e.g <4GB_0, 4GB>
     const ramValueEnum = createAccessoriesEnumObj([RAM.DDR4_4, RAM.DDR4_8, RAM.DDR4_16, RAM.DDR4_32]);
@@ -31,16 +37,11 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
     const collectInfoOnFinish = (values: Partial<StepsFormDataType>): void => {
         setStepsFormData({ ...values, dataSource: dataSource });
     }
-    // const createDescriptionColumns = (skuRowData: Partial<DataSourceType>) => {
-    //     return Object.entries(skuRowData).map(([key, value]) => (
-    //         {
-    //             title: value,
-    //             key: key,
-    //             dataIndex: key,
-    //             copyable: true
-    //         }
-    //     ));
-    // }
+
+    const handlePrimeCostUpload = (options: UploadRequestOption) => {
+        dispatch(uploadItemsPrimeCost(options));
+    }
+
 
     return (
         <StepsForm
@@ -75,7 +76,7 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                         }}
                     />
                 </MyProCard>
-                <MyProCard title="Create SKU">
+                <MyProCard title="Supplement Info">
                     <ProFormCheckbox.Group
                         name="amzAccts"
                         label="Amazon Accounts"
@@ -126,6 +127,9 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                         }}
                     />
                 </MyProCard>
+                <MyProCard title="Prime Cost Upload">
+                    <FileUpload customizedUpload={handlePrimeCostUpload} />
+                </MyProCard>
             </StepForm>
             <StepForm
                 name="verifySku"
@@ -137,9 +141,9 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                     console.log(`values: `, stepsFormData)
                     return true;
                 }}
-                // request={async () => {
-                //     return true;
-                // }}
+            // request={async () => {
+            //     return true;
+            // }}
             >
                 <MyProCard title="Generated SKU and Price">
 

@@ -1,12 +1,14 @@
 import { Model } from "mongoose";
-import PrimeCost, { IPrimeCost } from "../models/PrimeCost";
+import PrimeCost, { IPrimeCost } from "#rootTS/lib/models/PrimeCost.js";
 
 type Upc = string;
 
 interface IOperationApi {
     getProductsPrimeCost: (items: Upc[]) => void;
 }
-
+/**
+ * @description lagacy version of OperationApi is in ./utitlities.js
+ */
 export class OperationApi implements IOperationApi {
     private _PrimeCost: Model<IPrimeCost>;
 
@@ -16,7 +18,7 @@ export class OperationApi implements IOperationApi {
 
     async getProductsPrimeCost(upcs: Upc[]) {
         let result = await Promise.all(upcs.map(upc =>
-            PrimeCost.find({ upc: upc })
+            this._PrimeCost.find({ upc: upc })
         ))
         console.log(result);
     }

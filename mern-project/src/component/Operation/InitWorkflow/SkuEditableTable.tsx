@@ -58,6 +58,12 @@ const SkuEditableTable: React.FC<IProps> = (props) => {
         { pattern: new RegExp(/^[a-zA-Z0-9]*$/), message: "No Space or Special Characters Allowed" }
     ]
 
+    const asinRules: Rule[] = [
+        { required: true, message: 'Required' },
+        { pattern: new RegExp(/^[a-zA-Z0-9]*$/), message: "No Space or Special Characters Allowed" },
+        { len: 12, message: "Asin needs to be 12 char length." }
+    ]
+
     const columns: ProColumns<DataSourceType>[] = [
         {
             title: 'UPC',
@@ -70,7 +76,7 @@ const SkuEditableTable: React.FC<IProps> = (props) => {
             dataIndex: 'asin',
             // readonly: true,
             width: '15%',
-            formItemProps: (_) => ({ rules: noSpaceRules }),
+            formItemProps: (_) => ({ rules: asinRules }),
         },
         {
             title: 'RAM',

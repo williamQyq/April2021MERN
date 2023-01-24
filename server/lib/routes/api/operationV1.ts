@@ -1,7 +1,7 @@
 import PrimeCost, { IPrimeCost } from "#rootTS/lib/models/PrimeCost.js";
 import auth from "#rootTS/lib/middleware/auth.js";
 import { Request, Response, Router } from "express";
-import { OperationApi } from "#root/lib/query/OperationApi";
+import { OperationApi } from "#rootTS/lib/query/OperationApi.js";
 
 const router: Router = Router();
 
@@ -34,9 +34,7 @@ router.post('/operation/v1/saveProductPrimeCost', auth, (req: Request, res: Resp
 router.post('/operation/v1/calcSkuPrice', auth, (req: Request, res: Response) => {
     const items: calcSkuPriceItems = req.body;
 
-    Promise.all(items.map(item =>
-        PrimeCost.find({ upc: item })
-    ))
+
 
 })
 
