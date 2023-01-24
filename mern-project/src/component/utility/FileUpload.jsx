@@ -10,7 +10,7 @@ const FileUpload = ({ customizedUpload }) => {
     const draggerProps = {
         name: 'file',
         multiple: true,
-        accept: ".txt, .csv",
+        accept: ".txt, .csv, .xlsx",
         onChange(info) {
             const { status, response, error } = info.file;
             if (status !== 'uploading') {

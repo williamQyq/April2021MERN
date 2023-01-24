@@ -7,7 +7,7 @@ import SkuEditableCreationTable from './SkuEditableTable';
 import MyProCard from 'component/utility/MyProCard';
 import FileUpload from 'component/utility/FileUpload';
 import { UploadRequestOption } from 'rc-upload/lib/interface';
-import { uploadItemsPrimeCost } from 'reducers/actions/operationAction';
+import { uploadProductsPrimeCost } from 'reducers/actions/operationAction';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'reducers/store/store';
 
@@ -39,7 +39,7 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
     }
 
     const handlePrimeCostUpload = (options: UploadRequestOption) => {
-        dispatch(uploadItemsPrimeCost(options));
+        dispatch(uploadProductsPrimeCost(options));
     }
 
 

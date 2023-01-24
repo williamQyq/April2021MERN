@@ -18,7 +18,7 @@ router.post('/operation/v1/getProductsPrimeCost', auth, (req: Request, res: Resp
 
 })
 
-router.post('/operation/v1/saveProductPrimeCost', auth, (req: Request, res: Response) => {
+router.post('/operation/v1/saveProductsPrimeCost', auth, (req: Request, res: Response) => {
     const primeCost: IPrimeCost = req.body;
     const newPrimeCostDoc = new PrimeCost({
         name: primeCost.name,
@@ -27,7 +27,7 @@ router.post('/operation/v1/saveProductPrimeCost', auth, (req: Request, res: Resp
 
     newPrimeCostDoc.update()
         .then(result => res.json(result))
-        .catch(() => res.status(404).json({ msg: "Fail to save prime cost." }));
+        .catch(() => res.status(400).json({ msg: "Fail to save prime cost." }));
 
 })
 

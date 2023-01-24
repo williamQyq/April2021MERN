@@ -38,7 +38,9 @@ export const getProductPricing = () => (dispatch, getState) => {
             dispatch(setResLoaded())  //process finished
         })
         .catch(err => {
-            dispatch(returnErrors(err.response.data.msg, err.response.status))
+            if (err.response) {
+                dispatch(returnErrors(err.response.data.msg, err.response.status))
+            }
         })
 }
 

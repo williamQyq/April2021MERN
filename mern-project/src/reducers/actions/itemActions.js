@@ -28,7 +28,7 @@ import {
     GET_ERRORS,
 } from './types.js';
 import { tokenConfig } from './authActions.js';
-import { clearMessages, returnMessages } from './messageActions.js';
+import { clearMessages, returnMessages } from './messageActions';
 
 // export const getItems = () => dispatch => {
 //     dispatch(setItemsLoading());

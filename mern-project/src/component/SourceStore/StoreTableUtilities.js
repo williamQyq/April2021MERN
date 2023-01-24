@@ -125,10 +125,14 @@ const DropDownActions = (props) => {
 
     const stableAddItemSpecification = useCallback(() => {
         dispatch(addItemSpec(record, storeName));
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [record, storeName])
 
     const stableSaveActionHistory = useCallback(() => {
         dispatch(setTableState({ ...prevTableState, store: storeName, clickedId: record._id }));
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [prevTableState, record, storeName])
 
     return (

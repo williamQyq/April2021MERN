@@ -10,7 +10,7 @@ import {
     setSearchShipmentLoading,
     setShipmentItemsLoading
 } from './loadingActions.js';
-import { clearMessages, returnMessages } from './messageActions.js';
+import { clearMessages, returnMessages } from './messageActions';
 import {
     CONFIRM_SHIPMENT,
     FILE_DOWNLOADED,

@@ -71,6 +71,7 @@ const SearchShipment = () => {
             }
         })();
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     //rerender on redux searchCategory or new formValues changed.
@@ -106,6 +107,7 @@ const SearchShipment = () => {
             default:
                 return;
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [category, formValues])
 
     return (

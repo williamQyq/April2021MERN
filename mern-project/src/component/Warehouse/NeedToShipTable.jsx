@@ -21,6 +21,7 @@ const NeedToShipTable = (props) => {
         const today = getUnixDate(0);
         const tommorrow = getUnixDate(1);
         dispatch(getShippedNotVerifiedShipmentByDate([today, tommorrow]))
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {

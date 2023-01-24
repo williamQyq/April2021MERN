@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import 'styles/index.css';
 import App from './App.tsx';
 // import reportWebVitals from './reportWebVitals';
-import store from './reducers/store/store.js';
+import store from './reducers/store/store';
 import { Provider } from 'react-redux';
 import persistStore from 'redux-persist/es/persistStore';
 import { PersistGate } from 'redux-persist/integration/react';

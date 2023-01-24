@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { tokenConfig } from './authActions.js';
 import { clearErrors, returnErrors } from './errorActions.js';
-import { returnMessages } from './messageActions.js';
+import { returnMessages } from './messageActions';
 import Papa from "papaparse";
 import fileDownload from 'js-file-download';
 import {
@@ -73,8 +73,9 @@ export const downloadInventoryReceived = (requiredFields = {}) => (dispatch, get
         })
 }
 
-export const updateInventoryReceivedByUpload = (file, onSuccess, onError) => (dispatch, getState) => {
-    // onError("err")
+export const updateInventoryReceivedByUpload = (options) => (dispatch, getState) => {
+    const { file, onSuccess, onError } = options //type UploadRequestOptions 
+
     Papa.parse(file, {
         complete: (results) => {
             const uploadFile = results.data;
@@ -146,7 +147,7 @@ export const getLocationInventory = (requiredFields) => (dispatch, getState) => 
 
 export const getSellerInventory = (requiredFields) => (dispatch, getState) => {
     dispatch(setSearchShipmentLoading());
-    axios.post(`/api/wms/sellerInventory/v0/getSellerInventory`, {requiredFields}, tokenConfig(getState))
+    axios.post(`/api/wms/sellerInventory/v0/getSellerInventory`, { requiredFields }, tokenConfig(getState))
         .then(res => {
             dispatch({
                 type: SEARCH_SELLER_INVENTORY,

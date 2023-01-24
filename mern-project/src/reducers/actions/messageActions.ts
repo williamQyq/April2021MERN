@@ -1,6 +1,8 @@
 import { GET_MESSAGES, CLEAR_MESSAGES } from "./types.js";
 
-export const returnMessages = (msg, status, id = null) => {
+type ActionType = string;
+
+export const returnMessages = (msg: string, status: number, id: ActionType | undefined = undefined) => {
     return {
         type: GET_MESSAGES,
         payload: { msg, status, id }
