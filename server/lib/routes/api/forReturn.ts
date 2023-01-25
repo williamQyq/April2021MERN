@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
 import auth from '#rootTS/lib/middleware/auth';
 import multer, { memoryStorage } from "multer";
-import { IResponseErrorMessage } from "@types";
+import { IResponseErrorMessage } from "#root/@types/interface";
 
 const router: Router = Router();
 

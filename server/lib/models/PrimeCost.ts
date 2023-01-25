@@ -1,16 +1,14 @@
 import mongoose, { Document } from "mongoose";
-
+import { IPrimeCost } from "./interface";
 const { model, Schema } = mongoose;
 
-export interface IPrimeCost extends Document {
-    name: string;
-    upc: string;
-    price: number;
-    // price_timestamps: Array<{ price: number, date: Date }>;
-    created_date: Date;
-}
-
 const PrimeCostSchema = new Schema<IPrimeCost>({
+    _id: {
+        type: {
+            upc: String,
+        },
+        required: true
+    },
     name: {
         type: String,
         required: true,

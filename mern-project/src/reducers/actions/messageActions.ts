@@ -1,6 +1,5 @@
 import { GET_MESSAGES, CLEAR_MESSAGES } from "./types.js";
-
-type ActionType = string;
+import { ActionType } from "reducers/interface";
 
 export const returnMessages = (msg: string, status: number, id: ActionType | undefined = undefined) => {
     return {

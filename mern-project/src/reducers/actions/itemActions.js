@@ -2,7 +2,7 @@ import axios from 'axios';
 import Moment from 'moment';
 import { getBBItems } from './itemBBActions.js';
 import { getMSItems } from './itemMSActions.js';
-import { clearErrors, returnErrors } from './errorActions.js'
+import { clearErrors, returnErrors } from './errorActions'
 import {
     // GET_ITEMS,
     ADD_ITEM,

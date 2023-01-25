@@ -1,7 +1,7 @@
 import { Model } from "mongoose";
-import PrimeCost, { IPrimeCost } from "#rootTS/lib/models/PrimeCost.js";
-
-type Upc = string;
+import PrimeCost from "#rootTS/lib/models/PrimeCost.js";
+import { IPrimeCost } from "../models/interface";
+import { Upc } from "../routes/api/interface";
 
 interface IOperationApi {
     getProductsPrimeCost: (items: Upc[]) => void;
@@ -21,5 +21,6 @@ export class OperationApi implements IOperationApi {
             this._PrimeCost.find({ upc: upc })
         ))
         console.log(result);
+        return result;
     }
 }

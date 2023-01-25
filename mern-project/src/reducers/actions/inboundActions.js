@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { tokenConfig } from './authActions.js';
-import { clearErrors, returnErrors } from './errorActions.js';
+import { clearErrors, returnErrors } from './errorActions';
 import { returnMessages } from './messageActions';
 import Papa from "papaparse";
 import fileDownload from 'js-file-download';

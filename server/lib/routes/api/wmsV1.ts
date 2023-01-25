@@ -7,7 +7,7 @@ import { shipmentStatus, WmsDBApis } from "#rootTS/lib/query/WmsDBApis.js";
 import {
     IReqBodyShipmentDownloadPickUpPDF,
     IResponseErrorMessage,
-} from "@types";
+} from "#root/@types/interface";
 import { GSheetNeedToShip } from "#rootTS/bin/gsheet/gsheet.js";
 
 const router: Router = Router();

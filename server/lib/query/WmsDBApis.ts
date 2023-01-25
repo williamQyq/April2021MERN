@@ -11,7 +11,7 @@ import {
     IUpdateShipmentStatusResponse,
     LocationDoc,
     PickUpItemsDoc
-} from '@types';
+} from '#root/@types/interface';
 import { COUNT_CREATED_PICKUP_LABEL, GET_NEED_TO_SHIP_ITEMS_FOR_PICKUP_BY_TODAY, GET_UPC_BACK_UP_LOCS_FOR_PICK_UP, GET_UPC_LOCATION_QTY_EXCEPT_WMS } from '#query/aggregate.js';
 import getTempLoc from '#root/lib/query/locationTemp.js'; //bad practice pay attention.
 

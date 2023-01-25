@@ -4,7 +4,7 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 // import PropTypes from 'prop-types';
 import { login, register } from 'reducers/actions/authActions.js';
-import { clearErrors } from 'reducers/actions/errorActions.js';
+import { clearErrors } from 'reducers/actions/errorActions';
 import WithNavigate from './WithNavigate.js';
 import { Navigate, NavigateFunction } from 'react-router-dom';
 import { FormProps } from 'antd/es/form/Form.js';

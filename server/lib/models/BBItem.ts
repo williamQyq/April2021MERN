@@ -1,13 +1,7 @@
-import { model, Schema } from "mongoose";
+import mongoose from "mongoose";
+import { BBItem } from "./interface";
+const { model, Schema } = mongoose;
 
-//Create Schema for self tracking list 
-export interface BBItem {
-    link: URL;
-    sku: string;
-    name: string;
-    price_timestamps: Array<{ price: number, date: Date }>;
-    created_date: Date;
-}
 
 const BBItemSchema = new Schema<BBItem>({
     link: {

@@ -1,4 +1,6 @@
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
+
+export type ActionType = string;
 
 export interface IReduxError {
     status: number;
@@ -14,6 +16,12 @@ export interface IReduxAuth {
 
 export interface myAxiosResponse extends AxiosResponse {
     data: {
-        msg: string
+        msg: string,
+        reason: string,
+        action?: ActionType,
+
     }
 }
+export interface myAxiosError extends AxiosError {
+    response: myAxiosResponse;
+};

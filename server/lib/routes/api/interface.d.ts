@@ -1,0 +1,12 @@
+import { IPrimeCost } from "#root/lib/models/interface";
+
+export type Upc = string;
+
+export interface IResponseErrorMessage {
+    msg: string,
+    reason?: any,
+}
+
+export interface IPrimeCost extends Omit<IPrimeCost, "_id" | "created_date"> {
+    upc: string;
+};

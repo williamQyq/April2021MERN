@@ -11,7 +11,7 @@ import openAlertNotification from 'component/utility/errorAlert.js';
 import { clearErrors } from 'reducers/actions/errorActions';
 import { clearMessages } from 'reducers/actions/messageActions';
 import NotFound from 'component/utility/NotFound.jsx';
-import { IReduxAuth, IReduxError } from 'reducers/types';
+import { IReduxAuth, IReduxError } from 'reducers/interface';
 import { Dispatch } from '@reduxjs/toolkit';
 import { AnyAction } from 'redux';
 import { ThemeContext } from 'component/Home/ThemeProvider';
