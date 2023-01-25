@@ -1,9 +1,7 @@
 import React from 'react';
-import { StepComponentProps } from "./types";
+import { StepComponentProps } from "component/utility/cmpt.interface.d";
 import {
     ProCard,
-    ProFormRadio,
-    ProFormSelect,
     ProFormText,
     StepsForm,
 } from '@ant-design/pro-components';

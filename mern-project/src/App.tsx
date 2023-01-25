@@ -29,9 +29,6 @@ class App extends React.Component<IProps, IState> {
   static contextType = ThemeContext;
   context!: React.ContextType<typeof ThemeContext>;
 
-  constructor(props: IProps) {
-    super(props);
-  }
   // static propTypes = {
   //   isAuthenticated: Proptypes.bool
   // }

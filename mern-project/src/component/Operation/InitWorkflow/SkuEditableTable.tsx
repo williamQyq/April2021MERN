@@ -8,11 +8,15 @@ import {
 } from '@ant-design/pro-components';
 import { Rule } from 'antd/es/form';
 import React, { useRef, useState } from 'react';
-import { Accessories, DataSourceType, HDD, HddEnum, OS, OsEnum, RAM, SSD } from './types';
+import {
+    InitSkuDataSourceType,
+    HddEnum, OsEnum, RAM, SSD
+} from 'component/utility/cmpt.interface.d';
+import { OS, HDD } from 'component/utility/types.enum';
 
 interface IProps {
-    dataSource: readonly DataSourceType[];
-    setDataSource: React.Dispatch<React.SetStateAction<readonly DataSourceType[]>>;
+    dataSource: readonly InitSkuDataSourceType[];
+    setDataSource: React.Dispatch<React.SetStateAction<readonly InitSkuDataSourceType[]>>;
     accessoriesValueEnum: {
         ramValueEnum: Map<string, RAM | "None">;
         ssdValueEnum: Map<string, SSD | "None">;
@@ -26,13 +30,13 @@ const SkuEditableTable: React.FC<IProps> = (props) => {
 
     const { ramValueEnum, ssdValueEnum } = accessoriesValueEnum;
 
-    const defaultData: DataSourceType[] = [
+    const defaultData: InitSkuDataSourceType[] = [
         {
             id: 624748504,
             upc: "123",
             asin: "BAA",
             ram: ["8GB_0", "8GB_1"],
-            ssd: ["PCIE_1024_0"],
+            ssd: ["PCIE1024_0"],
             hdd: "None",
             os: OS.W11H
         },
@@ -64,7 +68,7 @@ const SkuEditableTable: React.FC<IProps> = (props) => {
         { len: 12, message: "Asin needs to be 12 char length." }
     ]
 
-    const columns: ProColumns<DataSourceType>[] = [
+    const columns: ProColumns<InitSkuDataSourceType>[] = [
         {
             title: 'UPC',
             dataIndex: 'upc',
@@ -152,7 +156,7 @@ const SkuEditableTable: React.FC<IProps> = (props) => {
 
     return (
         <>
-            <EditableProTable<DataSourceType>
+            <EditableProTable<InitSkuDataSourceType>
                 rowKey="id"
                 editableFormRef={editableFormRef}
                 // maxLength={5}

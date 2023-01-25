@@ -1,14 +1,13 @@
 import React from 'react';
-import { MenuOption } from 'types';
+import { MenuOption } from 'component/utility/cmpt.interface.d';
 import { ContentHeader } from './Layout';
 import { Card, Row, Col } from 'antd';
 import { Link } from 'react-router-dom';
 
-interface CategoryOption extends MenuOption { };
 
 interface IProps {
     title: string;
-    categories: CategoryOption[];
+    categories: MenuOption[];
 }
 const { Meta } = Card;
 const Category: React.FC<IProps> = (props) => {
@@ -16,7 +15,7 @@ const Category: React.FC<IProps> = (props) => {
     return (
         <>
             <ContentHeader title={title} />
-            <Row gutter={[2,16]} >
+            <Row gutter={[2, 16]} >
                 {
                     categories.map((ctg, i) => {
                         return (

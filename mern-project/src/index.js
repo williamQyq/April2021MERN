@@ -1,7 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import 'styles/index.css';
-import App from './App.tsx';
+import App from './App';
 // import reportWebVitals from './reportWebVitals';
 import store from './reducers/store/store';
 import { Provider } from 'react-redux';
@@ -21,7 +21,7 @@ function render() {
           <SocketProvider>
             <ThemeProvider>
               <Router>
-                <App />
+                <App token={''} isLoading={false} />
               </Router>
             </ThemeProvider>
           </SocketProvider>

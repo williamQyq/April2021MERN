@@ -9,7 +9,8 @@ import { message } from 'antd';
 import React, { useState } from 'react';
 import FileUpload from 'component/utility/FileUpload';
 import { waitTime } from './utilities';
-import { HDD, OS, RAM, SSD, StepComponentProps } from './types';
+import { StepComponentProps } from 'component/utility/cmpt.interface.d';
+import { HDD, OS, RAM, SSD } from 'component/utility/types.enum';
 
 const defaultData = {
     upc: "987654",

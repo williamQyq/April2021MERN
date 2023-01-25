@@ -138,7 +138,7 @@ const MenuCard: React.FC = () => {
                         }
                       `}
                                     >
-                                        <img src="https://gw.alipayobjects.com/zos/antfincdn/6FTGmLLmN/bianzu%25252013.svg" />
+                                        <img src="https://gw.alipayobjects.com/zos/antfincdn/6FTGmLLmN/bianzu%25252013.svg" alt = "an alipay object image"/>
                                         <div
                                             style={{
                                                 marginInlineStart: 14,

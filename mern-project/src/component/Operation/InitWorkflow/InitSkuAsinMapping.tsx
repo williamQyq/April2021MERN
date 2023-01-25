@@ -1,15 +1,29 @@
 import React, { useState } from 'react';
-import { ProDescriptions, ProFormCheckbox, ProFormRadio, ProFormSelect, ProFormSlider, StepsForm } from '@ant-design/pro-components';
 import { message, Typography } from 'antd';
 import { createAccessoriesEnumObj, waitTime } from './utilities';
-import { Accessories, DataSourceType, HDD, RAM, ShippingTemplate, SSD, StepComponentProps } from './types';
+import { HDD, RAM, SSD } from 'component/utility/types.enum';
 import SkuEditableCreationTable from './SkuEditableTable';
 import MyProCard from 'component/utility/MyProCard';
 import FileUpload from 'component/utility/FileUpload';
-import { UploadRequestOption } from 'rc-upload/lib/interface';
 import { uploadProductsPrimeCost } from 'reducers/actions/operationAction';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'reducers/store/store';
+import {
+    StepsFormDataType,
+    StepComponentProps,
+    InitSkuDataSourceType,
+    FileUploadRequestOption,
+    Accessories
+} from 'component/utility/cmpt.interface.d';
+import {
+    ProDescriptions,
+    ProFormCheckbox,
+    ProFormRadio,
+    ProFormSelect,
+    ProFormSlider,
+    StepsForm
+} from '@ant-design/pro-components';
+
 
 const { StepForm } = StepsForm;
 
@@ -17,15 +31,9 @@ const defaultStepsData: Partial<StepsFormDataType> = {
     amzAccts: ["RS"],
     shippingTemplate: "USPrime"
 }
-interface StepsFormDataType {
-    dataSource: readonly DataSourceType[];
-    amzAccts: string[];
-    shippingTemplate: ShippingTemplate;
-    profitRate: number;
-    addon: any[];
-}
+
 const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
-    const [dataSource, setDataSource] = useState<readonly DataSourceType[]>([]);
+    const [dataSource, setDataSource] = useState<readonly InitSkuDataSourceType[]>([]);
     const [stepsFormData, setStepsFormData] = useState<Partial<StepsFormDataType> | null>(null);
     const dispatch: AppDispatch = useDispatch();
 
@@ -38,7 +46,7 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
         setStepsFormData({ ...values, dataSource: dataSource });
     }
 
-    const handlePrimeCostUpload = (options: UploadRequestOption) => {
+    const handlePrimeCostUpload = (options: FileUploadRequestOption) => {
         dispatch(uploadProductsPrimeCost(options));
     }
 

@@ -1,7 +1,7 @@
 
 import { FormInstance, Button } from "antd";
 import React, { ReactNode } from "react";
-import { Accessories } from "./types";
+import { Accessories } from "component/utility/cmpt.interface.d";
 
 export const waitTime = (time: number = 100) => {
     return new Promise((resolve) => {

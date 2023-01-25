@@ -1,7 +1,7 @@
 import React from 'react';
 import { AiOutlineShopping } from 'react-icons/ai';
 import IconCover from 'component/utility/IconCover.jsx'
-import { MenuOption } from 'types';
+import { MenuOption } from 'component/utility/cmpt.interface.d';
 import Category from 'component/utility/Category';
 
 const alertFeatures: MenuOption[] = [
