@@ -25,3 +25,9 @@ export interface myAxiosResponse extends AxiosResponse {
 export interface myAxiosError extends AxiosError {
     response: myAxiosResponse;
 };
+
+export interface IRequestBody {
+    fileData?: any;
+    isOverriden?: boolean;
+}
+export interface UploadPrimeCostRequestBody extends Required<IRequestBody> { }

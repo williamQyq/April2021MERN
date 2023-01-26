@@ -1,14 +1,14 @@
 import mongoose from 'mongoose';
 import io from './index.js';    //socket io
 // import startScrapeScheduler from './bin/scrapeScheduler.js';    //scripts scheduler, node-cron
-import startAmazonScheduler from '#amz/amazonSchedule.js';
+// import startAmazonScheduler from '#amz/amazonSchedule.js';
 
 //@Mongoose connection; Connect to Mongo.
 const mongoURI = process.env.DB_URI;
+mongoose.set('strictQuery', false);
 mongoose.connect(mongoURI, {
     useUnifiedTopology: true,
-    useNewUrlParser: true,
-    useCreateIndex: true
+    useNewUrlParser: true
 })
     .then(() => console.log('Atlas MongoDB Connected...'))
     .catch(err => console.error('\nMongoCloud Error: \n\n', err));

@@ -8,7 +8,7 @@ import { RootState } from 'reducers/store/store';
 import { UPLOAD_PRIME_COST } from './types';
 import { RcFile } from 'antd/es/upload';
 import { returnMessages } from './messageActions';
-import { myAxiosResponse, myAxiosError } from 'reducers/interface';
+import { myAxiosResponse, myAxiosError, UploadPrimeCostRequestBody } from 'reducers/interface';
 import { returnErrors } from './errorActions';
 
 
@@ -18,7 +18,8 @@ export const uploadProductsPrimeCost = (options: UploadRequestOption) => (dispat
     Papa.parse(file as RcFile, {
         complete: (xlsx) => {
             const uploadFile = xlsx.data;
-            axios.post('/api/operationV1/upload/v1/saveProductsPrimeCost', uploadFile, tokenConfig(getState))
+            const reqBody: UploadPrimeCostRequestBody = { fileData: uploadFile, isOverriden: true }
+            axios.post('/api/operationV1/upload/v1/saveProductsPrimeCost', reqBody, tokenConfig(getState))
                 .then((res: myAxiosResponse) => {
                     dispatch({
                         type: UPLOAD_PRIME_COST
@@ -28,7 +29,7 @@ export const uploadProductsPrimeCost = (options: UploadRequestOption) => (dispat
                 })
                 .catch((err: myAxiosError) => {
                     onError!(err);
-                    dispatch(returnErrors(err.response.data.msg, err.response.status, UPLOAD_PRIME_COST))
+                    dispatch(returnErrors(err.response.data.msg, err.response.status, UPLOAD_PRIME_COST, err.response.data.reason))
                 })
         },
         error: (error, file) => {

@@ -12,6 +12,7 @@ export interface IPrimeCost extends Document {
     };
     name: string;
     price: number;
+    category: string;
     // price_timestamps: Array<{ price: number, date: Date }>;
     created_date: Date;
 }

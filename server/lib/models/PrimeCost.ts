@@ -1,27 +1,30 @@
-import mongoose, { Document } from "mongoose";
+import mongoose from "mongoose";
 import { IPrimeCost } from "./interface";
-const { model, Schema } = mongoose;
+const { Schema } = mongoose;
 
 const PrimeCostSchema = new Schema<IPrimeCost>({
     _id: {
-        type: {
-            upc: String,
-        },
-        required: true
+        upc: {
+            type: Schema.Types.String,
+            required: true
+        }
     },
     name: {
-        type: String,
+        type: Schema.Types.String,
         required: true,
     },
     price: {
-        type: Number,
+        type: Schema.Types.Number,
         required: true,
+    },
+    category: {
+        type: Schema.Types.String,
     },
     // price_timestamp: Array<{ price: number, date: Date }>,
     created_date: {
-        type: Date,
+        type: Schema.Types.Date,
         default: Date.now
     }
 }, { collection: "primeCost" });
 
-export default model<IPrimeCost>("PrimeCost", PrimeCostSchema);
+export default mongoose.model<IPrimeCost>("PrimeCost", PrimeCostSchema);

@@ -1,34 +1,35 @@
 import mongoose from "mongoose";
 import { BBItem } from "./interface";
-const { model, Schema } = mongoose;
+
+const { Schema } = mongoose;
 
 
 const BBItemSchema = new Schema<BBItem>({
     link: {
-        type: String,
+        type: Schema.Types.String,
         require: true
     },
     sku: {
-        type: String,
+        type: Schema.Types.String,
         require: true
     },
     name: {
-        type: String,
+        type: Schema.Types.String,
         require: true
     },
     price_timestamps: [{
         price: {
-            type: Number,
+            type: Schema.Types.Number,
         },
         date: {
-            type: Date,
+            type: Schema.Types.Date,
             default: Date.now
         }
     }],
     created_date: {
-        type: Date,
+        type: Schema.Types.Date,
         default: Date.now
     }
 }, { collection: 'bbStoreListings' });
 
-export default model<BBItem>("BBItem", BBItemSchema)
+export default mongoose.model<BBItem>("BBItem", BBItemSchema)
