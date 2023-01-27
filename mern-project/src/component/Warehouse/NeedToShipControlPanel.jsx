@@ -5,7 +5,7 @@ import NeedToShipTable from "./NeedToShipTable";
 import { BsUiChecksGrid } from 'react-icons/bs';
 import { Collapse, Menu } from 'antd';
 import { AreaChartOutlined } from "@ant-design/icons";
-import FileUpload from 'component/utility/FileUpload.jsx';
+import FileUpload from 'component/utility/FileUploader';
 const { Panel } = Collapse;
 
 const needToShipMenuItems = [

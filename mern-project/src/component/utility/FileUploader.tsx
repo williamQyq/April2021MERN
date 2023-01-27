@@ -1,13 +1,19 @@
+import React from 'react';
 import { Upload, message } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
+import { AppDispatch } from 'reducers/store/store';
+import { FileUploadRequestOption, FileUploadProps } from './cmpt.interface';
 const { Dragger } = Upload;
 
+interface IProps {
+    customizedUpload: (options: FileUploadRequestOption) => void;
+}
 
-const FileUpload = ({ customizedUpload }) => {
-    const dispatch = useDispatch()
+const FileUploader: React.FC<IProps> = ({ customizedUpload }) => {
+    const dispatch: AppDispatch = useDispatch()
 
-    const draggerProps = {
+    const draggerProps: FileUploadProps = {
         name: 'file',
         multiple: true,
         accept: ".txt, .csv, .xlsx",
@@ -48,4 +54,4 @@ const FileUpload = ({ customizedUpload }) => {
     )
 }
 
-export default FileUpload;
+export default FileUploader;

@@ -1,3 +1,4 @@
+import { UploadProps } from 'antd';
 import { UploadRequestOption } from 'rc-upload/lib/interface';
 
 export interface MenuOption {
@@ -66,5 +67,5 @@ export type InitSkuDataSourceType = {
  * @usage: FileUploader
  * 
  */
-export interface FileUploadRequestOption extends UploadRequestOption { };
-
+export interface FileUploadRequestOption extends Omit<UploadRequestOption, "action" | "method"> { };
+export interface FileUploadProps extends UploadProps { };

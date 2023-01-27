@@ -7,7 +7,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { returnErrors } from 'reducers/actions/errorActions';
 import { syncInventoryReceivedWithGsheet } from 'reducers/actions/outboundActions.js';
-import FileUpload from 'component/utility/FileUpload.jsx';
+import FileUpload from 'component/utility/FileUploader';
 import { BsUiChecksGrid } from 'react-icons/bs';
 import { Collapse, Menu } from 'antd';
 

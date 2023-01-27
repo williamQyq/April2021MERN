@@ -4,7 +4,7 @@ import { createAccessoriesEnumObj, waitTime } from './utilities';
 import { HDD, RAM, SSD } from 'component/utility/types.enum';
 import SkuEditableCreationTable from './SkuEditableTable';
 import MyProCard from 'component/utility/MyProCard';
-import FileUpload from 'component/utility/FileUpload';
+import FileUpload from 'component/utility/FileUploader';
 import { uploadProductsPrimeCost } from 'reducers/actions/operationAction';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'reducers/store/store';

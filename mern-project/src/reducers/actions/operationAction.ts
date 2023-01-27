@@ -2,17 +2,16 @@ import axios from 'axios';
 import Papa from 'papaparse';
 import { Dispatch } from 'redux';
 import { tokenConfig } from './authActions';
-
-import { UploadRequestOption } from 'rc-upload/lib/interface';
 import { RootState } from 'reducers/store/store';
 import { UPLOAD_PRIME_COST } from './types';
 import { RcFile } from 'antd/es/upload';
 import { returnMessages } from './messageActions';
 import { myAxiosResponse, myAxiosError, UploadPrimeCostRequestBody } from 'reducers/interface';
 import { returnErrors } from './errorActions';
+import { FileUploadRequestOption } from 'component/utility/cmpt.interface';
 
 
-export const uploadProductsPrimeCost = (options: UploadRequestOption) => (dispatch: Dispatch, getState: () => RootState) => {
+export const uploadProductsPrimeCost = (options: FileUploadRequestOption) => (dispatch: Dispatch, getState: () => RootState) => {
     const { file, onSuccess, onError } = options;
 
     Papa.parse(file as RcFile, {

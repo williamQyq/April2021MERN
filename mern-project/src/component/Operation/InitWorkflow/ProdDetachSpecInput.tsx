@@ -7,7 +7,7 @@ import {
 } from '@ant-design/pro-components';
 import { message } from 'antd';
 import React, { useState } from 'react';
-import FileUpload from 'component/utility/FileUpload';
+import FileUpload from 'component/utility/FileUploader';
 import { waitTime } from './utilities';
 import { StepComponentProps } from 'component/utility/cmpt.interface.d';
 import { HDD, OS, RAM, SSD } from 'component/utility/types.enum';
