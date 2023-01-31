@@ -116,7 +116,7 @@ router.post('/download/v1/downloadInitSkuFeeds', (req: Request, res: Response) =
     );
     res.setHeader(
         "Content-Disposition",
-        "attachment; filename=" + "PrimeCostTemplate.xlsx"
+        "attachment; filename=" + "skuUpload.xlsx"
     );
     workbook.xlsx.write(res).then(() => {
         res.status(200).end();

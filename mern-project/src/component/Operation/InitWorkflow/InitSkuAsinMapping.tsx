@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { message, Typography } from 'antd';
 import { createAccessoriesEnumObj, waitTime } from './utilities';
 import { HDD, RAM, SSD } from 'component/utility/types.enum';
 import SkuEditableCreationTable from './SkuEditableTable';
 import MyProCard from 'component/utility/MyProCard';
 import FileUpload from 'component/utility/FileUploader';
-import { downloadProductPrimeCostTemplate, uploadProductsPrimeCost } from 'reducers/actions/operationAction';
+import {
+    downloadInitSkuforAmzSPFeeds,
+    downloadProductPrimeCostTemplate,
+    uploadProductsPrimeCost
+} from 'reducers/actions/operationAction';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'reducers/store/store';
 import {
@@ -56,10 +60,10 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
         console.log('download PrimeCostTemplate Xlsx.');
         dispatch(downloadProductPrimeCostTemplate());
     }
-    const downloadSkuUploadFeedsXlsx = () => {
+    const downloadSkuUploadFeedsXlsx = useCallback(() => {
         console.log('download sku upload feeds Xlsx.');
-        dispatch(downloadSkuUploadFeedsXlsx());
-    }
+        dispatch(downloadInitSkuforAmzSPFeeds());
+    }, [])
 
     return (
         <StepsForm
