@@ -5,7 +5,7 @@ import { HDD, RAM, SSD } from 'component/utility/types.enum';
 import SkuEditableCreationTable from './SkuEditableTable';
 import MyProCard from 'component/utility/MyProCard';
 import FileUpload from 'component/utility/FileUploader';
-import { uploadProductsPrimeCost } from 'reducers/actions/operationAction';
+import { downloadProductPrimeCostTemplate, uploadProductsPrimeCost } from 'reducers/actions/operationAction';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'reducers/store/store';
 import {
@@ -23,6 +23,7 @@ import {
     ProFormSlider,
     StepsForm
 } from '@ant-design/pro-components';
+import TemplateDownloader from './TemplateDownloader';
 
 
 const { StepForm } = StepsForm;
@@ -50,6 +51,11 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
         dispatch(uploadProductsPrimeCost(options));
     }
 
+    //download sample prime cost template xlxs
+    const handlePrimeCostTemplateDownload = () => {
+        console.log('download PrimeCostTemplate Xlsx.')
+        dispatch(downloadProductPrimeCostTemplate());
+    }
 
     return (
         <StepsForm
@@ -135,7 +141,12 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                         }}
                     />
                 </MyProCard>
-                <MyProCard title="Prime Cost Upload">
+                <MyProCard
+                    title="Prime Cost Upload"
+                    collapsible={false}
+                    extra={<TemplateDownloader
+                        handleTemplateDownload={handlePrimeCostTemplateDownload} />
+                    }>
                     <FileUpload customizedUpload={handlePrimeCostUpload} />
                 </MyProCard>
             </StepForm>

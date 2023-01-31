@@ -282,7 +282,7 @@ export class WmsDBApis {
                             })
                     })
                 )
-        )
+        ) 
     }
 
     async countNeedToShipPickUpFromShipment(): Promise<IPickUpCountDoc> {

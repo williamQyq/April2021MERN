@@ -2,8 +2,10 @@ import auth from "#rootTS/lib/middleware/auth.js";
 import { Request, Response, Router } from "express";
 import { OperationApi } from "#rootTS/lib/query/OperationApi.js";
 import { parseCsvHelper } from "#rootTS/bin/helper/parseHelper.js";
-import { Upc, IPrimeCost as IRoutePrimeCost, IResponseErrorMessage } from "./interface";
+import { Upc, IPrimeCost as IRoutePrimeCost, IResponseErrorMessage, IPrimeCostXlsxDataType } from "./interface";
 import { MongoError } from "mongodb";
+import excel from 'exceljs';
+
 const router: Router = Router();
 
 router.post('/upload/v1/getProductsPrimeCost', auth, (req: Request, res: Response) => {
@@ -39,11 +41,42 @@ router.post('/upload/v1/saveProductsPrimeCost', auth, (req: Request, res: Respon
         });
 })
 
-router.post('/operation/v1/calcSkuPrice', auth, (req: Request, res: Response) => {
+router.post('/upload/v1/calcSkuPrice', auth, (req: Request, res: Response) => {
     const items: Upc[] = req.body;
 
 
 
+})
+
+router.get('/download/v1/downloadPrimeCostXlsxTemplate', (req: Request, res: Response) => {
+    let workbook = new excel.Workbook();
+    let worksheet = workbook.addWorksheet("Prime Cost");
+    worksheet.columns = [
+        { header: "UPC", key: "upc", width: 25 },
+        { header: "Name", key: "name", width: 25 },
+        { header: "Price", key: "price", width: 15 },
+        { header: "category", key: "category", width: 20 }
+    ];
+    let rows = [];
+    let sampleData: IPrimeCostXlsxDataType = {
+        upc: "",
+        name: "",
+        price: undefined,
+        category: ""
+    }
+    rows.push(sampleData);
+    worksheet.addRows(rows);
+    res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    );
+    res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=" + "PrimeCostTemplate.xlsx"
+    );
+    workbook.xlsx.write(res).then(() => {
+        res.status(200).end();
+    });
 })
 
 export default router;

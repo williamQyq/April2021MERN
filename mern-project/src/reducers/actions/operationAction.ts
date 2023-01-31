@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import Papa from 'papaparse';
 import { Dispatch } from 'redux';
 import { tokenConfig } from './authActions';
@@ -9,6 +9,7 @@ import { returnMessages } from './messageActions';
 import { myAxiosResponse, myAxiosError, UploadPrimeCostRequestBody } from 'reducers/interface';
 import { returnErrors } from './errorActions';
 import { FileUploadRequestOption } from 'component/utility/cmpt.interface';
+import fileDownload from 'js-file-download';
 
 
 export const uploadProductsPrimeCost = (options: FileUploadRequestOption) => (dispatch: Dispatch, getState: () => RootState) => {
@@ -36,4 +37,11 @@ export const uploadProductsPrimeCost = (options: FileUploadRequestOption) => (di
             onError!(error);
         },
     })
+}
+
+export const downloadProductPrimeCostTemplate = () => (dispatch: Dispatch, getState: RootState) => {
+    axios.get('/api/operationV1/download/v1/downloadPrimeCostXlsxTemplate', { responseType: "blob" })
+        .then((res: AxiosResponse<Blob>) => {
+            fileDownload(res.data, "PrimeCostTemplate.xlsx");
+        })
 }
