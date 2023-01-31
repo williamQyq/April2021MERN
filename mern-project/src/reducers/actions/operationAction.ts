@@ -45,3 +45,10 @@ export const downloadProductPrimeCostTemplate = () => (dispatch: Dispatch, getSt
             fileDownload(res.data, "PrimeCostTemplate.xlsx");
         })
 }
+
+export const downloadInitSkuforAmzSPFeeds = () => (dispatch: Dispatch, getState: RootState) => {
+    axios.post('/api/operationV1/download/v1/downloadInitSkuFeeds', { responseType: "blob" })
+        .then((res: AxiosResponse<Blob>) => {
+            fileDownload(res.data, "skuForUpload.xlsx");
+        })
+}

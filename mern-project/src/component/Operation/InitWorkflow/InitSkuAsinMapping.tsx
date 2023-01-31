@@ -53,8 +53,12 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
 
     //download sample prime cost template xlxs
     const handlePrimeCostTemplateDownload = () => {
-        console.log('download PrimeCostTemplate Xlsx.')
+        console.log('download PrimeCostTemplate Xlsx.');
         dispatch(downloadProductPrimeCostTemplate());
+    }
+    const downloadSkuUploadFeedsXlsx = () => {
+        console.log('download sku upload feeds Xlsx.');
+        dispatch(downloadSkuUploadFeedsXlsx());
     }
 
     return (
@@ -157,7 +161,8 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                 onFinish={async () => {
                     await waitTime(1000);
                     message.success("Downloaded Generated SKU Success");
-                    console.log(`values: `, stepsFormData)
+                    // console.log(`values: `, stepsFormData)
+                    downloadSkuUploadFeedsXlsx();
                     return true;
                 }}
             // request={async () => {
