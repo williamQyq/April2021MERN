@@ -20,6 +20,7 @@ export interface IPrimeCostXlsxDataType {
 }
 type FulfillmentCenterId = "AMAZON_NA" | undefined;
 type MerchantShippingGroup = "USprime" | undefined;
+// type UnknownInput = "";
 export interface ISkuUploadFeedsType {
     sku: string;
     "product-id": string;

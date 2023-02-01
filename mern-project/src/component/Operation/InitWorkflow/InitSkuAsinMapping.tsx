@@ -36,7 +36,7 @@ const defaultStepsData: Partial<StepsFormDataType> = {
     amzAccts: ["RS"],
     shippingTemplate: "USPrime"
 }
-
+const tempSkuDataSource = { id: 1, sku: "196801739468-32102400H00P-AZM-B0BPHP6D2Z", price: 863.99, minPrice: 858.99, maxPrice: 1717.98 };
 const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
     const [dataSource, setDataSource] = useState<readonly InitSkuDataSourceType[]>([]);
     const [stepsFormData, setStepsFormData] = useState<Partial<StepsFormDataType> | null>(null);
@@ -56,14 +56,15 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
     }
 
     //download sample prime cost template xlxs
-    const handlePrimeCostTemplateDownload = () => {
+    const handlePrimeCostTemplateDownload = useCallback(() => {
         console.log('download PrimeCostTemplate Xlsx.');
         dispatch(downloadProductPrimeCostTemplate());
-    }
-    const downloadSkuUploadFeedsXlsx = useCallback(() => {
+    }, []);
+
+    const downloadSkuUploadFeeds = () => {
         console.log('download sku upload feeds Xlsx.');
         dispatch(downloadInitSkuforAmzSPFeeds());
-    }, [])
+    };
 
     return (
         <StepsForm
@@ -166,7 +167,7 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                     await waitTime(1000);
                     message.success("Downloaded Generated SKU Success");
                     // console.log(`values: `, stepsFormData)
-                    downloadSkuUploadFeedsXlsx();
+                    downloadSkuUploadFeeds();
                     return true;
                 }}
             // request={async () => {
@@ -174,8 +175,37 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
             // }}
             >
                 <MyProCard title="Generated SKU and Price">
-
-
+                    <ProDescriptions
+                        key={tempSkuDataSource.id}
+                        column={2}
+                        dataSource={tempSkuDataSource}
+                        columns={[
+                            {
+                                title: "SKU",
+                                key: "sku",
+                                dataIndex: "sku",
+                                copyable: true
+                            },
+                            {
+                                title: "Price",
+                                key: "price",
+                                dataIndex: "price",
+                                valueType:"money"
+                            },
+                            {
+                                title: "Min Price",
+                                key: "minPrice",
+                                dataIndex: "minPrice",
+                                valueType:"money"
+                            },
+                            {
+                                title: "MaxPrice",
+                                key: "maxPrice",
+                                dataIndex: "maxPrice",
+                                valueType:"money"
+                            }
+                        ]}
+                    />
                 </MyProCard>
 
                 <MyProCard title="Last Input Data Info">

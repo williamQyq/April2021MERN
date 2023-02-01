@@ -13,7 +13,8 @@
     "prod": "concurrently \"npm run start\" \"npm run client\"",
     "deploy": "cd ../deploy && node cmd.js",
     "watch": "tsc --watch",
-    "clean": "rm -rf node_modules package-lock.json",
+    "clean": "del node_modules package-lock.json",
+    "clean-client":"cd ../mern-project && del node_modules package-lock.json",
     "rmPdf": "cd ./bin/pdfGenerator/pdf && rm ./*"
   },
   "imports": {
@@ -67,6 +68,7 @@
     "@types/node-cron": "^3.0.1",
     "@types/papaparse": "^5.3.7",
     "@types/puppeteer": "^5.4.4",
+    "@types/redux-state-sync": "^3.1.5",
     "@types/tunnel-ssh": "^4.1.1",
     "nodemon": "^2.0.19",
     "ts-node": "^10.5.0",

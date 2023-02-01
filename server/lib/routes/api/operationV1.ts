@@ -59,8 +59,8 @@ router.get('/download/v1/downloadPrimeCostXlsxTemplate', (req: Request, res: Res
     ];
     let rows = [];
     let sampleData: IPrimeCostXlsxDataType = {
-        upc: "",
-        name: "",
+        upc: "198112354567",
+        name: "RICK PC",
         price: undefined,
         category: ""
     }
@@ -79,25 +79,24 @@ router.get('/download/v1/downloadPrimeCostXlsxTemplate', (req: Request, res: Res
     });
 })
 
-router.post('/download/v1/downloadInitSkuFeeds', (req: Request, res: Response) => {
+router.get('/download/v1/downloadInitSkuFeeds', (req: Request, res: Response) => {
     let workbook = new excel.Workbook();
-    let worksheet = workbook.addWorksheet("Prime Cost");
-    worksheet.columns = [
-        { header: "UPC", key: "upc", width: 25 },
-        { header: "Name", key: "name", width: 25 },
-        { header: "Price", key: "price", width: 15 },
-        { header: "category", key: "category", width: 20 }
-    ];
-    let rows = [];
+    let worksheet = workbook.addWorksheet("skuUpload");
+    const headers = ["sku", "product-id", "product-id-type", "price", "minimum-seller-allowed-price", "maximum-seller-allowed-price", "item-condition", "quantity", "add-delete", "will-ship-internationally", "expedited-shipping", "standard-plus", "item-note", "fulfillment-center-id", "product-tax-code", "handling-time", "merchant_shipping_group_name"]
+    // const values = [196801739468-32102400H00P-AZM-B0BPHP6D2Z	B0BPHP6D2Z	1	863.99	858.99	1717.98	11	0	a								USprime]
+    let skuUploadCols = headers.map(header => ({ header: header, key: header, width: 20 }));
+    console.log(JSON.stringify(skuUploadCols, null, 4));
+    worksheet.columns = skuUploadCols;
+    let rows: ISkuUploadFeedsType[] = [];
     let sampleData: ISkuUploadFeedsType = {
-        sku: "196801739468-32102400H00P-AZM-B0BPHP6D2Z",
+        "sku": "196801739468-32102400H00P-AZM-B0BPHP6D2Z",
         "product-id": "B0BPHP6D2Z",
         "product-id-type": 1,
-        price: 863.99,
+        "price": 863.99,
         "minimum-seller-allowed-price": 858.99,
         "maximum-seller-allowed-price": 1717.98,
         "item-condition": 11,
-        quantity: 0,
+        "quantity": 0,
         "add-delete": "a",
         "will-ship-internationally": undefined,
         "expedited-shipping": undefined,
