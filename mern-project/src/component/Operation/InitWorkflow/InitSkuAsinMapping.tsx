@@ -4,7 +4,7 @@ import { createAccessoriesEnumObj, waitTime } from './utilities';
 import { HDD, RAM, SSD } from 'component/utility/types.enum';
 import SkuEditableCreationTable from './SkuEditableTable';
 import MyProCard from 'component/utility/MyProCard';
-import FileUpload from 'component/utility/FileUploader';
+import FileUploader from 'component/utility/FileUploader';
 import {
     downloadInitSkuforAmzSPFeeds,
     downloadProductPrimeCostTemplate,
@@ -17,7 +17,8 @@ import {
     StepComponentProps,
     InitSkuDataSourceType,
     FileUploadRequestOption,
-    Accessories
+    Accessories,
+    SkuConfig
 } from 'component/utility/cmpt.interface.d';
 import {
     ProDescriptions,
@@ -36,7 +37,6 @@ const defaultStepsData: Partial<StepsFormDataType> = {
     amzAccts: ["RS"],
     shippingTemplate: "USPrime"
 }
-const tempSkuDataSource = { id: 1, sku: "196801739468-32102400H00P-AZM-B0BPHP6D2Z", price: 863.99, minPrice: 858.99, maxPrice: 1717.98 };
 const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
     const [dataSource, setDataSource] = useState<readonly InitSkuDataSourceType[]>([]);
     const [stepsFormData, setStepsFormData] = useState<Partial<StepsFormDataType> | null>(null);
@@ -47,7 +47,7 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
     const ssdValueEnum = createAccessoriesEnumObj([SSD.PCIE_2048, SSD.PCIE_1024, SSD.PCIE_512, SSD.PCIE_256, SSD.PCIE_128]);
 
     //stepsFormData combine each step form field data and sku editableTable datasource
-    const collectInfoOnFinish = (values: Partial<StepsFormDataType>): void => {
+    const collectEditableConfigOnFinish = (values: Partial<StepsFormDataType>): void => {
         setStepsFormData({ ...values, dataSource: dataSource });
     }
 
@@ -59,12 +59,15 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
     const handlePrimeCostTemplateDownload = useCallback(() => {
         console.log('download PrimeCostTemplate Xlsx.');
         dispatch(downloadProductPrimeCostTemplate());
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const downloadSkuUploadFeeds = () => {
+    const downloadSkuUploadFeeds = useCallback((skuConfigValues: SkuConfig | null) => {
         console.log('download sku upload feeds Xlsx.');
-        dispatch(downloadInitSkuforAmzSPFeeds());
-    };
+        dispatch(downloadInitSkuforAmzSPFeeds(skuConfigValues));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <StepsForm
@@ -82,7 +85,7 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                 onFinish={async (values) => {
                     await waitTime(1000);
                     message.success('Init SKU Finished');
-                    collectInfoOnFinish(values);
+                    collectEditableConfigOnFinish(values);
                     return true;
                 }}
                 request={async () => {
@@ -156,29 +159,24 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                     extra={<TemplateDownloader
                         handleTemplateDownload={handlePrimeCostTemplateDownload} />
                     }>
-                    <FileUpload customizedUpload={handlePrimeCostUpload} />
+                    <FileUploader customizedUpload={handlePrimeCostUpload} />
                 </MyProCard>
             </StepForm>
             <StepForm
                 name="verifySku"
                 title="Verify SKU"
                 isKeyPressSubmit={true}
-                onFinish={async () => {
+                onFinish={async (_) => {
                     await waitTime(1000);
                     message.success("Downloaded Generated SKU Success");
-                    // console.log(`values: `, stepsFormData)
-                    downloadSkuUploadFeeds();
+                    downloadSkuUploadFeeds(stepsFormData);
                     return true;
                 }}
-            // request={async () => {
-            //     return true;
-            // }}
             >
                 <MyProCard title="Generated SKU and Price">
                     <ProDescriptions
-                        key={tempSkuDataSource.id}
                         column={2}
-                        dataSource={tempSkuDataSource}
+                        // dataSource={tempSkuDataSource}
                         columns={[
                             {
                                 title: "SKU",
@@ -205,7 +203,7 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                                 })
                             },
                             {
-                                title: "MaxPrice",
+                                title: "Max Price",
                                 key: "maxPrice",
                                 dataIndex: "maxPrice",
                                 valueType: (item) => ({
@@ -214,14 +212,22 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                                 })
                             }
                         ]}
+                        request={async () => {
+                            const tempSkuDataSource = {
+                                id: 1,
+                                sku: "196801739468-32102400H00P-AZM-B0BPHP6D2Z",
+                                price: 863.99,
+                                minPrice: 858.99,
+                                maxPrice: 1717.98
+                            };
+                            return tempSkuDataSource;
+                        }}
                     />
                 </MyProCard>
 
                 <MyProCard title="Last Input Data Info">
                     {
                         stepsFormData?.dataSource?.map(skuRowData => {
-                            // let columns = createDescriptionColumns(skuRowData);
-                            console.log(skuRowData);
                             return (
                                 <ProDescriptions
                                     key={skuRowData.id}

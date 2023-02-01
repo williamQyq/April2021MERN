@@ -20,7 +20,7 @@ router.post('/upload/v1/getProductsPrimeCost', auth, (req: Request, res: Respons
  * @description: save products prime cost to db
  * 
  */
-router.post('/upload/v1/saveProductsPrimeCost', auth, (req: Request, res: Response) => {
+router.post('/primeCost/v1/ProductsPrimeCost', auth, (req: Request, res: Response) => {
     const { fileData, isOverriden }: { fileData: string[][]; isOverriden: boolean } = req.body;
     let ProdsPrimeCost = parseCsvHelper<IRoutePrimeCost>(fileData);  //parse string[][] to array of prod obj.
     if (!ProdsPrimeCost) {
@@ -41,14 +41,8 @@ router.post('/upload/v1/saveProductsPrimeCost', auth, (req: Request, res: Respon
         });
 })
 
-router.post('/upload/v1/calcSkuPrice', auth, (req: Request, res: Response) => {
-    const items: Upc[] = req.body;
 
-
-
-})
-
-router.get('/download/v1/downloadPrimeCostXlsxTemplate', (req: Request, res: Response) => {
+router.get('/template/v1/PrimeCostXlsxTemplate', (req: Request, res: Response) => {
     let workbook = new excel.Workbook();
     let worksheet = workbook.addWorksheet("Prime Cost");
     worksheet.columns = [
@@ -79,7 +73,7 @@ router.get('/download/v1/downloadPrimeCostXlsxTemplate', (req: Request, res: Res
     });
 })
 
-router.get('/download/v1/downloadInitSkuFeeds', (req: Request, res: Response) => {
+router.get('/listings/v1/initSkuFeeds', (req: Request, res: Response) => {
     let workbook = new excel.Workbook();
     let worksheet = workbook.addWorksheet("skuUpload");
     const headers = ["sku", "product-id", "product-id-type", "price", "minimum-seller-allowed-price", "maximum-seller-allowed-price", "item-condition", "quantity", "add-delete", "will-ship-internationally", "expedited-shipping", "standard-plus", "item-note", "fulfillment-center-id", "product-tax-code", "handling-time", "merchant_shipping_group_name"]

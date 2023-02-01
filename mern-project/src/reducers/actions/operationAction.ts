@@ -8,10 +8,14 @@ import { RcFile } from 'antd/es/upload';
 import { returnMessages } from './messageActions';
 import { myAxiosResponse, myAxiosError, UploadPrimeCostRequestBody } from 'reducers/interface';
 import { returnErrors } from './errorActions';
-import { FileUploadRequestOption } from 'component/utility/cmpt.interface';
+import { FileUploadRequestOption, SkuConfig } from 'component/utility/cmpt.interface';
 import fileDownload from 'js-file-download';
 
-
+/**
+ * 
+ * @description save productPrimeCost xlsx data to db
+ * 
+ */
 export const uploadProductsPrimeCost = (options: FileUploadRequestOption) => (dispatch: Dispatch, getState: () => RootState) => {
     const { file, onSuccess, onError } = options;
 
@@ -19,7 +23,7 @@ export const uploadProductsPrimeCost = (options: FileUploadRequestOption) => (di
         complete: (xlsx) => {
             const uploadFile = xlsx.data;
             const reqBody: UploadPrimeCostRequestBody = { fileData: uploadFile, isOverriden: true }
-            axios.post('/api/operationV1/upload/v1/saveProductsPrimeCost', reqBody, tokenConfig(getState))
+            axios.post('/api/operationV1/primeCost/v1/ProductsPrimeCost', reqBody, tokenConfig(getState))
                 .then((res: myAxiosResponse) => {
                     dispatch({
                         type: UPLOAD_PRIME_COST
@@ -40,14 +44,14 @@ export const uploadProductsPrimeCost = (options: FileUploadRequestOption) => (di
 }
 
 export const downloadProductPrimeCostTemplate = () => (dispatch: Dispatch, getState: RootState) => {
-    axios.get('/api/operationV1/download/v1/downloadPrimeCostXlsxTemplate', { responseType: "blob" })
+    axios.get('/api/operationV1/template/v1/PrimeCostXlsxTemplate', { responseType: "blob" })
         .then((res: AxiosResponse<Blob>) => {
             fileDownload(res.data, "PrimeCostTemplate.xlsx");
         })
 }
 
-export const downloadInitSkuforAmzSPFeeds = () => (dispatch: Dispatch, getState: RootState) => {
-    axios.get('/api/operationV1/download/v1/downloadInitSkuFeeds', { responseType: "blob" })
+export const downloadInitSkuforAmzSPFeeds = (skuConfigData: SkuConfig | null) => (dispatch: Dispatch, getState: RootState) => {
+    axios.get('/api/operationV1/listings/v1/InitSkuFeeds', { responseType: "blob" })
         .then((res: AxiosResponse<Blob>) => {
             fileDownload(res.data, "skuUpload.xlsx");
         })

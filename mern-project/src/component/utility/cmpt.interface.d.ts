@@ -14,7 +14,7 @@ export interface MenuOption {
  */
 export interface StepsFormDataType {
     dataSource: readonly DataSourceType[];
-    amzAccts: string[];
+    amzAccts: AmzAcct[] | undefined;
     shippingTemplate: ShippingTemplate;
     profitRate: number;
     addon: any[];
@@ -41,6 +41,7 @@ type SSD = string;
 type RAM = "4GB" | "8GB" | "16GB" | "32GB";
 type HDD = "1TB" | "2TB" | "3TB";
 type OS = "W10H" | "W10P" | "W11H" | "W11P";
+type AmzAcct = "RS" | "PRO"
 export type Accessories = HDD | OS | SSD | RAM;
 
 export type AccessoriesOptionEnum = Record<string, Accessories | "None">;
@@ -63,6 +64,7 @@ export type InitSkuDataSourceType = {
     children?: InitSkuDataSourceType[];
 };
 
+export interface SkuConfig extends Partial<StepsFormDataType> { }
 /**
  * @usage: FileUploader
  * 
