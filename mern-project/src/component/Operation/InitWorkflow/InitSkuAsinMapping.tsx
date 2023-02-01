@@ -190,19 +190,28 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                                 title: "Price",
                                 key: "price",
                                 dataIndex: "price",
-                                valueType:"money"
+                                valueType: (item) => ({
+                                    type: 'money',
+                                    locale: 'en-US'
+                                })
                             },
                             {
                                 title: "Min Price",
                                 key: "minPrice",
                                 dataIndex: "minPrice",
-                                valueType:"money"
+                                valueType: (item) => ({
+                                    type: 'money',
+                                    locale: 'en-US'
+                                })
                             },
                             {
                                 title: "MaxPrice",
                                 key: "maxPrice",
                                 dataIndex: "maxPrice",
-                                valueType:"money"
+                                valueType: (item) => ({
+                                    type: 'money',
+                                    locale: 'en-US'
+                                })
                             }
                         ]}
                     />
