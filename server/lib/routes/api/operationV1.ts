@@ -79,7 +79,6 @@ router.get('/listings/v1/initSkuFeeds', (req: Request, res: Response) => {
     const headers = ["sku", "product-id", "product-id-type", "price", "minimum-seller-allowed-price", "maximum-seller-allowed-price", "item-condition", "quantity", "add-delete", "will-ship-internationally", "expedited-shipping", "standard-plus", "item-note", "fulfillment-center-id", "product-tax-code", "handling-time", "merchant_shipping_group_name"]
     // const values = [196801739468-32102400H00P-AZM-B0BPHP6D2Z	B0BPHP6D2Z	1	863.99	858.99	1717.98	11	0	a								USprime]
     let skuUploadCols = headers.map(header => ({ header: header, key: header, width: 20 }));
-    console.log(JSON.stringify(skuUploadCols, null, 4));
     worksheet.columns = skuUploadCols;
     let rows: ISkuUploadFeedsType[] = [];
     let sampleData: ISkuUploadFeedsType = {

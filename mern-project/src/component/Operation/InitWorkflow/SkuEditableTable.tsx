@@ -33,8 +33,8 @@ const SkuEditableTable: React.FC<IProps> = (props) => {
     const defaultData: InitSkuDataSourceType[] = [
         {
             id: 624748504,
-            upc: "123",
-            asin: "BAA",
+            upc: "196801739468",
+            asin: "B0BPHP6D2Z",
             ram: ["8GB_0", "8GB_1"],
             ssd: ["PCIE1024_0"],
             hdd: "None",
@@ -65,7 +65,6 @@ const SkuEditableTable: React.FC<IProps> = (props) => {
     const asinRules: Rule[] = [
         { required: true, message: 'Required' },
         { pattern: new RegExp(/^[a-zA-Z0-9]*$/), message: "No Space or Special Characters Allowed" },
-        { len: 12, message: "Asin needs to be 12 char length." }
     ]
 
     const columns: ProColumns<InitSkuDataSourceType>[] = [
@@ -171,10 +170,6 @@ const SkuEditableTable: React.FC<IProps> = (props) => {
                                 if (value.length < 1) {
                                     throw new Error('请至少添加一行记录');
                                 }
-
-                                // if (value.length > 5) {
-                                //     throw new Error('最多可以设置五个题库');
-                                // }
                             },
                         }
                     ]
@@ -191,12 +186,11 @@ const SkuEditableTable: React.FC<IProps> = (props) => {
                 }}
                 loading={false}
                 columns={columns}
+                value={dataSource}
                 request={async () => ({
                     data: defaultData,
-                    total: 3,
                     success: true,
                 })}
-                value={dataSource}
                 onChange={setDataSource}
                 editable={{
                     type: 'multiple',

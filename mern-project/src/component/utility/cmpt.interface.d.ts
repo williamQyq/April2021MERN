@@ -12,7 +12,7 @@ export interface MenuOption {
  * @usage: Operation/InitWorkFlow/InitSkuAsinMapping
  * 
  */
-export interface StepsFormDataType {
+export interface InitSkuStepsFormDataType {
     dataSource: readonly DataSourceType[];
     amzAccts: AmzAcct[] | undefined;
     shippingTemplate: ShippingTemplate;
@@ -63,6 +63,14 @@ export type InitSkuDataSourceType = {
     ramOnboard?: string;
     children?: InitSkuDataSourceType[];
 };
+
+export interface VerifiedSkuDataSourceType {
+    id: number;
+    sku: string;
+    price: number;
+    minPrice: number;
+    maxPrice: number;
+}
 
 export interface SkuConfig extends Partial<StepsFormDataType> { }
 /**
