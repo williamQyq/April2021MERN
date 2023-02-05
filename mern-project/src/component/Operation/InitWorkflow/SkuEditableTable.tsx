@@ -9,14 +9,14 @@ import {
 import { Rule } from 'antd/es/form';
 import React, { useRef, useState } from 'react';
 import {
-    InitSkuDataSourceType,
+    SkuDataSourceType,
     HddEnum, OsEnum, RAM, SSD
 } from 'component/utility/cmpt.interface.d';
 import { OS, HDD } from 'component/utility/types.enum';
 
 interface IProps {
-    dataSource: readonly InitSkuDataSourceType[];
-    setDataSource: React.Dispatch<React.SetStateAction<readonly InitSkuDataSourceType[]>>;
+    dataSource: readonly SkuDataSourceType[];
+    setDataSource: React.Dispatch<React.SetStateAction<readonly SkuDataSourceType[]>>;
     accessoriesValueEnum: {
         ramValueEnum: Map<string, RAM | "None">;
         ssdValueEnum: Map<string, SSD | "None">;
@@ -30,7 +30,7 @@ const SkuEditableTable: React.FC<IProps> = (props) => {
 
     const { ramValueEnum, ssdValueEnum } = accessoriesValueEnum;
 
-    const defaultData: InitSkuDataSourceType[] = [
+    const defaultData: SkuDataSourceType[] = [
         {
             id: 624748504,
             upc: "196801739468",
@@ -67,7 +67,7 @@ const SkuEditableTable: React.FC<IProps> = (props) => {
         { pattern: new RegExp(/^[a-zA-Z0-9]*$/), message: "No Space or Special Characters Allowed" },
     ]
 
-    const columns: ProColumns<InitSkuDataSourceType>[] = [
+    const columns: ProColumns<SkuDataSourceType>[] = [
         {
             title: 'UPC',
             dataIndex: 'upc',
@@ -155,7 +155,7 @@ const SkuEditableTable: React.FC<IProps> = (props) => {
 
     return (
         <>
-            <EditableProTable<InitSkuDataSourceType>
+            <EditableProTable<SkuDataSourceType>
                 rowKey="id"
                 editableFormRef={editableFormRef}
                 // maxLength={5}

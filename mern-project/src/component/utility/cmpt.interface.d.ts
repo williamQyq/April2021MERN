@@ -13,7 +13,7 @@ export interface MenuOption {
  * 
  */
 export interface InitSkuStepsFormDataType {
-    dataSource: readonly DataSourceType[];
+    dataSource: readonly SkuDataSourceType[];
     amzAccts: AmzAcct[] | undefined;
     shippingTemplate: ShippingTemplate;
     profitRate: number;
@@ -51,7 +51,7 @@ export interface SsdEnum extends AccessoriesOptionEnum { };
 export interface HddEnum extends AccessoriesOptionEnum { };
 export interface OsEnum extends AccessoriesOptionEnum { };
 
-export type InitSkuDataSourceType = {
+export type SkuDataSourceType = {
     id: React.Key;
     upc?: string;
     asin?: string;
@@ -61,7 +61,7 @@ export type InitSkuDataSourceType = {
     hdd?: HDD | "None";
     os?: OS;
     ramOnboard?: string;
-    children?: InitSkuDataSourceType[];
+    children?: SkuDataSourceType[];
 };
 
 export interface VerifiedSkuDataSourceType {

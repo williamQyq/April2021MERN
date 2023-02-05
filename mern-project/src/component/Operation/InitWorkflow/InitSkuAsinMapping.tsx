@@ -6,6 +6,7 @@ import SkuEditableCreationTable from './SkuEditableTable';
 import MyProCard from 'component/utility/MyProCard';
 import FileUploader from 'component/utility/FileUploader';
 import {
+    calcVerifiedSkuPrimeCost,
     downloadInitSkuforAmzSPFeeds,
     downloadProductPrimeCostTemplate,
     uploadProductsPrimeCost
@@ -15,7 +16,7 @@ import { AppDispatch } from 'reducers/store/store';
 import {
     InitSkuStepsFormDataType,
     StepComponentProps,
-    InitSkuDataSourceType,
+    SkuDataSourceType,
     FileUploadRequestOption,
     Accessories,
     SkuConfig,
@@ -34,9 +35,11 @@ import TemplateDownloader from './TemplateDownloader';
 
 const { StepForm } = StepsForm;
 
-const defaultStepsData: Partial<InitSkuStepsFormDataType> = {
+const defaultStepsData: Omit<InitSkuStepsFormDataType, "dataSource"> = {
     amzAccts: ["RS"],
-    shippingTemplate: "USPrime"
+    shippingTemplate: "USPrime",
+    profitRate: 7,
+    addon: []
 }
 
 const tempSkuDataSource1 = {
@@ -57,7 +60,7 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
     const dispatch: AppDispatch = useDispatch();
 
     //sku specification data source
-    const [dataSource, setDataSource] = useState<readonly InitSkuDataSourceType[]>([]);
+    const [dataSource, setDataSource] = useState<readonly SkuDataSourceType[]>([]);
     //steps form data source, include sku specification data source in dataSource
     const [stepsFormData, setStepsFormData] = useState<Partial<InitSkuStepsFormDataType> | null>(null);
 
@@ -69,8 +72,8 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
     const ssdValueEnum = createAccessoriesEnumObj([SSD.PCIE_2048, SSD.PCIE_1024, SSD.PCIE_512, SSD.PCIE_256, SSD.PCIE_128]);
 
     //stepsFormData combine each step form field data and sku editableTable datasource
-    const collectEditableConfigOnFinish = (values: Partial<InitSkuStepsFormDataType>): void => {
-        setStepsFormData({ ...values, dataSource: dataSource });
+    const initEditableConfigOnFinish = (values: Partial<InitSkuStepsFormDataType>, skuDataSource: readonly SkuDataSourceType[]): void => {
+        setStepsFormData({ ...values, dataSource: skuDataSource });
     }
 
     const handlePrimeCostUpload = (options: FileUploadRequestOption) => {
@@ -92,10 +95,11 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const calcAndVerifiedSkuPrices = useCallback((stepsFormData: InitSkuStepsFormDataType) => {
-        dispatch(calcAndVerifiedSkuPrices(stepsFormData))
+    const processComposedItems = useCallback((stepsFormData: Omit<InitSkuStepsFormDataType, "dataSource">, dataSource: readonly SkuDataSourceType[]) => {
+        dispatch(calcVerifiedSkuPrimeCost({ ...stepsFormData, dataSource: dataSource }))
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
 
     return (
         <StepsForm
@@ -110,12 +114,14 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                 name="collectInfo"
                 title="Collect Info"
                 isKeyPressSubmit={true}
-                onFinish={async (values) => {
+                onFinish={async (formValues: Omit<InitSkuStepsFormDataType, "dataSource">) => {
                     await waitTime(1000);
                     message.success('Init SKU Finished');
-                    collectEditableConfigOnFinish(values);
+                    initEditableConfigOnFinish(formValues, dataSource);
+                    processComposedItems(formValues, dataSource);
                     return true;
                 }}
+                //preset accts, profit rate, shipping method
                 request={async () => {
                     return defaultStepsData;
                 }}
@@ -130,6 +136,7 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                         }}
                     />
                 </MyProCard>
+
                 <MyProCard title="Supplement Info">
                     <ProFormCheckbox.Group
                         name="amzAccts"
@@ -181,6 +188,7 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                         }}
                     />
                 </MyProCard>
+
                 <MyProCard
                     title="Prime Cost Upload"
                     tooltip="If any prime cost of bundle cost not being recorded..."
@@ -190,7 +198,10 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                     }>
                     <FileUploader customizedUpload={handlePrimeCostUpload} />
                 </MyProCard>
+                
             </StepForm>
+
+            {/**...Verification Step... */}
             <StepForm
                 name="verifySku"
                 title="Verify SKU"
@@ -201,6 +212,7 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                     downloadSkuUploadFeeds(stepsFormData);
                     return true;
                 }}
+
             >
                 <MyProCard title="Generated SKU and Price">
                     {

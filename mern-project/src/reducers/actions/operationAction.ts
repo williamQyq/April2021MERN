@@ -8,7 +8,7 @@ import { RcFile } from 'antd/es/upload';
 import { returnMessages } from './messageActions';
 import { myAxiosResponse, myAxiosError, UploadPrimeCostRequestBody } from 'reducers/interface';
 import { returnErrors } from './errorActions';
-import { FileUploadRequestOption, SkuConfig } from 'component/utility/cmpt.interface';
+import { FileUploadRequestOption, InitSkuStepsFormDataType, SkuConfig } from 'component/utility/cmpt.interface';
 import fileDownload from 'js-file-download';
 
 /**
@@ -55,4 +55,20 @@ export const downloadInitSkuforAmzSPFeeds = (skuConfigData: SkuConfig | null) =>
         .then((res: AxiosResponse<Blob>) => {
             fileDownload(res.data, "skuUpload.xlsx");
         })
+}
+
+/**
+ * 
+ * @param stepsFormData 
+ * @returns 
+ * 
+ * @description set redux state generated sku with prime cost price
+ */
+export const calcVerifiedSkuPrimeCost = (stepsFormData: InitSkuStepsFormDataType) => (dispatch: Dispatch, getState: RootState) => {
+    console.log(`steps form: `, stepsFormData)
+    // axios.get('', tokenConfig(getState))
+    //     .then(() => {
+
+    //     })
+    //     .catch();
 }
