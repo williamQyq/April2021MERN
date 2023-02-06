@@ -2,7 +2,14 @@ import auth from "#rootTS/lib/middleware/auth.js";
 import { Request, Response, Router } from "express";
 import { OperationApi } from "#rootTS/lib/query/OperationApi.js";
 import { parseCsvHelper } from "#rootTS/bin/helper/parseHelper.js";
-import { Upc, IPrimeCost as IRoutePrimeCost, IResponseErrorMessage, IPrimeCostXlsxDataType, ISkuUploadFeedsType } from "./interface";
+import {
+    Upc,
+    IPrimeCost as IRoutePrimeCost,
+    IResponseErrorMessage,
+    IPrimeCostXlsxTemplateDataType,
+    ISkuUploadFeedsType,
+    IPrimeCostCalcReqBody
+} from "./interface";
 import { MongoError } from "mongodb";
 import excel from 'exceljs';
 
@@ -41,6 +48,34 @@ router.post('/primeCost/v1/ProductsPrimeCost', auth, (req: Request, res: Respons
         });
 })
 
+router.post('/primeCost/v1/skus/profitRate/addon/dataSource', auth, (req: Request<{}, {}, IPrimeCostCalcReqBody>, res: Response) => {
+    const { addon, dataSource, profitRate } = req.body;
+
+    // console.log(req.body);
+
+    let result1: Partial<ISkuUploadFeedsType> = {
+        "sku": "196801739468-32102400H00P-AZM-B0BPHP6D2Z",
+        "product-id": "B0BPHP6D2Z",
+        "product-id-type": 1,
+        "price": 863.99,
+        "minimum-seller-allowed-price": 858.99,
+        "maximum-seller-allowed-price": 1717.98,
+        "item-condition": 11,
+        "quantity": 0,
+        "add-delete": "a",
+        "will-ship-internationally": undefined,
+        "expedited-shipping": undefined,
+        "standard-plus": undefined,
+        "item-note": undefined,
+        "fulfillment-center-id": "AMAZON_NA",
+        "product-tax-code": undefined,
+        "handling-time": undefined,
+        "merchant_shipping_group_name": "USprime"
+    }
+    res.json([
+        result1,
+    ]);
+})
 
 router.get('/template/v1/PrimeCostXlsxTemplate', (req: Request, res: Response) => {
     let workbook = new excel.Workbook();
@@ -52,7 +87,7 @@ router.get('/template/v1/PrimeCostXlsxTemplate', (req: Request, res: Response) =
         { header: "category", key: "category", width: 20 }
     ];
     let rows = [];
-    let sampleData: IPrimeCostXlsxDataType = {
+    let sampleData: IPrimeCostXlsxTemplateDataType = {
         upc: "198112354567",
         name: "RICK PC",
         price: undefined,
@@ -73,35 +108,36 @@ router.get('/template/v1/PrimeCostXlsxTemplate', (req: Request, res: Response) =
     });
 })
 
-router.get('/listings/v1/initSkuFeeds', (req: Request, res: Response) => {
+router.put('/listings/v1/initSkuFeeds', (req: Request<{}, {}, { initSkuFeeds: ISkuUploadFeedsType[] }>, res: Response) => {
+    const { initSkuFeeds } = req.body;
     let workbook = new excel.Workbook();
     let worksheet = workbook.addWorksheet("skuUpload");
     const headers = ["sku", "product-id", "product-id-type", "price", "minimum-seller-allowed-price", "maximum-seller-allowed-price", "item-condition", "quantity", "add-delete", "will-ship-internationally", "expedited-shipping", "standard-plus", "item-note", "fulfillment-center-id", "product-tax-code", "handling-time", "merchant_shipping_group_name"]
     // const values = [196801739468-32102400H00P-AZM-B0BPHP6D2Z	B0BPHP6D2Z	1	863.99	858.99	1717.98	11	0	a								USprime]
     let skuUploadCols = headers.map(header => ({ header: header, key: header, width: 20 }));
     worksheet.columns = skuUploadCols;
-    let rows: ISkuUploadFeedsType[] = [];
-    let sampleData: ISkuUploadFeedsType = {
-        "sku": "196801739468-32102400H00P-AZM-B0BPHP6D2Z",
-        "product-id": "B0BPHP6D2Z",
-        "product-id-type": 1,
-        "price": 863.99,
-        "minimum-seller-allowed-price": 858.99,
-        "maximum-seller-allowed-price": 1717.98,
-        "item-condition": 11,
-        "quantity": 0,
-        "add-delete": "a",
-        "will-ship-internationally": undefined,
-        "expedited-shipping": undefined,
-        "standard-plus": undefined,
-        "item-note": undefined,
-        "fulfillment-center-id": "AMAZON_NA",
-        "product-tax-code": undefined,
-        "handling-time": undefined,
-        "merchant_shipping_group_name": "USprime"
-    }
-    rows.push(sampleData);
-    worksheet.addRows(rows);
+    // let rows: ISkuUploadFeedsType[] = initSkuFeeds;
+    // let sampleData: ISkuUploadFeedsType = {
+    //     "sku": "196801739468-32102400H00P-AZM-B0BPHP6D2Z",
+    //     "product-id": "B0BPHP6D2Z",
+    //     "product-id-type": 1,
+    //     "price": 863.99,
+    //     "minimum-seller-allowed-price": 858.99,
+    //     "maximum-seller-allowed-price": 1717.98,
+    //     "item-condition": 11,
+    //     "quantity": 0,
+    //     "add-delete": "a",
+    //     "will-ship-internationally": undefined,
+    //     "expedited-shipping": undefined,
+    //     "standard-plus": undefined,
+    //     "item-note": undefined,
+    //     "fulfillment-center-id": "AMAZON_NA",
+    //     "product-tax-code": undefined,
+    //     "handling-time": undefined,
+    //     "merchant_shipping_group_name": "USprime"
+    // }
+    // rows.push(sampleData);
+    worksheet.addRows(initSkuFeeds);
     res.setHeader(
         "Content-Type",
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

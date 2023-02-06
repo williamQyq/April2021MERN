@@ -3,10 +3,15 @@ import Papa from 'papaparse';
 import { Dispatch } from 'redux';
 import { tokenConfig } from './authActions';
 import { RootState } from 'reducers/store/store';
-import { UPLOAD_PRIME_COST } from './types';
+import { GET_SKU_PRIME_COST, UPLOAD_PRIME_COST } from './types';
 import { RcFile } from 'antd/es/upload';
 import { returnMessages } from './messageActions';
-import { myAxiosResponse, myAxiosError, UploadPrimeCostRequestBody } from 'reducers/interface';
+import {
+    myAxiosResponse,
+    myAxiosError,
+    UploadPrimeCostRequestBody,
+    ISkuUploadFeeds,
+} from 'reducers/interface';
 import { returnErrors } from './errorActions';
 import { FileUploadRequestOption, InitSkuStepsFormDataType, SkuConfig } from 'component/utility/cmpt.interface';
 import fileDownload from 'js-file-download';
@@ -66,9 +71,22 @@ export const downloadInitSkuforAmzSPFeeds = (skuConfigData: SkuConfig | null) =>
  */
 export const calcVerifiedSkuPrimeCost = (stepsFormData: InitSkuStepsFormDataType) => (dispatch: Dispatch, getState: RootState) => {
     console.log(`steps form: `, stepsFormData)
-    // axios.get('', tokenConfig(getState))
-    //     .then(() => {
+    const { dataSource, profitRate, addon } = stepsFormData;
 
-    //     })
-    //     .catch();
+    axios.post(`/api/operationV1/primeCost/v1/skus/profitRate/addon/dataSource`, {
+        dataSource,
+        addon,
+        profitRate
+    },
+        tokenConfig(getState)
+    )
+        .then((res: AxiosResponse<{ data: ISkuUploadFeeds | undefined }>) => {
+            dispatch({
+                type: GET_SKU_PRIME_COST,
+                payload: res.data
+            })
+        })
+        .catch((err: myAxiosError) => {
+            dispatch(returnErrors(err.response.data.msg, err.response.status, GET_SKU_PRIME_COST, err.response.data.reason))
+        });
 }
