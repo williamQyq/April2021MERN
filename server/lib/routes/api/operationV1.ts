@@ -15,10 +15,10 @@ import excel from 'exceljs';
 
 const router: Router = Router();
 
-router.post('/upload/v1/getProductsPrimeCost', auth, (req: Request, res: Response) => {
-    const items: Upc[] = req.body;
+router.get('/upload/v1/getProductsPrimeCost/:upc', auth, (req: Request, res: Response) => {
+    const { upc } = req.params as { upc: string };
     let api = new OperationApi();
-    api.getProductsPrimeCost(items)
+    api.getPrimeCostByUpc(upc)
         .then(result => res.json(result));
 
 })
@@ -50,8 +50,37 @@ router.post('/primeCost/v1/ProductsPrimeCost', auth, (req: Request, res: Respons
 
 router.post('/primeCost/v1/skus/profitRate/addon/dataSource', auth, (req: Request<{}, {}, IPrimeCostCalcReqBody>, res: Response) => {
     const { addon, dataSource, profitRate } = req.body;
+    let api = new OperationApi();
 
-    // console.log(req.body);
+    console.log(`dataSource`, dataSource);
+    const primeCostReqSet = new Set<string>();  //unique set of prime cost checking items
+
+    // prepare the prime cost checking set
+    dataSource.forEach(listing => {
+        listing.ram.forEach(ramType => {
+            if (!primeCostReqSet.has(ramType))
+                primeCostReqSet.add(ramType);
+        });
+
+        listing.ssd.forEach(ssdType => {
+            if (!primeCostReqSet.has(ssdType))
+                primeCostReqSet.add(ssdType);
+        });
+
+        if (listing.hdd !== "None")
+            primeCostReqSet.add(listing.hdd);
+
+        if (!primeCostReqSet.has(listing.upc))
+            primeCostReqSet.add(listing.upc)
+
+        primeCostReqSet.add(listing.os);
+
+    })
+
+    //retrieve all prime cost from db
+    Promise.all(Array.from(primeCostReqSet).map(reqPrimeCostUpc => {
+        return api.getPrimeCostByUpc(reqPrimeCostUpc);
+    })).then(result => console.log(result));
 
     let result1: Partial<ISkuUploadFeedsType> = {
         "sku": "196801739468-32102400H00P-AZM-B0BPHP6D2Z",

@@ -15,6 +15,7 @@ import {
 import { returnErrors } from './errorActions';
 import { FileUploadRequestOption, InitSkuStepsFormDataType, SkuConfig } from 'component/utility/cmpt.interface';
 import fileDownload from 'js-file-download';
+import { parseMyMultiAccessoriesDataSource } from './actionsHelper';
 
 /**
  * 
@@ -69,16 +70,26 @@ export const downloadInitSkuforAmzSPFeeds = (skuConfigData: SkuConfig | null) =>
  * 
  * @description set redux state generated sku with prime cost price
  */
-export const calcVerifiedSkuPrimeCost = (stepsFormData: InitSkuStepsFormDataType) => (dispatch: Dispatch, getState: RootState) => {
-    console.log(`steps form: `, stepsFormData)
+export const calcVerifiedSkuPrimeCost = (abortSignal: AbortSignal, stepsFormData: InitSkuStepsFormDataType) => (dispatch: Dispatch, getState: RootState) => {
     const { dataSource, profitRate, addon } = stepsFormData;
+    let parsedDataSource = dataSource.map(sku => {
+        let parsedRam = sku.ram ? parseMyMultiAccessoriesDataSource(sku.ram) : [];
+        let parsedSsd = sku.ssd ? parseMyMultiAccessoriesDataSource(sku.ssd) : [];
+        sku.ram = parsedRam;
+        sku.ssd = parsedSsd;
+
+        const newDataSource = { ...sku, ram: parsedRam, ssd: parsedSsd };
+        return newDataSource;
+    })
 
     axios.post(`/api/operationV1/primeCost/v1/skus/profitRate/addon/dataSource`, {
-        dataSource,
+        dataSource: parsedDataSource,
         addon,
         profitRate
-    },
-        tokenConfig(getState)
+    }, {
+        signal: abortSignal,
+        ...tokenConfig(getState)
+    }
     )
         .then((res: AxiosResponse<{ data: ISkuUploadFeeds | undefined }>) => {
             dispatch({

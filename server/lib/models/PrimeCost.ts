@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import { IPrimeCost } from "./interface";
+import { IPrimeCostDoc } from "./interface";
 const { Schema } = mongoose;
 
-const PrimeCostSchema = new Schema<IPrimeCost>({
+const PrimeCostSchema = new Schema<IPrimeCostDoc>({
     _id: {
         upc: {
             type: Schema.Types.String,
@@ -27,4 +27,4 @@ const PrimeCostSchema = new Schema<IPrimeCost>({
     }
 }, { collection: "primeCost" });
 
-export default mongoose.model<IPrimeCost>("PrimeCost", PrimeCostSchema);
+export default mongoose.model<IPrimeCostDoc>("PrimeCost", PrimeCostSchema);

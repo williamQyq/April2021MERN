@@ -20,7 +20,7 @@ const MyProCard: React.FC<IProps> = (props) => {
             collapsible={collapsible !== undefined ? collapsible : true}
             style={{
                 marginBlockEnd: 16,
-                minWidth: 800,
+                minWidth: 1000,
                 maxWidth: '100%',
             }}
         >

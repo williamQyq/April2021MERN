@@ -1,10 +1,10 @@
 import { FilterQuery, UpdateQuery, QueryOptions, Model } from "mongoose";
 import PrimeCost from "#rootTS/lib/models/PrimeCost.js";
-import { IPrimeCost } from "../models/interface";
+import { IPrimeCostDoc } from "../models/interface";
 import { IPrimeCost as IRoutePrimeCost, Upc } from "../routes/api/interface.d";
 
 interface IOperationApi {
-    getProductsPrimeCost: (items: Upc[]) => void;
+    getPrimeCostByUpc: (upc: Upc) => Promise<number | undefined>;
     saveProductPrimeCost: (prod: IRoutePrimeCost) => Promise<any>;
     updateProductPrimeCost: (prod: IRoutePrimeCost) => Promise<any>;
 }
@@ -12,18 +12,17 @@ interface IOperationApi {
  * @description lagacy version of OperationApi is in ./utitlities.js
  */
 export class OperationApi implements IOperationApi {
-    private _PrimeCost: Model<IPrimeCost>;
+    private _PrimeCost: Model<IPrimeCostDoc>;
 
     constructor() {
         this._PrimeCost = PrimeCost;
     }
 
-    async getProductsPrimeCost(upcs: Upc[]) {
-        let result = await Promise.all(upcs.map(upc =>
-            this._PrimeCost.find({ upc: upc })
-        ))
-        console.log(result);
-        return result;
+    async getPrimeCostByUpc(upc: Upc) {
+
+        let doc = await this._PrimeCost.find({ upc: upc })
+        console.log(doc)
+        return 0;
     }
 
     async saveProductPrimeCost(prod: IRoutePrimeCost) {

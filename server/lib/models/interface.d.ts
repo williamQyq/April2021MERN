@@ -6,7 +6,7 @@ export interface BBItem extends Document {
     created_date: Date;
 }
 
-export interface IPrimeCost extends Document {
+export interface IPrimeCostDoc extends Document {
     _id: {
         upc: string;
     };

@@ -13,6 +13,7 @@ import {
     HddEnum, OsEnum, RAM, SSD
 } from 'component/utility/cmpt.interface.d';
 import { OS, HDD } from 'component/utility/types.enum';
+import { Button } from 'antd';
 
 interface IProps {
     dataSource: readonly SkuDataSourceType[];
@@ -122,24 +123,27 @@ const SkuEditableTable: React.FC<IProps> = (props) => {
         {
             title: 'Action',
             valueType: 'option',
-            width: 200,
+            width: 100,
             render: (text, record, _, action) => [
-                <a
+                <Button
                     key="editable"
+                    type="link"
                     onClick={() => {
                         action?.startEditable?.(record.id);
                     }}
                 >
                     编辑
-                </a>,
-                <a
+                </Button>,
+                <Button
                     key="delete"
+                    type="link"
+                    danger
                     onClick={() => {
                         setDataSource(dataSource.filter((item) => item.id !== record.id));
                     }}
                 >
                     删除
-                </a>,
+                </Button>,
                 <EditableProTable.RecordCreator
                     key="copy"
                     record={{
@@ -147,7 +151,7 @@ const SkuEditableTable: React.FC<IProps> = (props) => {
                         id: (Math.random() * 1000000).toFixed(0),
                     }}
                 >
-                    <a>复制</a>
+                    <Button type="link">复制</Button>
                 </EditableProTable.RecordCreator>,
             ],
         },

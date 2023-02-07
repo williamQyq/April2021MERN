@@ -11,7 +11,7 @@ import {
     downloadProductPrimeCostTemplate,
     uploadProductsPrimeCost
 } from 'reducers/actions/operationAction';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from 'reducers/store/store';
 import {
     InitSkuStepsFormDataType,
@@ -20,7 +20,7 @@ import {
     FileUploadRequestOption,
     Accessories,
     SkuConfig,
-    VerifiedSkuDataSourceType
+    VerifiedSellerAllowedPriceDataType
 } from 'component/utility/cmpt.interface.d';
 import {
     ProDescriptions,
@@ -31,6 +31,8 @@ import {
     StepsForm
 } from '@ant-design/pro-components';
 import TemplateDownloader from './TemplateDownloader';
+import { ReduxRootState } from 'reducers/interface';
+import { parseMyAccessoryDataSource, parseRamDataSource } from 'reducers/actions/actionsHelper';
 
 
 const { StepForm } = StepsForm;
@@ -42,20 +44,9 @@ const defaultStepsData: Omit<InitSkuStepsFormDataType, "dataSource"> = {
     addon: []
 }
 
-const tempSkuDataSource1 = {
-    id: 1,
-    sku: "196801739468-32102400H00P-AZM-B0BPHP6D2Z",
-    price: 863.99,
-    minPrice: 858.99,
-    maxPrice: 1717.98
-};
-const tempSkuDataSource2 = {
-    id: 2,
-    sku: "196801739468-32102400H00P-AZM-B0BPHP6D2Z",
-    price: 863.99,
-    minPrice: 858.99,
-    maxPrice: 1717.98
-};
+const ramOptions: RAM[] = [RAM.DDR4_4, RAM.DDR4_8, RAM.DDR4_16, RAM.DDR4_32];
+const ssdOptions: SSD[] = [SSD.PCIE_2048, SSD.PCIE_1024, SSD.PCIE_512, SSD.PCIE_256, SSD.PCIE_128]
+
 const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
     const dispatch: AppDispatch = useDispatch();
 
@@ -65,11 +56,10 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
     const [stepsFormData, setStepsFormData] = useState<Partial<InitSkuStepsFormDataType> | null>(null);
 
     //generated sku, prices from sku specification data source
-    const [verifiedSkuDataSource, setVerifiedSkuDataSource] = useState<VerifiedSkuDataSourceType[]>([tempSkuDataSource1, tempSkuDataSource2]);
-
+    const verifiedSkuDataSource = useSelector((state: ReduxRootState) => state.amazon.primeCost);
     //Accessories key, type Map, e.g <4GB_0, 4GB>
-    const ramValueEnum = createAccessoriesEnumObj([RAM.DDR4_4, RAM.DDR4_8, RAM.DDR4_16, RAM.DDR4_32]);
-    const ssdValueEnum = createAccessoriesEnumObj([SSD.PCIE_2048, SSD.PCIE_1024, SSD.PCIE_512, SSD.PCIE_256, SSD.PCIE_128]);
+    const ramValueEnum = createAccessoriesEnumObj(ramOptions);
+    const ssdValueEnum = createAccessoriesEnumObj(ssdOptions);
 
     //stepsFormData combine each step form field data and sku editableTable datasource
     const initEditableConfigOnFinish = (values: Partial<InitSkuStepsFormDataType>, skuDataSource: readonly SkuDataSourceType[]): void => {
@@ -80,7 +70,7 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
         dispatch(uploadProductsPrimeCost(options));
     }
 
-    //download sample prime cost template xlxs
+    // download sample prime cost template xlxs
     const handlePrimeCostTemplateDownload = useCallback(() => {
         console.log('download PrimeCostTemplate Xlsx.');
         dispatch(downloadProductPrimeCostTemplate());
@@ -88,16 +78,20 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    //download sku feeds xlsx for Amz skus upload
+    // download sku feeds xlsx for Amz skus upload
     const downloadSkuUploadFeeds = useCallback((skuConfigValues: SkuConfig | null) => {
         console.log('download sku upload feeds Xlsx.');
         dispatch(downloadInitSkuforAmzSPFeeds(skuConfigValues));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    // generate sku and seller allowed prices, and update redux state store
     const processComposedItems = useCallback((stepsFormData: Omit<InitSkuStepsFormDataType, "dataSource">, dataSource: readonly SkuDataSourceType[]) => {
-        dispatch(calcVerifiedSkuPrimeCost({ ...stepsFormData, dataSource: dataSource }))
+        const controller = new AbortController();
+        dispatch(calcVerifiedSkuPrimeCost(controller.signal, { ...stepsFormData, dataSource: dataSource }))
         // eslint-disable-next-line react-hooks/exhaustive-deps
+
+        return () => controller.abort();
     }, []);
 
 
@@ -198,7 +192,7 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                     }>
                     <FileUploader customizedUpload={handlePrimeCostUpload} />
                 </MyProCard>
-                
+
             </StepForm>
 
             {/**...Verification Step... */}
@@ -216,9 +210,9 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
             >
                 <MyProCard title="Generated SKU and Price">
                     {
-                        verifiedSkuDataSource.map((skuDescr: VerifiedSkuDataSourceType) => (
+                        verifiedSkuDataSource.map((skuDescr: VerifiedSellerAllowedPriceDataType) => (
                             <ProDescriptions
-                                key={skuDescr.id}
+                                key={skuDescr['product-id']}
                                 column={2}
                                 dataSource={skuDescr}
                                 columns={[
@@ -240,7 +234,7 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                                     {
                                         title: "Min Price",
                                         key: "minPrice",
-                                        dataIndex: "minPrice",
+                                        dataIndex: "minimum-seller-allowed-price",
                                         valueType: (item) => ({
                                             type: 'money',
                                             locale: 'en-US'
@@ -249,7 +243,7 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                                     {
                                         title: "Max Price",
                                         key: "maxPrice",
-                                        dataIndex: "maxPrice",
+                                        dataIndex: "maximum-seller-allowed-price",
                                         valueType: (item) => ({
                                             type: 'money',
                                             locale: 'en-US'
@@ -261,7 +255,7 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                     }
                 </MyProCard>
 
-                <MyProCard title="Last Input Data Info">
+                <MyProCard title="Verify your Input Accessories">
                     {
                         stepsFormData?.dataSource?.map(skuRowData => {
                             return (
@@ -288,9 +282,13 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                                             dataIndex: "ram",
                                             render: (values) => {
                                                 let accsValues = values as Exclude<Accessories, HDD>[];
-                                                return accsValues.map((accs) => (
-                                                    <Typography.Text key={accs}>{accs} </Typography.Text>
-                                                ))
+
+                                                let accumulatedValue = accsValues.reduce((prev: number, next: string) => {
+                                                    let ramValue: number = parseRamDataSource(next);
+                                                    return prev + ramValue;
+                                                }, 0);
+
+                                                return <Typography.Text>{accumulatedValue}GB </Typography.Text>
                                             }
                                         },
                                         {
@@ -299,9 +297,10 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                                             dataIndex: "ssd",
                                             render: (values) => {
                                                 let accsValues = values as Exclude<Accessories, HDD>[];
-                                                return accsValues.map((accs) => (
-                                                    <Typography.Text key={accs}>{accs} </Typography.Text>
-                                                ))
+                                                return accsValues.map((accs) => {
+                                                    const parsedSsd = parseMyAccessoryDataSource(accs);
+                                                    return <Typography.Text key={accs} style={{ marginRight: 4 }} >{parsedSsd} </Typography.Text>
+                                                })
                                             }
                                         },
                                         {

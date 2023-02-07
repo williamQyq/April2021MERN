@@ -35,7 +35,15 @@ export interface UploadPrimeCostRequestBody extends Required<IRequestBody> { }
 type FulfillmentCenterId = "AMAZON_NA" | undefined;
 type MerchantShippingGroup = "USprime" | undefined;
 
-export interface ISkuUploadFeeds {
+export interface ISkuUploadFeeds extends VerifiedSellerAllowedPriceDataSourceType {
+    "will-ship-internationally": undefined;
+    "expedited-shipping": undefined;
+    "standard-plus": undefined;
+    "item-note": undefined;
+    "product-tax-code": undefined;
+    "handling-time": undefined;
+}
+export interface VerifiedSellerAllowedPriceDataSourceType {
     "sku": string;
     "product-id": string;
     "product-id-type": number;
@@ -45,12 +53,22 @@ export interface ISkuUploadFeeds {
     "item-condition": number;
     "quantity": number;
     "add-delete": string;
-    "will-ship-internationally": undefined;
-    "expedited-shipping": undefined;
-    "standard-plus": undefined;
-    "item-note": undefined;
     "fulfillment-center-id": FulfillmentCenterId;
-    "product-tax-code": undefined;
-    "handling-time": undefined;
     "merchant_shipping_group_name": MerchantShippingGroup;
 }
+
+export interface ReduxRootState {
+    item: ItemReducerState;
+    error: ErrorReducerState;
+    auth: AuthReducerState;
+    amazon: AmazonReducerState;
+}
+
+export interface AmazonReducerState {
+    sellingPartner: any[];
+    loading: boolean;
+    primeCost: VerifiedSellerAllowedPriceDataSourceType[];
+}
+export interface ItemReducerState { };
+export interface ErrorReducerState { };
+export interface AuthReducerState { };

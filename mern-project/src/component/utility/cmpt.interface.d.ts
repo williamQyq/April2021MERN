@@ -1,5 +1,6 @@
 import { UploadProps } from 'antd';
 import { UploadRequestOption } from 'rc-upload/lib/interface';
+import { VerifiedSellerAllowedPriceDataSourceType } from 'reducers/interface';
 
 export interface MenuOption {
     key: string,
@@ -64,13 +65,7 @@ export type SkuDataSourceType = {
     children?: SkuDataSourceType[];
 };
 
-export interface VerifiedSkuDataSourceType {
-    id: number;
-    sku: string;
-    price: number;
-    minPrice: number;
-    maxPrice: number;
-}
+export type VerifiedSellerAllowedPriceDataType = VerifiedSellerAllowedPriceDataSourceType;
 
 export interface SkuConfig extends Partial<StepsFormDataType> { }
 /**
