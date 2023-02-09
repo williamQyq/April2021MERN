@@ -19,7 +19,10 @@ router.get('/upload/v1/getProductsPrimeCost/:upc', auth, (req: Request, res: Res
     const { upc } = req.params as { upc: string };
     let api = new OperationApi();
     api.getPrimeCostByUpc(upc)
-        .then(result => res.json(result));
+        .then(result => res.json(result))
+        .catch((err: Error) => {
+            res.status(404)
+        });
 
 })
 
@@ -27,19 +30,22 @@ router.get('/upload/v1/getProductsPrimeCost/:upc', auth, (req: Request, res: Res
  * @description: save products prime cost to db
  * 
  */
-router.post('/primeCost/v1/ProductsPrimeCost', auth, (req: Request, res: Response) => {
+router.put('/primeCost/v1/ProductsPrimeCost', auth, (req: Request, res: Response) => {
     const { fileData, isOverriden }: { fileData: string[][]; isOverriden: boolean } = req.body;
     let ProdsPrimeCost = parseCsvHelper<IRoutePrimeCost>(fileData);  //parse string[][] to array of prod obj.
     if (!ProdsPrimeCost) {
         let errorMsg: IResponseErrorMessage = { msg: "Fail to save prime cost." }
         return res.status(400).json(errorMsg);
     }
+
     let api = new OperationApi();
-    Promise.all(ProdsPrimeCost!.map((prod: IRoutePrimeCost) => {
-        return isOverriden ?
-            api.updateProductPrimeCost(prod)
-            : api.saveProductPrimeCost(prod);
-    }))
+    Promise.all(
+        ProdsPrimeCost!.filter(prod => prod.upc && prod.upc !== '').map((prod: IRoutePrimeCost) => {
+            return isOverriden ?
+                api.updateProductPrimeCost(prod)
+                : api.saveProductPrimeCost(prod);
+        })
+    )
         .then(result => res.json(result))
         .catch((err: MongoError) => {
             console.error(`MongoError: `, err.message);
@@ -52,7 +58,6 @@ router.post('/primeCost/v1/skus/profitRate/addon/dataSource', auth, (req: Reques
     const { addon, dataSource, profitRate } = req.body;
     let api = new OperationApi();
 
-    console.log(`dataSource`, dataSource);
     const primeCostReqSet = new Set<string>();  //unique set of prime cost checking items
 
     // prepare the prime cost checking set
@@ -78,32 +83,43 @@ router.post('/primeCost/v1/skus/profitRate/addon/dataSource', auth, (req: Reques
     })
 
     //retrieve all prime cost from db
-    Promise.all(Array.from(primeCostReqSet).map(reqPrimeCostUpc => {
-        return api.getPrimeCostByUpc(reqPrimeCostUpc);
-    })).then(result => console.log(result));
+    Promise.allSettled(
+        Array.from(primeCostReqSet).map(reqPrimeCostUpc => {
+            return api.getPrimeCostByUpc(reqPrimeCostUpc);
+        })
+    )
+        .then(uniquePrimeCostPromRes => {
+            // uniquePrimeCostPromRes.filter()
+            console.log(uniquePrimeCostPromRes);
+            let result1: Partial<ISkuUploadFeedsType> = {
+                "sku": "196801739468-32102400H00P-AZM-B0BPHP6D2Z",
+                "product-id": "B0BPHP6D2Z",
+                "product-id-type": 1,
+                "price": 863.99,
+                "minimum-seller-allowed-price": 858.99,
+                "maximum-seller-allowed-price": 1717.98,
+                "item-condition": 11,
+                "quantity": 0,
+                "add-delete": "a",
+                "will-ship-internationally": undefined,
+                "expedited-shipping": undefined,
+                "standard-plus": undefined,
+                "item-note": undefined,
+                "fulfillment-center-id": "AMAZON_NA",
+                "product-tax-code": undefined,
+                "handling-time": undefined,
+                "merchant_shipping_group_name": "USprime"
+            }
+            res.json([
+                result1,
+            ]);
+        })
+        .catch((err: Error) => {
+            let errorMsg: IResponseErrorMessage = { msg: "Fail to calc sku Prime Cost", reason: err.message };
+            res.status(400).json(errorMsg);
+        });
 
-    let result1: Partial<ISkuUploadFeedsType> = {
-        "sku": "196801739468-32102400H00P-AZM-B0BPHP6D2Z",
-        "product-id": "B0BPHP6D2Z",
-        "product-id-type": 1,
-        "price": 863.99,
-        "minimum-seller-allowed-price": 858.99,
-        "maximum-seller-allowed-price": 1717.98,
-        "item-condition": 11,
-        "quantity": 0,
-        "add-delete": "a",
-        "will-ship-internationally": undefined,
-        "expedited-shipping": undefined,
-        "standard-plus": undefined,
-        "item-note": undefined,
-        "fulfillment-center-id": "AMAZON_NA",
-        "product-tax-code": undefined,
-        "handling-time": undefined,
-        "merchant_shipping_group_name": "USprime"
-    }
-    res.json([
-        result1,
-    ]);
+
 })
 
 router.get('/template/v1/PrimeCostXlsxTemplate', (req: Request, res: Response) => {

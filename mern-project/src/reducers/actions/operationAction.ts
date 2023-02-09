@@ -29,7 +29,7 @@ export const uploadProductsPrimeCost = (options: FileUploadRequestOption) => (di
         complete: (xlsx) => {
             const uploadFile = xlsx.data;
             const reqBody: UploadPrimeCostRequestBody = { fileData: uploadFile, isOverriden: true }
-            axios.post('/api/operationV1/primeCost/v1/ProductsPrimeCost', reqBody, tokenConfig(getState))
+            axios.put('/api/operationV1/primeCost/v1/ProductsPrimeCost', reqBody, tokenConfig(getState))
                 .then((res: myAxiosResponse) => {
                     dispatch({
                         type: UPLOAD_PRIME_COST

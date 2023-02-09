@@ -3,7 +3,7 @@ import 'styles/Operation.scss';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Form } from 'antd';
-import { defaultSettings, title, footer } from 'component/Operation/_Settings';
+import { defaultSettings } from 'component/Operation/_Settings';
 import { mainColumns } from 'component/Operation/SkuManagement/OperationEditableEle.jsx';
 import { getProductPricing } from 'reducers/actions/operationActions.js';
 import OperationMenu from 'component/Operation/SkuManagement/OperationMenu.jsx';

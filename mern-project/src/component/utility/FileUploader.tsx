@@ -16,7 +16,7 @@ const FileUploader: React.FC<IProps> = ({ customizedUpload }) => {
     const draggerProps: FileUploadProps = {
         name: 'file',
         multiple: true,
-        accept: ".txt, .csv, .xlsx",
+        accept: ".txt, .csv",
         onChange(info) {
             const { status, response, error } = info.file;
             if (status !== 'uploading') {

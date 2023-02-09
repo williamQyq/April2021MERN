@@ -28,10 +28,11 @@ export function parseCsvHelper<O = unknown>(records: string[][]): O[] | undefine
     let parsedResult = records.slice(1).reduce<any[]>((prev, cur) => {
         let obj: ParserRecord = {};
         for (const [index, key] of records[0].entries()) {
-            if (key === "price") {
-                obj[key] = currencyStringConverter(cur[index]);
+            let lc_key = key.toLocaleLowerCase();
+            if (lc_key === "price") {
+                obj[lc_key] = currencyStringConverter(cur[index]);
             } else {
-                obj[key] = cur[index];
+                obj[lc_key] = cur[index];
             }
         }
         return [...prev, obj];

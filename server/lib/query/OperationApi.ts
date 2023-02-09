@@ -4,7 +4,7 @@ import { IPrimeCostDoc } from "../models/interface";
 import { IPrimeCost as IRoutePrimeCost, Upc } from "../routes/api/interface.d";
 
 interface IOperationApi {
-    getPrimeCostByUpc: (upc: Upc) => Promise<number | undefined>;
+    getPrimeCostByUpc: (upc: Upc) => Promise<[Upc, number]>;
     saveProductPrimeCost: (prod: IRoutePrimeCost) => Promise<any>;
     updateProductPrimeCost: (prod: IRoutePrimeCost) => Promise<any>;
 }
@@ -18,11 +18,18 @@ export class OperationApi implements IOperationApi {
         this._PrimeCost = PrimeCost;
     }
 
-    async getPrimeCostByUpc(upc: Upc) {
+    async getPrimeCostByUpc(upc: Upc): Promise<[Upc, number]> {
 
-        let doc = await this._PrimeCost.find({ upc: upc })
-        console.log(doc)
-        return 0;
+        let doc = await this._PrimeCost.find({
+            _id: {
+                upc: upc
+            }
+        })
+        if (doc.length <= 0) {
+            throw new Error(`Failure upc: ${upc}`)
+        }
+        const upcPrimeCost = doc[0].price;
+        return [upc, upcPrimeCost];
     }
 
     async saveProductPrimeCost(prod: IRoutePrimeCost) {
@@ -39,6 +46,7 @@ export class OperationApi implements IOperationApi {
     }
 
     async updateProductPrimeCost(prod: IRoutePrimeCost) {
+        console.log('update prod: ', prod)
         const filter: FilterQuery<any> = {
             _id: {
                 upc: prod.upc
