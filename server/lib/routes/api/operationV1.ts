@@ -3,7 +3,6 @@ import { Request, Response, Router } from "express";
 import { OperationApi } from "#rootTS/lib/query/OperationApi.js";
 import { parseCsvHelper } from "#rootTS/bin/helper/parseHelper.js";
 import {
-    Upc,
     IPrimeCost as IRoutePrimeCost,
     IResponseErrorMessage,
     IPrimeCostXlsxTemplateDataType,
@@ -54,13 +53,13 @@ router.put('/primeCost/v1/ProductsPrimeCost', auth, (req: Request, res: Response
         });
 })
 
-router.post('/primeCost/v1/skus/profitRate/addon/dataSource', auth, (req: Request<{}, {}, IPrimeCostCalcReqBody>, res: Response) => {
+router.post('/primeCost/v1/skus/profitRate/addon/dataSource', auth, async (req: Request<{}, {}, IPrimeCostCalcReqBody>, res: Response) => {
     const { addon, dataSource, profitRate } = req.body;
     let api = new OperationApi();
 
     const primeCostReqSet = new Set<string>();  //unique set of prime cost checking items
 
-    // prepare the prime cost checking set
+    // add unique config item to primeCostReqSet - e.g. PCIE1024
     dataSource.forEach(listing => {
         listing.ram.forEach(ramType => {
             if (!primeCostReqSet.has(ramType))
@@ -82,43 +81,54 @@ router.post('/primeCost/v1/skus/profitRate/addon/dataSource', auth, (req: Reques
 
     })
 
-    //retrieve all prime cost from db
-    Promise.allSettled(
+    //add unique bundle add on item to primeCostReqSet
+    addon.forEach((bundleItem: string) => {
+        if (!primeCostReqSet.has(bundleItem))
+            primeCostReqSet.add(bundleItem)
+    })
+
+    //retrieve all needed prime cost from db
+    const primeCostMap = await Promise.allSettled(
         Array.from(primeCostReqSet).map(reqPrimeCostUpc => {
             return api.getPrimeCostByUpc(reqPrimeCostUpc);
-        })
-    )
+        }))
         .then(uniquePrimeCostPromRes => {
-            // uniquePrimeCostPromRes.filter()
-            console.log(uniquePrimeCostPromRes);
-            let result1: Partial<ISkuUploadFeedsType> = {
-                "sku": "196801739468-32102400H00P-AZM-B0BPHP6D2Z",
-                "product-id": "B0BPHP6D2Z",
-                "product-id-type": 1,
-                "price": 863.99,
-                "minimum-seller-allowed-price": 858.99,
-                "maximum-seller-allowed-price": 1717.98,
-                "item-condition": 11,
-                "quantity": 0,
-                "add-delete": "a",
-                "will-ship-internationally": undefined,
-                "expedited-shipping": undefined,
-                "standard-plus": undefined,
-                "item-note": undefined,
-                "fulfillment-center-id": "AMAZON_NA",
-                "product-tax-code": undefined,
-                "handling-time": undefined,
-                "merchant_shipping_group_name": "USprime"
-            }
-            res.json([
-                result1,
-            ]);
+            let promiseFulfilledResults = uniquePrimeCostPromRes.filter(prom => prom.status === 'fulfilled')
+                .map(settledProm => (settledProm as PromiseFulfilledResult<[string, number]>).value)
+
+            return new Map(promiseFulfilledResults);
         })
         .catch((err: Error) => {
             let errorMsg: IResponseErrorMessage = { msg: "Fail to calc sku Prime Cost", reason: err.message };
             res.status(400).json(errorMsg);
         });
 
+    // dataSource.forEach(listing => {
+    //     listing.
+    // })
+
+    let result1: Partial<ISkuUploadFeedsType> = {
+        "sku": "196801739468-32102400H00P-AZM-B0BPHP6D2Z",
+        "product-id": "B0BPHP6D2Z",
+        "product-id-type": 1,
+        "price": 863.99,
+        "minimum-seller-allowed-price": 858.99,
+        "maximum-seller-allowed-price": 1717.98,
+        "item-condition": 11,
+        "quantity": 0,
+        "add-delete": "a",
+        "will-ship-internationally": undefined,
+        "expedited-shipping": undefined,
+        "standard-plus": undefined,
+        "item-note": undefined,
+        "fulfillment-center-id": "AMAZON_NA",
+        "product-tax-code": undefined,
+        "handling-time": undefined,
+        "merchant_shipping_group_name": "USprime"
+    }
+    res.json([
+        result1,
+    ]);
 
 })
 

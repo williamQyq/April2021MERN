@@ -210,7 +210,7 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
             >
                 <MyProCard title="Generated SKU and Price">
                     {
-                        verifiedSkuDataSource.map((skuDescr: VerifiedSellerAllowedPriceDataType) => (
+                        verifiedSkuDataSource ? verifiedSkuDataSource.map((skuDescr: VerifiedSellerAllowedPriceDataType) => (
                             <ProDescriptions
                                 key={skuDescr['product-id']}
                                 column={2}
@@ -251,7 +251,7 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                                     }
                                 ]}
                             />
-                        ))
+                        )) : null
                     }
                 </MyProCard>
 
