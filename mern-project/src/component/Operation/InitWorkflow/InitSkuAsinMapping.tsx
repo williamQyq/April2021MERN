@@ -32,7 +32,7 @@ import {
 } from '@ant-design/pro-components';
 import TemplateDownloader from './TemplateDownloader';
 import { ReduxRootState } from 'reducers/interface';
-import { parseMyAccessoryDataSource, parseRamDataSource } from 'reducers/actions/actionsHelper';
+import { parseSsdDataSource, parseRamDataSource } from 'reducers/actions/actionsHelper';
 
 
 const { StepForm } = StepsForm;
@@ -297,10 +297,12 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                                             dataIndex: "ssd",
                                             render: (values) => {
                                                 let accsValues = values as Exclude<Accessories, HDD>[];
-                                                return accsValues.map((accs) => {
-                                                    const parsedSsd = parseMyAccessoryDataSource(accs);
-                                                    return <Typography.Text key={accs} style={{ marginRight: 4 }} >{parsedSsd} </Typography.Text>
-                                                })
+                                                let accumulatedValue = accsValues.reduce((accumSsd: number, unparsedSsd: string) => {
+                                                    const ssdValue = parseSsdDataSource(unparsedSsd);
+                                                    return accumSsd + ssdValue;
+                                                }, 0);
+
+                                                return <Typography.Text>PCIE{accumulatedValue}</Typography.Text>
                                             }
                                         },
                                         {

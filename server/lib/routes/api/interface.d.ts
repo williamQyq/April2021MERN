@@ -1,7 +1,8 @@
 import { IPrimeCost } from "#root/lib/models/interface";
 
 export type Upc = string;
-type primeCostCategory = "product" | "accessories" | "";
+
+type PrimeCostCategory = "product" | "accessories" | "";
 
 export interface IResponseErrorMessage {
     msg: string,
@@ -16,19 +17,21 @@ export interface IPrimeCostXlsxTemplateDataType {
     upc: string;
     name: string;
     price: number | undefined;
-    category: primeCostCategory;
+    category: PrimeCostCategory;
+}
+
+export interface listingItem {
+    id: number;
+    asin: string;
+    hdd: Hdd;
+    os: Os;
+    ram: Ram[];
+    ssd: Ssd[];
+    upc: string;
 }
 
 export interface IPrimeCostCalcReqBody {
-    dataSource: {
-        id: number;
-        asin: string;
-        hdd: string;
-        os: string;
-        ram: any[];
-        ssd: any[];
-        upc: string;
-    }[],
+    dataSource: listingItem[],
     addon: any[],
     profitRate: number
 }

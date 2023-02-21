@@ -35,3 +35,18 @@ export function parseRamDataSource(unparsedRam: string): number {
 
     return Number(found.groups!.value!);
 }
+
+/**
+ * 
+ * @param accessories e.g. "PCIE1024_{index}"
+ * @description parse and get value of PCIE{value}.*
+ * @returns 1024 | 0 //if no found
+ */
+export function parseSsdDataSource(unparsedSsd: string): number {
+    const SsdValueMatchReg = /[A-Z]*(?<value>\d+)/;
+    const found = unparsedSsd.match(SsdValueMatchReg)
+    if (!found)
+        return 0;
+
+    return Number(found.groups!.value);
+}

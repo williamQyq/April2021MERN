@@ -1,13 +1,14 @@
 import auth from "#rootTS/lib/middleware/auth.js";
 import { Request, Response, Router } from "express";
-import { OperationApi } from "#rootTS/lib/query/OperationApi.js";
+import { Listings, OperationApi } from "#rootTS/lib/query/OperationApi.js";
 import { parseCsvHelper } from "#rootTS/bin/helper/parseHelper.js";
 import {
     IPrimeCost as IRoutePrimeCost,
     IResponseErrorMessage,
     IPrimeCostXlsxTemplateDataType,
     ISkuUploadFeedsType,
-    IPrimeCostCalcReqBody
+    IPrimeCostCalcReqBody,
+    listingItem
 } from "./interface";
 import { MongoError } from "mongodb";
 import excel from 'exceljs';
@@ -56,44 +57,59 @@ router.put('/primeCost/v1/ProductsPrimeCost', auth, (req: Request, res: Response
 router.post('/primeCost/v1/skus/profitRate/addon/dataSource', auth, async (req: Request<{}, {}, IPrimeCostCalcReqBody>, res: Response) => {
     const { addon, dataSource, profitRate } = req.body;
     let api = new OperationApi();
-
     const primeCostReqSet = new Set<string>();  //unique set of prime cost checking items
-
+    if (dataSource.length === 0) {
+        let errorMsg: IResponseErrorMessage = { msg: "Please enter input to your SKU Creation Table.", reason: 'Received empty sku creation table.' };
+        return res.status(400).json(errorMsg);
+    }
     // add unique config item to primeCostReqSet - e.g. PCIE1024
     dataSource.forEach(listing => {
+        //[RAM]
         listing.ram.forEach(ramType => {
             if (!primeCostReqSet.has(ramType))
                 primeCostReqSet.add(ramType);
         });
-
+        //[SSD]
         listing.ssd.forEach(ssdType => {
             if (!primeCostReqSet.has(ssdType))
                 primeCostReqSet.add(ssdType);
         });
-
+        //[HDD]
         if (listing.hdd !== "None")
             primeCostReqSet.add(listing.hdd);
-
+        //[UPC]
         if (!primeCostReqSet.has(listing.upc))
             primeCostReqSet.add(listing.upc)
-
+        //[OS]
         primeCostReqSet.add(listing.os);
 
     })
 
-    //add unique bundle add on item to primeCostReqSet
+    //[Addon] add unique bundle add on item to primeCostReqSet
     addon.forEach((bundleItem: string) => {
         if (!primeCostReqSet.has(bundleItem))
             primeCostReqSet.add(bundleItem)
     })
 
     //retrieve all needed prime cost from db
-    const primeCostMap = await Promise.allSettled(
+    const primeCostMap: Map<string, number> | void = await Promise.allSettled(
         Array.from(primeCostReqSet).map(reqPrimeCostUpc => {
             return api.getPrimeCostByUpc(reqPrimeCostUpc);
         }))
         .then(uniquePrimeCostPromRes => {
-            let promiseFulfilledResults = uniquePrimeCostPromRes.filter(prom => prom.status === 'fulfilled')
+            let hasRejected: boolean = uniquePrimeCostPromRes.filter(prom => prom.status === 'rejected').length > 0
+
+            if (hasRejected) {
+                let reasons = uniquePrimeCostPromRes.filter(prom => prom.status === 'rejected') as PromiseRejectedResult[];
+                console.log(reasons[0].reason.reason)
+                let errorMsg: IResponseErrorMessage = { msg: "Fail to calc sku Prime Cost", reason: '' };
+                res.status(400).json(errorMsg);
+                return;
+            }
+            return uniquePrimeCostPromRes;
+        })
+        .then(uniquePrimeCostPromRes => {
+            let promiseFulfilledResults = uniquePrimeCostPromRes!.filter(prom => prom.status === 'fulfilled')
                 .map(settledProm => (settledProm as PromiseFulfilledResult<[string, number]>).value)
 
             return new Map(promiseFulfilledResults);
@@ -101,34 +117,40 @@ router.post('/primeCost/v1/skus/profitRate/addon/dataSource', auth, async (req: 
         .catch((err: Error) => {
             let errorMsg: IResponseErrorMessage = { msg: "Fail to calc sku Prime Cost", reason: err.message };
             res.status(400).json(errorMsg);
+            return;
         });
 
-    // dataSource.forEach(listing => {
-    //     listing.
-    // })
-
-    let result1: Partial<ISkuUploadFeedsType> = {
-        "sku": "196801739468-32102400H00P-AZM-B0BPHP6D2Z",
-        "product-id": "B0BPHP6D2Z",
-        "product-id-type": 1,
-        "price": 863.99,
-        "minimum-seller-allowed-price": 858.99,
-        "maximum-seller-allowed-price": 1717.98,
-        "item-condition": 11,
-        "quantity": 0,
-        "add-delete": "a",
-        "will-ship-internationally": undefined,
-        "expedited-shipping": undefined,
-        "standard-plus": undefined,
-        "item-note": undefined,
-        "fulfillment-center-id": "AMAZON_NA",
-        "product-tax-code": undefined,
-        "handling-time": undefined,
-        "merchant_shipping_group_name": "USprime"
+    // **something went wrong, neither upc nor cost Map created
+    if (!primeCostMap || primeCostMap.size === 0) {
+        console.error(`[Failed] no prime cost map.`)
+        return;
     }
-    res.json([
-        result1,
-    ]);
+
+    // creating sku listings upload feeds ...
+    const listingsItemSubmission = dataSource.map((newListing: listingItem) => {
+        const primeCostKeys = ['ram', 'ssd', 'upc', 'os'];  //interactive keys of prime cost.
+        let listingPrimeCost = 0;   //the init prime cost of each listing.
+
+        //accumulate all items' prime cost by key
+        primeCostKeys.forEach((key) => {
+            let value = newListing[key as keyof typeof newListing]
+            if (value.constructor === Array) {
+                value.forEach(element => {
+                    if (primeCostMap.has(element))
+                        listingPrimeCost += primeCostMap.get(element)!;
+                })
+            } else {
+                if (primeCostMap.has(value as string))
+                    listingPrimeCost += primeCostMap.get(value as string)!;
+            }
+        })
+
+        let listing: Listings | null = new Listings({ ...newListing });
+        let listingAttributes = listing.putListingItem(listingPrimeCost, profitRate);
+
+        return listingAttributes;
+    });
+    res.json(listingsItemSubmission);
 
 })
 
