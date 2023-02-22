@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'styles/ProcessStreamStartUp.scss';
 import { ContentHeader } from 'component/utility/Layout';
 // import { StepStatus } from 'types';
@@ -9,16 +9,23 @@ import { MdOutlineTipsAndUpdates } from 'react-icons/md';
 import { SiAmazonaws } from 'react-icons/si';
 import { IoHardwareChipOutline } from 'react-icons/io5';
 import { TbListDetails } from 'react-icons/tb';
+import { GrFormViewHide } from 'react-icons/gr';
 
 import { Typography, Row, Col, Steps } from 'antd';
 import ProdKeySpecInput from './ProdKeySpecInput';
+import { IconContext } from 'react-icons/lib';
 
 
 const { Title } = Typography;
 
 const InitNewProdWorkflow: React.FC = () => {
     const [currentStep, setCurrentStep] = useState(0);
+    const [isScreenMaxWidthReach, setScreenMaxWidthisReach] = useState<boolean>(false);
+    useEffect(() => {
+        const handler = (e: MediaQueryListEvent) => setScreenMaxWidthisReach(e.matches)
+        window.matchMedia("(max-width: 1600px)").addEventListener('change', handler);
 
+    }, []);
     //Set current Step status: error, process finish,wait
     // const getStepStatus = (index: number): StepStatus => {
     //     let status = StepStatus.error;
@@ -81,13 +88,24 @@ const InitNewProdWorkflow: React.FC = () => {
                     {steps[currentStep].content}
                 </Col>
                 <Col span={4}>
-                    <Steps
-                        style={{ marginTop: "36px", height: "70vh" }}
-                        direction='vertical'
-                        current={currentStep}
-                        onChange={(current: number) => setCurrentStep(current)}
-                        items={steps}
-                    />
+                    {
+                        isScreenMaxWidthReach ?
+                            <IconContext.Provider
+                                value={{ color: 'white', size: "50px" }}
+                            >
+                                <GrFormViewHide />
+                            </IconContext.Provider>
+                            :
+                            <Steps
+                                style={{ marginTop: "36px", height: "70vh" }}
+                                direction='vertical'
+                                current={currentStep}
+                                onChange={(current: number) => setCurrentStep(current)}
+                                items={steps}
+                            />
+
+                    }
+
                 </Col>
             </Row>
         </>

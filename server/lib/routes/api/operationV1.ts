@@ -13,6 +13,10 @@ import {
 import { MongoError } from "mongodb";
 import excel from 'exceljs';
 
+interface PromiseRejectedResult {
+    reason: MongoError;
+}
+
 const router: Router = Router();
 
 router.get('/upload/v1/getProductsPrimeCost/:upc', auth, (req: Request, res: Response) => {
@@ -99,13 +103,15 @@ router.post('/primeCost/v1/skus/profitRate/addon/dataSource', auth, async (req: 
         .then(uniquePrimeCostPromRes => {
             let hasRejected: boolean = uniquePrimeCostPromRes.filter(prom => prom.status === 'rejected').length > 0
 
+            // if has req not found in prime cost db collection table, throw error
             if (hasRejected) {
                 let reasons = uniquePrimeCostPromRes.filter(prom => prom.status === 'rejected') as PromiseRejectedResult[];
-                console.log(reasons[0].reason.reason)
-                let errorMsg: IResponseErrorMessage = { msg: "Fail to calc sku Prime Cost", reason: '' };
-                res.status(400).json(errorMsg);
-                return;
+                let errReasons = reasons.reduce((prev: string, next: PromiseRejectedResult) => (
+                    prev + next.reason.message + "\n"
+                ), "");
+                throw errReasons;
             }
+
             return uniquePrimeCostPromRes;
         })
         .then(uniquePrimeCostPromRes => {
@@ -114,8 +120,8 @@ router.post('/primeCost/v1/skus/profitRate/addon/dataSource', auth, async (req: 
 
             return new Map(promiseFulfilledResults);
         })
-        .catch((err: Error) => {
-            let errorMsg: IResponseErrorMessage = { msg: "Fail to calc sku Prime Cost", reason: err.message };
+        .catch((errReason: string) => {
+            let errorMsg: IResponseErrorMessage = { msg: "Fail to calc sku Prime Cost", reason: errReason };
             res.status(400).json(errorMsg);
             return;
         });

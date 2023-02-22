@@ -89,8 +89,7 @@ export const calcVerifiedSkuPrimeCost = (abortSignal: AbortSignal, stepsFormData
     }, {
         signal: abortSignal,
         ...tokenConfig(getState)
-    }
-    )
+    })
         .then((res: AxiosResponse<{ data: ISkuUploadFeeds | undefined }>) => {
             dispatch({
                 type: GET_SKU_PRIME_COST,

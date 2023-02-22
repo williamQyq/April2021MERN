@@ -89,9 +89,9 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
     const processComposedItems = useCallback((stepsFormData: Omit<InitSkuStepsFormDataType, "dataSource">, dataSource: readonly SkuDataSourceType[]) => {
         const controller = new AbortController();
         dispatch(calcVerifiedSkuPrimeCost(controller.signal, { ...stepsFormData, dataSource: dataSource }))
-        // eslint-disable-next-line react-hooks/exhaustive-deps
 
         return () => controller.abort();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
 
