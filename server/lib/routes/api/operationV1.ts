@@ -191,36 +191,17 @@ router.get('/template/v1/PrimeCostXlsxTemplate', (req: Request, res: Response) =
     });
 })
 
-router.put('/listings/v1/initSkuFeeds', (req: Request<{}, {}, { initSkuFeeds: ISkuUploadFeedsType[] }>, res: Response) => {
-    const { initSkuFeeds } = req.body;
+router.patch('/listings/v1/offers', auth, (req: Request<{}, {}, ISkuUploadFeedsType[]>, res: Response) => {
+    const listingOffers = req.body;
+    console.log(req.body);
     let workbook = new excel.Workbook();
     let worksheet = workbook.addWorksheet("skuUpload");
     const headers = ["sku", "product-id", "product-id-type", "price", "minimum-seller-allowed-price", "maximum-seller-allowed-price", "item-condition", "quantity", "add-delete", "will-ship-internationally", "expedited-shipping", "standard-plus", "item-note", "fulfillment-center-id", "product-tax-code", "handling-time", "merchant_shipping_group_name"]
     // const values = [196801739468-32102400H00P-AZM-B0BPHP6D2Z	B0BPHP6D2Z	1	863.99	858.99	1717.98	11	0	a								USprime]
-    let skuUploadCols = headers.map(header => ({ header: header, key: header, width: 20 }));
-    worksheet.columns = skuUploadCols;
-    // let rows: ISkuUploadFeedsType[] = initSkuFeeds;
-    // let sampleData: ISkuUploadFeedsType = {
-    //     "sku": "196801739468-32102400H00P-AZM-B0BPHP6D2Z",
-    //     "product-id": "B0BPHP6D2Z",
-    //     "product-id-type": 1,
-    //     "price": 863.99,
-    //     "minimum-seller-allowed-price": 858.99,
-    //     "maximum-seller-allowed-price": 1717.98,
-    //     "item-condition": 11,
-    //     "quantity": 0,
-    //     "add-delete": "a",
-    //     "will-ship-internationally": undefined,
-    //     "expedited-shipping": undefined,
-    //     "standard-plus": undefined,
-    //     "item-note": undefined,
-    //     "fulfillment-center-id": "AMAZON_NA",
-    //     "product-tax-code": undefined,
-    //     "handling-time": undefined,
-    //     "merchant_shipping_group_name": "USprime"
-    // }
-    // rows.push(sampleData);
-    worksheet.addRows(initSkuFeeds);
+    let skuOfferCols = headers.map(header => ({ header: header, key: header, width: 20 }));
+    worksheet.columns = skuOfferCols;
+    
+    worksheet.addRows(listingOffers);
     res.setHeader(
         "Content-Type",
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

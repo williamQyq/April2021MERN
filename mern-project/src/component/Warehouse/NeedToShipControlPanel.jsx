@@ -59,7 +59,7 @@ const NeedToShipControlPanel = ({ shipmentInfo }) => {
         }
     }
     return (
-        <Collapse accordion ghost collapsible='header'>
+        <Collapse defaultActiveKey={['1']} accordion ghost>
             <Panel
                 header={
                     <BsUiChecksGrid style={{ fontSize: "200%" }} />

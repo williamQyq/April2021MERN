@@ -1,13 +1,8 @@
 import React from 'react';
 import {
-    BiSearchAlt
-} from 'react-icons/bi';
-import {
     SearchOutlined,
 } from '@ant-design/icons';
 import { Input, theme } from 'antd';
-
-
 
 const SearchInput: React.FC = () => {
     const { token } = theme.useToken();
@@ -38,14 +33,8 @@ const SearchInput: React.FC = () => {
                         }}
                     />
                 }
-                placeholder="searching"
+                placeholder="Where to look up sku?"
                 bordered={false}
-            />
-            <BiSearchAlt
-                style={{
-                    color: token.colorPrimary,
-                    fontSize: 24,
-                }}
             />
         </div>
     );

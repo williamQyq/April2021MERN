@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import 'styles/ProcessStreamStartUp.scss';
+import { css } from '@emotion/css';
 import { ContentHeader } from 'component/utility/Layout';
 // import { StepStatus } from 'types';
 import ProdDetachSpecInput from './ProdDetachSpecInput';
@@ -9,18 +10,18 @@ import { MdOutlineTipsAndUpdates } from 'react-icons/md';
 import { SiAmazonaws } from 'react-icons/si';
 import { IoHardwareChipOutline } from 'react-icons/io5';
 import { TbListDetails } from 'react-icons/tb';
-import { GrFormViewHide } from 'react-icons/gr';
+import { GiRun } from 'react-icons/gi';
 
-import { Typography, Row, Col, Steps } from 'antd';
+import { Typography, Row, Col, Steps, theme } from 'antd';
 import ProdKeySpecInput from './ProdKeySpecInput';
-import { IconContext } from 'react-icons/lib';
-
 
 const { Title } = Typography;
 
 const InitNewProdWorkflow: React.FC = () => {
     const [currentStep, setCurrentStep] = useState(0);
-    const [isScreenMaxWidthReach, setScreenMaxWidthisReach] = useState<boolean>(false);
+    const { token } = theme.useToken();
+    const [isScreenMaxWidthReach, setScreenMaxWidthisReach] = useState<boolean>(window.matchMedia("(max-width: 1600px)").matches);
+
     useEffect(() => {
         const handler = (e: MediaQueryListEvent) => setScreenMaxWidthisReach(e.matches)
         window.matchMedia("(max-width: 1600px)").addEventListener('change', handler);
@@ -70,6 +71,23 @@ const InitNewProdWorkflow: React.FC = () => {
             content: <InitSkuAsinMapping nextCatag={next} prevCatag={prev} />
         }
     ]
+    const miniSteps = [
+        {
+            key: "init-product-detachable-spec",
+            icon: <IoHardwareChipOutline />,
+            content: <ProdDetachSpecInput nextCatag={next} prevCatag={prev} />
+        },
+        {
+            key: "init-product-key-spec",
+            icon: <TbListDetails />,
+            content: <ProdKeySpecInput nextCatag={next} prevCatag={prev} />
+        },
+        {
+            key: "init-sku",
+            icon: <SiAmazonaws />,
+            content: <InitSkuAsinMapping nextCatag={next} prevCatag={prev} />
+        }
+    ]
 
     return (
         <>
@@ -90,11 +108,22 @@ const InitNewProdWorkflow: React.FC = () => {
                 <Col span={4}>
                     {
                         isScreenMaxWidthReach ?
-                            <IconContext.Provider
-                                value={{ color: 'white', size: "50px" }}
-                            >
-                                <GrFormViewHide />
-                            </IconContext.Provider>
+                            <div style={{ display: "flex", flexDirection: 'row', alignItems: "center", minWidth:"180px" }}>
+
+                                <Steps
+                                    style={{ alignItems:"center", marginRight:"4px" }}
+                                    direction='horizontal'
+                                    current={currentStep}
+                                    onChange={(current: number) => setCurrentStep(current)}
+                                    items={miniSteps}
+                                />
+                                <GiRun className={
+                                    css`
+                                stroke: ${token.colorTextSecondary};
+                                fill: ${token.colorTextSecondary};
+                                font-size: 18px;
+                            `} />
+                            </div>
                             :
                             <Steps
                                 style={{ marginTop: "36px", height: "70vh" }}
@@ -103,7 +132,6 @@ const InitNewProdWorkflow: React.FC = () => {
                                 onChange={(current: number) => setCurrentStep(current)}
                                 items={steps}
                             />
-
                     }
 
                 </Col>

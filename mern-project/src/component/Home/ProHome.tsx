@@ -70,7 +70,7 @@ class ProHome extends React.Component<IProHomeProps, IState>{
                     logo={
                         <Avatar src="https://images-rocky-public.s3.amazonaws.com/logo.jpg" />
                     }
-                    title="Morty Citadel"
+                    title="w Citadel"
                     bgLayoutImgList={[
                         {
                             src: 'https://img.alicdn.com/imgextra/i2/O1CN01O4etvp1DvpFLKfuWq_!!6000000000279-2-tps-609-606.png',
@@ -113,9 +113,6 @@ class ProHome extends React.Component<IProHomeProps, IState>{
                             props.layout !== 'side' && document.body.clientWidth > 1400 ? (
                                 <SearchInput />
                             ) : undefined,
-                            <InfoCircleFilled key="InfoCircleFilled" />,
-                            <QuestionCircleFilled key="QuestionCircleFilled" />,
-                            <GithubFilled key="GithubFilled" />,
                             <Switch
                                 checkedChildren={<CgSun />}
                                 unCheckedChildren={<CgMoon />}

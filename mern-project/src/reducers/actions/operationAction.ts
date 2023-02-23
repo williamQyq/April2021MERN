@@ -56,10 +56,13 @@ export const downloadProductPrimeCostTemplate = () => (dispatch: Dispatch, getSt
         })
 }
 
-export const downloadInitSkuforAmzSPFeeds = (skuConfigData: SkuConfig | null) => (dispatch: Dispatch, getState: RootState) => {
-    axios.get('/api/operationV1/listings/v1/InitSkuFeeds', { responseType: "blob" })
+export const downloadInitSkuforAmzSPFeeds = (verifiedData: SkuConfig | null) => (dispatch: Dispatch, getState: RootState) => {
+    axios.patch('/api/operationV1/listings/v1/offers', verifiedData, { ...tokenConfig(getState), responseType: "blob" })
         .then((res: AxiosResponse<Blob>) => {
             fileDownload(res.data, "skuUpload.xlsx");
+        })
+        .catch((err: myAxiosError) => {
+            dispatch(returnErrors(err.response!.data.msg, err.response.status))
         })
 }
 

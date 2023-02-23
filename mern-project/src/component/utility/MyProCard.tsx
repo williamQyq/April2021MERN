@@ -2,7 +2,7 @@ import React from 'react';
 import { ProCard } from '@ant-design/pro-components';
 
 interface IProps {
-    title: string;
+    title: string | React.ReactNode;
     extra?: React.ReactNode;
     collapsible?: boolean;
     tooltip?: string;

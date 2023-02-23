@@ -28,7 +28,7 @@ const AwaitingShipmentList = ({ shipmentInfo }) => {
     //avoid duplicate request append to data state
     useEffect(() => {
         let lastDataDoc = data.at(-1);
-        let lastNewDataDoc = items.at(-1);
+        let lastNewDataDoc = items ? items.at(-1) : undefined;
 
         //init new data to data state
         if (lastDataDoc === undefined && lastNewDataDoc) {

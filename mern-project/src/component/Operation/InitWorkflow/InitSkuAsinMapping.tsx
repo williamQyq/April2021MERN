@@ -54,6 +54,7 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
     const [dataSource, setDataSource] = useState<readonly SkuDataSourceType[]>([]);
     //steps form data source, include sku specification data source in dataSource
     const [stepsFormData, setStepsFormData] = useState<Partial<InitSkuStepsFormDataType> | null>(null);
+    const [acceptedFile, setAcceptedFile] = useState<string>('.txt');
 
     //generated sku, prices from sku specification data source
     const verifiedSkuDataSource = useSelector((state: ReduxRootState) => state.amazon.primeCost);
@@ -94,7 +95,6 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-
     return (
         <StepsForm
             stepsRender={(_) => <></>}
@@ -108,6 +108,7 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                 name="collectInfo"
                 title="Collect Info"
                 isKeyPressSubmit={true}
+                grid={true}
                 onFinish={async (formValues: Omit<InitSkuStepsFormDataType, "dataSource">) => {
                     await waitTime(1000);
                     message.success('Init SKU Finished');
@@ -184,8 +185,28 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                 </MyProCard>
 
                 <MyProCard
-                    title="Prime Cost Upload"
-                    tooltip="If any prime cost of bundle cost not being recorded..."
+                    title={
+                        <div style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            alignItems: "center"
+                        }}>
+                            <Typography.Title level={4} style={{ margin: "auto 12px auto 12px " }}>Prime Cost Upload</Typography.Title>
+                            <ProFormRadio.Group
+                                style={{marginRight:"12px"}}
+                                radioType="button"
+                                fieldProps={{
+                                    value: acceptedFile,
+                                    onChange: (e) => setAcceptedFile(e.target.value)
+                                }}
+                                colProps={{
+                                    span: 200,
+                                }}
+                                options={['.txt']}
+                            />
+                        </div>
+                    }
+                    tooltip="upload any missing prime cost product items in selected file extension..."
                     collapsible={false}
                     extra={<TemplateDownloader
                         handleTemplateDownload={handlePrimeCostTemplateDownload} />
@@ -202,8 +223,8 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                 isKeyPressSubmit={true}
                 onFinish={async (_) => {
                     await waitTime(1000);
-                    message.success("Downloaded Generated SKU Success");
-                    downloadSkuUploadFeeds(stepsFormData);
+                    // message.success("Downloaded Generated SKU Success");
+                    downloadSkuUploadFeeds(verifiedSkuDataSource);
                     return true;
                 }}
 
@@ -244,7 +265,7 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                                         title: "Max Price",
                                         key: "maxPrice",
                                         dataIndex: "maximum-seller-allowed-price",
-                                        valueType: (item) => ({
+                                        valueType: (_) => ({
                                             type: 'money',
                                             locale: 'en-US'
                                         })
