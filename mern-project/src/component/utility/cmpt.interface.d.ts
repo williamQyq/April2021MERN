@@ -18,7 +18,7 @@ export interface InitSkuStepsFormDataType {
     amzAccts: AmzAcct[] | undefined;
     shippingTemplate: ShippingTemplate;
     profitRate: number;
-    addon: any[];
+    addon: { label: string, value: string, key: string }[];
 }
 
 export interface StepComponentProps {

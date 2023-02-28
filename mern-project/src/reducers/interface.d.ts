@@ -70,5 +70,10 @@ export interface AmazonReducerState {
     primeCost: VerifiedSellerAllowedPriceDataSourceType[];
 }
 export interface ItemReducerState { };
-export interface ErrorReducerState { };
+export interface ErrorReducerState {
+    msg: string,
+    status: number,
+    id?: string,
+    reason?: string | object | any[]
+};
 export interface AuthReducerState { };

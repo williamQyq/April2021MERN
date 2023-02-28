@@ -4,7 +4,7 @@ import { css } from '@emotion/css';
 import { ContentHeader } from 'component/utility/Layout';
 // import { StepStatus } from 'types';
 import ProdDetachSpecInput from './ProdDetachSpecInput';
-import InitSkuAsinMapping from './InitSkuAsinMapping';
+import InitSkuAsinMapping from './InitSkuProcess/InitSkuAsinMapping';
 
 import { MdOutlineTipsAndUpdates } from 'react-icons/md';
 import { SiAmazonaws } from 'react-icons/si';
@@ -108,21 +108,20 @@ const InitNewProdWorkflow: React.FC = () => {
                 <Col span={4}>
                     {
                         isScreenMaxWidthReach ?
-                            <div style={{ display: "flex", flexDirection: 'row', alignItems: "center", minWidth:"180px" }}>
+                            <div style={{ display: "flex", flexDirection: 'row', alignItems: "center", minWidth: "180px" }}>
 
                                 <Steps
-                                    style={{ alignItems:"center", marginRight:"4px" }}
+                                    style={{ alignItems: "center", marginRight: "4px" }}
                                     direction='horizontal'
                                     current={currentStep}
                                     onChange={(current: number) => setCurrentStep(current)}
                                     items={miniSteps}
                                 />
-                                <GiRun className={
-                                    css`
+                                <GiRun className={css`
                                 stroke: ${token.colorTextSecondary};
                                 fill: ${token.colorTextSecondary};
                                 font-size: 18px;
-                            `} />
+                                `} />
                             </div>
                             :
                             <Steps

@@ -1,5 +1,4 @@
-import { AlertOutlined, ChromeFilled, CrownFilled, DownloadOutlined, ScanOutlined, SmileFilled, TabletFilled } from '@ant-design/icons';
-import { ProLayoutProps } from '@ant-design/pro-layout';
+import { AlertOutlined, CrownFilled, DownloadOutlined, ScanOutlined, TabletFilled } from '@ant-design/icons';
 import React from 'react';
 import { AiOutlineShopping } from 'react-icons/ai';
 import { GrAmazon } from 'react-icons/gr';

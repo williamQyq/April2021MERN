@@ -122,6 +122,7 @@ router.post('/primeCost/v1/skus/profitRate/addon/dataSource', auth, async (req: 
         })
         .catch((errReason: string) => {
             let errorMsg: IResponseErrorMessage = { msg: "Fail to calc sku Prime Cost", reason: errReason };
+            console.error(`[Failed] ${JSON.stringify(errReason, null, 4)}`);
             res.status(400).json(errorMsg);
             return;
         });
@@ -200,7 +201,7 @@ router.patch('/listings/v1/offers', auth, (req: Request<{}, {}, ISkuUploadFeedsT
     // const values = [196801739468-32102400H00P-AZM-B0BPHP6D2Z	B0BPHP6D2Z	1	863.99	858.99	1717.98	11	0	a								USprime]
     let skuOfferCols = headers.map(header => ({ header: header, key: header, width: 20 }));
     worksheet.columns = skuOfferCols;
-    
+
     worksheet.addRows(listingOffers);
     res.setHeader(
         "Content-Type",

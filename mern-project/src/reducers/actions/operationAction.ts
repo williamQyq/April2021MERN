@@ -75,6 +75,8 @@ export const downloadInitSkuforAmzSPFeeds = (verifiedData: SkuConfig | null) => 
  */
 export const calcVerifiedSkuPrimeCost = (abortSignal: AbortSignal, stepsFormData: InitSkuStepsFormDataType) => (dispatch: Dispatch, getState: RootState) => {
     const { dataSource, profitRate, addon } = stepsFormData;
+
+    //ram, ssd in dataSource need to be parsed to convert from format "8GB_0" to "8GB" before requesting the primeCost.
     let parsedDataSource = dataSource.map(sku => {
         let parsedRam = sku.ram ? parseMyMultiAccessoriesDataSource(sku.ram) : [];
         let parsedSsd = sku.ssd ? parseMyMultiAccessoriesDataSource(sku.ssd) : [];
@@ -84,10 +86,12 @@ export const calcVerifiedSkuPrimeCost = (abortSignal: AbortSignal, stepsFormData
         const newDataSource = { ...sku, ram: parsedRam, ssd: parsedSsd };
         return newDataSource;
     })
+    //the value of addon "{label:'Pen, value: 'pen', key:'pen'}[]"" needs to be extracted before requesting the primeCost. 
+    let valueExtractedAddonItems = addon.map(labelItem => labelItem.value);
 
     axios.post(`/api/operationV1/primeCost/v1/skus/profitRate/addon/dataSource`, {
         dataSource: parsedDataSource,
-        addon,
+        addon: valueExtractedAddonItems,
         profitRate
     }, {
         signal: abortSignal,

@@ -1,15 +1,10 @@
-import React, { useState, useCallback } from 'react';
-import { message, Typography } from 'antd';
-import { createAccessoriesEnumObj, waitTime } from './utilities';
-import { HDD, RAM, SSD } from 'component/utility/types.enum';
-import SkuEditableCreationTable from './SkuEditableTable';
+import React, { useState, useCallback, useMemo } from 'react';
+import { Typography, theme } from 'antd';
+import { waitTime } from '../utilities';
+import { HDD } from 'component/utility/types.enum';
 import MyProCard from 'component/utility/MyProCard';
-import FileUploader from 'component/utility/FileUploader';
 import {
-    calcVerifiedSkuPrimeCost,
     downloadInitSkuforAmzSPFeeds,
-    downloadProductPrimeCostTemplate,
-    uploadProductsPrimeCost
 } from 'reducers/actions/operationAction';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from 'reducers/store/store';
@@ -17,81 +12,53 @@ import {
     InitSkuStepsFormDataType,
     StepComponentProps,
     SkuDataSourceType,
-    FileUploadRequestOption,
     Accessories,
     SkuConfig,
     VerifiedSellerAllowedPriceDataType
 } from 'component/utility/cmpt.interface.d';
 import {
     ProDescriptions,
-    ProFormCheckbox,
-    ProFormRadio,
-    ProFormSelect,
-    ProFormSlider,
     StepsForm
 } from '@ant-design/pro-components';
-import TemplateDownloader from './TemplateDownloader';
+import { VscUnverified, VscVerified } from 'react-icons/vsc';
 import { ReduxRootState } from 'reducers/interface';
 import { parseSsdDataSource, parseRamDataSource } from 'reducers/actions/actionsHelper';
-
+import SkuConfigInputStepForm from './SkuConfigInputStepForm';
+import { GET_SKU_PRIME_COST } from 'reducers/actions/types';
+import { css } from '@emotion/css';
 
 const { StepForm } = StepsForm;
-
-const defaultStepsData: Omit<InitSkuStepsFormDataType, "dataSource"> = {
-    amzAccts: ["RS"],
-    shippingTemplate: "USPrime",
-    profitRate: 7,
-    addon: []
-}
-
-const ramOptions: RAM[] = [RAM.DDR4_4, RAM.DDR4_8, RAM.DDR4_16, RAM.DDR4_32];
-const ssdOptions: SSD[] = [SSD.PCIE_2048, SSD.PCIE_1024, SSD.PCIE_512, SSD.PCIE_256, SSD.PCIE_128]
+const { useToken } = theme;
 
 const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
     const dispatch: AppDispatch = useDispatch();
-
+    const { token } = useToken();
     //sku specification data source
     const [dataSource, setDataSource] = useState<readonly SkuDataSourceType[]>([]);
     //steps form data source, include sku specification data source in dataSource
     const [stepsFormData, setStepsFormData] = useState<Partial<InitSkuStepsFormDataType> | null>(null);
-    const [acceptedFile, setAcceptedFile] = useState<string>('.txt');
 
     //generated sku, prices from sku specification data source
     const verifiedSkuDataSource = useSelector((state: ReduxRootState) => state.amazon.primeCost);
-    //Accessories key, type Map, e.g <4GB_0, 4GB>
-    const ramValueEnum = createAccessoriesEnumObj(ramOptions);
-    const ssdValueEnum = createAccessoriesEnumObj(ssdOptions);
+    const calcPrimeCostHasError = useSelector((state: ReduxRootState) => state.error.id === GET_SKU_PRIME_COST ? true : false);
 
     //stepsFormData combine each step form field data and sku editableTable datasource
     const initEditableConfigOnFinish = (values: Partial<InitSkuStepsFormDataType>, skuDataSource: readonly SkuDataSourceType[]): void => {
         setStepsFormData({ ...values, dataSource: skuDataSource });
     }
 
-    const handlePrimeCostUpload = (options: FileUploadRequestOption) => {
-        dispatch(uploadProductsPrimeCost(options));
+    const handleProfitRateOnchange = (newProfitRate: number | null) => {
+        if (newProfitRate) {
+            console.log(`[profit rate] set new profit rate ${newProfitRate}.`)
+            setStepsFormData({ ...stepsFormData, profitRate: newProfitRate })
+        }
     }
 
-    // download sample prime cost template xlxs
-    const handlePrimeCostTemplateDownload = useCallback(() => {
-        console.log('download PrimeCostTemplate Xlsx.');
-        dispatch(downloadProductPrimeCostTemplate());
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
+    const profitRate = useMemo(() => stepsFormData?.profitRate, [stepsFormData?.profitRate]);
     // download sku feeds xlsx for Amz skus upload
     const downloadSkuUploadFeeds = useCallback((skuConfigValues: SkuConfig | null) => {
         console.log('download sku upload feeds Xlsx.');
         dispatch(downloadInitSkuforAmzSPFeeds(skuConfigValues));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    // generate sku and seller allowed prices, and update redux state store
-    const processComposedItems = useCallback((stepsFormData: Omit<InitSkuStepsFormDataType, "dataSource">, dataSource: readonly SkuDataSourceType[]) => {
-        const controller = new AbortController();
-        dispatch(calcVerifiedSkuPrimeCost(controller.signal, { ...stepsFormData, dataSource: dataSource }))
-
-        return () => controller.abort();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -104,117 +71,13 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                 },
             }}
         >
-            <StepForm
-                name="collectInfo"
-                title="Collect Info"
-                isKeyPressSubmit={true}
-                grid={true}
-                onFinish={async (formValues: Omit<InitSkuStepsFormDataType, "dataSource">) => {
-                    await waitTime(1000);
-                    message.success('Init SKU Finished');
-                    initEditableConfigOnFinish(formValues, dataSource);
-                    processComposedItems(formValues, dataSource);
-                    return true;
-                }}
-                //preset accts, profit rate, shipping method
-                request={async () => {
-                    return defaultStepsData;
-                }}
-            >
-                <MyProCard title="Create SKU">
-                    <SkuEditableCreationTable
-                        dataSource={dataSource}
-                        setDataSource={setDataSource}
-                        accessoriesValueEnum={{
-                            ramValueEnum,
-                            ssdValueEnum
-                        }}
-                    />
-                </MyProCard>
-
-                <MyProCard title="Supplement Info">
-                    <ProFormCheckbox.Group
-                        name="amzAccts"
-                        label="Amazon Accounts"
-                        options={['RS', 'PRO']}
-                        tooltip="These skus are created for which store?"
-                        rules={[
-                            { required: true, message: "Must create for at least one store.", type: 'array' }
-                        ]}
-                    />
-                    <ProFormSlider
-                        name="profitRate"
-                        label="Profit Rate"
-                        width="md"
-                        min={0}
-                        max={25}
-                        marks={{
-                            0: '0%',
-                            7: "7%",
-                            15: '15%',
-                            20: "20%",
-                            25: '25%',
-                        }}
-                    />
-                    <ProFormRadio.Group
-                        name="shippingTemplate"
-                        label="Shipping Template"
-                        options={['USPrime', 'Regular']}
-                        tooltip="Sku for Prime?"
-                        rules={[
-                            { required: true, message: "Must select one template.", type: 'string' }
-                        ]}
-                    />
-                    <ProFormSelect.SearchSelect
-                        name="addon"
-                        label="Add On 配件"
-                        width="lg"
-                        fieldProps={{
-                            labelInValue: true
-                        }}
-                        debounceTime={300}
-                        request={async ({ keyWords = '' }) => {
-                            return [
-                                { label: 'HDMI CABLE', value: 'hdmiCable' },
-                                { label: 'Pen', value: 'pen' },
-                            ].filter(({ value, label }) => {
-                                return value.includes(keyWords) || label.includes(keyWords);
-                            });
-                        }}
-                    />
-                </MyProCard>
-
-                <MyProCard
-                    title={
-                        <div style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            alignItems: "center"
-                        }}>
-                            <Typography.Title level={4} style={{ margin: "auto 12px auto 12px " }}>Prime Cost Upload</Typography.Title>
-                            <ProFormRadio.Group
-                                style={{marginRight:"12px"}}
-                                radioType="button"
-                                fieldProps={{
-                                    value: acceptedFile,
-                                    onChange: (e) => setAcceptedFile(e.target.value)
-                                }}
-                                colProps={{
-                                    span: 200,
-                                }}
-                                options={['.txt']}
-                            />
-                        </div>
-                    }
-                    tooltip="upload any missing prime cost product items in selected file extension..."
-                    collapsible={false}
-                    extra={<TemplateDownloader
-                        handleTemplateDownload={handlePrimeCostTemplateDownload} />
-                    }>
-                    <FileUploader customizedUpload={handlePrimeCostUpload} />
-                </MyProCard>
-
-            </StepForm>
+            <SkuConfigInputStepForm
+                dataSource={dataSource}
+                setDataSource={setDataSource}
+                handleProfitRateOnChange={handleProfitRateOnchange}
+                profitRate={profitRate}
+                initEditableConfigOnFinish={initEditableConfigOnFinish}
+            />
 
             {/**...Verification Step... */}
             <StepForm
@@ -229,7 +92,25 @@ const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
                 }}
 
             >
-                <MyProCard title="Generated SKU and Price">
+                <MyProCard
+                    title="Generated SKU and Price"
+                    extra={calcPrimeCostHasError ? (
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                            <VscUnverified className={css`
+                            fill:${token.colorError};
+                            font-size:24px;
+                            `} />
+                            <Typography.Text type='danger'>Warning! Missing Important Prime Cost </Typography.Text>
+                        </div>
+                    ) : (
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                            <VscVerified className={css`
+                            fill: ${token.colorSuccess};
+                            font-size: 24px;
+                            `} />
+                            <Typography.Text type="success" style={{ height: "100%" }}>Price Verified</Typography.Text>
+                        </div>
+                    )}>
                     {
                         verifiedSkuDataSource ? verifiedSkuDataSource.map((skuDescr: VerifiedSellerAllowedPriceDataType) => (
                             <ProDescriptions

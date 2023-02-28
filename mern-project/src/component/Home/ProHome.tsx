@@ -1,9 +1,4 @@
 import {
-    GithubFilled,
-    InfoCircleFilled,
-    QuestionCircleFilled,
-} from '@ant-design/icons';
-import {
     ProCard,
     PageContainer,
     ProLayout,

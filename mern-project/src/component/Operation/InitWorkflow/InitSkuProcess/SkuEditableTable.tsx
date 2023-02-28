@@ -1,10 +1,7 @@
 import {
     ProColumns,
     EditableProTable,
-    ProCard,
-    ProFormField,
     EditableFormInstance,
-    ProConfigProvider
 } from '@ant-design/pro-components';
 import { Rule } from 'antd/es/form';
 import React, { useRef, useState } from 'react';
@@ -160,6 +157,7 @@ const SkuEditableTable: React.FC<IProps> = (props) => {
     return (
         <>
             <EditableProTable<SkuDataSourceType>
+                style={{ height: "40vh" }}
                 rowKey="id"
                 editableFormRef={editableFormRef}
                 // maxLength={5}
@@ -206,6 +204,8 @@ const SkuEditableTable: React.FC<IProps> = (props) => {
                 }}
 
             />
+            {/* 
+            <!-- for dev -->
             <ProCard title="table data" headerBordered collapsible defaultCollapsed>
                 <ProConfigProvider dark={true}>
                     <ProFormField
@@ -221,7 +221,7 @@ const SkuEditableTable: React.FC<IProps> = (props) => {
                         text={JSON.stringify(dataSource)}
                     />
                 </ProConfigProvider>
-            </ProCard>
+            </ProCard> */}
         </>
     )
 }
