@@ -109,8 +109,8 @@ class ProHome extends React.Component<IProHomeProps, IState>{
                                 <SearchInput />
                             ) : undefined,
                             <Switch
-                                checkedChildren={<CgSun />}
-                                unCheckedChildren={<CgMoon />}
+                                checkedChildren={<CgMoon />}
+                                unCheckedChildren={<CgSun />}
                                 onChange={toggleTheme}
                             />
                         ];

@@ -59,7 +59,6 @@ const contentLayout: CSSProperties = {
 }
 
 interface IProps extends ReduxStateSignIn {
-    isAuthenticated: boolean;
     navigate: NavigateFunction;
     register: () => void;
     login: (user: IUser) => void;
@@ -71,7 +70,7 @@ interface IState {
 }
 
 interface IUser {
-    email: string;
+    username: string;
     password: string;
 }
 
@@ -103,7 +102,7 @@ class SignIn extends React.Component<IProps, IState> {
     }
 
     componentDidUpdate(prevProps: IProps) {
-        const { error, isAuthenticated } = this.props;
+        const { error, auth } = this.props;
         if (error !== prevProps.error) {
             if (error.id === 'LOGIN_FAIL') {
                 this.setState({ msg: error.msg.msg });
@@ -112,7 +111,7 @@ class SignIn extends React.Component<IProps, IState> {
                 this.setState({ msg: null });
             }
         }
-        if (isAuthenticated) {
+        if (auth.isAuthenticated) {
             message.success('Sign in success!');
             this.props.clearErrors();
             this.props.navigate('/app', { replace: true });
@@ -121,9 +120,9 @@ class SignIn extends React.Component<IProps, IState> {
     }
 
     onFinish = (values: IUser) => {
-        const { email, password } = values;
+        const { username, password } = values;
         const user: IUser = {
-            email,
+            username,
             password
         }
         this.props.login(user);
@@ -143,9 +142,9 @@ class SignIn extends React.Component<IProps, IState> {
     }
 
     render() {
-        const { isAuthenticated } = this.props;
+        const { auth } = this.props;
         return (
-            isAuthenticated ? (
+            auth.isAuthenticated ? (
                 <Navigate to="/app" replace={true} />
             ) : (
                 <Layout style={{ minHeight: "100vh" }}>
@@ -160,7 +159,7 @@ class SignIn extends React.Component<IProps, IState> {
                                 <Title level={3}>Welcome to RockyStone</Title>
                             </Form.Item>
                             <Form.Item
-                                name="email"
+                                name="username"
                                 label="Email or Username"
                                 rules={[
                                     {
@@ -204,8 +203,7 @@ class SignIn extends React.Component<IProps, IState> {
 
 }
 const mapStateToProps = (state: ReduxStateSignIn) => ({
-    isAuthenticated: state.auth.isAuthenticated,
-    isLoading: state.auth.isLoading,
+    auth: state.auth,
     error: state.error
 })
 export default WithNavigate(connect(mapStateToProps, { login, clearErrors, register })(SignIn));

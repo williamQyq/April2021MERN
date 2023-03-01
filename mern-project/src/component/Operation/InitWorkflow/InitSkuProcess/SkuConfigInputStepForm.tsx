@@ -26,6 +26,7 @@ import FileUploader from 'component/utility/FileUploader';
 import SkuEditableCreationTable from './SkuEditableTable';
 import TemplateDownloader from '../TemplateDownloader';
 import { RAM, SSD } from 'component/utility/types.enum';
+import SpreadSheetComponent from 'component/utility/SpreadSheetComponent';
 
 
 const { StepForm } = StepsForm;
@@ -110,8 +111,8 @@ const SkuConfigInputStepForm: React.FC<IProps> = (props) => {
                     accessoriesValueEnum={{
                         ramValueEnum,
                         ssdValueEnum
-                    }}
-                />
+                    }} />
+                <SpreadSheetComponent />
             </MyProCard>
 
             <MyProCard title="Supplement Info">

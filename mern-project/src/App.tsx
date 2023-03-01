@@ -1,6 +1,5 @@
 import React from 'react';
 import { Route, Routes } from "react-router-dom";
-import SignIn from 'component/auth/SignIn';
 import PrivateRoute from 'component/auth/PrivateRoute.js';
 import { connect } from 'react-redux';
 // import Proptypes from 'prop-types';
@@ -16,6 +15,7 @@ import { Dispatch } from '@reduxjs/toolkit';
 import { AnyAction } from 'redux';
 import { ThemeContext } from 'component/Home/ThemeProvider';
 import { ConfigProvider, theme } from 'antd';
+import ProSignIn from 'component/auth/ProSignIn';
 
 interface IProps extends IReduxAuth {
   error: IReduxError;
@@ -50,11 +50,11 @@ class App extends React.Component<IProps, IState> {
     return (
       <ConfigProvider
         theme={{
-          algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
+          algorithm: isDark ? theme.defaultAlgorithm : theme.darkAlgorithm
         }}
       >
         <Routes>
-          <Route path="/" element={<SignIn />} />
+          <Route path="/" element={<ProSignIn />} />
           <Route
             path="app/*"
             element={
