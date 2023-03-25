@@ -23,7 +23,7 @@ import WithNavigate from './WithNavigate';
 import withToken from './WithToken';
 import { Navigate } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { login, register } from 'reducers/actions/authActions';
+import { login, register, googleOAuthLogin } from 'reducers/actions/authActions';
 import { clearErrors } from 'reducers/actions/errorActions';
 import { css } from '@emotion/css';
 
@@ -62,6 +62,10 @@ class ProSignIn extends React.Component<IProSignInProps, IState>{
 
     handleLogin = async (user: User): Promise<void> => {
         return this.props.login(user);
+    }
+
+    handleGoogleOAuthLogin = () => {
+        this.props.googleOAuthLogin();
     }
 
     setLoginType = (type: LoginType) => {
@@ -144,6 +148,11 @@ class ProSignIn extends React.Component<IProSignInProps, IState>{
                                             width: 160,
                                             border: '2px solid #D4D8DD',
                                             borderRadius: '4px',
+                                            cursor: "pointer"
+                                        }}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            this.handleGoogleOAuthLogin()
                                         }}
                                     >
                                         <FcGoogle style={{ ...iconStyles }} />
@@ -291,4 +300,15 @@ const mapStateToProps = (state: ReduxStateSignIn) => ({
     error: state.error
 });
 
-export default withToken(WithNavigate(connect(mapStateToProps, { login, clearErrors, register })(ProSignIn)));
+export default withToken(
+    WithNavigate(
+        connect(
+            mapStateToProps,
+            {
+                googleOAuthLogin,
+                login,
+                clearErrors,
+                register
+            }
+        )(ProSignIn)
+    ));

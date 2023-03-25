@@ -10,16 +10,30 @@
     "rootDir": ".",
     "checkJs": true,
     "moduleResolution": "node",
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
-      "@types":["@types/interface.d.ts"],
-      "#root/*":["./*"],
-      "#rootTS/*":["./*"],
-      "#binTS/*":["./bin/*"],
-      "#query/*":["./lib/query/*"],
-      "#amazonSPTS/*":["./bin/amazonSP/*"]
+      "@types": [
+        "@types/interface.d.ts"
+      ],
+      "#root/*": [
+        "./*"
+      ],
+      "#rootTS/*": [
+        "./*"
+      ],
+      "#binTS/*": [
+        "./bin/*"
+      ],
+      "#query/*": [
+        "./lib/query/*"
+      ],
+      "#amazonSPTS/*": [
+        "./bin/amazonSP/*"
+      ]
     },
     "typeRoots": [
       "./@types",
@@ -27,7 +41,7 @@
     ]
   },
   "include": [
-    "./**/*.ts"
+    "./**/*.ts",
   ],
   "exclude": [
     "node_modules",

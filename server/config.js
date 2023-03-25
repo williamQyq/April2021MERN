@@ -58,6 +58,12 @@ export const gCredentials = {
     client_x509_cert_url: process.env.client_x509_cert_url
 }
 
+export const gOAuth = {
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: process.env.OAUTH_CALLBACK_URL
+}
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 export const pdfGeneratorDirPath = path.join(__dirname, "bin", "pdfGenerator");

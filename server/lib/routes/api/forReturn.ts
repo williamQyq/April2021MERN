@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import auth from '#rootTS/lib/middleware/auth';
+import { auth } from '#rootTS/lib/middleware/auth';
 import multer, { memoryStorage } from "multer";
 import { IResponseErrorMessage } from "#root/@types/interface";
 

@@ -10,17 +10,17 @@ import openAlertNotification from 'component/utility/errorAlert.js';
 import { clearErrors } from 'reducers/actions/errorActions';
 import { clearMessages } from 'reducers/actions/messageActions';
 import NotFound from 'component/utility/NotFound.jsx';
-import { IReduxAuth, IReduxError } from 'reducers/interface';
-import { Dispatch } from '@reduxjs/toolkit';
-import { AnyAction } from 'redux';
+import { AppDispatch, IReduxAuth, IReduxError } from 'reducers/interface';
 import { ThemeContext } from 'component/Home/ThemeProvider';
 import { ConfigProvider, theme } from 'antd';
 import ProSignIn from 'component/auth/ProSignIn';
+import { loadUser } from 'reducers/actions/authActions';
 
 interface IProps extends IReduxAuth {
   error: IReduxError;
   handleMessages: () => void;
   handleErrors: () => void;
+  loadUser: () => void;
 }
 
 interface IState { };
@@ -29,22 +29,33 @@ class App extends React.Component<IProps, IState> {
   static contextType = ThemeContext;
   context!: React.ContextType<typeof ThemeContext>;
 
-  // static propTypes = {
-  //   isAuthenticated: Proptypes.bool
-  // }
 
-  componentDidUpdate() {
-    const { status, msg, reason } = this.props.error;
-    if (status === 202) {
-      openAlertNotification('warning', msg, this.props.handleMessages, reason)
+  componentDidUpdate(prevProps: IProps) {
+    if (this.props.error !== prevProps.error) {
+      this.handleRequestErrorStatus(this.props.error);
     }
-    else if (status && status !== 200) {
-      openAlertNotification('error', msg, this.props.handleErrors, reason)
-    }
-    else if (status === 200) {
-      openAlertNotification('success', msg, this.props.handleMessages, reason)
+
+    //getAuthUser
+    this.props.loadUser()
+
+  }
+
+  handleRequestErrorStatus = (error: IReduxError) => {
+    const { status, msg, reason } = error;
+    if (!status) return;
+
+    switch (status) {
+      case 200:
+        openAlertNotification('success', msg, this.props.handleMessages, reason)
+        break;
+      case 202:
+        openAlertNotification('warning', msg, this.props.handleMessages, reason)
+        break;
+      default:
+        openAlertNotification('error', msg, this.props.handleErrors, reason)
     }
   }
+
   render() {
     const isDark = this.context?.isDark;
     return (
@@ -81,9 +92,10 @@ const mapStateToProps = (state: { auth: IReduxAuth; error: IReduxError }) => ({
   error: state.error
 })
 
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
+const mapDispatchToProps = (dispatch: AppDispatch) => ({
   handleErrors: () => dispatch(clearErrors()),
-  handleMessages: () => dispatch(clearMessages())
+  handleMessages: () => dispatch(clearMessages()),
+  loadUser: () => dispatch(loadUser())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

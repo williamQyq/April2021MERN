@@ -50,6 +50,13 @@ const InitNewProdWorkflow: React.FC = () => {
     }
     const steps = [
         {
+            key: "init-sku",
+            title: "Init Amazon SKU",
+            description: "Generate SKU for AWS Selling Partner",
+            icon: <SiAmazonaws />,
+            content: <InitSkuAsinMapping nextCatag={next} prevCatag={prev} />
+        },
+        {
             key: "init-product-detachable-spec",
             title: 'Detachable Specification',
             description: "RAM Slots, SSD Slots...",
@@ -62,13 +69,6 @@ const InitNewProdWorkflow: React.FC = () => {
             description: "CPU, GPU, Screen...",
             icon: <TbListDetails />,
             content: <ProdKeySpecInput nextCatag={next} prevCatag={prev} />
-        },
-        {
-            key: "init-sku",
-            title: "Init Amazon SKU",
-            description: "Generate SKU for AWS Selling Partner",
-            icon: <SiAmazonaws />,
-            content: <InitSkuAsinMapping nextCatag={next} prevCatag={prev} />
         }
     ]
     const miniSteps = [

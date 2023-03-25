@@ -6,8 +6,8 @@ interface IProps {
 }
 const SpreadSheetComponent: React.FC<IProps> = () => {
     const data = [
-        [{ value: "Vanilla" }, { value: "Chocolate" }],
-        [{ value: "Strawberry" }, { value: "Cookies" }],
+        [{ value: "UPC" }, { value: "Asin" },{ value: "RAM_1st_slot" },{ value: "RAM_2nd_slot" },{ value: "SSD_1st_slot" },{ value: "SSD_2nd_slot" },{ value: "HDD" },{ value: "OS" },],
+        [],[],[],[],[]
     ];
     return (
         <div>

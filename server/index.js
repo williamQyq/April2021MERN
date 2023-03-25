@@ -4,7 +4,7 @@ import msItemsRouter from '#routes/api/ms_items.js';
 // import wmItemsRouter from '#routes/api/wm_items.js';
 import itemsRouter from '#routes/api/items.js';
 import usersRouter from '#routes/api/users.js';
-import authRouter from '#routes/api/auth.js';
+import authRouter from '#routesV1/api/auth.js';
 import wmsRouter from '#routes/api/wms.js';
 import wmsV1Router from "#routesV1/api/wmsV1.js";
 import operationRouter from '#routes/api/operation.js';
@@ -12,7 +12,11 @@ import operationV1Router from '#routesV1/api/operationV1.js';
 
 import { Server } from 'socket.io';
 import cors from 'cors';
+import passport from 'passport';
+import passportSetup from '#rootTS/lib/middleware/passport.js';
+import session from 'express-session';
 
+passportSetup(passport);
 //@Bodyparser Middleware
 const app = express();
 app.use(cors());
@@ -38,6 +42,27 @@ app.use('/api/wmsV1', wmsV1Router);
 app.use('/api/operation', operationRouter);
 app.use('/api/operationV1', operationV1Router);
 
+
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: true }
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use((req, res, next) => {
+    if (req.isAuthenticated()) {
+        console.log("Now we can set global variable");
+        res.locals.user = req.user;
+        console.log(req.user)
+        next();
+    } else {
+        console.log("Now we can not set global variable");
+        res.locals.user = null;
+        next();
+    }
+})
 
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, '../mern-project/build')));

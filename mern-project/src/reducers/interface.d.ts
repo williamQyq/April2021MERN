@@ -1,4 +1,7 @@
 import { AxiosError, AxiosResponse } from "axios";
+import { Action, AnyAction } from "redux";
+import { ThunkAction, ThunkDispatch } from "redux-thunk";
+import { RootState } from "./store/store";
 
 export type ActionType = string;
 
@@ -77,3 +80,6 @@ export interface ErrorReducerState {
     reason?: string | object | any[]
 };
 export interface AuthReducerState { };
+
+export interface MyThunkAction extends ThunkAction<void, RootState, unknown, AnyAction> { };
+export type AppDispatch = ThunkDispatch<RootState, undefined, AnyAction>

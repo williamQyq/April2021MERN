@@ -1,4 +1,4 @@
-import auth from "#rootTS/lib/middleware/auth.js";
+import { auth } from "#rootTS/lib/middleware/auth.js";
 import { Request, Response, Router } from "express";
 import { Listings, OperationApi } from "#rootTS/lib/query/OperationApi.js";
 import { parseCsvHelper } from "#rootTS/bin/helper/parseHelper.js";
@@ -58,8 +58,13 @@ router.put('/primeCost/v1/ProductsPrimeCost', auth, (req: Request, res: Response
         });
 })
 
+/**
+ * Attention: Needs to be optimized later. Disgusting.
+ */
 router.post('/primeCost/v1/skus/profitRate/addon/dataSource', auth, async (req: Request<{}, {}, IPrimeCostCalcReqBody>, res: Response) => {
     const { addon, dataSource, profitRate } = req.body;
+    const primeCostKeys = ['ram', 'ssd', 'upc', 'os'];  //interactive keys of prime cost.
+
     let api = new OperationApi();
     const primeCostReqSet = new Set<string>();  //unique set of prime cost checking items
     if (dataSource.length === 0) {
@@ -135,7 +140,6 @@ router.post('/primeCost/v1/skus/profitRate/addon/dataSource', auth, async (req: 
 
     // creating sku listings upload feeds ...
     const listingsItemSubmission = dataSource.map((newListing: listingItem) => {
-        const primeCostKeys = ['ram', 'ssd', 'upc', 'os'];  //interactive keys of prime cost.
         let listingPrimeCost = 0;   //the init prime cost of each listing.
 
         //accumulate all items' prime cost by key
@@ -146,9 +150,14 @@ router.post('/primeCost/v1/skus/profitRate/addon/dataSource', auth, async (req: 
                     if (primeCostMap.has(element))
                         listingPrimeCost += primeCostMap.get(element)!;
                 })
-            } else {
-                if (primeCostMap.has(value as string))
-                    listingPrimeCost += primeCostMap.get(value as string)!;
+            } else if (primeCostMap.has(value as string)) {
+                listingPrimeCost += primeCostMap.get(value as string)!;
+            }
+        })
+
+        addon.forEach(item => {
+            if (primeCostMap.has(item)) {
+                listingPrimeCost += primeCostMap.get(item)!;
             }
         })
 

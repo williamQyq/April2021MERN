@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { tokenConfig } from './authActions.js';
+import { tokenConfig } from './authActions';
 import { clearErrors, returnErrors } from './errorActions';
 import { returnMessages } from './messageActions';
 import Papa from "papaparse";

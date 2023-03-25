@@ -13,3 +13,9 @@ export declare const REGION: amazonSpApiConfig.region
 
 export declare const pdfGeneratorDirPath: string
 export declare const JWT_SECRET: string
+
+export declare const gOAuth: {
+    clientID: string
+    clientSecret: string
+    callbackURL: string
+}

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import fileDownload from 'js-file-download';
 import moment from 'moment';
-import { tokenConfig } from './authActions.js';
+import { tokenConfig } from './authActions';
 import { clearErrors, returnErrors } from './errorActions';
 import {
     setConfirmShipmentLoading,

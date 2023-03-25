@@ -29,6 +29,7 @@ export interface IProSignInProps extends ReduxStateSignIn {
     navigate: NavigateFunction;
     register: () => void;
     login: (user: IUser) => void;
+    googleOAuthLogin: () => Promise<any>;
     clearErrors: () => void;
 }
 

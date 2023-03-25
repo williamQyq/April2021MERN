@@ -11,6 +11,7 @@ import {
     myAxiosError,
     UploadPrimeCostRequestBody,
     ISkuUploadFeeds,
+    MyThunkAction,
 } from 'reducers/interface';
 import { returnErrors } from './errorActions';
 import { FileUploadRequestOption, InitSkuStepsFormDataType, SkuConfig } from 'component/utility/cmpt.interface';
@@ -22,7 +23,7 @@ import { parseMyMultiAccessoriesDataSource } from './actionsHelper';
  * @description save productPrimeCost xlsx data to db
  * 
  */
-export const uploadProductsPrimeCost = (options: FileUploadRequestOption) => (dispatch: Dispatch, getState: () => RootState) => {
+export const uploadProductsPrimeCost = (options: FileUploadRequestOption): MyThunkAction => (dispatch: Dispatch, getState: () => RootState) => {
     const { file, onSuccess, onError } = options;
 
     Papa.parse(file as RcFile, {
@@ -49,14 +50,14 @@ export const uploadProductsPrimeCost = (options: FileUploadRequestOption) => (di
     })
 }
 
-export const downloadProductPrimeCostTemplate = () => (dispatch: Dispatch, getState: RootState) => {
+export const downloadProductPrimeCostTemplate = (): MyThunkAction => (dispatch: Dispatch, getState) => {
     axios.get('/api/operationV1/template/v1/PrimeCostXlsxTemplate', { responseType: "blob" })
         .then((res: AxiosResponse<Blob>) => {
             fileDownload(res.data, "PrimeCostTemplate.xlsx");
         })
 }
 
-export const downloadInitSkuforAmzSPFeeds = (verifiedData: SkuConfig | null) => (dispatch: Dispatch, getState: RootState) => {
+export const downloadInitSkuforAmzSPFeeds = (verifiedData: SkuConfig | null): MyThunkAction => (dispatch: Dispatch, getState) => {
     axios.patch('/api/operationV1/listings/v1/offers', verifiedData, { ...tokenConfig(getState), responseType: "blob" })
         .then((res: AxiosResponse<Blob>) => {
             fileDownload(res.data, "skuUpload.xlsx");
@@ -73,7 +74,7 @@ export const downloadInitSkuforAmzSPFeeds = (verifiedData: SkuConfig | null) => 
  * 
  * @description set redux state generated sku with prime cost price
  */
-export const calcVerifiedSkuPrimeCost = (abortSignal: AbortSignal, stepsFormData: InitSkuStepsFormDataType) => (dispatch: Dispatch, getState: RootState) => {
+export const calcVerifiedSkuPrimeCost = (abortSignal: AbortSignal, stepsFormData: InitSkuStepsFormDataType): MyThunkAction => (dispatch: Dispatch, getState) => {
     const { dataSource, profitRate, addon } = stepsFormData;
 
     //ram, ssd in dataSource need to be parsed to convert from format "8GB_0" to "8GB" before requesting the primeCost.

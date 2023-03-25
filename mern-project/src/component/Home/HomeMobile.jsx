@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import 'styles/HomeMobile.scss';
 import { getInvReceivedWithWrongAdds } from 'reducers/actions/inboundActions.js';
-import { logout } from 'reducers/actions/authActions.js';
+import { logout } from 'reducers/actions/authActions';
 
 // import { SocketContext } from 'component/socket/socketContext.js';
 const { Content } = Layout;

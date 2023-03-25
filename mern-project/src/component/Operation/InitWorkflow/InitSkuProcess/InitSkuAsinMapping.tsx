@@ -32,7 +32,7 @@ const { useToken } = theme;
 
 const InitSkuAsinMapping: React.FC<StepComponentProps> = () => {
     const dispatch: AppDispatch = useDispatch();
-    const { token } = useToken();
+    const { token } = useToken();   //antd theme token
     //sku specification data source
     const [dataSource, setDataSource] = useState<readonly SkuDataSourceType[]>([]);
     //steps form data source, include sku specification data source in dataSource

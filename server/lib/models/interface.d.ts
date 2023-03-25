@@ -1,3 +1,5 @@
+import { Date, Types } from "mongoose";
+
 export interface BBItem extends Document {
     link: URL;
     sku: string;
@@ -18,3 +20,15 @@ export interface IPrimeCostDoc extends Document {
 }
 
 interface ParserRecord extends Record<string, string | number> { };
+
+
+export interface IUserDoc extends Document {
+    _id: Types.ObjectId;
+    email: string
+    password: string
+    role: "admin" | "member"
+    register_date: Date,
+    googleId?: string,
+    name?: string,
+    photo?: string
+}

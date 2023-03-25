@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Moment from 'moment';
 import { GET_MS_ITEMS, ITEMS_LOADING_MS } from './types';
-import { tokenConfig } from './authActions.js';
+import { tokenConfig } from './authActions';
 
 export const getMSItems = () => (dispatch, getState) => {
     dispatch(setItemsLoading());
