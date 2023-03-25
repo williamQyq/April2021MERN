@@ -32,10 +32,11 @@ router.get('/peek/v0/prices', auth, (req, res) => {
 
 // @route GET api/items
 // @access public
-router.get('/detail/:_id', (req, res) => {
+router.get('/peek/v0/getProductDetail/id/:_id', (req, res) => {
+    const { _id } = req.params
     let alertApi = new AlertApi();
     let model = alertApi.getBestbuyAlertModel();
-    alertApi.getStoreItemDetailById(model, req.params._id)
+    alertApi.getStoreItemDetailById(model, _id)
         .then(items => {
             res.json(items)
         })

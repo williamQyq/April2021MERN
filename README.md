@@ -1,35 +1,40 @@
 # RockyStone ERP - William
 
-## If you found this project is helpful, please star me. Thank you! 💙
+## If you found this project is helpful, please star me. Thank you! 😃
 
 *status*: under development...  
-*latest update: 4/11/2022*  
+*latest update: 12/17/2022*  
 
 author: Yuqing (William) Qiao  
 description: MERN stack project
-
-
+<br/>
+<br/>
 
 ## What is this project for?
 ---
-This project has access to the **Mongo database** of the warehouse, the Amazon Seller Central via **Selling Partner API** and the **Walmart Open I/O**. Make it easier for small to medium company to maintain track and manage assets. 
-
+This project has access to the **Mongo database** of the warehouse, the Amazon Seller Central via **Selling Partner API**, the **Walmart Open I/O**, and google service. Make it easier for small to medium company to maintain track and manage assets. Typescript and ESNext Module supported.
+<br/>
+<br/>
 ## Getting Started
 ---
 
-## Pre-requested config files - ***not provided***:
+## Important .env, config files - ***not provided***:
 ### 1. **#root/server/.env** contains Mongo URI, WMS credentials, Amazon credentials, and jwtSecret.  
 <br/>
-Environment variables are exported from #root/config.js, Otherwise, you might need to config dotenv.config(/PATH_TO_.ENV) to get access to process.env.KEY
-
+Environment variables are exported from server/config.js. Or you might need to config dotenv.config(/PATH_TO_.ENV) to get access to process.env.KEY.  
+<br/>
+<br/>
 
 Note: You may also store relative sensitive information in config.json. Personally, config.json files might be used to store data particular to the application as a whole.
 
 ### 2. To connect to ***local database*** using ssh(or other existing local services...) 
 
 ```c
+        import mongodb from 'mongodb';
         import tunnel from 'tunnel-ssh';
         import fs from 'fs';
+
+        const {MongoClient} = mongodb;
 
         const config = {
                 agent: <AGENT>, //optional
@@ -44,17 +49,31 @@ Note: You may also store relative sensitive information in config.json. Personal
                 keepAlive: true
         }
 
-        const connect = (config, callback)=>{
+        const connect = new Promise((resolve, _) => {
+                tunnel(sshConfig, async (error, server) => {
 
-                tunnel(config,(error,server)=>{
-                        if (error) {
-                                console.log("SSH connection error: " + error);
+                        const client = new MongoClient(
+                        `mongodb://127.0.0.1:27017/${DB}`,
+                        {
+                                useUnifiedTopology: true,
+                                socketTimeoutMS: 360000,
+                                connectTimeoutMS: 360000,
+                                keepAlive: true
                         }
+                        );
+                        await client.connect();
+                        const db = client.db(DATABASE);
+                        resolve({ db });    //db connection built.
 
-                        //db connection...
-                        //callback()
-                });
-        }
+                        client.on('error', console.error.bind(console, "***mongodb error***"))
+                        client.on('error', (err) => {
+                        console.error(`******mongodb client connection closed**********`)
+                        client.close();
+                        })
+                })
+        });
+
+        const { db } = await connect;
         
 ```
 
@@ -70,6 +89,14 @@ Using openssl
 To extract public key from the generated private key:
 - $openssl rsa -in my_rsa_key_pair.pem -pubout > mykey.pub
 
+**Generate EC2 Key pair**:  
+1. create new key pair .pem
+2. change file read permision  
+   
+        Icacls "william-dev-linux.pem" /Inheritance:r
+        Icacls "william-dev-linux.pem" /Grant:r "%Username%":"(R)"
+3. get public key from .pem: **ssh-keygen -y -f "C:\Users\h2s\Desktop\AWS EC2.pem"**
+4. add public key to EC2 from AWS console: ***sudo nano .ssh/authorized_keys***
 ## To build
 ---
 
@@ -206,6 +233,13 @@ After installed nginx, edit below files.
 ---
 ### Q: Unable to git push to repository using **SourceTree** because of git auth token expired?  
 
+Recommend method:  
+manually clear stored credentials by emptying those files:
+
+        %LocalAppData%\Atlassian\SourceTree\passwd  
+        %LocalAppData%\Atlassian\SourceTree\userhost
+
+Other Option:  
 Reset and regenerate git tokens. Edit project files: ***/.git/config/origin***.  
 Replace the token part of url with regenerated tokens from github developer setting.
 
@@ -356,6 +390,8 @@ For more information of using React Context with Socket.io, refer to [alex hays 
 ```
 ---
 ## Walmart I/O
+<br/>
+
 [walmart.io quick start](https://www.walmart.io/docs/affiliate/quick-start-guide)  
 **To create signed signature using crypto** - Attn: ***node-rsa module not working-encoding too long error***
 
@@ -397,7 +433,31 @@ const getProductById = async (productId) => {
         return detail
 };
 ```
+---
+## Docker
+<br/>
 
+| Docker Action         | CMD                                                                                   |
+| ----------------------| --------------------------------------------------------------------------------------|
+| build image           | docker build -t NAME:VERSION .                                                        |
+| list containers       | docker ps -a                                                                          |
+| list images           | docker images                                                                         |
+| run images            | docker run --name ASIGNED_NAME IMAGE -d -p LOCAL_PORT:CONTAINER_PORT --restart always |
+| rm all images         | docker rm -f $(docker ps -aq)                                                         |
+| rm single image       | docker rmi IMAGE_NAME                                                                 |
+| tag image             | docker image tag myimage registry-host:5000/myname/myimage:latest                     |
+| push image            | docker image push --all-tags registry-host:5000/myname/myimage                        |
+| enter containers      | docker exec -it <container_name> bash                                                 |
+
+run image in container procedures:
+1. docker stop CONTAINER_NAME
+2. docker rm CONTAINER_NAME
+3. docker run --name ASSIGN_CTR_NAME -p 5000:5000 -d IMAGE:TAG(default: latest) --restart always
+
+build and push procedures:
+1. docker build -t NAME:VERSION .
+2. docker tag IMAGE dockerwilliamqiao/mern_server:latest
+3. docker push dockerwilliamqiao/mern_server:latest
 
 ## Software Architecture that can be improved in future
 ---
@@ -406,14 +466,14 @@ const getProductById = async (productId) => {
 - docker cluster
 - PID control algorithm based smart bidding strategy
 
-## New knowledge today 03/01/22:
+## Note 03/01/22:
 
 - elastic search (AWS OpenSearch derived from elasticsearch)
 - Ngram search
 - hexo.io  - npm framework for creating blog page
 - smart bidding Reading Wechat blog: PID Control fundamental and implementation on Python
 
-## New knowledge today 03/02/22:
+## Note 03/02/22:
 ### Working on Bulk Data with MongoDB
 
         collection.find(query).stream()
@@ -427,7 +487,7 @@ const getProductById = async (productId) => {
         // final callback
         });
 
-## New knowledge today 03/22/22:
+## Note 03/22/22:
 1. exports, export default, module.exports  
 To solve the error "The requested module does not provide an export named 'default'", be consistent with your ES6 imports and exports. If a value is exported as a default export, it has to be imported as a default import and if it's exported as a named export, it has to be imported as a named import.
 
@@ -445,3 +505,40 @@ To solve the error "The requested module does not provide an export named 'defau
 
         import {name} from './path'; //wrong, cannot find module
 ```
+
+## Note 09/26/22:
+1. Upgraded to latest React 18 & react-router-dom v6.
+
+## Note 01/12/23:
+NFS server & client:
+
+on Windows:
+1. netsh interface portproxy show all
+2. ip addr show | grep eth0
+3. ```c
+        netsh interface portproxy add v4tov4 listenport=443 listenaddress=0.0.0.0 connectport=443 connectaddress=<inet>
+        netsh interface portproxy add v4tov4 listenport=2049 listenaddress=0.0.0.0 connectport=2049 connectaddress=
+        netsh interface portproxy add v4tov4 listenport=111 listenaddress=0.0.0.0 connectport=111 connectaddress=
+
+        netsh advfirewall firewall delete rule name="TCP Port 6624" protocol=TCP localport=6624
+on Host WSL:
+1. config /etc/exports
+2. sudo exportfs -a
+3. sudo service nfs-kernel-server start
+
+on Ubuntu Client:
+```
+        sudo mount -t nfs4 192.168.1.24:/partimg /home/partimg -o noatime
+```
+
+- ifconfig eth0 169.254.7.44 broadcast 169.254.255.255 netmask 255.255.0.0
+
+start nfs deamon:  
+- sudo service rpcbind start  
+- sudo service nfs-kernel-server restart  
+
+restart network:  
+- sudo /etc/init.d/networking start
+
+config network:  
+- sudo vi /etc/network/interfaces

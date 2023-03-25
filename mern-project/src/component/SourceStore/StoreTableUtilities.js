@@ -17,13 +17,12 @@ import {
     ImportOutlined,
     LoadingOutlined,
 } from '@ant-design/icons';
-import { Link, useLocation } from 'react-router-dom';
-import { useDispatch, useSelector } from "react-redux";
+import { Link } from 'react-router-dom';
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { addItemSpec, getItemsOnlinePrice } from "reducers/actions/itemActions.js";
 import { setTableState } from "reducers/actions/itemActions.js";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
-import { ContentHeader } from "component/utility/Layout.jsx";
 import { storeType } from "./data.js";
 import './Store.scss';
 
@@ -83,19 +82,23 @@ export const tableColumns = (storeName) => [
         }
     },
     {
-        title: <Tooltip
-            placement="topLeft"
-            title='Click to sort on price diff'>
-            Current Price
-        </Tooltip>,
+        title:
+            <Tooltip
+                placement="topLeft"
+                title='Click to sort on price diff'
+            >
+                Current Price
+            </Tooltip>,
         dataIndex: 'currentPrice',
         key: 'currentPrice',
         width: '10%',
         // defaultSortOrder: tableState.currentPrice,
         sorter: (a, b) => a.currentPrice - b.currentPrice,
         render: (text, record) => (
-            record.isCurrentPriceLower ? <Text type="success">$ {text}</Text>
-                : <Text type="danger">$ {text}</Text>
+            record.isCurrentPriceLower ?
+                <Text type="success">$ {text}</Text>
+                :
+                <Text type="danger">$ {text}</Text>
         )
     },
     {
@@ -111,45 +114,42 @@ export const tableColumns = (storeName) => [
         title: 'Action',
         key: 'action',
         width: '10%',
-        render: (_, record) => (
-            <DropDownActions record={record} storeName={storeName} />
-        ),
+        render: (_, record) => <DropDownActions record={record} storeName={storeName} />
     }
 
 ]
 const DropDownActions = (props) => {
     const { record, storeName } = props
     const dispatch = useDispatch();
-    const prevTableState = useSelector(state => state.item.tableState)
+    const prevTableState = useSelector(state => state.item.tableState, shallowEqual)
 
-    const { pathname } = useLocation();
+    const stableAddItemSpecification = useCallback(() => {
+        dispatch(addItemSpec(record, storeName));
 
-    const actionHandler = {
-        addItemSpecification: () => {
-            console.log(`item spec added`, record._id);
-            dispatch(addItemSpec(record, storeName));
-        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [record, storeName])
 
-        saveActionHistory: () => {
-            console.log(`clicked`, record._id)
-            dispatch(setTableState({ ...prevTableState, store: storeName, clickedId: record._id }));
-        },
-        pathname
-    }
+    const stableSaveActionHistory = useCallback(() => {
+        dispatch(setTableState({ ...prevTableState, store: storeName, clickedId: record._id }));
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [prevTableState, record, storeName])
 
     return (
         <Dropdown
             trigger={["click"]}
-            overlay={ActionMenu({ ...actionHandler })}
+            menu={() => ActionMenu({ addItemSpecification: stableAddItemSpecification })}
             placement="bottom"
         >
-            <TypoLink onClick={() => actionHandler.saveActionHistory()}>More Actions <DownOutlined /></TypoLink>
+            <TypoLink onClick={stableSaveActionHistory}>
+                More Actions <DownOutlined />
+            </TypoLink>
         </Dropdown>
     );
 
 }
 const ActionMenu = (props) => {
-    const { addItemSpecification, pathname } = props
+    const { addItemSpecification } = props;
 
     const buttonSetting = {
         block: true,
@@ -164,7 +164,7 @@ const ActionMenu = (props) => {
         {
             label: (
                 <Button {...buttonSetting}>
-                    <Link to={`${pathname}/item-detail`} className="action-link">
+                    <Link to="item-detail" className="action-link">
                         <SearchOutlined />
                         Detail
                     </Link>
@@ -205,7 +205,7 @@ export const MostViewedSearchBox = (props) => {
     const [status, setStatus] = useState('')
     const onSearch = (value) => {
         // let isValid = /^\d{7}$/.test(value) //regex way check valid
-        let output = value.split('').filter(ele => typeof (Number(ele)) === 'number');
+        let output = value.split('').filter(ele => !isNaN(ele));
         let isValid = output.length === 7
         if (isValid) {
             setStatus('')
@@ -263,7 +263,7 @@ export const StoreOperationMenu = (props) => {
 
     const treeData = [
         {
-            title: <ContentHeader title={store} />,
+            title: "open more options",
             key: 'controller',
             children: [
                 {

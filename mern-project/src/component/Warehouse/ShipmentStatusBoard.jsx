@@ -1,31 +1,49 @@
-import { Row, Col, Progress, Typography } from 'antd';
+import { Row, Progress, Typography } from 'antd';
+import { useMemo } from 'react';
 const { Text } = Typography;
 
-const ShipmentStatusBoard = (props) => {
-    const { pending, total } = props.shipmentInfo;
 
-    const getFinishedPercent = (pendingCount, totalCount) => {
-        if (totalCount <= 0) {
+const ShipmentStatusBoard = ({ shipmentInfo }) => {
+    const { pending, total, pickUpPending, pickUpCreated } = shipmentInfo;
+    const getFinishedPercent = (nume, denom) => {
+        //if no shipment today
+        if (denom === undefined || denom <= 0) {
             return 0;
         }
-        return (
-            Math.round(((totalCount - pendingCount) / totalCount).toFixed(2) * 100)
-        )
-    }
 
-    const finishedPercent = getFinishedPercent(pending, total);
+        return Math.round(((denom - nume) / denom).toFixed(2) * 100)
+
+    }
+    const shipmentFulfilledPercentByToday = useMemo(() => getFinishedPercent(pending, total), [pending, total]);
+    const pickUpCreatedPercent = useMemo(() => getFinishedPercent(pickUpPending, pickUpCreated), [pickUpPending, pickUpCreated]);
+
     return (
-        <Row gutter={[8, 8]} justify="end">
-            <Col flex={6}></Col>
-            <Col flex={2}><Progress showInfo={false} percent={finishedPercent}></Progress></Col>
-            <Col >
+        <>
+            <Row >
+                <Progress
+                    style={{ width: 400, paddingRight: 20 }}
+                    showInfo={false}
+                    percent={shipmentFulfilledPercentByToday}
+                />
                 <Text strong={true} italic={true}>
                     {
-                        `${pending > 0 ? pending : 0} pending - ${total > 0 ? total : 0} total`
+                        `Today: ${pending > 0 ? pending : 0} pending - ${total > 0 ? total : 0} total`
                     }
                 </Text>
-            </Col>
-        </Row >
+            </Row >
+            <Row >
+                <Progress
+                    style={{ width: 400, paddingRight: 20 }}
+                    showInfo={false}
+                    percent={pickUpCreatedPercent}
+                />
+                <Text strong={true} italic={true}>
+                    {
+                        `${pickUpPending > 0 ? pickUpPending : 0} pending Pick Up Label`
+                    }
+                </Text>
+            </Row >
+        </>
     )
 }
 

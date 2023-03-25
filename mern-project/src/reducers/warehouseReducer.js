@@ -1,9 +1,16 @@
 import {
+    CONFIRM_SHIPMENT,
+    CONFIRM_SHIPMENT_LOADING,
+    FILE_DOWNLOADED,
+    FILE_DOWNLOADING,
     GET_INVENTORY_RECEIVED_ITEMS,
     GET_SHIPMENT_ITEMS_WITH_LIMIT,
     GET_SHIPPED_NOT_VERIFIED_SHIPMENT,
     INVENTORY_RECEIVED_LOADING,
-    SEARCH_SHIPMENT,
+    SEARCH_LOCATION_INVENTORY,
+    SEARCH_OUTBOUND_SHIPMENT,
+    SEARCH_RECEIVAL_SHIPMENT,
+    SEARCH_SELLER_INVENTORY,
     SEARCH_SHIPMENT_LOADING,
     SHIPMENT_ITEMS_LOADING,
     SYNC_INVENTORY_RECEIVED_WITH_GSHEET
@@ -18,7 +25,13 @@ const initialState = {
     needToShip: {
         items: [],
         itemsLoading: false,
-        shippedNotVerifiedItems: []
+        confirmLoading: false,
+        shippedNotVerifiedItems: [],
+        download: {
+            isDownloading: false,
+            receievedBytes: undefined,
+            totalBytes: undefined,
+        }
     },
     shipmentSearch: {
         items: [],
@@ -52,13 +65,17 @@ export default function Reducer(state = initialState, action) {
                     inventoryReceivedLoading: true
                 }
             };
-        case SEARCH_SHIPMENT:
+        case SEARCH_OUTBOUND_SHIPMENT:
+        case SEARCH_RECEIVAL_SHIPMENT:
+        case SEARCH_LOCATION_INVENTORY:
+        case SEARCH_SELLER_INVENTORY:
             return {
                 ...state,
                 shipmentSearch: {
                     ...state.shipmentSearch,
                     items: action.payload,
-                    itemsLoading: false
+                    itemsLoading: false,
+                    category: action.type
                 }
             }
         case GET_SHIPMENT_ITEMS_WITH_LIMIT:
@@ -67,7 +84,6 @@ export default function Reducer(state = initialState, action) {
                 needToShip: {
                     ...state.needToShip,
                     items: action.payload.shipment,
-                    totalShipmentCount: action.payload.totalShipmentCount,
                     itemsLoading: false
                 }
             }
@@ -76,7 +92,8 @@ export default function Reducer(state = initialState, action) {
                 ...state,
                 shipmentSearch: {
                     ...state.shipmentSearch,
-                    itemsLoading: true
+                    itemsLoading: true,
+                    // items: []
                 }
             }
         case SHIPMENT_ITEMS_LOADING:
@@ -87,6 +104,23 @@ export default function Reducer(state = initialState, action) {
                     itemsLoading: true
                 }
             }
+        case CONFIRM_SHIPMENT_LOADING:
+            return {
+                ...state,
+                needToShip: {
+                    ...state.needToShip,
+                    confirmLoading: true
+                }
+            }
+        case CONFIRM_SHIPMENT:
+            return {
+                ...state,
+                needToShip: {
+                    ...state.needToShip,
+                    confirmLoading: false
+                }
+            }
+
         case GET_SHIPPED_NOT_VERIFIED_SHIPMENT:
             return {
                 ...state,
@@ -97,6 +131,30 @@ export default function Reducer(state = initialState, action) {
                 }
 
             }
+        case FILE_DOWNLOADED:
+            return {
+                ...state,
+                needToShip: {
+                    ...state.needToShip,
+                    download: {
+                        ...state.needToShip.download,
+                        isDownloading: false
+                    }
+                }
+            }
+        case FILE_DOWNLOADING:
+            return {
+                ...state,
+                needToShip: {
+                    ...state.needToShip,
+                    download: {
+                        isDownloading: true,
+                        receivedBytes: action.payload.receivedBytes,
+                        totalBytes: action.payload.totalBytes
+                    }
+                }
+            }
+
         default:
             return Object.assign({}, state, {
                 needToShip: Object.assign({}, state.needToShip)

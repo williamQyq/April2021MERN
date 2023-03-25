@@ -3,7 +3,8 @@ import {
     UPLOAD_ASINS_MAPPING,
     PRODUCT_LIST_LOADING,
     GET_WAREHOUSE_QTY,
-    RES_LOADED
+    RES_LOADED,
+    GET_SKU_PRIME_COST,
     // GET_ITEM_SPEC,
 } from './actions/types';
 
@@ -39,6 +40,11 @@ export default function Reducer(state = initialState, action) {
             return {
                 ...state,
                 loading: false
+            }
+        case GET_SKU_PRIME_COST:
+            return {
+                ...state,
+                primeCost: action.payload
             }
         default:
             return state;

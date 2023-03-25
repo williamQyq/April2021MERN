@@ -2,7 +2,7 @@ import ItemSpec from '../models/Spec.js';
 import BestbuyAlertModel from "../models/BBItem.js";
 import MicrosoftAlertModel from "../models/MsItem.js";
 import { AmzProdPricing, AmzIdentifier } from '../models/Amz.js';
-import wms from '#wms/wmsDatabase.js';
+import wms from '#wmsTS/wmsDatabase.js';
 import mongoose from 'mongoose';
 
 const { ObjectId } = mongoose.Types;
@@ -14,8 +14,8 @@ import {
     LOOKUP_ITEM_SPEC,
     LAST_PRICE,
     GET_INVENTORY_RECEIVED_HALF_MONTH_AGO,
-    GET_NEED_TO_SHIP_ITEMS_BY_TODAY,
-    COUNT_NEED_TO_SHIP_ITEMS_BY_TODAY,
+    GET_NEED_TO_SHIP_ITEMS_SINCE_LAST_WEEK,
+    COUNT_NEED_TO_SHIP_ITEMS,
     COUNT_SHIPMENT_BY_TODAY,
     GET_UNVERIFIED_SHIPMENT,
     GET_LOCINV_UPC_QTY_SUM_EXCLUDE_WMS,
@@ -23,7 +23,8 @@ import {
     GET_LOCATION_QTY_BY_UPC_AND_LOC,
     GET_SHIPMENT_BY_COMPOUND_FILTER,
     GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER,
-    GET_INVENTORY_LOCATION_BY_COMPOUND_FILTER
+    GET_INVENTORY_LOCATION_BY_COMPOUND_FILTER,
+    GET_SELLER_INVENTORY_BY_COMPOUND_FILTER
 } from './aggregate.js';
 import GenerateGSheetApis from '../../bin/gsheet/gsheet.js';
 import moment from 'moment';
@@ -259,7 +260,7 @@ export class WMSDatabaseApis {
         locationInv: "locationInv"
     }
     constructor() {
-        this.db = wms.getDatabase();
+        this.db = wms;
     }
     async findUpcQtyOnOrg(upc, org = "M") {
         const collection = this.db.collection(WMSDatabaseApis._collection.sellerInv);
@@ -282,25 +283,31 @@ export class WMSDatabaseApis {
 
     async getNeedToShipFromShipment(docLimits = 10, docSkip = 0) {
         const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
-        let needToShipItemsByToday = await collection.aggregate(GET_NEED_TO_SHIP_ITEMS_BY_TODAY(docLimits, docSkip)).toArray();
-        return needToShipItemsByToday;
+        let needToShipItems = await collection.aggregate(GET_NEED_TO_SHIP_ITEMS_SINCE_LAST_WEEK(docLimits, docSkip)).toArray();
+        return needToShipItems;
     }
 
     //Get all org pending shipment Info by default.
-    async getPendingShipmentInfoByOrgNm(orgNm) {
+    async getShipmentCountByOrgNm(orgNm) {
         const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
-        let pendingShipmentCountByToday = await collection.aggregate(COUNT_SHIPMENT_BY_TODAY(orgNm)).toArray();
+        let docs = await collection.aggregate(COUNT_SHIPMENT_BY_TODAY(orgNm)).toArray();
 
+        const shipmentCountByToday = docs[0];
         //handle no shipment document by today
-        if (pendingShipmentCountByToday.length === 0) {
+        if (!shipmentCountByToday) {
             return ({ pending: 0, total: 0, confirm: 0 });
         }
-        return pendingShipmentCountByToday[0];
+
+        if (!shipmentCountByToday.pending)   //missing field if aggregate not match found
+            return { ...shipmentCountByToday, pending: 0 }
+
+        return shipmentCountByToday;
     }
+
     async countNeedToShipFromShipment() {
         const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
-        let shipmentCountByToday = await collection.aggregate(COUNT_NEED_TO_SHIP_ITEMS_BY_TODAY).toArray();
-        let count = shipmentCountByToday.length > 0 ? shipmentCountByToday[0].shipmentCount : 0
+        let docs = await collection.aggregate(COUNT_NEED_TO_SHIP_ITEMS).toArray();
+        let count = docs.length > 0 ? docs[0].shipmentCount : 0
         return count;
     }
 
@@ -315,7 +322,7 @@ export class WMSDatabaseApis {
     //@desc: get shipped status and operStatus unverified shipment docs
     async getShippedNotVerifiedShipment(startDateUnix) {
         const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
-        let unverifiedShipment = await collection.aggregate(GET_UNVERIFIED_SHIPMENT(startDateUnix)).toArray();
+        let unverifiedShipment = await collection.aggregate(GET_UNVERIFIED_SHIPMENT).toArray();
         return unverifiedShipment;
     }
     async updateSellerInvQtyByUpcAndOrgNm(upc, orgNm, qty) {
@@ -357,23 +364,27 @@ export class WMSDatabaseApis {
         let cursors = await collection.aggregate(GET_LOCINV_UPC_QTY_SUM_EXCLUDE_WMS(upc)).toArray();
 
         let hasQtyOnWMSOnly = cursors.length === 0 ? true : false;
-        // do nothing, if no location qty sum documents exclude “WMS" are found.
+        // do nothing, if no location qty sum documents exclude “WMS" are found. qty on WMS already being deducted.
         if (hasQtyOnWMSOnly) {
             return ({
                 action: "updateLocationInvQtyByUpc",
+                upc: upc,
+                reqProcQty: reqProcQty,
                 msg: "No location other than WMS exists, no action taken"
             });
         }
 
-        let qtyOnLocExceptWMS = cursors[0].sum;
+        let qtyOnLocExceptWMS = cursors[0].sum; //upc qty on location except WMS
         let locHasEnoughQty = qtyOnLocExceptWMS >= unProcQty ? true : false;
 
         let locWMSQty = (await collection.aggregate(GET_LOCATION_QTY_BY_UPC_AND_LOC(upc, "WMS")).toArray())[0].qty;
 
+        //Whether WMS has enough qty after shipped qty on other location
         let locWMSHasEnoughQty = locWMSQty >= (reqProcQty - qtyOnLocExceptWMS) ? true : false;
 
         try {
             const upcLocQtyDocs = await collection.aggregate(GET_UPC_LOCATION_QTY_EXCEPT_WMS(upc)).toArray();
+            //locations do not have enough qty for shippment and WMS location do not have enough qty after deducted needed qty
             if (!locHasEnoughQty && !locWMSHasEnoughQty) {
                 throw new Error(`locInv: ${upc} does not have enought qty.\n Need ${unProcQty}`)
             }
@@ -420,7 +431,6 @@ export class WMSDatabaseApis {
                 procQty: reqProcQty - unProcQty
             })
         } catch (err) {
-            console.log(`locInv err: `, JSON.stringify(err, null, 4))
             throw new Error(`locationInv: unable to get loc qty for upc ${upc}`)
         }
     }
@@ -453,7 +463,7 @@ export class WMSDatabaseApis {
         let processedTrackings = new Set();
 
         allUnShipment.forEach((unShipment) => {
-            const { orgNm, trackingID, rcIts } = unShipment;
+            const { trackingID, rcIts } = unShipment;
             rcIts.forEach(([unShippedUpc, unShippedQty]) => {
 
                 unShippedQty = Number(unShippedQty);
@@ -464,7 +474,6 @@ export class WMSDatabaseApis {
                         {
                             ...prevRcIts,
                             unShippedQty: prevRcIts.unShippedQty + unShippedQty,
-                            orgNm: unShipment.orgNm,
                             trackings: [...prevRcIts.trackings, trackingID]
                         }
                     )
@@ -472,7 +481,6 @@ export class WMSDatabaseApis {
                     unShipmentHandler.set(unShippedUpc,
                         {
                             unShippedQty: unShippedQty,
-                            orgNm: orgNm,
                             trackings: [trackingID]
                         }
                     );
@@ -539,27 +547,35 @@ export class WMSDatabaseApis {
     }
 
     async getShipment(fields) {
-        let requiredFields = Object.assign({}, fields);
-        delete requiredFields.type;
+        // let requiredFields = Object.assign({}, fields);
+        // delete requiredFields.type;
         const collection = this.db.collection(WMSDatabaseApis._collection.shipment);
-        let shipmentRecordsByReqFields = await collection.aggregate(GET_SHIPMENT_BY_COMPOUND_FILTER(requiredFields)).toArray();
+        let shipmentRecordsByReqFields = await collection.aggregate(GET_SHIPMENT_BY_COMPOUND_FILTER(fields)).toArray();
         return shipmentRecordsByReqFields;
     }
 
     async getInventoryReceive(fields) {
-        let requiredFields = Object.assign({}, fields);
-        delete requiredFields.type;
+        // let requiredFields = Object.assign({}, fields);
+        // delete requiredFields.type;
         const collection = this.db.collection(WMSDatabaseApis._collection.inventoryReceive);
-        let invRecRecords = await collection.aggregate(GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER(requiredFields)).toArray();
+        let invRecRecords = await collection.aggregate(GET_INVENTORY_RECEIVED_BY_COMPOUND_FILTER(fields)).toArray();
         return invRecRecords;
     }
 
     async getLocation(fields) {
-        let requiredFields = Object.assign({}, fields);
-        delete requiredFields.type;
+        // let requiredFields = Object.assign({}, fields);
+        // delete requiredFields.type;
         const collection = this.db.collection(WMSDatabaseApis._collection.locationInv);
-        let locationRecordsByReqFields = await collection.aggregate(GET_INVENTORY_LOCATION_BY_COMPOUND_FILTER(requiredFields)).toArray();
+        let locationRecordsByReqFields = await collection.aggregate(GET_INVENTORY_LOCATION_BY_COMPOUND_FILTER(fields)).toArray();
         return locationRecordsByReqFields;
+    }
+
+    async getSellerInventory(fields) {
+        // let requiredFields = Object.assign({}, fields);
+        // delete requiredFields.type;
+        const collection = this.db.collection(WMSDatabaseApis._collection.sellerInv);
+        let sellerInvRecordsByReqFields = await collection.aggregate(GET_SELLER_INVENTORY_BY_COMPOUND_FILTER(fields)).toArray();
+        return sellerInvRecordsByReqFields;
     }
 
 
@@ -582,6 +598,7 @@ export class GsheetApis extends GenerateGSheetApis {
         spreadsheetId: "1Pgk6x0Dflq6FwMLk2qIyU9QgHH8RZNneYWLWMk3J2qM",
         ranges: ["needtoship!I:I", "needtoship!J:J", "needtoship!AV:AV", "needtoship!AD:AD", "needtoship!AE:AF", "needtoship!AG:AH", "needtoship!AI:AJ", "needtoship!AK:AL"],
         order: {
+            _id: undefined,
             amzOrderId: undefined,
             tracking: undefined,
             upc1: undefined,
@@ -633,11 +650,11 @@ export class GsheetApis extends GenerateGSheetApis {
     createArrayOfArrayFromDocumentsInOrder(spreadSheetDetail, docs) {
         let aoa;
         let keys;
-        let order = spreadSheetDetail.order;
-        let now = moment().format();
+        if (spreadSheetDetail.order) {
+            let order = spreadSheetDetail.order;
+            let now = moment().format();
 
-        keys = this._getInOrderKeys(order, docs);
-        if (keys !== undefined) {
+            keys = this._getInOrderKeys(order, docs);
             aoa = this._getInOrderValues(order, docs);
             aoa.unshift(keys, new Array(now))
         }

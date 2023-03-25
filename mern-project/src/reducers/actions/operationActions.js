@@ -25,7 +25,7 @@ export const getProductPricing = () => (dispatch, getState) => {
             })
             return res.data
         })
-        .then(prods =>
+        .then(prods =>                         //!Warning abuse using async here, improve later
             dispatch(getWmsProdQty(prods))    //append warehouse qty to prod list.
         )
         .then(warehouseData => {
@@ -38,7 +38,9 @@ export const getProductPricing = () => (dispatch, getState) => {
             dispatch(setResLoaded())  //process finished
         })
         .catch(err => {
-            dispatch(returnErrors(err.response.data.msg, err.response.status))
+            if (err.response) {
+                dispatch(returnErrors(err.response.data.msg, err.response.status))
+            }
         })
 }
 
@@ -58,7 +60,9 @@ export const getWmsProdQty = (prods) => async (dispatch, getState) => {
 
 }
 
-export const uploadAsinsMapping = (file, onSuccess, onError) => dispatch => {
+export const uploadAsinsMapping = (options) => dispatch => {
+    const { file, onSuccess, onError } = options; //type UploadRequestionOptions from rc-upload/lib/interface
+
     dispatch(setResLoading());
     Papa.parse(file, {
         complete: (results) => {

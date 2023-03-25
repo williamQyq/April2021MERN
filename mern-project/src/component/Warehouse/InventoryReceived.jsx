@@ -3,9 +3,10 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Form } from 'antd';
 import { defaultSettings, searchReceivedShipmentColumns } from 'component/Warehouse/utilities.js';
-import { InventoryReceivedMenu } from './Menus.jsx';
+import InventoryReceivedControlPanel from './InventoryReceivedControlPanel.jsx';
 import FormTable from 'component/utility/FormTable.jsx';
 import { getInventoryReceived } from 'reducers/actions/inboundActions.js';
+import { ContentHeader } from 'component/utility/Layout.jsx';
 
 class InventoryReceived extends React.Component {
     constructor(props) {
@@ -73,7 +74,8 @@ class InventoryReceived extends React.Component {
         const { loading, inventoryReceivedItems } = this.props;
         return (
             <>
-                <InventoryReceivedMenu />
+                <ContentHeader title="InventoryReceived" />
+                <InventoryReceivedControlPanel />
                 <Form ref={this.formRef} component={false}>
                     <FormTable
                         loading={loading}

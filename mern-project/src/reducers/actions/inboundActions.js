@@ -1,15 +1,17 @@
 import axios from 'axios';
-import { tokenConfig } from './authActions.js';
-import { clearErrors, returnErrors } from './errorActions.js';
-import { returnMessages } from './messageActions.js';
+import { tokenConfig } from './authActions';
+import { clearErrors, returnErrors } from './errorActions';
+import { returnMessages } from './messageActions';
 import Papa from "papaparse";
 import fileDownload from 'js-file-download';
 import {
     GET_ERRORS,
     SERVICE_UNAVAILABLE,
     UPDATE_INVENTORY_RECEIVE,
-    SEARCH_SHIPMENT,
-    GET_INVENTORY_RECEIVED_ITEMS
+    GET_INVENTORY_RECEIVED_ITEMS,
+    SEARCH_RECEIVAL_SHIPMENT,
+    SEARCH_LOCATION_INVENTORY,
+    SEARCH_SELLER_INVENTORY
 } from './types.js';
 import {
     setInventoryReceivedLoading,
@@ -31,13 +33,13 @@ export const getInventoryReceivedFromSearch = (requiredFields) => (dispatch, get
     axios.post(`/api/wms/inventoryReceive/v0/getInventoryReceived`, { requiredFields }, tokenConfig(getState))
         .then(res => {
             dispatch({
-                type: SEARCH_SHIPMENT,
+                type: SEARCH_RECEIVAL_SHIPMENT,
                 payload: res.data
             });
         })
         .catch(err => {
             dispatch({
-                type: SEARCH_SHIPMENT,
+                type: SEARCH_RECEIVAL_SHIPMENT,
                 payload: []
             })
             dispatch(clearErrors());
@@ -64,8 +66,16 @@ export const getInventoryReceived = (requiredFields = {}) => (dispatch, getState
         })
 }
 
-export const updateInventoryReceivedByUpload = (file, onSuccess, onError) => (dispatch, getState) => {
-    // onError("err")
+export const downloadInventoryReceived = (requiredFields = {}) => (dispatch, getState) => {
+    axios.post('/api/wms/inventoryReceive/v0/downloadReceivalXlsx', { requiredFields, responseType: "blob" })
+        .then((res) => {
+            fileDownload(res.data, 'receivalRecords.xlsx')
+        })
+}
+
+export const updateInventoryReceivedByUpload = (options) => (dispatch, getState) => {
+    const { file, onSuccess, onError } = options //type UploadRequestOptions 
+
     Papa.parse(file, {
         complete: (results) => {
             const uploadFile = results.data;
@@ -96,10 +106,11 @@ export const updateInventoryReceivedByUpload = (file, onSuccess, onError) => (di
 }
 
 export const downloadInventoryReceivedUploadSample = () => dispatch => {
-    axios.get('/api/wms/inventoryReceive/v0/downloadSampleXlsx', { responseType: "blob" }).then((res) => {
+    axios.post('/api/wms/inventoryReceive/v0/downloadSampleXlsx', { responseType: "blob" }).then((res) => {
         fileDownload(res.data, 'inventoryReceived.xlsx')
     })
 }
+
 
 export const uploadNeedToShip = (file, onSuccess, onError) => (dispatch, getState) => {
     onError("err")
@@ -120,16 +131,42 @@ export const getLocationInventory = (requiredFields) => (dispatch, getState) => 
     axios.post(`/api/wms/locationInventory/v0/getLocationInventory`, { requiredFields }, tokenConfig(getState))
         .then(res => {
             dispatch({
-                type: SEARCH_SHIPMENT,
+                type: SEARCH_LOCATION_INVENTORY,
                 payload: res.data
             });
         })
         .catch(err => {
             dispatch({
-                type: SEARCH_SHIPMENT,
+                type: SEARCH_LOCATION_INVENTORY,
                 payload: []
             })
             dispatch(clearErrors());
             dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS));
+        })
+}
+
+export const getSellerInventory = (requiredFields) => (dispatch, getState) => {
+    dispatch(setSearchShipmentLoading());
+    axios.post(`/api/wms/sellerInventory/v0/getSellerInventory`, { requiredFields }, tokenConfig(getState))
+        .then(res => {
+            dispatch({
+                type: SEARCH_SELLER_INVENTORY,
+                payload: res.data
+            });
+        })
+        .catch(err => {
+            dispatch({
+                type: SEARCH_SELLER_INVENTORY,
+                payload: []
+            })
+            dispatch(clearErrors());
+            dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS));
+        })
+}
+
+export const downloadLocationInventory = (requiredFields = {}) => (dispatch, getState) => {
+    axios.post('/api/wms/locationInventory/v0/downloadLocationInventoryXlsx', { requiredFields, responseType: "blob" })
+        .then((res) => {
+            fileDownload(res.data, 'locationRecords.xlsx')
         })
 }

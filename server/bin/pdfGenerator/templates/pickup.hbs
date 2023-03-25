@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pick Up List</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+
+<body>
+    <style>
+        html body {
+            height: 100%;
+            margin: 0px;
+        }
+
+        @media print {
+            .container {
+                margin-top: 32px;
+                position: inherit;
+                display: block;
+                min-height: 100%;
+                page-break-after: always;
+            }
+
+            .trackings-list {
+                columns: 100px 3;
+            }
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+        }
+
+        .title {
+            font-size: 32px;
+        }
+
+        .table {
+            page-break-inside: auto;
+            margin: 16px 32px 48px 32px;
+        }
+
+        .tr {
+            margin-top: 18px;
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
+        .table td {
+            font-size: 22px;
+        }
+
+        .table th {
+            font-size: 24px;
+        }
+
+        .middle {
+            font-size: 16px;
+        }
+
+        .tiny {
+            font-size: 8px;
+        }
+    </style>
+    {{#if upgradeTasks.length}}
+    <div class="container">
+        <table class="table">
+            <thead>
+                <h2 class="text-center title">
+                    Pick Up -- For Upgrade
+                </h2>
+                <h6 class="text-center">{{date}}</h6>
+                <h6 class="text-center notice">current pick up routes not properly optimized, implementd partition
+                    number instead. </h6>
+                <tr>
+                    <th>UPC Upgrade</th>
+                    <th>Qty</th>
+                    <th>Location</th>
+                    <th>Back Up Loc</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each upgradeTasks as | task |}}
+                <tr>
+                    <td>{{task.upc}}</td>
+                    <td>{{task.qty}}</td>
+                    <td>{{task.location}}</td>
+                    <td>
+                        <ul>
+                            {{#each task.backUpLocs}}
+                            <li>
+                                <p class="middle">{{this}}</p>
+                            </li>
+                            {{/each}}
+                        </ul>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        <footer>
+            <p class="text-center tiny">W @copyright 2022</p>
+        </footer>
+    </div>
+    {{/if}}
+    {{#if origTasks.length}}
+    <div class="container">
+        <h2 class="text-center title">
+            Pick Up -- For Orig
+        </h2>
+        <h6 class="text-center">{{date}}</h6>
+        <h6 class="text-center notice">pick up routes not optimized</h6>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>UPC Orig</th>
+                    <th>Qty</th>
+                    <th>Location</th>
+                    <th>Back Up Loc</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each origTasks as | task |}}
+                <tr>
+                    <td>{{task.upc}}</td>
+                    <td>{{task.qty}}</td>
+                    <td>{{task.location}}</td>
+                    <td>
+                        <ul>
+                            {{#each task.backUpLocs}}
+                            <li>
+                                <p class="middle">{{this}}</p>
+                            </li>
+                            {{/each}}
+                        </ul>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        <footer>
+            <p class="text-center tiny">W @copyright 2022</p>
+        </footer>
+    </div>
+    {{/if}}
+    <div class="container">
+        <h2 class="text-center title">
+            Pick Up -- Processed Trackings
+        </h2>
+        <h6 class="text-center">{{date}}</h6>
+
+
+        <ul class="trackings-list">
+            {{#each processedTrackings}}
+            <li>
+                <p class="middle">{{this}}</p>
+            </li>
+            {{/each}}
+        </ul>
+
+        <footer>
+            <p class="text-center tiny">W @copyright 2022</p>
+        </footer>
+    </div>
+</body>
+
+</html>

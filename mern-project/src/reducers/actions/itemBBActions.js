@@ -11,7 +11,7 @@ import {
     GET_BESTBUY_API_ERRORS,
     GET_ERRORS
 } from './types';
-import { tokenConfig } from './authActions.js';
+import { tokenConfig } from './authActions';
 import { returnErrors } from './errorActions';
 
 

@@ -1,26 +1,14 @@
 import React from 'react';
-import { Redirect, Route } from 'react-router';
+import { Navigate } from 'react-router';
 
-const PrivateRoute = ({ children, isAuthenticated, ...rest }) => {
+const PrivateRoute = ({ children, isAuthenticated }) => {
     return (
-        <Route
-            {...rest}
-            render={
-                ({ location }) =>
-                    isAuthenticated ? (
-                        children
-                    ) : (
-                        <Redirect
-                            to={{
-                                pathname: "/",
-                                state: { from: location }
-                            }}
-                        />
-                    )
-            }
-        />
+        isAuthenticated ? (
+            children
+        ) : (
+            <Navigate to="/" />
+        )
     )
-
 }
 
 export default PrivateRoute;

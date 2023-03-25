@@ -1,4 +1,4 @@
-import { EditableCell } from "component/Operation/OperationEditableEle"
+import { EditableCell } from "component/Operation/SkuManagement/OperationEditableEle.jsx"
 
 
 export const defaultSettings = {
@@ -12,7 +12,12 @@ export const defaultSettings = {
     bottom: 'bottomRight',
     rowKey: "_id",
     tableLayout: "fixed",
-    pagination: { position: ['topRight', 'bottomRight'] },
+    pagination: {
+        defaultPageSize: 20,
+        showSizeChanger: true,
+        pageSizeOptions: ['10', '20', '50', '100'],
+        position: ['topRight', 'bottomRight']
+    },
     components: {
         body: {
             cell: EditableCell
@@ -103,35 +108,42 @@ export const searchShipmentColumns = [
         title: "Qty",
         dataIndex: "qty",
         editable: false,
-        width: "5%"
     },
     {
         title: "SN",
         dataIndex: "sn",
-        searchable: true
+        searchable: true,
     },
     {
         title: "Create Time",
         dataIndex: "crtTm",
         searchable: true,
         sorter: (a, b) => a.crtStmp - b.crtStmp,
+        responsive: ["xxl"]
     },
     {
         title: "Shipped Time",
         dataIndex: "mdfTm",
         searchable: true,
         sorter: (a, b) => a.mdfStmp - b.mdfStmp,
+        responsive: ["xxl"]
     },
     {
         title: "Orgnization",
         dataIndex: "orgNm",
         searchable: true,
-        width: "8%"
     },
     {
         title: "Ship By",
         dataIndex: "shipBy",
-        searchable: true
+        searchable: true,
+        responsive: ["xxl"]
+    },
+    {
+        title: "status",
+        dataIndex: "status",
+        searchable: true,
+        responsive: ["xxl"]
     }
 ]
 
@@ -164,7 +176,7 @@ export const searchReceivedShipmentColumns = [
         sorter: (a, b) => a.crtStmp - b.crtStmp,
     },
     {
-        title: "Shipped Time",
+        title: "Latest Modify Time",
         dataIndex: "mdfTm",
         searchable: true,
         sorter: (a, b) => a.mdfStmp - b.mdfStmp
@@ -173,6 +185,10 @@ export const searchReceivedShipmentColumns = [
         title: "Orgnization",
         dataIndex: "orgNm",
         width: "8%"
+    },
+    {
+        title: "Executor",
+        dataIndex: "usrID"
     }
 ]
 
@@ -196,12 +212,45 @@ export const searchLocationInventoryColumns = [
         title: "Qty",
         dataIndex: "qty",
         editable: false,
-        width: "5%"
+        width: "10%"
     },
     {
         title: "Modify Time",
         dataIndex: "mdfTm",
         searchable: true,
         sorter: (a, b) => a.mdfStmp - b.mdfStmp,
+    },
+]
+
+export const searchSellerInventoryColumns = [
+    {
+        title: "Orgnization",
+        dataIndex: "org",
+        searchable: true,
+        sorter: (a, b) => a.org.charCodeAt(0) - b.org.charCodeAt(0),
+        align: 'center'
+    },
+    {
+        title: "UPC",
+        dataIndex: "upc",
+        editable: false,
+        searchable: true,
+        align: 'right',
+    },
+    {
+        title: "Qty",
+        dataIndex: "qty",
+        editable: false,
+        width: "10%",
+        sorter: (a, b) => a.qty - b.qty,
+        align: 'center'
+    },
+
+    {
+        title: "Last Updated Time",
+        dataIndex: "mdfTm",
+        searchable: true,
+        sorter: (a, b) => a.mdfStmp - b.mdfStmp,
+        align: 'center',
     },
 ]

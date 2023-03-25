@@ -26,14 +26,15 @@ const openAlertNotification = (type, msg, handleAction, context) => {
             break;
     }
 
-    console.log(`context: `, context);
     notification[type]({
         message: <Text style={{ color }}>{msgSubject}</Text>,
         description:
             <>
                 <Text style={{ color }}>{msg}</Text>
                 {(
-                    context ? <div>{JSON.stringify(context, null, 4)}</div> : null
+                    context && typeof context === 'string' ? <div>{context}</div>
+                        :
+                        <div>{JSON.stringify(context, null, 4)}</div>
 
                 )}
             </>,

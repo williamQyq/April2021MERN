@@ -1,8 +1,7 @@
 import React from "react";
-import './Configuration.scss';
+import 'styles/Configuration.scss';
 import { Divider, Steps, Typography } from 'antd';
 import { CheckCircleOutlined, LoadingOutlined, QuestionCircleOutlined } from "@ant-design/icons";
-const { Step } = Steps;
 const { Title } = Typography;
 
 const steps = [
@@ -85,14 +84,15 @@ class Configuration extends React.Component {
                     current={current}
                     onChange={this.onChange}
                     className="site-navigation-steps"
-                >
-                    {
+                    items={steps}
+                />
+                {/* {
                         steps.map(step => {
                             let status = this.getStatus(step.title);
                             return <Step {...step} status={status} icon={this.getStatusIcon(status)} />
                         })
                     }
-                </Steps>
+                </Steps> */}
                 <div className="steps-content">{steps[current].content}</div>
             </>
         )

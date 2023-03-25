@@ -1,0 +1,1 @@
+export default function getTempLoc(): Map<string, string>;

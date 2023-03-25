@@ -1,24 +1,17 @@
 import mongoose from 'mongoose';
 import io from './index.js';    //socket io
-import wms from "./wms/wmsDatabase.js";    // @local wms server connection
-import startScrapeScheduler from './bin/scrapeScheduler.js';    //scripts scheduler, node-cron
-import startAmazonScheduler from '#amz/amazonSchedule.js';
-// import unitTest from './unit_test.js'   //For testing functionalities
-
-// @CREATE WMS CONNECTION
-wms.connect(() =>
-    console.log(`WMS Database Connected...`)
-);
+// import startScrapeScheduler from './bin/scrapeScheduler.js';    //scripts scheduler, node-cron
+// import startAmazonScheduler from '#amz/amazonSchedule.js';
 
 //@Mongoose connection; Connect to Mongo.
 const mongoURI = process.env.DB_URI;
+mongoose.set('strictQuery', false);
 mongoose.connect(mongoURI, {
     useUnifiedTopology: true,
-    useNewUrlParser: true,
-    useCreateIndex: true
+    useNewUrlParser: true
 })
     .then(() => console.log('Atlas MongoDB Connected...'))
-    .catch(err => console.log(err));
+    .catch(err => console.error('\nMongoCloud Error: \n\n', err));
 
 const db = mongoose.connection;  //set up mongoose connection
 db.once('open', () => {
@@ -60,7 +53,7 @@ db.once('open', () => {
     // unitTest();
     // startScrapeScheduler();
     // @AMAZON SP UPDATE
-    // startamazonScheduler();
+    // startAmazonScheduler();
     // amazonScheduler()
 
 });

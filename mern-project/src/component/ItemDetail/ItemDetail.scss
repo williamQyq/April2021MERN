@@ -6,18 +6,8 @@
     margin: 4px;
 }
 
-.main-grid {
-    margin: auto;
-    min-width: 1400px;
-    width: 66%;
-    height: 100%;
-    padding-top: 12px;
-    
-}
-
 .left-panel {
-    min-width: 60%;
-    padding: 0 6px;
+    // min-width: 60%;
 
     .price-row {
         padding-top: 16px;
@@ -48,8 +38,7 @@
 }
 
 .right-panel {
-    width: 100%;
-    padding: 0 6px;
+   
     .ant-form-item {
         margin-bottom: 8px;
         .ant-form-item-label {

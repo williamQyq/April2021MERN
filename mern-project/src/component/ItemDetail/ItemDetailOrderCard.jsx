@@ -1,10 +1,9 @@
 import React from 'react';
-import 'antd/dist/antd.min.css';
+// import 'antd/dist/antd.min.css';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Card, Skeleton, Divider, Input, Form, InputNumber } from 'antd';
 import { EditOutlined, EllipsisOutlined, ShoppingCartOutlined } from '@ant-design/icons';
-import Meta from 'antd/lib/card/Meta';
 
 const layout = {
     labelCol: {
@@ -25,6 +24,7 @@ class OrderPanel extends React.Component {
         console.log(values);
     }
     render() {
+        const { name, link, loading } = this.props;
         return (
             <Card
                 style={cardStyle}
@@ -34,16 +34,15 @@ class OrderPanel extends React.Component {
                     <EllipsisOutlined key="ellipsis" />,
                 ]}
             >
-                <Skeleton loading={this.props.loading} >
-                    <Meta title="Place Order" />
-
+                <Skeleton loading={loading} >
+                    <Card.Meta title="Place Order" />
                     <Divider />
                     <Form
                         {...layout} name="nest-messages"
                         onFinish={this.onFinish}
                         initialValues={{
-                            product: this.props.name,
-                            website: this.props.link,
+                            product: name,
+                            website: link,
                         }}
                     >
                         <Form.Item name='product' label="Product">

@@ -5,6 +5,7 @@ import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
 import { setTableState } from 'reducers/actions/itemActions';
 import 'styles/FormTable.scss';
+import { normalizeStringValue } from './helper';
 
 
 class FormTable extends React.Component {
@@ -16,14 +17,13 @@ class FormTable extends React.Component {
             searchedRowId: '',
             searchedColumn: '',
             data: this.props.data,
-            tableState: this.props.tableSettings.tableState || null //
+            tableState: null // for caching table action history
         };
     }
 
     componentDidMount() {
         if (this.state.tableState != null) {
             this.handleScrollPosition(this.state.data, this.state.tableState);  //scroll to clicked row
-            this.handleTableState(this.state.tableState);
         }
     }
     componentDidUpdate(prevProps, prevState) {
@@ -137,12 +137,14 @@ class FormTable extends React.Component {
             filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
             onFilter: (value, record) => {
                 if (value === undefined) return false;  //if empty searchText, filter no data
-                let isValueIncluded = record[dataIndex]
-                    ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
-                    : '';
+                let isValueIncluded = record[dataIndex] ? (
+                    record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
+                ) : (
+                    false
+                );
                 return isValueIncluded
             },
-            onFilterDropdownVisibleChange: visible => {
+            onFilterDropdownOpenChange: visible => {
                 if (visible) {
                     setTimeout(() => this.searchInput.select(), 100);
                 }
@@ -175,8 +177,9 @@ class FormTable extends React.Component {
 
     handleSearch = (selectedKeys, confirm, dataIndex) => {
         confirm();
+        let trimSearchText = normalizeStringValue(selectedKeys[0]);
         this.setState({
-            searchText: selectedKeys[0],
+            searchText: trimSearchText,
             searchedColumn: dataIndex,
         });
     };
@@ -190,6 +193,7 @@ class FormTable extends React.Component {
     render() {
         const { data, loading, columns, tableSettings } = this.props
         const searchPropsColumns = this.addSearchPropsToColumns(columns, this.getColumnSearchProps);
+
         return (
             <Table
                 loading={loading}

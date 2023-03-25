@@ -4,6 +4,7 @@
         min-width: 30vw;
         margin: auto;
     }
+
     .login-form {
         height: 100%;
         max-width: 100%;
@@ -13,12 +14,14 @@
             margin-right: 24px;
         }
     }
+
     #default-image {
         height: 50%;
         object-fit: cover;
         overflow: hidden;
     }
-    .ant-layout-sider {
+
+    #image-sider {
         background-image: url("assets/background.png");
         background-position: 0 0;
         background-size: cover;

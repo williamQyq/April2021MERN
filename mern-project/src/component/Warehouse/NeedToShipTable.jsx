@@ -1,20 +1,44 @@
-import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import FormTable from "component/utility/FormTable.jsx";
-import { defaultSettings, needToShipColumns } from "component/Warehouse/utilities.js";
-import { getShippedNotVerifiedShipmentByDate } from "reducers/actions/outboundActions";
 import moment from "moment";
 import { Table } from "antd";
+import { useState, useEffect, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import FormTable from "component/utility/FormTable.jsx";
+import { defaultSettings, needToShipColumns } from "component/Warehouse/utilities.js";
+import { getShippedNotVerifiedShipmentByDate } from "reducers/actions/outboundActions.js";
 import { confirmShipmentAndSubTractQty } from "reducers/actions/outboundActions.js";
-import NeedToShipTableTitle from "./NeedToShipTableTitle";
+import NeedToShipTableTitle from "./NeedToShipTableTitle.jsx";
 
 
 const NeedToShipTable = (props) => {
-    const { data, loading, shipmentInfo } = props;
+    const { shippedNotVerifiedItems, itemsLoading } = useSelector((state) => (state.warehouse.needToShip));
+    const { shipmentInfo } = props;
     const dispatch = useDispatch();
     const [allSelected, setAllSelected] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]);
     const [selectedRowKeys, setSelectedRowkeys] = useState([]);
+
+    const getNotVerifiedShipment = useCallback(() => {
+        const today = getUnixDate(0);
+        const tommorrow = getUnixDate(1);
+        dispatch(getShippedNotVerifiedShipmentByDate([today, tommorrow]))
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    useEffect(() => {
+        getNotVerifiedShipment();
+    }, [getNotVerifiedShipment])
+
+    useEffect(() => {
+        let hasRowData = shippedNotVerifiedItems.length > 0 ? true : false;
+        let isAllRowsSelected = selectedRowKeys.length >= shippedNotVerifiedItems.length ? true : false;
+        if (isAllRowsSelected && hasRowData) {
+            setAllSelected(true)
+        } else {
+            setAllSelected(false)
+        }
+
+    }, [selectedRowKeys, allSelected, shippedNotVerifiedItems])
+
 
     const rowSelection = {
         fixed: true,
@@ -29,22 +53,6 @@ const NeedToShipTable = (props) => {
         ],
         columnWidth: 60
     }
-    useEffect(() => {
-        let today = getUnixDate(0);
-        // console.log(`today date in unix: `, today)
-        let tommorrow = getUnixDate(1);
-        dispatch(getShippedNotVerifiedShipmentByDate([today, tommorrow]))//get unsubstantiated shipment from today to tomorrow excluded
-
-        let hasRowData = data.length > 0 ? true : false;
-        let isAllRowsSelected = selectedRowKeys.length >= data.length ? true : false;
-        if (isAllRowsSelected && hasRowData) {
-            setAllSelected(true)
-        } else {
-            setAllSelected(false)
-        }
-
-    }, [selectedRowKeys, allSelected, data, dispatch])
-
     const getUnixDate = (offset) => {
         let date = new Date();
         date.setHours(0, 0, 0, 0);
@@ -83,9 +91,9 @@ const NeedToShipTable = (props) => {
             setSelectedRowkeys([]);
             setSelectedRows([]);
         } else {
-            let dataRowKeys = data.map((shipment) => shipment.trackingID)
+            let dataRowKeys = shippedNotVerifiedItems.map((shipment) => shipment.trackingID)
             setSelectedRowkeys(dataRowKeys)
-            setSelectedRows(data)
+            setSelectedRows(shippedNotVerifiedItems)
 
         }
         setAllSelected(!allSelected);
@@ -102,13 +110,13 @@ const NeedToShipTable = (props) => {
     }
     return (
         <div style={{
-            maxHeight: "100vh",
+            borderRadius: "4px",
             padding: "4px 8px",
             boxShadow: "5px 8px 24px 5px rgba(208, 216, 243, 0.8)"
         }}>
             <FormTable
-                loading={loading}
-                data={data}
+                loading={itemsLoading}
+                data={shippedNotVerifiedItems}
                 columns={needToShipColumns}
                 tableSettings={{
                     ...defaultSettings,

@@ -1,8 +1,10 @@
 import express from 'express';
 import auth from '#middleware/auth.js';
 import excel from 'exceljs';
-import { WMSDatabaseApis, GsheetApis } from '../../query/utilities.js';
-import { status } from '../../query/aggregate.js';
+import { WMSDatabaseApis, GsheetApis } from '#query/utilities.js';
+import { status } from '#query/aggregate.js';
+import moment from 'moment';
+import connectionTimeout from '#rootTS/lib/middleware/connectionTimeout.js';
 
 const router = express.Router();
 
@@ -17,7 +19,7 @@ router.get('/sellerInv/v0/quantity/upc/:upc', (req, res) => {
 
 //@route POST api/wms
 //@desc get warehouse quantity on multiple upcs
-router.post('/sellerInv/v0/quantity/upcs', auth, (req, res) => {
+router.post('/sellerInv/v0/quantity/upcs', auth, connectionTimeout(), (req, res) => {
     const { upcArr } = req.body;
     let result = [];
     let wms = new WMSDatabaseApis();
@@ -27,7 +29,8 @@ router.post('/sellerInv/v0/quantity/upcs', auth, (req, res) => {
             res.json(result)
         })
         .catch(err => {
-            res.status(502).json({ msg: "WMS connection error" })
+            console.error(err.message);
+            res.status(404).json({ msg: "WMS connection error" })
         })
 
 })
@@ -46,21 +49,23 @@ router.post('/inventoryReceive/v0/getInventoryReceived', auth, (req, res) => {
     wms.getInventoryReceive(requiredFields)
         .then(validRecItems => { res.json(validRecItems) })
         .catch(err => {
+            console.error(err.message);
             res.status(400).json({ msg: "Fail to get Inventory Received", reason: err.message })
         })
 })
 
 //@route GET api/wms
 router.get('/inventoryReceive/v0/getWrongAdds', auth, (req, res) => {
-    const db = wms.getDatabase();
-    const collection = db.collection('inventoryReceive');
+    res.status(400).json({ msg: "deprecated" })
+    // const db = wms;
+    // const collection = db.collection('inventoryReceive');
 
-    collection.find({ 'orgNm': 'wrongadds' }).toArray()
-        .then(docs => {
-            console.log(`[routes] receive inventoryReceive wrongadds GET request...`)
-            res.json(docs)
-            // return docs;
-        })
+    // collection.find({ 'orgNm': 'wrongadds' }).toArray()
+    //     .then(docs => {
+    //         console.log(`[routes] receive inventoryReceive wrongadds GET request...`)
+    //         res.json(docs)
+    //         // return docs;
+    //     })
 });
 
 
@@ -75,6 +80,7 @@ router.get('/inventoryReceive/v0/getInventoryReceiveInHalfMonth/updateGsheet', a
         .then(values => gsheet.updateSheet(GsheetApis._forUploadSpreadSheet, values))
         .then(() => { res.json("success") })
         .catch(err => {
+            console.error(err.message);
             res.status(500).json({ msg: "Fail to get Inventory Received or Update Gsheet" })
         })
 
@@ -85,17 +91,17 @@ router.get('/shipment/v0/getNeedToShipItems/limit/:docLimit/skip/:docSkip', auth
     let wms = new WMSDatabaseApis();
     wms.getNeedToShipFromShipment(Number(docLimit), Number(docSkip))// params in req are strings, mongodb limit query accepts number only
         .then(needToShipItems => {
-            wms.countNeedToShipFromShipment()
-                .then((totalShipmentCount) => res.json({ shipment: needToShipItems, totalShipmentCount }))
+            res.json({ shipment: needToShipItems })
         })
         .catch((err => {
+            console.error(err.message);
             res.status(500).json({ msg: "Fail to get Shipment" })
         }))
 })
 router.get('/shipment/v0/getPendingAndTotal/:orgNm', auth, (req, res) => {
     const { orgNm } = req.params;
     let wms = new WMSDatabaseApis();
-    wms.getPendingShipmentInfoByOrgNm(orgNm)
+    wms.getShipmentCountByOrgNm(orgNm)
         .then((shipmentCountInfo) => {
             res.json(shipmentCountInfo)
         })
@@ -113,8 +119,9 @@ router.post('/inventoryReceive/v0/updateRecOnTracking', auth, (req, res) => {
             }
 
         })
-        .catch(e => {
-            res.status(400).json({ msg: `Upload File contains Invalid Input\n\n${e}` })
+        .catch(err => {
+            console.error(err.message);
+            res.status(400).json({ msg: `Upload File contains Invalid Input\n\n${err}` })
         })
 })
 
@@ -156,9 +163,8 @@ router.get('/inventoryReceive/v0/downloadSampleXlsx', (req, res) => {
         "Content-Disposition",
         "attachment; filename=" + "sample.xlsx"
     );
-    return workbook.xlsx.write(res).then(() => {
-        res.status(200).end();
-    });
+    workbook.xlsx.write(res)
+        .then(() => { res.status(200).end(); });
 })
 
 router.get('/needToShip/syncGsheet', auth, (req, res) => {
@@ -208,19 +214,20 @@ router.get('/shipment/v0/getNotVerifiedShipment/dateMin/:dateMin/dateMax/:dateMa
             res.json(formattedShipmentArr)
         })
         .catch(err => {
+            console.error(err.message);
             res.status(500).json({ msg: `Unable to get unsubstantiated Shipment\n\n${err}` })
         })
 })
 
 router.post('/needToShip/v0/confirmShipment', auth, (req, res) => {
-    console.log(`*************confirm Shipment*************`);
+    console.log(`*************confirm Shipment*************\n`, moment().format());
 
     const { allUnShipment } = req.body;
 
     let wms = new WMSDatabaseApis();
-    console.log(`all unShipment: `, allUnShipment)
     const { unShipmentHandler, processedTrackings } = wms.createUnShipmentMapping(allUnShipment);
-    console.log(`unshipment Map: `, unShipmentHandler);
+    // console.log(`all unShipment: `, allUnShipment)
+    // console.log(`unshipment Map: `, unShipmentHandler);
 
     // // concat 2 steps promise array:
     // // update locationInv -> update shipment status
@@ -228,7 +235,7 @@ router.post('/needToShip/v0/confirmShipment', auth, (req, res) => {
     Promise.allSettled(
         // update qty on location Inv
         Array.from(unShipmentHandler)
-            .map(([upc, { unShippedQty, orgNm, trackings }]) =>
+            .map(([upc, { unShippedQty, trackings }]) =>
                 new Promise((resolve, reject) => {
                     wms.updateLocationInvQtyByUpc(upc, Number(unShippedQty))
                         .then(updateRes => {
@@ -240,14 +247,13 @@ router.post('/needToShip/v0/confirmShipment', auth, (req, res) => {
                                 reason: err.message,
                                 rejectedUpc: upc,
                                 rejectedQty: Number(unShippedQty),
-                                rejectedTrackings: trackings,
-                                rejectedOrgNm: orgNm,
+                                rejectedTrackings: trackings
                             })
                         });
                 })
             )
     )
-        //     //update fulfilled shipment status 
+        //update fulfilled shipment status 
         .then(async (results) => {
 
             //get rejected trackings for fulfilled trackings filter
@@ -282,20 +288,19 @@ router.post('/needToShip/v0/confirmShipment', auth, (req, res) => {
             return results;
         })
         .then((results) => {
-            console.log(`results: `, JSON.stringify(results, null, 4))
+            // console.log(`results: `, JSON.stringify(results, null, 4))
             let allRejectedShipment = results.filter(res => res.status === "rejected")
-            // console.log(`rejected promise results: `, allRejectedShipment)
-
+            console.log(JSON.stringify(allRejectedShipment));
             if (allRejectedShipment.length > 0) {
-                res.status(400).json({ msg: `Rejected Shipment Occurs`, reason: allRejectedShipment })
-            } else {
-                res.json({ msg: `All Shipment fullfilled.` })
+                console.log(`Error: Rejected promise results: `, JSON.stringify(allRejectedShipment, null, 4))
+                throw new Error(JSON.stringify(allRejectedShipment));
             }
+            res.json({ msg: `All Shipment fullfilled.` })
         })
         .catch(err => {
-            console.log(`err: `, err)
-            res.status(500).json({
-                msg: `Reject updating sellerInv qty or locInv qty on Upc`,
+            // console.log(`err: `, err.message)
+            res.status(400).json({
+                msg: `Reject updating sellerInv qty or locInv qty on upc`,
                 reason: err.message
             })
         })
@@ -305,12 +310,13 @@ router.post('/needToShip/v0/confirmShipment', auth, (req, res) => {
 
 router.post('/shipment/v0/getShipment', auth, (req, res) => {
     const { requiredFields } = req.body;
-    let wms = new WMSDatabaseApis();
+    const wms = new WMSDatabaseApis();
     wms.getShipment(requiredFields)
         .then(validShipment => {
             res.json(validShipment)
         })
         .catch(err => {
+            console.error(err.message);
             res.status(400).json({
                 msg: `Reject get shipment by required fields`,
                 reasoon: err.message
@@ -318,16 +324,51 @@ router.post('/shipment/v0/getShipment', auth, (req, res) => {
         })
 })
 
+//@desc: download xlsx shipment records
+router.post('shipment/v0/downloadShipmentXlsx', auth, (req, res) => {
+    const { requiredFields } = req.body;
+    res.json();
+})
+
+//@desc: download xlsx inventory receival records
+router.post('inventoryReceive/v0/downloadReceivalXlsx', auth, (req, res) => {
+    const { requiredFields } = req.body;
+    res.json();
+})
+
+//@desc: download xlsx location inventory records
+router.post('locationInventory/v0/downloadLocationInventoryXlsx', auth, (req, res) => {
+    const { requiredFields } = req.body;
+    res.json();
+})
+
 router.post('/locationInventory/v0/getLocationInventory', auth, (req, res) => {
     const { requiredFields } = req.body;
-    let wms = new WMSDatabaseApis();
+    const wms = new WMSDatabaseApis();
     wms.getLocation(requiredFields)
         .then(validShipment => {
             res.json(validShipment)
         })
         .catch(err => {
+            console.error(err.message);
             res.status(400).json({
                 msg: `Reject get shipment by required fields`,
+                reasoon: err.message
+            })
+        })
+})
+
+router.post('/sellerInventory/v0/getSellerInventory', auth, (req, res) => {
+    const { requiredFields } = req.body;
+    const wms = new WMSDatabaseApis();
+    wms.getSellerInventory(requiredFields)
+        .then(validShipment => {
+            res.json(validShipment)
+        })
+        .catch(err => {
+            console.error(err.message);
+            res.status(400).json({
+                msg: `Reject get Seller Inventory by required fields`,
                 reasoon: err.message
             })
         })

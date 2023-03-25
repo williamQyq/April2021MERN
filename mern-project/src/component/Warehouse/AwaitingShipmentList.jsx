@@ -1,41 +1,81 @@
 import InfiniteScroll from 'react-infinite-scroll-component';
 import DescriptionCard from 'component/utility/DescriptionCard.jsx';
-import { Divider, List, PageHeader, Skeleton } from 'antd';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { Divider, List, Skeleton } from 'antd';
 import ShipmentStatusBoard from './ShipmentStatusBoard.jsx';
+import { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+    getNeedToShipFromShipmentWithLimit
+} from 'reducers/actions/outboundActions.js';
 
-const AwaitingShipmentList = (props) => {
-    const { data, loadMore, dataLengthLimit, shipmentInfo } = props;
-    const [pending, SetPending] = useState(0);
-    const [total, SetTotal] = useState(0);
-    const [awaitngShipment, SetAwaitingShipment] = useState(data);
+const AwaitingShipmentList = ({ shipmentInfo }) => {
+    const dispatch = useDispatch();
+    const [data, setData] = useState([]);
+    const [skip, setSkip] = useState(0);
+    const { pendingPickUp } = shipmentInfo;
+
+    const { items, itemsLoading } = useSelector((state) => state.warehouse.needToShip);
+    const docLimits = 10;
+
+    //get limit number of new Awaiting shipment docs
+    const updateItems = useCallback((abortSignal) => {
+        dispatch(getNeedToShipFromShipmentWithLimit(abortSignal, docLimits, skip));
+        setSkip(skip + docLimits);
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [docLimits, skip])
+
+    //avoid duplicate request append to data state
+    useEffect(() => {
+        let lastDataDoc = data.at(-1);
+        let lastNewDataDoc = items ? items.at(-1) : undefined;
+
+        //init new data to data state
+        if (lastDataDoc === undefined && lastNewDataDoc) {
+            setData([...items]);
+            return;
+        }
+
+        //compare if last data object orderID and the last new data object orderID are same.
+        if (lastNewDataDoc) {
+            let compare = data.at(-1).orderID === items.at(-1).orderID ? true : false
+            if (!compare)
+                setData([...data, ...items]);
+        }
+    }, [data, items])
 
     useEffect(() => {
-        SetPending(shipmentInfo.pending);
-        SetTotal(shipmentInfo.total);
-        SetAwaitingShipment(data)
-    }, [shipmentInfo, data])
+        const controller = new AbortController();
+        updateItems(controller.signal);
+
+        return () => controller.abort();
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    const loadMore = () => {
+        if (itemsLoading) {
+            return;
+        }
+        updateItems();
+    }
 
     return (
-        <>
-            <Divider plain><PageHeader title="Awaiting Shipment" /></Divider>
-            <ShipmentStatusBoard shipmentInfo={{ pending, total }}></ShipmentStatusBoard>
+        <div style={{ maxWidth: "80%", margin: "auto" }}>
+            <ShipmentStatusBoard shipmentInfo={shipmentInfo} />
             <div
-                id="scrollableDiv"
+                id='scrollableDiv'
                 style={{
-                    height: "80vh",
-                    overflow: 'auto',
-                    padding: '0 16px',
-                    // border: '1px solid #fbfbfd',
+                    height: "100vh",
+                    overflow: "auto",
                     background: "linear-gradient(145deg, #e2e2e4, #ffffff)",
                     boxShadow: "5px 5px 10px #9c9c9d"
                 }}
             >
                 <InfiniteScroll
-                    dataLength={awaitngShipment.length}
+                    dataLength={data.length}
                     next={loadMore}
-                    hasMore={awaitngShipment.length < dataLengthLimit}
+                    hasMore={data.length !== 0 && data.length < pendingPickUp}
                     loader={
                         <Skeleton
                             paragraph={{
@@ -49,18 +89,17 @@ const AwaitingShipmentList = (props) => {
 
                 >
                     <List
-                        dataSource={awaitngShipment}
+                        dataSource={data}
                         size="small"
                         renderItem={(item) => (
-                            <List.Item key={item.orderID}>
+                            <List.Item>
                                 <DescriptionCard detail={item} />
                             </List.Item>
                         )}
                     />
                 </InfiniteScroll>
             </div>
-        </>
-
+        </div>
     );
 }
 

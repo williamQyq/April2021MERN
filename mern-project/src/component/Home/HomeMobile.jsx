@@ -1,13 +1,12 @@
-import { Button, message, Result, Row } from 'antd';
-import { Content } from 'antd/lib/layout/layout';
+import { Button, message, Layout } from 'antd';
 import React from 'react';
 import { connect } from 'react-redux';
-import './HomeMobile.scss';
+import 'styles/HomeMobile.scss';
 import { getInvReceivedWithWrongAdds } from 'reducers/actions/inboundActions.js';
-import { logout } from 'reducers/actions/authActions.js';
+import { logout } from 'reducers/actions/authActions';
 
 // import { SocketContext } from 'component/socket/socketContext.js';
-
+const { Content } = Layout;
 
 class HomeMobile extends React.Component {
     // static contextType = SocketContext
@@ -40,7 +39,7 @@ class HomeMobile extends React.Component {
     }
 
     render() {
-        const { loading, data } = this.state
+        const { loading } = this.state
         return (
             <Content className='home'>
                 <Button loading={loading} size='large' onClick={e => this.handleClick(e)}>Get Wrong Adds</Button>

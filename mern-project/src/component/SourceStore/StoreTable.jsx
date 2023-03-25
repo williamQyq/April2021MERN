@@ -12,6 +12,7 @@ import {
     StoreOperationMenu,
     tableColumns
 } from 'component/SourceStore/StoreTableUtilities.js';
+import { ContentHeader } from 'component/utility/Layout';
 
 // import BackTopHelper from 'component/utility/BackTop';
 class StoreTable extends React.Component {
@@ -31,11 +32,12 @@ class StoreTable extends React.Component {
     }
 
     render() {
-        const { items, store, loading, tableState } = this.props
-        const columns = tableColumns(store)
+        const { items, storeName, loading, tableState } = this.props
+        const columns = tableColumns(storeName)
         return (
             <>
-                <StoreOperationMenu store={store} />
+                <ContentHeader title={storeName} />
+                <StoreOperationMenu store={storeName} />
                 <FormTable
                     loading={loading}
                     tableSettings={{ ...defaultTableSettings, expandable: null, tableState: tableState }}

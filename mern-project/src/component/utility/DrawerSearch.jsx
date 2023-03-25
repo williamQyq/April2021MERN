@@ -1,34 +1,21 @@
-
 import { useEffect, useState } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
-import { Button, Col, DatePicker, Drawer, Form, Input, Row, Select, Space } from 'antd';
-import moment from 'moment';
-
+import { AutoComplete, Button, Col, DatePicker, Drawer, Form, Input, Row, Select, Space } from 'antd';
+import { SEARCH_LOCATION_INVENTORY, SEARCH_OUTBOUND_SHIPMENT, SEARCH_RECEIVAL_SHIPMENT, SEARCH_SELLER_INVENTORY } from 'reducers/actions/types.js';
+import moment from 'moment/moment';
 
 const { Option } = Select;
 
 const DrawerSearch = (props) => {
     const { title, onSubmit, setVisible, visible, form } = props;
-    const [searchCategory, setCategory] = useState('');
-    const [shipmentOptionSelectable, setShipmentOption] = useState(true);
-    const [inventoryReceiveOptionSelectable, setInventoryReceiveOption] = useState(true);
-    const [inventoryLocationOptionSelectable, setInventoryLocationOption] = useState(true);
+    const [searchCategory, setCategory] = useState("");
 
-    const [hackValue, setHackValue] = useState(null);
-    const [value, setValue] = useState(null);
-    const [dates, setDates] = useState(null);
+    const [dates, setDates] = useState([null, null]);
 
     const dateFormat = 'YYYY-MM-DD';
 
-
-
     useEffect(() => {
-        setShipmentOption(searchCategory === 'outBoundShipment' ? true : false);
-        setInventoryReceiveOption(searchCategory === 'inBoundReceived' ? true : false);
-        setInventoryLocationOption(searchCategory === 'locationInventory' ? true : false);
-
-        setHackValue([getOffDate(0), getOffDate(90)])
-        setValue([getOffDate(0), getOffDate(90)])
+        setDates([null, null]);
     }, [searchCategory])
 
     const showDrawer = () => {
@@ -43,32 +30,23 @@ const DrawerSearch = (props) => {
         setCategory(category);
     }
 
-    const getOffDate = (offDays = 0) => {
-        let d = new Date();
-        let day = d.getDate();
-        d.setDate(day - offDays);
-
-        return moment(d, dateFormat);
-    }
-
-    const disabledDate = (current) => {
-        if (!dates) {
-            return false;
-        }
-
-        const tooLate = dates[0] && current.diff(dates[0], 'days') > 90;
-        const tooEarly = dates[1] && dates[1].diff(current, 'days') > 90;
-        return !!tooEarly || !!tooLate;
+    const disabledDate = (currentDate) => {
+        let today = moment();
+        let isCurrentDateNotValid = today.diff(currentDate, 'days') < 0;
+        return isCurrentDateNotValid;
     };
 
     const onOpenChange = (open) => {
-        if (open) {
-            setHackValue([null, null]);
-            setDates([null, null]);
-        } else {
-            setHackValue(null);
-        }
+
     };
+
+    //editable control
+    let isOrderIdInputEditable = searchCategory === SEARCH_OUTBOUND_SHIPMENT ? true : false;
+    let isTrackingIdInputEditable = searchCategory === SEARCH_OUTBOUND_SHIPMENT ? true : false ||
+        searchCategory === SEARCH_RECEIVAL_SHIPMENT ? true : false;
+    let isOrgNmInputEditable = searchCategory !== SEARCH_LOCATION_INVENTORY ? true : false;
+    let isUpcInputEditable = true;  //upc option is editable for all category
+    let isSnInputEditable = searchCategory === SEARCH_OUTBOUND_SHIPMENT ? true : false;
 
     return (
         <>
@@ -79,7 +57,7 @@ const DrawerSearch = (props) => {
                 title="Search Shipment"
                 width={720}
                 onClose={onClose}
-                visible={visible}
+                open={visible}
                 bodyStyle={{
                     paddingBottom: 80,
                 }}
@@ -99,7 +77,7 @@ const DrawerSearch = (props) => {
                                 name="OrderId"
                                 label="OrderId"
                             >
-                                <Input disabled={!shipmentOptionSelectable} placeholder="Please enter OrderId" />
+                                <Input disabled={!isOrderIdInputEditable} placeholder="Please enter OrderId" />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
@@ -107,7 +85,7 @@ const DrawerSearch = (props) => {
                                 name="trackingId"
                                 label="TrackingId"
                             >
-                                <Input disabled={!(shipmentOptionSelectable || inventoryReceiveOptionSelectable)} placeholder="Please enter TrackingId" />
+                                <Input disabled={!isTrackingIdInputEditable} placeholder="Please enter TrackingId" />
                             </Form.Item>
                         </Col>
                     </Row>
@@ -117,18 +95,17 @@ const DrawerSearch = (props) => {
                                 name="orgNm"
                                 label="orgNm"
                             >
-                                <Select
-                                    disabled={
-                                        !(
-                                            shipmentOptionSelectable ||
-                                            inventoryReceiveOptionSelectable
-                                        )
-                                    }
-                                    placeholder="Please select an organization">
-                                    <Option value="M">M</Option>
-                                    <Option value="R">R</Option>
-                                    <Option value="X">X</Option>
-                                </Select>
+                                <AutoComplete
+                                    showSearch
+                                    autoClearSearchValue
+                                    disabled={!isOrgNmInputEditable}
+                                    placeholder="Please select an organization"
+                                >
+                                    <AutoComplete.Option value="M">M</AutoComplete.Option>
+                                    <AutoComplete.Option value="R">R</AutoComplete.Option>
+                                    <AutoComplete.Option value="C">C</AutoComplete.Option>
+                                    <AutoComplete.Option value="X">X</AutoComplete.Option>
+                                </AutoComplete>
                             </Form.Item>
                         </Col>
                         <Col span={12}>
@@ -143,9 +120,10 @@ const DrawerSearch = (props) => {
                                 ]}
                             >
                                 <Select onSelect={handleCategoryChange} placeholder="Please choose the type">
-                                    <Option value="outBoundShipment">OutBound Shipment</Option>
-                                    <Option value="inBoundReceived">InBound Received</Option>
-                                    <Option value="locationInventory">Location Inventory</Option>
+                                    <Option value={SEARCH_OUTBOUND_SHIPMENT}>OutBound Shipment</Option>
+                                    <Option value={SEARCH_RECEIVAL_SHIPMENT}>InBound Receival</Option>
+                                    <Option value={SEARCH_LOCATION_INVENTORY}>Location Inventory</Option>
+                                    <Option value={SEARCH_SELLER_INVENTORY}>Seller Inventory</Option>
                                 </Select>
                             </Form.Item>
                         </Col>
@@ -157,13 +135,7 @@ const DrawerSearch = (props) => {
                                 label="UPC"
                             >
                                 <Input
-                                    disabled={
-                                        !(
-                                            shipmentOptionSelectable ||
-                                            inventoryReceiveOptionSelectable ||
-                                            inventoryLocationOptionSelectable
-                                        )
-                                    }
+                                    disabled={!isUpcInputEditable}
                                     placeholder="Please enter UPC" />
                             </Form.Item>
                         </Col>
@@ -172,7 +144,7 @@ const DrawerSearch = (props) => {
                                 name="sn"
                                 label="SN"
                             >
-                                <Input disabled={!shipmentOptionSelectable} placeholder="Please enter SN" />
+                                <Input disabled={!isSnInputEditable} placeholder="Please enter SN" />
                             </Form.Item>
                         </Col>
                     </Row>
@@ -186,12 +158,12 @@ const DrawerSearch = (props) => {
                                     style={{
                                         width: '100%',
                                     }}
-                                    value={hackValue || value}
-                                    disabledDate={disabledDate}
+                                    value={dates}
+                                    disabledDate={(currentDate) => disabledDate(currentDate)}
                                     onCalendarChange={(val) => setDates(val)}
-                                    onChange={(val) => setValue(val)}
+                                    onChange={(val) => setDates(val)}
                                     onOpenChange={onOpenChange}
-                                    defaultValue={value}
+                                    // defaultValue={value}
                                     format={dateFormat}
                                     getPopupContainer={(trigger) => trigger.parentElement}
                                 />

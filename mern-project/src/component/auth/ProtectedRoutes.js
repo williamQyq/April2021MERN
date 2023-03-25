@@ -1,23 +1,14 @@
 import { Suspense } from 'react';
-import { Route } from 'react-router-dom';
-import routes from 'component/auth/AuthenticatedRoutes.js'; // Route list
-import ErrorPage from 'component/utility/ErrorPage.jsx';
+import { useRoutes } from 'react-router-dom';
+import routesConfig from 'component/auth/AuthenticatedRoutes.js'; // Route list
+import LoadingPage from 'component/utility/LoadingPage.jsx';
 
 const ProtectedRoutes = () => {
+    const routes = useRoutes(routesConfig);
+
     return (
-        <Suspense
-            fallback={<ErrorPage />}
-        >
-            {routes.map(({ component: Component, path, exact }) => (
-                <Route
-                    path={`/${path}`}
-                    key={path}
-                    exact={exact}
-                >
-                    <Component />
-                </Route>
-            )
-            )}
+        <Suspense fallback={<LoadingPage />}>
+            {routes}
         </Suspense>
 
     );

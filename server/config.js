@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
-// import path from 'path';
-// import { fileURLToPath } from 'url';
+import path from 'path';
+import { fileURLToPath } from 'url';
 // import fs from 'fs'
 
 
@@ -13,7 +13,7 @@ export const sshConfig = {
     username: process.env.WMS_USERNAME,
     password: process.env.WMS_PASSWORD,
     host: process.env.WMS_HOST,
-    port: process.env.WMS_PORT,
+    port: process.env.SSH_PORT,
     dstPort: process.env.WMS_DST_PORT,
     // privateKey: require('fs').readFileSync('/path/to/key'),
     localPort: process.env.PORT || process.env.WMS_LOCAL_PORT,
@@ -58,3 +58,12 @@ export const gCredentials = {
     client_x509_cert_url: process.env.client_x509_cert_url
 }
 
+export const gOAuth = {
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: process.env.OAUTH_CALLBACK_URL
+}
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+export const pdfGeneratorDirPath = path.join(__dirname, "bin", "pdfGenerator");
