@@ -3,7 +3,7 @@ import { gOAuth } from '#root/config.js';
 import { PassportStatic } from 'passport';
 import User from '#rootTS/lib/models/User.js';
 import { IUserDoc } from '../models/interface';
-import { Error } from 'mongoose';
+import mongoose from 'mongoose';
 
 export default function passportSetup(passport: PassportStatic) {
     passport.use(
@@ -11,21 +11,22 @@ export default function passportSetup(passport: PassportStatic) {
             {
                 clientID: gOAuth.clientID,
                 clientSecret: gOAuth.clientSecret,
-                callbackURL: gOAuth.callbackURL
+                callbackURL: gOAuth.callbackURL,
+                passReqToCallback: true
             },
-            async function (accessToken, refreshToken, profile: Profile, done) {
-                console.log("Trying to access google account ", profile)
+            async (req, accessToken, refreshToken, profile: Profile, done) => {
+                // console.log("***Trying to access google account:***\n ", profile)
                 try {
+
                     let user = await User.findOne({ googleId: profile.id });
                     if (user) {
                         done(null, user);
                     } else {
                         //register new user
-                        const email = profile._json.email!
 
                         const newUser: IUserDoc = new User({
-                            email,
-                            password: profile.id,
+                            email: null,
+                            password: null,
                             role: "member",
                             googleId: profile.id,
                             name: profile._json.given_name,
@@ -37,27 +38,28 @@ export default function passportSetup(passport: PassportStatic) {
                         done(null, user);
 
                     }
-                } catch (err) {
+                } catch (err: any) {
                     console.error(err);
+                    done(err, undefined);
                 }
-
             }
         )
     );
 
     // passport.use(
     //     new AppleStrategy(
-
+    //         //Apple oAuth strategy ...
     //     )
     // )
 
     passport.serializeUser((user, done) => {
         console.log(`passport serialize user: `, user)
-        done(null, user._id);
+        done(null, user.googleId);
     });
 
     passport.deserializeUser((id, done) => {
-        User.findById(id, (err: Error, user: IUserDoc) => {
+        console.log(`passport deserialize user id: `, id)
+        User.findOne({ googleId: id }, (err: mongoose.Error, user: IUserDoc) => {
             done(err, user);
         })
     })

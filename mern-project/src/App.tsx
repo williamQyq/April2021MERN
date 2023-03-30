@@ -15,6 +15,7 @@ import { ThemeContext } from 'component/Home/ThemeProvider';
 import { ConfigProvider, theme } from 'antd';
 import ProSignIn from 'component/auth/ProSignIn';
 import { loadUser } from 'reducers/actions/authActions';
+import ProSignInSuccess from 'component/auth/ProSignInSuccess';
 
 interface IProps extends IReduxAuth {
   error: IReduxError;
@@ -34,9 +35,6 @@ class App extends React.Component<IProps, IState> {
     if (this.props.error !== prevProps.error) {
       this.handleRequestErrorStatus(this.props.error);
     }
-
-    //getAuthUser
-    this.props.loadUser()
 
   }
 
@@ -66,6 +64,7 @@ class App extends React.Component<IProps, IState> {
       >
         <Routes>
           <Route path="/" element={<ProSignIn />} />
+          <Route path="/login/success" element={<ProSignInSuccess />} />
           <Route
             path="app/*"
             element={

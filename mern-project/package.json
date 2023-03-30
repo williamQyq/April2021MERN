@@ -54,7 +54,8 @@
     "tsc": "tsc",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "clean": "del node_modules package-lock.json"
   },
   "proxy": "http://localhost:5000",
   "secure": false,

@@ -23,7 +23,7 @@ import WithNavigate from './WithNavigate';
 import withToken from './WithToken';
 import { Navigate } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { login, register, googleOAuthLogin } from 'reducers/actions/authActions';
+import { login, register, loadUser } from 'reducers/actions/authActions';
 import { clearErrors } from 'reducers/actions/errorActions';
 import { css } from '@emotion/css';
 
@@ -50,22 +50,43 @@ class ProSignIn extends React.Component<IProSignInProps, IState>{
         }
     }
 
+
     componentDidUpdate(prevProps: Readonly<IProSignInProps>, prevState: Readonly<IState>, snapshot?: any): void {
-        const { error, auth } = this.props;
+        const { auth } = this.props;
         const { rootPath } = this.state;
 
-        if (auth.isAuthenticated) {
-            this.props.clearErrors();
-            this.props.navigate(rootPath, { replace: true });
+        //check authenticated status if props.auth changed
+        if (prevProps.auth !== auth) {
+            if (auth.isAuthenticated) {
+                this.props.clearErrors();
+                this.props.navigate(rootPath, { replace: true });
+            }
         }
     }
 
+    //email & psw login
     handleLogin = async (user: User): Promise<void> => {
         return this.props.login(user);
     }
 
+    //google oauth login
     handleGoogleOAuthLogin = () => {
-        this.props.googleOAuthLogin();
+        let timer: NodeJS.Timeout | null = null;
+        const openOAuthWindow = (): Window | null => {
+            const googleOAuthURL = "http://localhost:5000/api/auth/google";
+            return window.open(googleOAuthURL, "_blank", "width=500,height=600");
+        }
+        const newWindow = openOAuthWindow();
+        if (newWindow) {
+            console.log(`opened new window`)
+            timer = setInterval(() => {
+                if (newWindow.closed) {
+
+                    this.props.loadUser();
+                    if (timer) clearInterval(timer);
+                }
+            }, 500);
+        }
     }
 
     setLoginType = (type: LoginType) => {
@@ -305,10 +326,10 @@ export default withToken(
         connect(
             mapStateToProps,
             {
-                googleOAuthLogin,
                 login,
+                register,
                 clearErrors,
-                register
+                loadUser
             }
         )(ProSignIn)
     ));

@@ -1,12 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { Card, Col, Row, Skeleton, Typography, Menu } from 'antd';
-import { MostViewedSearchBox } from './StoreTableUtilities.js';
+import { connect, useDispatch, useSelector } from 'react-redux';
+import { Card, Col, Row, Skeleton, Typography, Menu, Input } from 'antd';
 import { SubContentHeader } from 'component/utility/Layout.jsx';
 import './Store.scss';
 import { getAlsoBoughtOnSku, getViewedUltimatelyBoughtOnSku } from 'reducers/actions/itemBBActions';
+
 const { Text } = Typography;
+const { Search } = Input;
+
+export const MostViewedSearchBox = (props) => {
+    const { name, reduxAction } = props;
+    const dispatch = useDispatch();
+    const { mostViewedItemsLoading } = useSelector((state) => state.bestbuy)
+    const [status, setStatus] = useState('')
+    const onSearch = (value) => {
+        // let isValid = /^\d{7}$/.test(value) //regex way check valid
+        let output = value.split('').filter(ele => !isNaN(ele));
+        let isValid = output.length === 7
+        if (isValid) {
+            setStatus('')
+            dispatch(reduxAction(value))
+        } else {
+            setStatus('error')
+        }
+    }
+
+    return (
+        <Search
+            placeholder={name}
+            allowClear
+            enterButton="Search"
+            size="large"
+            onSearch={onSearch}
+            loading={mostViewedItemsLoading}
+            status={status}
+        />
+    )
+}
+
 
 const menuItems = [
     {

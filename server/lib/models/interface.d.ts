@@ -24,11 +24,11 @@ interface ParserRecord extends Record<string, string | number> { };
 
 export interface IUserDoc extends Document {
     _id: Types.ObjectId;
-    email: string
-    password: string
+    email?: string | null
+    password?: string | null
     role: "admin" | "member"
     register_date: Date,
-    googleId?: string,
-    name?: string,
-    photo?: string
+    googleId?: string | null,
+    name?: string | null,
+    photo?: string | null
 }

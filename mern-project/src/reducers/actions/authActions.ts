@@ -16,32 +16,40 @@ import {
 
 export const tokenConfig = <State extends RootState>(getState: () => State) => {
     // Get token from localStorage
-    const token = getState().auth.token;
+    const { token, isOAuth } = getState().auth;
 
     //Headers
-    const config: AxiosRequestConfig & { headers: { 'x-auth-token': any } } = {
+    const config: AxiosRequestConfig & { headers: { 'x-auth-token': any, 'Authorization': any } } = {
         // headers: {
         //     "Content-type": "application/json"
         // },
         headers: {
             "Content-Type": "application/json",
-            "x-auth-token": undefined
+            "x-auth-token": undefined,
+            "Authorization": undefined
         },
         timeout: 30000
     };
 
-    if (token) {
+    if (token && isOAuth) {
+        config.headers["Authorization"] = "Bearer" + token;
+    } else if (token) {
         config.headers['x-auth-token'] = token;
+
     }
     return config;
 }
 
-
-
-export const login = (authObject: { username: string, password: string }) => async (dispatch: Dispatch<AnyAction>) => {
-    const { username, password } = authObject;
+/**
+ * 
+ * @param authConfig
+ * @returns dispatch payload to redux auth reducer
+ * @description for legacy email psw login 
+ */
+export const login = (authConfig: { username: string, password: string }) => async (dispatch: Dispatch<AnyAction>) => {
+    const { username, password } = authConfig;
     //Headers
-    const config = {
+    const config: AxiosRequestConfig = {
         headers: {
             "Content-type": "application/json"
         }
@@ -57,25 +65,36 @@ export const login = (authObject: { username: string, password: string }) => asy
             })
         })
         .catch(err => {
-            console.log(`err:`, err)
             dispatch(
                 returnErrors(err.response.data.msg, err.response.status, LOGIN_FAIL)
             );
-            dispatch({
-                type: LOGIN_FAIL
-            });
         })
 }
 
+// async function getUserAuthToken() {
+//     return axios.get('/api/auth/token')
+//         .then(res => {
+//             console.log(`get auth token: `, res.data)
+//             return res.data;
+//         })
+// }
 
 //Check token & load user
-export const loadUser = (): MyThunkAction => (dispatch, getState) => {
+export const loadUser = (): MyThunkAction => (dispatch: Dispatch<AnyAction>) => {
     dispatch({ type: USER_LOADING });
-    axios.get('/api/auth/user', tokenConfig(getState))
-        .then(res => dispatch({
-            type: USER_LOADED,
-            payload: res.data
-        }))
+    const config: AxiosRequestConfig = {
+        withCredentials: true,
+        headers: {
+            "Content-Type": "application/json",
+        }
+    }
+    axios.get('/api/auth/user', config)
+        .then(res =>
+            dispatch({
+                type: USER_LOADED,
+                payload: res.data
+            })
+        )
         .catch(err => {
             // dispatch(returnErrors(err.response.data.msg, err.response.status));
             dispatch({
@@ -96,11 +115,5 @@ export const register = () => (dispatch: Dispatch<AnyAction>) => {
     dispatch(
         returnErrors("Currently, registration is not yet open to public.", 202, REGISTER_FAIL)
     )
-}
-
-
-
-export const googleOAuthLogin = () => async (dispatch: Dispatch<AnyAction>) => {
-    window.open("http://localhost:5000/api/auth/google", "_self")
 }
 

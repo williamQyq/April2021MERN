@@ -8,6 +8,13 @@ import { fileURLToPath } from 'url';
 // const __dirname = path.dirname(__filename);
 dotenv.config();   //secrete keys in environment
 
+export const ORIGIN = (() => {
+    if (process.env.NODE_ENV === 'prodution') {
+        return process.env.PROD_ORIGIN;
+    }
+    return process.env.DEV_ORIGIN;
+})();
+
 export const sshConfig = {
     agent: process.env.SSH_AUTH_SOCK,
     username: process.env.WMS_USERNAME,

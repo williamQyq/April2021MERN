@@ -1,6 +1,8 @@
 import { Config as amazonSpApiConfig } from "amazon-sp-api/lib/typings/baseTypes";
 import { Config as sshTunnelConfig } from "tunnel-ssh";
 
+export declare const ORIGIN: URL | string;
+
 export declare const sshConfig: sshTunnelConfig;
 
 export declare const wmsCollections: {

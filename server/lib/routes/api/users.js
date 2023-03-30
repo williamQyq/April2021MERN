@@ -34,15 +34,15 @@ router.post('/register', auth, (req, res) => {
                     newUser.save()
                         .then(user => {
                             jwt.sign(
-                                { id: user.id },
+                                { id: user._id },
                                 JWT_SECRET,
-                                // {expiresIn: 3600},
+                                { expiresIn: 3600 },
                                 (err, token) => {
                                     if (err) throw err;
                                     res.json({
                                         token,
                                         user: {
-                                            id: user.id,
+                                            _id: user._id,
                                             email: user.email,
                                             role: user.role
                                         }
@@ -55,6 +55,9 @@ router.post('/register', auth, (req, res) => {
                 })
             })
 
+        })
+        .catch((err) => {
+            console.err(`Register User Error:\n`, err);
         });
 });
 
