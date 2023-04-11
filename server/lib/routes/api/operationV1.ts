@@ -1,7 +1,7 @@
-import { auth } from "#rootTS/lib/middleware/auth.js";
+import auth from "#root/lib/middleware/auth";
 import { Request, Response, Router } from "express";
-import { Listings, OperationApi } from "#rootTS/lib/query/OperationApi.js";
-import { parseCsvHelper } from "#rootTS/bin/helper/parseHelper.js";
+import { Listings, OperationApi } from "#root/lib/query/OperationApi";
+import { parseCsvHelper } from "#root/bin/helper/parseHelper";
 import {
     IPrimeCost as IRoutePrimeCost,
     IResponseErrorMessage,

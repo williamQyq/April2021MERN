@@ -1,24 +1,29 @@
 import mongoose from 'mongoose';
-import io from './index.js';    //socket io
+import io from '#root/index.js';    //socket io
+import config from 'config';
+import dotenv from 'dotenv';
 // import startScrapeScheduler from './bin/scrapeScheduler.js';    //scripts scheduler, node-cron
 // import startAmazonScheduler from '#amz/amazonSchedule.js';
-
+dotenv.config();
 //@Mongoose connection; Connect to Mongo.
-const mongoURI = process.env.DB_URI;
 mongoose.set('strictQuery', false);
-mongoose.connect(mongoURI, {
-    useUnifiedTopology: true,
-    useNewUrlParser: true
-})
-    .then(() => console.log('Atlas MongoDB Connected...'))
-    .catch(err => console.error('\nMongoCloud Error: \n\n', err));
+
+export async function connect() {
+    try {
+        await mongoose.connect(process.env.DB_URI)
+        console.log('Atlas MongoDB Connected...')
+    } catch (err: unknown) {
+        console.error('\nMongoCloud Error: \n\n', err)
+    }
+
+}
 
 const db = mongoose.connection;  //set up mongoose connection
 db.once('open', () => {
-    const COL_BESTBUY = process.env.DB_COLLECTION_BESTBUY
-    const COL_MICROSOFT = process.env.DB_COLLECTION_MICROSOFT
-    const COL_AMZ_PROD_PRICING = process.env.DB_COLLECTION_AMZ_PROD_PRICING
-    const COL_ITEMSPEC = process.env.DB_COLLECTION_ITEMSPEC
+    const COL_BESTBUY = config.get("db.col.bestbuy") as string;
+    const COL_MICROSOFT = config.get("db.col.microsoft") as string;
+    const COL_AMZ_PROD_PRICING = config.get("db.col.amzProdPricing") as string;
+    const COL_ITEMSPEC = config.get("db.col.itemSpec") as string;
 
     const bbStoreListings = db.collection(COL_BESTBUY).watch();
     const msStoreListings = db.collection(COL_MICROSOFT).watch();
@@ -50,11 +55,6 @@ db.once('open', () => {
         }
     })
 
-    // unitTest();
-    // startScrapeScheduler();
-    // @AMAZON SP UPDATE
-    // startAmazonScheduler();
-    // amazonScheduler()
-
 });
 
+export default db;

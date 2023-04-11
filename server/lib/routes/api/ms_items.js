@@ -1,8 +1,8 @@
 import express from 'express';
-import auth from '#middleware/auth.js';
-import { AlertApi } from '../../query/utilities.js';
-import io from '../../../index.js';
-import Microsoft from '../../../bin/helper/MS.js';
+import auth from '#middleware/auth';
+import { AlertApi } from '#query/utilities.js';
+import io from 'index.js';
+import Microsoft from '#bin/helper/MS.js';
 
 const router = express.Router();
 

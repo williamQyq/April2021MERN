@@ -1,12 +1,19 @@
 import cron from 'node-cron';
 import { performance } from 'perf_hooks';
 import SellingPartnerAPI from 'amazon-sp-api';
-import { AMZ_CREDENTIALS, AMZ_REFRESH_TOKEN, REGION } from '#root/config.js';
+import config from "config";
+
 
 export const sellingPartner = () => new SellingPartnerAPI({
-    region: REGION,
-    credentials: AMZ_CREDENTIALS,
-    refresh_token: AMZ_REFRESH_TOKEN
+    region: config.get('aws.region'),
+    credentials: {
+        SELLING_PARTNER_APP_CLIENT_ID: process.env.AMZ_SELLING_PARTNER_APP_CLIENT_ID,
+        SELLING_PARTNER_APP_CLIENT_SECRET: process.env.AMZ_SELLING_PARTNER_APP_CLIENT_SECRET,
+        AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
+        AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
+        AWS_SELLING_PARTNER_ROLE: process.env.AWS_SELLING_PARTNER_ROLE
+    },
+    refresh_token: process.env.AMZ_REFRESH_TOKEN
 });
 
 /* 

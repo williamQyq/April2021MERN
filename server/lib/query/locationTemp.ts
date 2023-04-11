@@ -5,7 +5,7 @@
     bfs or dfs or other algorithm to find shortest path is recommend. 
 
 */
-export default function getTempLoc() {
+export default function getTempLoc(): Map<string, string> {
     return new Map([
         ["10A-1", "15"],
         ["10A-2", "15"],

@@ -1,24 +1,30 @@
+`use strict`
 import express from 'express';
+
+import path from 'path';
+//for ts path alias resolve...
+
 import bbItemsRouter from '#routes/api/bb_items.js';
 import msItemsRouter from '#routes/api/ms_items.js';
 // import wmItemsRouter from '#routes/api/wm_items.js';
 import itemsRouter from '#routes/api/items.js';
 import usersRouter from '#routes/api/users.js';
-import authRouter from '#routesV1/api/auth.js';
 import wmsRouter from '#routes/api/wms.js';
-import wmsV1Router from "#routesV1/api/wmsV1.js";
 import operationRouter from '#routes/api/operation.js';
-import operationV1Router from '#routesV1/api/operationV1.js';
+import wmsV1Router from "#routes/api/wmsV1";
+import authRouter from '#routes/api/auth';
+import operationV1Router from '#routes/api/operationV1';
 
 import dotenv from 'dotenv'
 import { Server } from 'socket.io';
 import cors from 'cors';
 import passport from 'passport';
-import passportSetup from '#rootTS/lib/middleware/passport.js';
+import passportSetup from '#root/lib/middleware/passport';
 import session from 'express-session';
 
-dotenv.config();
+import * as myAtlasDb from "#root/lib/db/mongoDB";
 
+dotenv.config();
 passportSetup(passport);
 
 //@Bodyparser Middleware
@@ -29,8 +35,18 @@ const port = process.env.PORT || 5000;
 
 // @server connection
 const server = app.listen(port, () => {
-    console.log(`Server started on port ${port}`);
+    let env = undefined;
+    if (process.env.NODE_ENV === "production") {
+        env = "*** Production ***"
+    }
+    else {
+        env = "*** Development ***"
+    }
+    console.log(`${env}\n\nServer started on port ${port}...`);
 });
+
+myAtlasDb.connect();
+
 //development session config
 app.use(session({
     secret: process.env.SESSION_KEY,

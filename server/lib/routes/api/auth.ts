@@ -1,15 +1,17 @@
 import express, { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt, { SignCallback } from 'jsonwebtoken';
-import User from '#rootTS/lib/models/User.js';
-import { auth, ensureAuth } from '#rootTS/lib/middleware/auth.js'
-import { JWT_SECRET, ORIGIN } from '#root/config.js';
-import { IUserDoc } from '#root/lib/models/interface';
 import passport from 'passport';
+import config from 'config';
+import User from '#models/User';
+import { IUserDoc } from '#models/interface';
+import auth, { ensureAuth } from '#middleware/auth'
 import { IResponseErrorMessage } from './interface';
+
 const router = express.Router();
 
-
+const JWT_SECRET = config.get('JWT_SECRET') as string;
+const ORIGIN: string = "http://localhost:3000";
 // @route:  POST api/auth
 // @access: public
 // @desc:   authorize users login

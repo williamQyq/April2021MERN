@@ -1,8 +1,8 @@
 import express from 'express';
-import auth from '#middleware/auth.js';
-import { AlertApi } from '../../query/utilities.js';
-import io from '../../../index.js';
-import Bestbuy from '../../../bin/helper/BB.js';
+import auth from '#middleware/auth';
+import { AlertApi } from '#query/utilities.js';
+import io from '#root/index.js';
+import Bestbuy from '#bin/helper/BB.js';
 import {
     getMostViewedOnCategoryId,
     getViewedUltimatelyBought,

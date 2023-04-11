@@ -1,9 +1,11 @@
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET } from '#root/config.js';
+import config from "config";
+
+
 
 const auth = (req, res, next) => {
     const token = req.header('x-auth-token');
-
+    const JWT_SECRET = config.get("JWT_SECRET");
     if (!token)
         return res.status(401).json({ msg: "authorization denied." })
 

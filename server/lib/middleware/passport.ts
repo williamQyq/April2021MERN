@@ -1,17 +1,16 @@
 import { Strategy as GoogleStrategy, Profile } from 'passport-google-oauth20';
-import { gOAuth } from '#root/config.js';
 import { PassportStatic } from 'passport';
-import User from '#rootTS/lib/models/User.js';
+import User from '#root/lib/models/User';
 import { IUserDoc } from '../models/interface';
 import mongoose from 'mongoose';
-
+import config from 'config';
 export default function passportSetup(passport: PassportStatic) {
     passport.use(
         new GoogleStrategy(
             {
-                clientID: gOAuth.clientID,
-                clientSecret: gOAuth.clientSecret,
-                callbackURL: gOAuth.callbackURL,
+                clientID: process.env.GOOGLE_CLIENT_ID,
+                clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                callbackURL: config.get('passport.google.callbackURL'),
                 passReqToCallback: true
             },
             async (req, accessToken, refreshToken, profile: Profile, done) => {

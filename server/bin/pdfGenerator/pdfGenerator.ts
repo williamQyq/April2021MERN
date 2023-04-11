@@ -2,9 +2,9 @@ import puppeteer, { Browser, Page, PDFOptions } from "puppeteer";
 import hbs from "handlebars";
 import fs, { PathLike } from 'fs-extra';
 import path from "path";
-import { pdfGeneratorDirPath } from "#root/config.js";
 
 type HTMLString = string;
+const pdfGeneratorDirPath = './bin/pdfGenerator'
 
 export interface IPickUpTask {
     upc: string,

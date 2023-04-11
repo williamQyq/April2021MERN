@@ -1,6 +1,6 @@
 import { GoogleAuth } from 'google-auth-library';
 import { google, sheets_v4 } from 'googleapis';
-// import {gCredentials} from '#root/config.js';
+import config from 'config';
 
 export interface Form {
     spreadSheetId: string,
@@ -36,9 +36,20 @@ class GSpreadSheet {
     private _auth: GoogleAuth;
     constructor() {
         this._auth = new google.auth.GoogleAuth({
-            keyFile: "bin/gsheet/credentials.json",
+            // keyFile: "bin/gsheet/credentials.json", //removed
             scopes: GSpreadSheet._scopes,
-            // credentials: GSpreadSheet._credentials
+            credentials: {
+                "type": config.get("google.gsheet.type"),
+                // "project_id": config.get("google.gsheet.project_id"),
+                // "private_key_id": process.env.private_key_id,
+                "private_key": process.env.private_key,
+                "client_email": config.get("google.gsheet.client_email"),
+                "client_id": config.get("google.gsheet.client_id"),
+                // "auth_uri": config.get("google.gsheet.auth_uri"),
+                // "token_uri": config.get("google.gsheet.token_uri"),
+                // "auth_provider_x509_cert_url": config.get("google.gsheet.auth_provider_x509_cert_url"),
+                // "client_x509_cert_url": config.get("google.gsheet.client_x509_cert_url")
+            }
         })
     }
 

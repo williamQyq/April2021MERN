@@ -1,15 +1,14 @@
 import jwt from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
-import { JWT_SECRET } from '#root/config.js';
 import { IResponseErrorMessage } from '#root/@types/interface';
-
+import config from 'config';
 /**
  * 
  * @description my customized legacy jwt auth process  
  */
-export function auth<T = any>(req: Request, res: Response, next: NextFunction): Response<T> | void {
+export default function auth<T = any>(req: Request, res: Response, next: NextFunction): Response<T> | void {
     const token: string | undefined = req.header('x-auth-token');
-
+    const JWT_SECRET = config.get('JWT_SECRET') as string;
     if (!token) {
         let errMsg: IResponseErrorMessage = {
             msg: "authorization denied"
@@ -32,7 +31,7 @@ export function auth<T = any>(req: Request, res: Response, next: NextFunction): 
 
 export function ensureAuth(req: Request, res: Response, next: NextFunction) {
     if (req.isAuthenticated()) {
-        console.log("OAuth Authenticated");
+        // console.log("OAuth Authenticated");
         next();
     } else {
         console.log("Not OAuth Authenticated");

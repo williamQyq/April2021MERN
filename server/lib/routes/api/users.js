@@ -2,10 +2,11 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import auth from '#middleware/auth.js'
-import User from '#rootTS/lib/models/User.js'; //User Model
-import { JWT_SECRET } from '#root/config.js';
-const router = express.Router();
+import User from '#root/lib/models/User'; //User Model
+import config from 'config';
 
+const router = express.Router();
+const JWT_SECRET = config.get("JWT_SECRET");
 
 // @route POST api/users
 // @desc Register new Users
