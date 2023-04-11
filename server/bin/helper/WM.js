@@ -88,7 +88,7 @@ export default class Walmart extends Stores {
     @param: page:Puppeteer<page>
     @return: PageNumFooter
     */
-    async #parsePageNumFooter(page) {
+    async parsePageNumFooter(page) {
         let pageNumFooter = {
             // numPerPage: undefined,
             pagesNum: undefined
@@ -115,7 +115,7 @@ export default class Walmart extends Stores {
     */
     async getPagesNum(page, url) {
         await page.goto(url);
-        let pageNumFooter = await this.#parsePageNumFooter(page)
+        let pageNumFooter = await this.parsePageNumFooter(page)
         // let pageNumFooter = {
         //     pagesNum: Math.ceil(totalNum / numPerPage),
         //     numPerPage: numPerPage
@@ -128,7 +128,7 @@ export default class Walmart extends Stores {
         @return: itemsArray:Array<Item>
         @access: private
     */
-    async #parseItemsList(page) {
+    async parseItemsList(page) {
         const SKU_LIST_EXPR = '//li[@class="sku-item"]'
         const PRICE_LIST_EXPR = SKU_LIST_EXPR + '//div[@class="priceView-hero-price priceView-customer-price"]/span[@aria-hidden="true"]'
         const NAME_LIST_EXPR = SKU_LIST_EXPR + '//h4[@class="sku-header"]/a'
@@ -167,10 +167,10 @@ export default class Walmart extends Stores {
         await page.goto(url)
         await page.waitForTimeout(10000);
         try {
-            items = await this.#parseItemsList(page)
+            items = await this.parseItemsList(page)
         } catch {
             await page.goto(url)
-            items = await this.retry(() => this.#parseItemsList(page), 2000)
+            items = await this.retry(() => this.parseItemsList(page), 2000)
         }
         return items
     }

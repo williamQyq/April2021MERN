@@ -1,9 +1,9 @@
 {
-  "extends":"./tsconfig.paths.json",
+  "extends": "./tsconfig.paths.json",
   "ts-node": {
     "transpileOnly": true,
-    "esm":true,
-    "files":true
+    "esm": true,
+    "files": true
   },
   "compilerOptions": {
     "target": "esnext", /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
@@ -23,21 +23,16 @@
     "typeRoots": [
       "./@types",
       "./node_modules/@types",
-    ]
+    ],
   },
-  "tsc-alias":{
+  "tsc-alias": {
     "resolveFullPaths": true,
-    "replacers":{
-      "mongodb":{
-        "enabled":true,
-        "file":"./node_modules/mongodb/lib/index.js"
-      }
-    }
   },
   "include": [
     "./**/*.ts",
   ],
   "exclude": [
+    "./lib/db/wms.db.ts",
     "node_modules",
     "dist",
     ".vscode"

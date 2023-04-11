@@ -227,11 +227,11 @@ export class WmsDBApis {
         @desc: update shipment docs: operStatus field to new status
     */
     async updateShipmentStatus(trackingID: string, newStatus: shipmentStatus) {
-        let query = { "_id": trackingID }
+        let query = { _id: trackingID }
         let update = { $set: { "operStatus": newStatus } }
 
         try {
-            const collection: mongoDB.Collection = this.db!.collection(WmsDBApis.Collection.Shipment);
+            const collection: mongoDB.Collection<any> = this.db!.collection(WmsDBApis.Collection.Shipment);
             const updateResult: mongoDB.UpdateResult = await collection.updateOne(query, update);
             let isUpdated: boolean = updateResult.modifiedCount === 1 ? true : false;
             const updateQueryResp: IUpdateShipmentStatusResponse = {

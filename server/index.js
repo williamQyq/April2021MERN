@@ -1,4 +1,4 @@
-`use strict`
+
 import express from 'express';
 
 import path from 'path';
@@ -23,6 +23,9 @@ import passportSetup from '#root/lib/middleware/passport';
 import session from 'express-session';
 
 import * as myAtlasDb from "#root/lib/db/mongoDB";
+import path from 'path';
+
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 dotenv.config();
 passportSetup(passport);
@@ -51,6 +54,10 @@ myAtlasDb.connect();
 app.use(session({
     secret: process.env.SESSION_KEY,
     resave: false,
+    // connect.session() MemoryStore is not designed for a production environment, 
+    // as it will leak memory, and will not scale past a single process.
+    // ***solve add below*** : 
+    // store: new RedisStore(), 
     saveUninitialized: false,
     cookie: { secure: process.env.NODE_ENV === 'production' }
 }))
