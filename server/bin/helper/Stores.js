@@ -1,5 +1,4 @@
 import puppeteer from 'puppeteer';
-import { USER_AGENT } from '#root/config.js'
 
 /* 
 declare class Stores{
@@ -56,7 +55,7 @@ export default class Stores {
         const page = await browser.newPage();
         await page.setViewport({ width: 1920, height: 1080 })   //set view port to 1920x1080
         // await page.setDefaultNavigationTimeout(0);
-        await page.setUserAgent(USER_AGENT);
+        // await page.setUserAgent(USER_AGENT);
         await page.setRequestInterception(true);
         page.on('request', (req) => {
             if (req.resourceType() === 'image') {

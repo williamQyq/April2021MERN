@@ -1,4 +1,10 @@
 {
+  "extends": "./tsconfig.paths.json",
+  "ts-node": {
+    "transpileOnly": true,
+    "esm": true,
+    "files": true
+  },
   "compilerOptions": {
     "target": "esnext", /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
     "module": "ESNext", /* Specify what module code is generated. */
@@ -8,43 +14,20 @@
     "skipLibCheck": true, /* Skip type checking all .d.ts files. */
     "allowJs": true,
     "rootDir": ".",
-    "checkJs": true,
+    "checkJs": false,
     "moduleResolution": "node",
-    "types": [
-      "node"
-    ],
     "outDir": "./dist",
-    "baseUrl": ".",
-    "paths": {
-      "@types": [
-        "@types/interface.d.ts"
-      ],
-      "#root/*": [
-        "./*"
-      ],
-      "#rootTS/*": [
-        "./*"
-      ],
-      "#binTS/*": [
-        "./bin/*"
-      ],
-      "#query/*": [
-        "./lib/query/*"
-      ],
-      "#amazonSPTS/*": [
-        "./bin/amazonSP/*"
-      ]
-    },
-    "typeRoots": [
-      "./@types",
-      "./node_modules/@types",
-    ]
+    "types": ["node","mongodb"]
+  },
+  "tsc-alias": {
+    "resolveFullPaths": true
   },
   "include": [
     "./**/*.ts",
   ],
   "exclude": [
     "node_modules",
-    "./dist/**/*"
+    "dist",
+    ".vscode",
   ]
 }

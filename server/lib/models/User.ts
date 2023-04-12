@@ -6,16 +6,18 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema<IUserDoc>({
     _id: { type: Schema.Types.ObjectId, auto: true },
     email: {
-        type: String,
-        require: true,
-        unique: true
+        type: Schema.Types.String,
+        // require: true,
+        allowNull: true
+        // unique: true
     },
     password: {
-        type: String,
-        require: true
+        type: Schema.Types.String,
+        allowNull: true
+        // require: true
     },
     role: {
-        type: String,
+        type: Schema.Types.String,
         default: 'member',
         enum: ['admin', 'member'],
         require: true
@@ -26,12 +28,15 @@ const UserSchema = new Schema<IUserDoc>({
     },
     googleId: {
         type: String,
+        allowNull: true,
     },
     name: {
         type: String,
+        allowNull: true
     },
     photo: {
-        type: String
+        type: String,
+        allowNull: true
     }
 
 }, { collection: 'users' });

@@ -1,7 +1,7 @@
 import moment from 'moment';
 import * as mongoDB from 'mongodb';
-import { IPickUp, IPickUpTask } from '#rootTS/bin/pdfGenerator/pdfGenerator';
-import wms from "#rootTS/wms/wmsDatabase.js";
+import { IPickUp, IPickUpTask } from '#root/bin/pdfGenerator/pdfGenerator';
+import wms from "lib/db/wms.db";
 import {
     BackUpLocationDoc,
     IAwaitingShipment,
@@ -12,8 +12,13 @@ import {
     LocationDoc,
     PickUpItemsDoc
 } from '#root/@types/interface';
-import { COUNT_CREATED_PICKUP_LABEL, GET_NEED_TO_SHIP_ITEMS_FOR_PICKUP_BY_TODAY, GET_UPC_BACK_UP_LOCS_FOR_PICK_UP, GET_UPC_LOCATION_QTY_EXCEPT_WMS } from '#query/aggregate.js';
-import getTempLoc from '#root/lib/query/locationTemp.js'; //bad practice pay attention.
+import {
+    COUNT_CREATED_PICKUP_LABEL,
+    GET_NEED_TO_SHIP_ITEMS_FOR_PICKUP_BY_TODAY,
+    GET_UPC_BACK_UP_LOCS_FOR_PICK_UP,
+    GET_UPC_LOCATION_QTY_EXCEPT_WMS
+} from '#query/aggregate.query';
+import getTempLoc from '#root/lib/query/locationTemp'; //bad practice pay attention.
 
 interface IWmsCollection {
     [key: string]: string
@@ -222,11 +227,11 @@ export class WmsDBApis {
         @desc: update shipment docs: operStatus field to new status
     */
     async updateShipmentStatus(trackingID: string, newStatus: shipmentStatus) {
-        let query = { "_id": trackingID }
+        let query = { _id: trackingID }
         let update = { $set: { "operStatus": newStatus } }
 
         try {
-            const collection: mongoDB.Collection = this.db!.collection(WmsDBApis.Collection.Shipment);
+            const collection: mongoDB.Collection<any> = this.db!.collection(WmsDBApis.Collection.Shipment);
             const updateResult: mongoDB.UpdateResult = await collection.updateOne(query, update);
             let isUpdated: boolean = updateResult.modifiedCount === 1 ? true : false;
             const updateQueryResp: IUpdateShipmentStatusResponse = {
@@ -282,7 +287,7 @@ export class WmsDBApis {
                             })
                     })
                 )
-        ) 
+        )
     }
 
     async countNeedToShipPickUpFromShipment(): Promise<IPickUpCountDoc> {

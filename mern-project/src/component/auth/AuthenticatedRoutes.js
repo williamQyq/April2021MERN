@@ -33,8 +33,7 @@ const routes = [
       {
         index: true,
         element: <Alert />
-      },
-      {
+      }, {
         path: "bestbuy-list",
         element: <StoreBB />,
         children: [
@@ -43,8 +42,7 @@ const routes = [
             element: <ItemDetail />
           }
         ]
-      },
-      {
+      }, {
         path: "microsoft-list",
         element: <StoreMS />,
         children: [
@@ -53,8 +51,7 @@ const routes = [
             element: <ItemDetail />
           }
         ]
-      },
-      {
+      }, {
         path: "walmart-list",
         element: <StoreWM />,
         children: [
@@ -93,16 +90,13 @@ const routes = [
       {
         index: true,
         element: <OutBound />
-      },
-      {
+      }, {
         path: "needToShip",
         element: <NeedToShip />
-      },
-      {
+      }, {
         path: "inventoryReceived",
         element: <InventoryReceived />
-      },
-      {
+      }, {
         path: "searchRecord",
         element: <SearchRecords />
       }

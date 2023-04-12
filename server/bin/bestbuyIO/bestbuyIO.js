@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { BESTBUY_API_KEY } from '#root/config.js';
 const DEFAULT_PAGE_SIZE = 50;
 
 export const getMostViewedOnCategoryId = async (categoryId, pageSize = DEFAULT_PAGE_SIZE) => {
@@ -7,7 +6,7 @@ export const getMostViewedOnCategoryId = async (categoryId, pageSize = DEFAULT_P
     let mostViewedProducts = [];
 
     let params = {
-        apiKey: BESTBUY_API_KEY,
+        apiKey: process.env.BESTBUY_API_KEY,
         format: 'json',
         pageSize,
     }

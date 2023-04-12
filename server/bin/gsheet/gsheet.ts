@@ -1,6 +1,6 @@
 import { GoogleAuth } from 'google-auth-library';
 import { google, sheets_v4 } from 'googleapis';
-// import {gCredentials} from '#root/config.js';
+import config from 'config';
 
 export interface Form {
     spreadSheetId: string,
@@ -36,9 +36,20 @@ class GSpreadSheet {
     private _auth: GoogleAuth;
     constructor() {
         this._auth = new google.auth.GoogleAuth({
-            keyFile: "bin/gsheet/credentials.json",
+            // keyFile: "bin/gsheet/credentials.json", //removed
             scopes: GSpreadSheet._scopes,
-            // credentials: GSpreadSheet._credentials
+            credentials: {
+                "type": config.get("google.gsheet.type"),
+                // "project_id": config.get("google.gsheet.project_id"),
+                // "private_key_id": process.env.private_key_id,
+                "private_key": process.env.private_key,
+                "client_email": config.get("google.gsheet.client_email"),
+                "client_id": config.get("google.gsheet.client_id"),
+                // "auth_uri": config.get("google.gsheet.auth_uri"),
+                // "token_uri": config.get("google.gsheet.token_uri"),
+                // "auth_provider_x509_cert_url": config.get("google.gsheet.auth_provider_x509_cert_url"),
+                // "client_x509_cert_url": config.get("google.gsheet.client_x509_cert_url")
+            }
         })
     }
 
@@ -97,15 +108,20 @@ export class GSheetNeedToShip extends GSheet {
         const upgradeTrackingSet = new Set<string>();
         const res = await this.batchReadSheet(spreadSheetId, ranges as string[])
 
-        let trackings: string[] = res.valueRanges![0].values?.flat() as string[];
-        let forUpgradeResults = res.valueRanges![1].values?.flat() as Array<undefined | "yes">;
+        let trackings: string[] = res.valueRanges![0].values!.flat() as string[];
+        let forUpgradeResults = res.valueRanges![1].values!.flat() as Array<undefined | "yes">;
 
         //load each need upgrade trackings to Set.
-        forUpgradeResults?.forEach((isTaskForUpgrade, index) => {
-            if (isTaskForUpgrade === "yes" && trackings !== undefined) {
-                upgradeTrackingSet.add(trackings[index])
-            }
-        })
+        if (forUpgradeResults) {
+            forUpgradeResults.forEach((isTaskForUpgrade, index) => {
+                if (isTaskForUpgrade === "yes" && trackings !== undefined) {
+                    upgradeTrackingSet.add(trackings[index])
+                }
+            })
+        } else {
+            console.log(`forUpgradeResults is undefined`)
+        }
+        
         return upgradeTrackingSet;
     }
 }

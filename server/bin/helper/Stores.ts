@@ -19,7 +19,7 @@ interface SubStoreInterface extends StoresInterface {
 
 }
 
-export class Stores implements StoresInterface {
+export default class Stores implements StoresInterface {
 
     constructor() {
     }

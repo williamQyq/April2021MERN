@@ -47,14 +47,16 @@
     "@types/papaparse": "^5.3.7",
     "@types/redux-state-sync": "^3.1.5",
     "react-scripts": "^5.0.1",
-    "redux-devtools-extension": "^2.13.9"
+    "redux-devtools-extension": "^2.13.9",
+    "rimraf": "^4.4.1"
   },
   "scripts": {
     "start": "react-scripts start",
     "tsc": "tsc",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "clean": "rimraf node_modules package-lock.json"
   },
   "proxy": "http://localhost:5000",
   "secure": false,

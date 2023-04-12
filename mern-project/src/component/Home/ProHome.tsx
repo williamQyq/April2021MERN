@@ -18,10 +18,10 @@ import { CgSun, CgMoon } from 'react-icons/cg';
 import { ThemeContext } from './ThemeProvider';
 
 interface IProHomeProps {
-    navigate: NavigateFunction;
     location: Location;
+    navigate: NavigateFunction;
     logout: () => void;
-
+    loadUser: () => void;
 };
 
 interface IState {
@@ -37,6 +37,9 @@ class ProHome extends React.Component<IProHomeProps, IState>{
         this.state = {
             pathname: "/app/operation",
         }
+    }
+    componentDidMount(): void {
+        // this.props.loadUser();
     }
 
     setPathname = (pathname: string) => {

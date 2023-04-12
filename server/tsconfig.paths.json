@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "*":["*.ts","*.js"],
+            "#root/*":["*"],
+            "#bin/*":["bin/*"],
+            "#query/*":["lib/query/*"],
+            "#models/*":["lib/models/*"],
+            "#amazonSP/*":["bin/amazonSP/*"],
+            "#routes/*":["lib/routes/*"],
+            "#middleware/*":["lib/middleware/*"],
+        }
+    }
+}
+

@@ -1,5 +1,5 @@
 import { FilterQuery, UpdateQuery, QueryOptions, Model } from "mongoose";
-import PrimeCost from "#rootTS/lib/models/PrimeCost.js";
+import PrimeCost from "#root/lib/models/PrimeCost";
 import { IPrimeCostDoc } from "../models/interface";
 import { IPrimeCost as IRoutePrimeCost, ISkuUploadFeedsType, listingItem, Upc } from "../routes/api/interface.d";
 

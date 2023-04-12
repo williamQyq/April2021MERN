@@ -98,7 +98,7 @@ export default class Microsoft extends Stores {
         return this.url + skipItemsNum
     }
 
-    async #parsePageNumFooter(page) {
+    async parsePageNumFooter(page) {
         let res = {
             numPerPage: undefined,
             totalNum: undefined
@@ -115,7 +115,7 @@ export default class Microsoft extends Stores {
         return res
     }
 
-    async #closeDialogIfAny(page) {
+    async closeDialogIfAny(page) {
         try {
             await page.waitForXPath('//div[@class="sfw-dialog"]/div[@class="c-glyph glyph-cancel"]')
             let dialogCloseBtn = (await page.$x('//div[@class="sfw-dialog"]/div[@class="c-glyph glyph-cancel"]'))[0]
@@ -132,8 +132,8 @@ export default class Microsoft extends Stores {
     */
     async getPagesNum(page, url) {
         await page.goto(url);
-        await this.#closeDialogIfAny(page)    //may or may not close the dialog, it depends if the dialog shows up.
-        let res = await this.#parsePageNumFooter(page)
+        await this.closeDialogIfAny(page)    //may or may not close the dialog, it depends if the dialog shows up.
+        let res = await this.parsePageNumFooter(page)
 
         let pageNumFooter = {
             pagesNum: Math.ceil(res.totalNum / res.numPerPage),
@@ -148,7 +148,7 @@ export default class Microsoft extends Stores {
         @param: url: string
         @return: Array<Item>
     */
-    async #parseItemsList(page) {
+    async parseItemsList(page) {
         const ITEM_ELEMENTS_EXPR = '//div[@class="m-channel-placement-item f-wide f-full-bleed-image"]'
         const PRICE_SPAN_EXPR = 'span[itemprop="price"]'
         const IS_INSTOCK_EXPR = 'strong[class="c-badge f-small f-lowlight x-hidden-focus"]'
@@ -192,7 +192,7 @@ export default class Microsoft extends Stores {
         await page.goto(url)
         // await page.waitForTimeout(10000);
 
-        let items = await this.#parseItemsList(page)
+        let items = await this.parseItemsList(page)
         return items
     }
 

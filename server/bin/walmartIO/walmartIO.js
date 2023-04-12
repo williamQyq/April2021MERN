@@ -1,7 +1,6 @@
 import fs from 'fs';
 import crypto from 'crypto';
 import fetch from 'node-fetch'
-import { WM_RSA_PASS_PHASE } from '#root/config.js'
 
 let pem = fs.readFileSync('./wm_rsa_key_pair.pem')
 let key = pem.toString('ascii')

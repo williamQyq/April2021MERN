@@ -1,9 +1,12 @@
-import ItemSpec from '../models/Spec.js';
-import BestbuyAlertModel from "../models/BBItem.js";
-import MicrosoftAlertModel from "../models/MsItem.js";
-import { AmzProdPricing, AmzIdentifier } from '../models/Amz.js';
-import wms from '#wmsTS/wmsDatabase.js';
 import mongoose from 'mongoose';
+import ItemSpec from '#models/Spec.js';
+import BestbuyAlertModel from "#models/BBItem.js";
+import MicrosoftAlertModel from "#models/MsItem.js";
+import { AmzProdPricing, AmzIdentifier } from '#models/Amz.js';
+import wms from 'lib/db/wms.db';
+import moment from 'moment';
+import { google } from 'googleapis';
+import config from 'config';
 
 const { ObjectId } = mongoose.Types;
 import {
@@ -26,8 +29,41 @@ import {
     GET_INVENTORY_LOCATION_BY_COMPOUND_FILTER,
     GET_SELLER_INVENTORY_BY_COMPOUND_FILTER
 } from './aggregate.js';
-import GenerateGSheetApis from '../../bin/gsheet/gsheet.js';
-import moment from 'moment';
+
+const credentials = {
+    "type": config.get("google.gsheet.type"),
+    "project_id": config.get("google.gsheet.project_id"),
+    "private_key_id": process.env.private_key_id,
+    "private_key": process.env.private_key,
+    "client_email": config.get("google.gsheet.client_email"),
+    "client_id": config.get("google.gsheet.client_id"),
+    "auth_uri": config.get("google.gsheet.auth_uri"),
+    "token_uri": config.get("google.gsheet.token_uri"),
+    "auth_provider_x509_cert_url": config.get("google.gsheet.auth_provider_x509_cert_url"),
+    "client_x509_cert_url": config.get("google.gsheet.client_x509_cert_url")
+}
+
+class GenerateGSheetApis {
+    constructor() {
+        this._scopes = "https://www.googleapis.com/auth/spreadsheets";
+        this._credentials = credentials;
+        this.auth = undefined;
+    }
+    async _getSpreadSheet() {
+        this.auth = new google.auth.GoogleAuth({
+            keyFile: "./bin/gsheet/credentials.json",
+            scopes: this._scopes,
+            // credentials: this._credentials
+        })
+        const authClientObject = await this.auth.getClient();
+        const googleSheetsInstance = google.sheets({ version: "v4", auth: authClientObject });
+        const spreadSheet = googleSheetsInstance.spreadsheets;
+
+        return spreadSheet;
+    }
+
+}
+
 
 //@desc Api for ERP application
 //@desc next version, currently not used.

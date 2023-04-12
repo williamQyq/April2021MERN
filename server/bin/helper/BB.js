@@ -114,15 +114,15 @@ export default class Bestbuy extends Stores {
     */
     async getItemSpec(page, url) {
         await page.goto(url);
-        await this.#openSpecWrapper(page);
-        let itemSpec = await this.#parseItemSpec(page);
+        await this.openSpecWrapper(page);
+        let itemSpec = await this.parseItemSpec(page);
         return itemSpec;
     }
-    async #openSpecWrapper(page) {
+    async openSpecWrapper(page) {
         let specWrapper = (await page.$x('//div[@class="specs-container specs-wrapper all-specs-wrapper"]'))[0]
         specWrapper.click()
     }
-    async #parseItemSpec(page) {
+    async parseItemSpec(page) {
         const KEYS_XPATH_EXPR = '//div[@class="row-title"]'
         const VALUES_XPATH_EXPR = '//div[contains(@class,"row-value")]'
         let keys = await this.evaluateElementsText(page, KEYS_XPATH_EXPR)
@@ -141,7 +141,7 @@ export default class Bestbuy extends Stores {
     @param: page:Puppeteer<page>
     @return: PageNumFooter
     */
-    async #parsePageNumFooter(page) {
+    async parsePageNumFooter(page) {
         let pageNumFooter = {
             numPerPage: undefined,
             totalNum: undefined
@@ -170,7 +170,7 @@ export default class Bestbuy extends Stores {
     */
     async getPagesNum(page, url) {
         await page.goto(url);
-        let { totalNum, numPerPage } = await this.#parsePageNumFooter(page)
+        let { totalNum, numPerPage } = await this.parsePageNumFooter(page)
         let pageNumFooter = {
             pagesNum: Math.ceil(totalNum / numPerPage),
             numPerPage: numPerPage
@@ -183,7 +183,7 @@ export default class Bestbuy extends Stores {
         @return: itemsArray:Array<Item>
         @access: private
     */
-    async #parseItemsList(page) {
+    async parseItemsList(page) {
         const SKU_LIST_EXPR = '//li[@class="sku-item"]'
         const PRICE_LIST_EXPR = SKU_LIST_EXPR + '//div[@class="priceView-hero-price priceView-customer-price"]/span[@aria-hidden="true"]'
         const NAME_LIST_EXPR = SKU_LIST_EXPR + '//h4[@class="sku-title"]/a'
@@ -223,13 +223,13 @@ export default class Bestbuy extends Stores {
         try {
             await page.goto(url)
             // await page.waitForTimeout(10000);
-            items = await this.#parseItemsList(page)
+            items = await this.parseItemsList(page)
             return items;
         } catch (e) {
             console.log(`getPageItems err... retrying...\n\n${e}`)
             await this.retry(async () => {
                 await page.goto(url)
-                items = await this.#parseItemsList(page)
+                items = await this.parseItemsList(page)
                 return items;
             }, 2000)
         }

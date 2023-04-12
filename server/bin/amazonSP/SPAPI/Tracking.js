@@ -116,10 +116,10 @@ export default class Tracking {
     }
     // @overload
     createAndAddTasksToBucket(bucket, trackingId) {
-        bucket.addTask(() => this.#taskPromise(trackingId))
+        bucket.addTask(() => this.taskPromise(trackingId))
     }
     // @overload
-    #taskPromise(trackingId) {
+    taskPromise(trackingId) {
         return new Promise((resolve, reject) => {
             let param = { ...this.param };
             // param.path.trackingId = trackingId;

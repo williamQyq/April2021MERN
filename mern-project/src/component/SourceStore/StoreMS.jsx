@@ -4,12 +4,11 @@ import { getMSItems } from 'reducers/actions/itemMSActions.js';
 import PropTypes from 'prop-types';
 import StoreTable from 'component/SourceStore/StoreTable.jsx';
 import { SocketContext, socketType } from 'component/socket/socketContext.js';
-import { storeType } from './data.js';
 import {
     handleErrorOnRetrievedItemsOnlinePrice,
     handleOnRetrievedItemsOnlinePrice
 } from 'reducers/actions/itemActions.js';
-
+import { storeType } from 'component/utility/cmpt.global';
 
 class MS extends React.Component {
     static contextType = SocketContext

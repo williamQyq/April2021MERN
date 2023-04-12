@@ -1,0 +1,36 @@
+{
+    "db": {
+        "col": {
+            "bestbuy": "bbStoreListings",
+            "microsoft": "msStoreListings",
+            "itemSpec": "itemSpec",
+            "amzProdPricing": "amzProdPricing",
+            "watchList": "product_price_listings"
+        }
+    },
+    "aws": {
+        "region": "na",
+        "bucket": {
+            "name": "returnimages",
+            "region": "us-east-1"
+        }
+    },
+    "JWT_SECRET": "williamERP_myJwtSecret",
+    "google": {
+        "gsheet": {
+            "type": "service_account",
+            "project_id": "rockystonebot",
+            "client_email": "iambot@rockystonebot.iam.gserviceaccount.com",
+            "client_id":"100017332083677086221",
+            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+            "token_uri": "https://oauth2.googleapis.com/token",
+            "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+            "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/iambot%40rockystonebot.iam.gserviceaccount.com"
+        }
+    },
+    "passport":{
+        "google":{
+            "callbackURL":"/api/auth/google/callback"
+        }
+    }
+}

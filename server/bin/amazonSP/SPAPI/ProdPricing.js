@@ -31,11 +31,11 @@ export default class ProdPricing {
     @param:
     @return: a Map of upc and asins 
     */
-    #createProdAsinsMapping(prod) {
+    createProdAsinsMapping(prod) {
         let upcAsinsMap = new Map();
 
         let asins = prod.identifiers.map(identifier => identifier.asin);  //get all asins
-        let asinsChunks = this.#sliceAsinsOnLimit(asins);  //divide asins to chuncks on asins number limit
+        let asinsChunks = this.sliceAsinsOnLimit(asins);  //divide asins to chuncks on asins number limit
         //add to Map for each asins chunk.
         asinsChunks.forEach(asinsChunk => {
             upcAsinsMap.set(prod.upc, asinsChunk);
@@ -44,7 +44,7 @@ export default class ProdPricing {
         return upcAsinsMap;
     }
 
-    #sliceAsinsOnLimit(asinsArray) {
+    sliceAsinsOnLimit(asinsArray) {
         let chuncks = [];
         let limit = ProdPricing.limit.asinsLimit;
 
@@ -56,14 +56,14 @@ export default class ProdPricing {
 
     // create upc asins prodpricing task and push to bucket
     createAndAddTasksToBucket(bucket, prod) {
-        let upcAsinsMap = this.#createProdAsinsMapping(prod);
+        let upcAsinsMap = this.createProdAsinsMapping(prod);
         for (const [upc, asins] of upcAsinsMap) {
-            bucket.addTask(() => this.#taskPromise(upc, asins))
+            bucket.addTask(() => this.taskPromise(upc, asins))
         }
 
     }
 
-    #taskPromise(upc, asins) {
+    taskPromise(upc, asins) {
         return new Promise((resolve, reject) => {
             let param = { ...this.getPricingParam, query: { ...this.getPricingParam.query } };  //make deep copy of apiParam
             param.query.Asins = asins;
