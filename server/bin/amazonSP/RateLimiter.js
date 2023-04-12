@@ -27,7 +27,7 @@ export const sellingPartner = () => new SellingPartnerAPI({
 
 class LeakyBucket {
     static capacity = 100;
-    #performance = 0;
+    _performance = 0;
 
     constructor() {
         this.queue = [];
@@ -36,18 +36,18 @@ class LeakyBucket {
          *  @private
          *  @desc: push task to queue
          */
-    #enqueue(task) {
+    _enqueue(task) {
         this.queue.push(task);
     }
     /*
      *  @private
      *  @return: first task in task queue
      */
-    #dequeue() {
+    _dequeue() {
         return this.queue.shift();
     }
 
-    #delay(ms) {
+    _delay(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
@@ -57,7 +57,7 @@ class LeakyBucket {
      * @param: task: ()=>Promise<{upc:string, sellingPartnerResponse:SpResponse, limit: APILimit}>
      * @return: result: TaskResult
      */
-    async #measureAndResolvePromise(index, task) {
+    async _measureAndResolvePromise(index, task) {
         let onPromiseDone = () => performance.now() - start;
         let start = performance.now();
         let taskResponse = await task();
@@ -81,15 +81,15 @@ class LeakyBucket {
      * @param: task: Promise<{upc:string, offers:AmzProdPricing, limit: APILimit}>
      */
     addTask(task) {
-        this.#enqueue(task);
+        this._enqueue(task);
     }
 
     getQueueLength() {
         return this.queue.length;
     }
 
-    #clearTimer() {
-        this.#performance = 0;
+    clearTimer() {
+        this._performance = 0;
     }
     /*
      *  @public
@@ -106,8 +106,8 @@ class LeakyBucket {
         if (!isQueueEmpty) {
             try {
                 for (let i = 0; i < queueLength; i++) {
-                    let task = this.#dequeue()
-                    let result = await this.#measureAndResolvePromise(i, task)
+                    let task = this._dequeue()
+                    let result = await this._measureAndResolvePromise(i, task)
                     if (result === undefined) {
                         console.log(``)
                         continue;
@@ -130,16 +130,16 @@ class LeakyBucket {
     }>
     */
     async delayIfReachedLimit(index, limit, timeCost) {
-        this.#performance += timeCost;
+        this._performance += timeCost;
         let ratePerSec = limit.ratePerSec;
         let reqRateIsReached = (index + 1) % ratePerSec == 0 ? true : false;
 
         if (reqRateIsReached) {
-            if (this.#performance >= 1000) {
+            if (this._performance >= 1000) {
                 console.log(`Req Rate Limit Reached, delay 1 sec...`)
-                await this.#delay(1000);
+                await this._delay(1000);
             }
-            this.#clearTimer();
+            this.clearTimer();
         }
     }
 

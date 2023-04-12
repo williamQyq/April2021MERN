@@ -108,15 +108,20 @@ export class GSheetNeedToShip extends GSheet {
         const upgradeTrackingSet = new Set<string>();
         const res = await this.batchReadSheet(spreadSheetId, ranges as string[])
 
-        let trackings: string[] = res.valueRanges![0].values?.flat() as string[];
-        let forUpgradeResults = res.valueRanges![1].values?.flat() as Array<undefined | "yes">;
+        let trackings: string[] = res.valueRanges![0].values!.flat() as string[];
+        let forUpgradeResults = res.valueRanges![1].values!.flat() as Array<undefined | "yes">;
 
         //load each need upgrade trackings to Set.
-        forUpgradeResults?.forEach((isTaskForUpgrade, index) => {
-            if (isTaskForUpgrade === "yes" && trackings !== undefined) {
-                upgradeTrackingSet.add(trackings[index])
-            }
-        })
+        if (forUpgradeResults) {
+            forUpgradeResults.forEach((isTaskForUpgrade, index) => {
+                if (isTaskForUpgrade === "yes" && trackings !== undefined) {
+                    upgradeTrackingSet.add(trackings[index])
+                }
+            })
+        } else {
+            console.log(`forUpgradeResults is undefined`)
+        }
+        
         return upgradeTrackingSet;
     }
 }

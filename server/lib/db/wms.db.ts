@@ -1,15 +1,15 @@
 import tunnel from 'tunnel-ssh';
-import * as mongodb from 'mongodb';
+import {MongoClient, Db} from 'mongodb';
 import { Server } from 'net';
 import dotenv from 'dotenv';
 dotenv.config();
 //when modules/instance being required in nodejs, it will only load once.
 
 class Wms {
-    private _client: mongodb.MongoClient;
+    private _client: MongoClient;
     private _tunnelServer: Server | null = null;
     constructor() {
-        this._client = new mongodb.MongoClient(
+        this._client = new MongoClient(
             `mongodb://127.0.0.1:${process.env.WMS_LOCAL_PORT}/`,
             {
                 socketTimeoutMS: 10000,
@@ -36,7 +36,7 @@ class Wms {
 
     }
 
-    async connect(): Promise<mongodb.Db | void> {
+    async connect(): Promise<Db | void> {
         const sshConfig = {
             username: process.env.WMS_USERNAME,
             password: process.env.WMS_PASSWORD,

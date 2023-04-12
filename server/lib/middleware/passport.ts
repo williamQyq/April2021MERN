@@ -22,20 +22,21 @@ export default function passportSetup(passport: PassportStatic) {
                         done(null, user);
                     } else {
                         //register new user
+                        if (process.env.NODE_ENV === "development") {
+                            const newUser: IUserDoc = new User({
+                                email: null,
+                                password: null,
+                                role: "member",
+                                googleId: profile.id,
+                                name: profile._json.given_name,
+                                photo: profile._json.picture
+                            })
 
-                        const newUser: IUserDoc = new User({
-                            email: null,
-                            password: null,
-                            role: "member",
-                            googleId: profile.id,
-                            name: profile._json.given_name,
-                            photo: profile._json.picture
-                        })
-
-                        user = await User.create(newUser);
-                        console.log("created new user.")
-                        done(null, user);
-
+                            user = await User.create(newUser);
+                            console.log("created new user.")
+                            done(null, user);
+                        }
+                        done("[Warning] Auto Register User in Production not allowed.",undefined)
                     }
                 } catch (err: any) {
                     console.error(err);

@@ -16,25 +16,18 @@
     "rootDir": ".",
     "checkJs": false,
     "moduleResolution": "node",
-    "types": [
-      "node"
-    ],
     "outDir": "./dist",
-    "typeRoots": [
-      "./@types",
-      "./node_modules/@types",
-    ],
+    "types": ["node","mongodb"]
   },
   "tsc-alias": {
-    "resolveFullPaths": true,
+    "resolveFullPaths": true
   },
   "include": [
     "./**/*.ts",
   ],
   "exclude": [
-    "./lib/db/wms.db.ts",
     "node_modules",
     "dist",
-    ".vscode"
+    ".vscode",
   ]
 }
