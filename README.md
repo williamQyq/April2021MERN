@@ -14,6 +14,14 @@ description: MERN stack project
 ---
 This project has access to the `MongoDB database` of the warehouse, the Amazon Seller Central via the `Selling Partner API`, the `Walmart Open I/O`, `Google services`, and `OpenAI`. It makes it easier for small to medium companies to maintain, track, and manage assets, with support for Typescript and ESNext modules.
 <br/>
+
+## Before Started  
+
+Edit import in `/server/dist/lib/db/wms.db.js`, because `tsc-alias` fail to resolve typescript imports for mongodb module.
+
+`import { MongoClient } from 'mongodb.js';`
+-> `import {MongoClient} from 'mongodb';`
+
 ## Getting Started
 ---
 

@@ -29,5 +29,6 @@
     "node_modules",
     "dist",
     ".vscode",
+    "./lib/db/wms.db.ts"
   ]
 }

@@ -3,7 +3,7 @@
         "baseUrl": ".",
         "paths": {
             "*":["*.ts","*.js"],
-            "#root/*":["*"],
+            "#root/*":["./*"],
             "#bin/*":["bin/*"],
             "#query/*":["lib/query/*"],
             "#models/*":["lib/models/*"],

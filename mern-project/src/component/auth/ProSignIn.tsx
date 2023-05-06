@@ -112,7 +112,7 @@ class ProSignIn extends React.Component<IProSignInProps, IState>{
                 `}>
                     <LoginFormPage
                         backgroundImageUrl="https://gw.alipayobjects.com/zos/rmsportal/FfdJeJRQWjEeGTpqgBKj.png"
-                        logo="https://github.githubassets.com/images/modules/logos_page/Octocat.png"
+                        logo="https://images-rocky-public.s3.amazonaws.com/blogGPT/bg-icon.png"
                         title="Welcome to Rockystone"
                         submitter={{
                             searchConfig: {
