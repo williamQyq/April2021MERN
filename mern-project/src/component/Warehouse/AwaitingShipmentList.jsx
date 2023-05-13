@@ -1,12 +1,12 @@
 import InfiniteScroll from 'react-infinite-scroll-component';
-import DescriptionCard from 'component/utility/DescriptionCard.jsx';
+import DescriptionCard from '@src/component/utils/DescriptionCard.jsx';
 import { Divider, List, Skeleton } from 'antd';
 import ShipmentStatusBoard from './ShipmentStatusBoard.jsx';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     getNeedToShipFromShipmentWithLimit
-} from 'reducers/actions/outboundActions.js';
+} from '@redux-action//outboundActions.js';
 
 const AwaitingShipmentList = ({ shipmentInfo }) => {
     const dispatch = useDispatch();

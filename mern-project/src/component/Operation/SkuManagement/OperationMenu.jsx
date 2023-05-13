@@ -1,10 +1,9 @@
-import React from 'react';
-import 'styles/Operation.scss';
+import '@src/assets/Operation.scss';
 import { useState } from 'react';
 import { Menu, Tree } from 'antd';
 import { AreaChartOutlined, DownOutlined } from '@ant-design/icons';
-import FileUpload from 'component/utility/FileUploader';
-import { uploadAsinsMapping } from 'reducers/actions/operationActions';
+import FileUpload from '@src/component/utils/FileUploader';
+import { uploadAsinsMapping } from '@redux-action//operationActions';
 
 
 

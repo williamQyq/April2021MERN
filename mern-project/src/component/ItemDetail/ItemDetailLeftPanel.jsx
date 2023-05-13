@@ -1,9 +1,9 @@
 import React from 'react';
 import { Row, Typography, Spin, Skeleton } from 'antd';
 import { SyncOutlined } from '@ant-design/icons';
-import KeyStatistics from 'component/ItemDetail/ItemDetailStat';
-import PriceHistoryChart from 'component/ItemDetail/ItemDetailChart.jsx';
-import { ContentHeader } from 'component/utility/Layout';
+import KeyStatistics from './ItemDetailStat';
+import PriceHistoryChart from './ItemDetailChart.jsx';
+import { ContentHeader } from '@src/component/utils/Layout';
 
 const { Title } = Typography;
 const antIcon = <SyncOutlined spin />;

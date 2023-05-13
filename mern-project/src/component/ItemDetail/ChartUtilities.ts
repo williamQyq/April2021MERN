@@ -1,4 +1,4 @@
-import UTILS from "styles/Util"
+import UTILS from "@src/assets/global"
 
 type Labels = any[];
 type DataPoints = Labels;

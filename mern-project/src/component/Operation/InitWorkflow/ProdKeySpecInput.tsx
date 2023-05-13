@@ -1,5 +1,5 @@
 import React from 'react';
-import { StepComponentProps } from "component/utility/cmpt.interface.d";
+import { StepComponentProps } from "@src/component/utils/cmpt.interface";
 import {
     ProCard,
     ProFormText,

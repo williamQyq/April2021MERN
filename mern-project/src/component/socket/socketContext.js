@@ -4,7 +4,7 @@ import {
     ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE,
     RETRIEVE_BB_ITEMS_ONLINE_PRICE_ERROR,
     RETRIEVE_MS_ITEMS_ONLINE_PRICE_ERROR
-} from "reducers/actions/types";
+} from "@src/redux/actions/types";
 import { io } from "socket.io-client";
 
 const socket = io();

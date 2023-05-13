@@ -1,8 +1,8 @@
 import React from "react";
 import { connect } from "react-redux";
 import SearchShipment from "./SearchShipment.jsx";
-import { ContentHeader } from "component/utility/Layout.jsx";
-import { SEARCH_LOCATION_INVENTORY, SEARCH_OUTBOUND_SHIPMENT, SEARCH_RECEIVAL_SHIPMENT, SEARCH_SELLER_INVENTORY } from "reducers/actions/types.js";
+import { ContentHeader } from "@src/component/utils/Layout.jsx";
+import { SEARCH_LOCATION_INVENTORY, SEARCH_OUTBOUND_SHIPMENT, SEARCH_RECEIVAL_SHIPMENT, SEARCH_SELLER_INVENTORY } from "@src/redux/actions/types.js";
 import Proptypes from 'prop-types';
 
 

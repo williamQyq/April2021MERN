@@ -2,11 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Form } from 'antd';
-import { defaultSettings, searchReceivedShipmentColumns } from 'component/Warehouse/utilities.js';
+import { defaultSettings, searchReceivedShipmentColumns } from '@src/component/Warehouse/util';
 import InventoryReceivedControlPanel from './InventoryReceivedControlPanel.jsx';
-import FormTable from 'component/utility/FormTable.jsx';
-import { getInventoryReceived } from 'reducers/actions/inboundActions.js';
-import { ContentHeader } from 'component/utility/Layout.jsx';
+import FormTable from '@src/component/utils/FormTable.jsx';
+import { getInventoryReceived } from '@redux-action//inboundActions.js';
+import { ContentHeader } from '@src/component/utils/Layout.jsx';
 
 class InventoryReceived extends React.Component {
     constructor(props) {

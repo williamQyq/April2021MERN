@@ -1,11 +1,11 @@
 import { useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
-import { syncFromNeedToShipGsheet, uploadNeedToShip } from "reducers/actions/inboundActions";
+import { syncFromNeedToShipGsheet, uploadNeedToShip } from "@redux-action//inboundActions";
 import NeedToShipTable from "./NeedToShipTable";
 import { BsUiChecksGrid } from 'react-icons/bs';
 import { Collapse, Menu } from 'antd';
 import { AreaChartOutlined } from "@ant-design/icons";
-import FileUpload from 'component/utility/FileUploader';
+import FileUpload from '@src/component/utils/FileUploader';
 const { Panel } = Collapse;
 
 const needToShipMenuItems = [

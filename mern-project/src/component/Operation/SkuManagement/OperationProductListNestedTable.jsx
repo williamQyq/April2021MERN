@@ -1,7 +1,7 @@
 import React from 'react';
 // import 'antd/dist/antd.min.css';
 import { Table, Form } from 'antd';
-import { EditableCell, nestedColumns } from 'component/Operation/SkuManagement/OperationEditableEle.jsx';
+import { EditableCell, nestedColumns } from '@src/component/Operation/SkuManagement/OperationEditableEle.jsx';
 
 export default class NestedTable extends React.Component {
     constructor(props) {

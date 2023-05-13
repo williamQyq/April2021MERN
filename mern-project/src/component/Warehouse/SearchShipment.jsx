@@ -2,31 +2,31 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Col, Form, Row } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
-import DrawerSearch from 'component/utility/DrawerSearch.jsx';
-import FormTable from 'component/utility/FormTable.jsx';
+import DrawerSearch from '@src/component/utils/DrawerSearch.jsx';
+import FormTable from '@src/component/utils/FormTable.jsx';
 import {
     defaultSettings,
     searchReceivedShipmentColumns,
     searchShipmentColumns,
     searchLocationInventoryColumns,
     searchSellerInventoryColumns
-} from 'component/Warehouse/utilities.js';
-import { downloadShipment, getShipment } from 'reducers/actions/outboundActions.js';
+} from '@src/component/Warehouse/util';
+import { downloadShipment, getShipment } from '@redux-action//outboundActions.js';
 import {
     downloadInventoryReceived,
     downloadLocationInventory,
     getInventoryReceivedFromSearch,
     getLocationInventory,
     getSellerInventory
-} from 'reducers/actions/inboundActions';
+} from '@redux-action//inboundActions';
 import {
     SEARCH_LOCATION_INVENTORY,
     SEARCH_OUTBOUND_SHIPMENT,
     SEARCH_RECEIVAL_SHIPMENT,
     SEARCH_SELLER_INVENTORY
-} from 'reducers/actions/types.js';
-import { normalizeObjectStringValuesToLowerCase } from 'component/utility/helper.js';
-import 'styles/SearchShipment.scss';
+} from '@src/redux/actions/types.js';
+import { normalizeObjectStringValuesToLowerCase } from '@src/component/utils/helper.js';
+import '@src/assets/SearchShipment.scss';
 
 const SearchShipment = () => {
     const dispatch = useDispatch();

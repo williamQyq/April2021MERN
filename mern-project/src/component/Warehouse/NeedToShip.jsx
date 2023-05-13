@@ -5,10 +5,10 @@ import {
     downloadPickUpListPDF,
     getNeedToShipPendingAndTotalCount,
     getNeedToShipPickUpPendingAndTotalCount
-} from 'reducers/actions/outboundActions.js';
+} from '@redux-action//outboundActions.js';
 import AwaitingShipmentList from './AwaitingShipmentList.jsx';
-import NeedToShipControlPanel from 'component/Warehouse/NeedToShipControlPanel.jsx';
-import { ContentHeader, SubContentHeader } from 'component/utility/Layout.jsx';
+import NeedToShipControlPanel from '@src/component/Warehouse/NeedToShipControlPanel.jsx';
+import { ContentHeader, SubContentHeader } from '@src/component/utils/Layout.jsx';
 import { Button, Col, Progress, Row } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 

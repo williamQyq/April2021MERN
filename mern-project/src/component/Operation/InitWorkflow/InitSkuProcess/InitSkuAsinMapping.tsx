@@ -1,13 +1,13 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Typography, theme } from 'antd';
 import { waitTime } from '../utilities';
-import { HDD } from 'component/utility/types.enum';
-import MyProCard from 'component/utility/MyProCard';
+import { HDD } from '@src/component/utils/types.enum';
+import MyProCard from '@src/component/utils/MyProCard';
 import {
     downloadInitSkuforAmzSPFeeds,
-} from 'reducers/actions/operationAction';
+} from '@src/redux/actions/operationAction';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch } from 'reducers/store/store';
+import { AppDispatch } from '@src/redux/store/store';
 import {
     InitSkuStepsFormDataType,
     StepComponentProps,
@@ -15,16 +15,16 @@ import {
     Accessories,
     SkuConfig,
     VerifiedSellerAllowedPriceDataType
-} from 'component/utility/cmpt.interface.d';
+} from '@src/component/utils/cmpt.interface';
 import {
     ProDescriptions,
     StepsForm
 } from '@ant-design/pro-components';
 import { VscUnverified, VscVerified } from 'react-icons/vsc';
-import { ReduxRootState } from 'reducers/interface';
-import { parseSsdDataSource, parseRamDataSource } from 'reducers/actions/actionsHelper';
+import { ReduxRootState } from '@src/redux/interface';
+import { parseSsdDataSource, parseRamDataSource } from '@src/redux/actions/actionsHelper';
 import SkuConfigInputStepForm from './SkuConfigInputStepForm';
-import { GET_SKU_PRIME_COST } from 'reducers/actions/types';
+import { GET_SKU_PRIME_COST } from '@src/redux/actions/types';
 import { css } from '@emotion/css';
 
 const { StepForm } = StepsForm;

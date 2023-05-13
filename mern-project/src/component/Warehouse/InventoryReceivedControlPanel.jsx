@@ -3,11 +3,11 @@ import { AreaChartOutlined, CloudSyncOutlined, DownloadOutlined, LoadingOutlined
 import {
     downloadInventoryReceivedUploadSample,
     updateInventoryReceivedByUpload,
-} from 'reducers/actions/inboundActions.js';
+} from '@redux-action//inboundActions.js';
 import { useDispatch, useSelector } from 'react-redux';
-import { returnErrors } from 'reducers/actions/errorActions';
-import { syncInventoryReceivedWithGsheet } from 'reducers/actions/outboundActions.js';
-import FileUpload from 'component/utility/FileUploader';
+import { returnErrors } from '@src/redux/actions/errorActions';
+import { syncInventoryReceivedWithGsheet } from '@redux-action//outboundActions.js';
+import FileUpload from '@src/component/utils/FileUploader';
 import { BsUiChecksGrid } from 'react-icons/bs';
 import { Collapse, Menu } from 'antd';
 

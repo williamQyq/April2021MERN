@@ -1,7 +1,7 @@
 import React from 'react';
-import IconCover from 'component/utility/IconCover.jsx';
+import IconCover from '@src/component/utils/IconCover.jsx';
 import { FaTruckLoading, FaWarehouse, FaSearch } from 'react-icons/fa';
-import Category from 'component/utility/Category';
+import Category from '@src/component/utils/Category';
 
 const outboundMenuFeatures = [
     {

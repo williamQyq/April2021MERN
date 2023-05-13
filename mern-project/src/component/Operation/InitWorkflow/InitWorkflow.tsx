@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import 'styles/ProcessStreamStartUp.scss';
+import '@src/assets/ProcessStreamStartUp.scss';
 import { css } from '@emotion/css';
-import { ContentHeader } from 'component/utility/Layout';
+import { ContentHeader } from '@src/component/utils/Layout';
 // import { StepStatus } from 'types';
 import ProdDetachSpecInput from './ProdDetachSpecInput';
 import InitSkuAsinMapping from './InitSkuProcess/InitSkuAsinMapping';

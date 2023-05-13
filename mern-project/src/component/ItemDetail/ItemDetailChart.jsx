@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Chart from 'chart.js/auto';
-import { setChartConfig, setChartData, setColorOnPriceUpOrDrop, setDataPoints, setLabels } from 'component/ItemDetail/ChartUtilities';
+import { setChartConfig, setChartData, setColorOnPriceUpOrDrop, setDataPoints, setLabels } from '@src/component/ItemDetail/ChartUtilities';
 
 
 const PriceHistoryChart = () => {

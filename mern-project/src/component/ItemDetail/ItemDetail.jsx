@@ -1,11 +1,11 @@
 import React from 'react';
-import 'component/ItemDetail/ItemDetail.scss';
+import './ItemDetail.scss';
 import { Col, Row } from 'antd';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import LeftPanel from 'component/ItemDetail/ItemDetailLeftPanel'
-import OrderPanel from 'component/ItemDetail/ItemDetailOrderCard';
-import { getItemDetail } from 'reducers/actions/itemActions';
+import LeftPanel from './ItemDetailLeftPanel.jsx'
+import OrderPanel from './ItemDetailOrderCard.jsx';
+import { getItemDetail } from '@redux-action//itemActions';
 import { useNavigate } from 'react-router-dom';
 
 class ItemDetail extends React.Component {
