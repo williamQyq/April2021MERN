@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
-import { BBItem } from "./interface";
+import { BestbuyDealDoc } from "./interface";
 
 const { Schema } = mongoose;
 
 
-const BBItemSchema = new Schema<BBItem>({
+const BBItemSchema = new Schema<BestbuyDealDoc>({
     link: {
         type: Schema.Types.String,
         require: true
@@ -32,4 +32,4 @@ const BBItemSchema = new Schema<BBItem>({
     }
 }, { collection: 'bbStoreListings' });
 
-export default mongoose.model<BBItem>("BBItem", BBItemSchema)
+export default mongoose.model<BestbuyDealDoc>("BBItem", BBItemSchema)

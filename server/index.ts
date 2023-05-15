@@ -1,10 +1,10 @@
 import express from 'express';
-import bbItemsRouter from '#routes/api/bb_items.js';
+import BestbuyRouter from 'lib/routes/api/bestbuy.api';
 import msItemsRouter from '#routes/api/ms_items.js';
 // import wmItemsRouter from '#routes/api/wm_items.js';
 import itemsRouter from '#routes/api/items.js';
 import usersRouter from '#routes/api/users.js';
-import wmsRouter from '#routes/api/wms.js';
+import wmsRouter from 'lib/routes/api/wmsV0.api';
 import operationRouter from '#routes/api/operation.js';
 import wmsV1Router from "#routes/api/wmsV1";
 import authRouter from '#routes/api/auth';
@@ -75,7 +75,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 //@routes; direct axios request from client
-app.use('/api/bestbuy', bbItemsRouter);
+app.use('/api/bestbuy', BestbuyRouter);
 app.use('/api/microsoft', msItemsRouter);
 // app.use('/api/walmart', wmItemsRouter);
 // app.use('/api/cc_items', require('./routes/api/cc_items'));

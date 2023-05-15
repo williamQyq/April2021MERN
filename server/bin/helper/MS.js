@@ -1,4 +1,4 @@
-import { AlertApi } from '../../lib/query/utilities.js';
+import { AlertApi } from '../../lib/query/deals.query.js';
 import Stores from './Stores.js';
 
 /*

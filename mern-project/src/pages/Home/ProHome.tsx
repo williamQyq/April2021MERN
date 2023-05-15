@@ -9,7 +9,7 @@ import {
     ProLayout,
     SettingDrawer,
 } from '@ant-design/pro-components';
-import { ThemeContext } from './components/ThemeProvider';
+import {ThemeContext} from './components/ThemeProvider';
 import defaultProps from './components/_defaultProps';
 import WithNavigate from '@src/component/auth/WithNavigate';
 import MenuCard from '@view/Home/components/MenuCard';

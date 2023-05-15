@@ -30,7 +30,7 @@ export interface NeedToShipForm extends Form {
     } | undefined
 }
 
-class GSpreadSheet {
+export class GSpreadSheet {
     private static _scopes: string = "https://www.googleapis.com/auth/spreadsheets";
     private static _credentials: any = {};
     private _auth: GoogleAuth;
@@ -121,7 +121,7 @@ export class GSheetNeedToShip extends GSheet {
         } else {
             console.log(`forUpgradeResults is undefined`)
         }
-        
+
         return upgradeTrackingSet;
     }
 }

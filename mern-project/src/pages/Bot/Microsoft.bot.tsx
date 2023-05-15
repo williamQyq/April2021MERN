@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { SocketContext, socketType } from '@src/component/socket/socketContext.js';
+import { SocketContext, socketType } from '@src/component/socket/SocketProvider';
 import StoreTable from '@view/Bot/StoreTable.jsx';
 import { storeType } from '@src/component/utils/cmpt.global';
 import {

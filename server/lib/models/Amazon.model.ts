@@ -1,5 +1,19 @@
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 const Schema = mongoose.Schema;
+
+export interface AmzProdPricingDoc extends mongoose.Document {
+    upc: string;
+    identifiers: Identifier[];
+    modifyBy: {
+        role: string;
+        date: Date;
+    };
+}
+
+export interface Identifier extends Document {
+    asin: string;
+    offers: any[];
+}
 
 const IdentifierSchema = new Schema({
 
@@ -28,5 +42,5 @@ const AmzProdPricingSchema = new Schema({
     }
 }, { collection: 'amzProdPricing' });
 
-export const AmzProdPricing = mongoose.model('AmzProdPricing', AmzProdPricingSchema);
-export const AmzIdentifier = mongoose.model('AmzIdentifier', IdentifierSchema);
+export const AmzProdPricing = mongoose.model<AmzProdPricingDoc>('AmzProdPricing', AmzProdPricingSchema);
+export const AmzIdentifier = mongoose.model<Identifier>('AmzIdentifier', IdentifierSchema);

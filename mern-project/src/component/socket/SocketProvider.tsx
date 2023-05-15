@@ -1,22 +1,25 @@
-import { createContext, useEffect } from "react";
+import React, { createContext, useEffect } from "react";
 import {
     ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE,
     ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE,
     RETRIEVE_BB_ITEMS_ONLINE_PRICE_ERROR,
     RETRIEVE_MS_ITEMS_ONLINE_PRICE_ERROR
 } from "@src/redux/actions/types";
-import { io } from "socket.io-client";
+import { Socket, io } from "socket.io-client";
 
-const socket = io();
+const socket: Socket = io();
 
-export const SocketContext = createContext(socket);
+export const SocketContext = createContext<Socket | null>(socket);
 export const socketType = {
     ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE,
     ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE,
     RETRIEVE_BB_ITEMS_ONLINE_PRICE_ERROR,
     RETRIEVE_MS_ITEMS_ONLINE_PRICE_ERROR
 }
-export const SocketProvider = (props) => {
+interface SocketProviderProps {
+    children: React.ReactNode;
+}
+export const SocketProvider: React.FC<SocketProviderProps> = (props) => {
     useEffect(() => {
         socket.on('connect', () => {
             console.log(`${socket.id} connected.\n`)
@@ -32,7 +35,9 @@ export const SocketProvider = (props) => {
             console.log(`socket exception: ${err}`)
         })
 
-        return () => socket.disconnect();
+        return () => {
+            socket.disconnect();
+        }
     }, [])
 
     return (

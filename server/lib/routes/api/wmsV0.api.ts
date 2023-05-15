@@ -1,10 +1,10 @@
 import express from 'express';
 import excel from 'exceljs';
 import moment from 'moment';
-import { WMSDatabaseApis, GsheetApis } from '#query/utilities.js';
-import { status } from '#query/aggregate.js';
+import { GSpreadSheet as GsheetApis } from 'bin/gsheet/gsheet';
+import { WmsDBApis as WMSDatabaseApis, shipmentStatus } from 'lib/query/WmsDBApis';
 import auth from '#middleware/auth.js';
-import connectionTimeout from '#middleware/connectionTimeout';
+// import connectionTimeout from '#middleware/connectionTimeout';
 
 const router = express.Router();
 
@@ -17,15 +17,19 @@ router.get('/sellerInv/v0/quantity/upc/:upc', (req, res) => {
         .then(qty => { res.json(qty) });
 });
 
+
 //@route POST api/wms
 //@desc get warehouse quantity on multiple upcs
-router.post('/sellerInv/v0/quantity/upcs', auth, connectionTimeout(), (req, res) => {
+router.post('/sellerInv/v0/quantity/upcs', auth, (req, res) => {
     const { upcArr } = req.body;
-    let result = [];
+    let result: [string, number][] = [];
     let wms = new WMSDatabaseApis();
     wms.findUpcQtyMultiOnOrg(upcArr)
         .then(docs => {
-            docs.forEach(doc => { result.push([doc._id.UPC, doc.qty]) })   //create array of array: upc, qty array mapping
+            docs.forEach(doc => {
+                const myId = doc._id as unknown as { UPC: string }; //Is it correct to override WithID<Document>?
+                result.push([myId.UPC, doc.qty])
+            })   //create array of array: upc, qty array mapping
             res.json(result)
         })
         .catch(err => {
@@ -75,14 +79,15 @@ router.get('/inventoryReceive/v0/getInventoryReceiveInHalfMonth/updateGsheet', a
     let wms = new WMSDatabaseApis();
     let gsheet = new GsheetApis();
 
-    wms.getInventoryReceiveInHalfMonth()
-        .then(receivedItems => gsheet.createArrayOfArrayFromDocumentsInOrder(GsheetApis._forUploadSpreadSheet, receivedItems))
-        .then(values => gsheet.updateSheet(GsheetApis._forUploadSpreadSheet, values))
-        .then(() => { res.json("success") })
-        .catch(err => {
-            console.error(err.message);
-            res.status(500).json({ msg: "Fail to get Inventory Received or Update Gsheet" })
-        })
+    // #TODO：
+    // wms.getInventoryReceiveInHalfMonth()
+    //     .then(receivedItems => gsheet.createArrayOfArrayFromDocumentsInOrder(GsheetApis._forUploadSpreadSheet, receivedItems))
+    //     .then(values => gsheet.updateSheet(GsheetApis._forUploadSpreadSheet, values))
+    //     .then(() => { res.json("success") })
+    //     .catch(err => {
+    //         console.error(err.message);
+    //         res.status(500).json({ msg: "Fail to get Inventory Received or Update Gsheet" })
+    //     })
 
 })
 
@@ -125,11 +130,11 @@ router.post('/inventoryReceive/v0/updateRecOnTracking', auth, (req, res) => {
         })
 })
 
-const updateRecOnTracking = async (file) => {
+const updateRecOnTracking = async (file: any[]) => {
     let api = new WMSDatabaseApis();
     let titles = file.shift();
     let colTitleIndexMap = new Map()
-    titles.forEach((colTitle, index) => {
+    titles.forEach((colTitle: string, index: number) => {
         colTitleIndexMap.set(colTitle, index);
     })
 
@@ -170,9 +175,10 @@ router.get('/inventoryReceive/v0/downloadSampleXlsx', (req, res) => {
 router.get('/needToShip/syncGsheet', auth, (req, res) => {
     let gsheet = new GsheetApis();
 
-    gsheet.batchReadSheet(GsheetApis._needToShipSpreadSheet).then((res) => {
-        console.log(res.valueRanges[0].values)
-    })
+    // #TODO
+    // gsheet.batchReadSheet(GsheetApis._needToShipSpreadSheet).then((res) => {
+    //     console.log(res.valueRanges[0].values)
+    // })
 
     res.json({ msg: "success" })
 })
@@ -202,7 +208,7 @@ router.get('/shipment/v0/getNotVerifiedShipment/dateMin/:dateMin/dateMax/:dateMa
                 shipment.orgNm = unformattedshipment["orgNm"];
                 shipment.trackingID = unformattedshipment["tracking"];
                 if (unformattedshipment.rcIts.length > 0) {
-                    unformattedshipment.rcIts.forEach((item, index) => {
+                    unformattedshipment.rcIts.forEach((item: any, index: number) => {
                         shipment[`upc${index}`] = item["UPC"];
                         shipment[`upc${index}Qty`] = item["qty"];
                     })
@@ -225,7 +231,7 @@ router.post('/needToShip/v0/confirmShipment', auth, (req, res) => {
     const { allUnShipment } = req.body;
 
     let wms = new WMSDatabaseApis();
-    const { unShipmentHandler, processedTrackings } = wms.createUnShipmentMapping(allUnShipment);
+    const { unshippedOrderMap, processedTrackings } = wms.createUnShipmentMapping(allUnShipment);
     // console.log(`all unShipment: `, allUnShipment)
     // console.log(`unshipment Map: `, unShipmentHandler);
 
@@ -234,7 +240,7 @@ router.post('/needToShip/v0/confirmShipment', auth, (req, res) => {
 
     Promise.allSettled(
         // update qty on location Inv
-        Array.from(unShipmentHandler)
+        Array.from(unshippedOrderMap)
             .map(([upc, { unShippedQty, trackings }]) =>
                 new Promise((resolve, reject) => {
                     wms.updateLocationInvQtyByUpc(upc, Number(unShippedQty))
@@ -260,7 +266,11 @@ router.post('/needToShip/v0/confirmShipment', auth, (req, res) => {
             let allRejectedTrackings = new Array();
             const rejectedShipment = results.filter(res => res.status === "rejected")
             rejectedShipment.forEach(shipment => {
-                const { reason: { rejectedTrackings } } = shipment;
+                const {
+                    reason: {
+                        rejectedTrackings
+                    }
+                } = shipment as { reason: { rejectedTrackings: string[] } };
                 allRejectedTrackings = [...allRejectedTrackings, ...rejectedTrackings];
             })
 
@@ -273,7 +283,7 @@ router.post('/needToShip/v0/confirmShipment', auth, (req, res) => {
                 //array of update shipment status promise
                 fulfilledTrackings.map(trackingId =>
                     new Promise((resolve, reject) => {
-                        wms.updateShipmentStatus(trackingId, status.shipment.SUBSTANTIATED)
+                        wms.updateShipmentStatus(trackingId, shipmentStatus.SUBSTANTIATED)
                             .then(updateRes => resolve(updateRes))
                             .catch((err) => {
                                 reject({

@@ -8,7 +8,7 @@ import { Provider } from 'react-redux';
 import persistStore from 'redux-persist/es/persistStore';
 import { PersistGate } from 'redux-persist/integration/react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { SocketProvider } from './component/socket/socketContext.js';
+import { SocketProvider } from './component/socket/SocketProvider';
 import { ThemeProvider } from './pages/Home/components/ThemeProvider';
 
 const persistor = persistStore(store);

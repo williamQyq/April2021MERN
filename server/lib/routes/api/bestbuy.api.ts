@@ -1,8 +1,8 @@
-import express from 'express';
+import express, { Router } from 'express';
+import io from '#root/index';
 import auth from '#middleware/auth';
-import { AlertApi } from '#query/utilities.js';
-import io from '#root/index.js';
 import Bestbuy from '#bin/helper/BB.js';
+import { AlertApi } from 'lib/query/deals.query';
 import {
     getMostViewedOnCategoryId,
     getViewedUltimatelyBought,
@@ -10,12 +10,12 @@ import {
 } from '#bin/bestbuyIO/bestbuyIO.js';
 
 
-const router = express.Router();
+const router:Router = express.Router();
 
 // @route GET api/items
 // @access private
-router.get('/peek/v0/prices', auth, (req, res) => {
-    let alertApi = new AlertApi();
+router.get('/v1/deals', auth, (req, res) => {
+    let deals = new AlertApi();
     let model = alertApi.getBestbuyAlertModel();
 
     alertApi.getStoreItems(model)

@@ -1,6 +1,6 @@
 import express from 'express';
 import auth from '#middleware/auth';
-import { AlertApi } from '#query/utilities.js';
+import { AlertApi } from 'lib/query/deals.query';
 import io from 'index.js';
 import Microsoft from '#bin/helper/MS.js';
 

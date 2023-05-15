@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Moment from 'moment';
-import { getBBItems } from './itemBBActions.js';
+import { getBBItems } from './bestbuy.action.js';
 import { getMSItems } from './itemMSActions.js';
 import { clearErrors, returnErrors } from './errorActions'
 import {

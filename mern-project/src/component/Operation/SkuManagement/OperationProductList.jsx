@@ -7,7 +7,7 @@ import { defaultSettings } from '@src/component/Operation/_Settings';
 import { mainColumns } from '@src/component/Operation/SkuManagement/OperationEditableEle.jsx';
 import { getProductPricing } from '@redux-action//operationActions.js';
 import OperationMenu from '@src/component/Operation/SkuManagement/OperationMenu.jsx';
-import { SocketContext } from '@src/component/socket/socketContext';
+import { SocketContext } from '@src/component/socket/SocketProvider';
 // import BackTopHelper from 'component/utility/BackTop.jsx';
 import FormTable from '@src/component/utils/FormTable';
 import { ContentHeader, SubContentHeader } from '@src/component/utils/Layout';

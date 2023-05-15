@@ -1,11 +1,18 @@
 import { Date, Types } from "mongoose";
 
-export interface BBItem extends Document {
+export interface DealDoc extends Document {
     link: URL;
     sku: string;
     name: string;
     price_timestamps: Array<{ price: number, date: Date }>;
     created_date: Date;
+};
+
+export interface BestbuyDealDoc extends DealDoc {
+    
+}
+export interface MicrosoftDealDoc extends DealDoc {
+
 }
 
 export interface IPrimeCostDoc extends Document {

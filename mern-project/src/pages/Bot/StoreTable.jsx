@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import './Store.scss';
-import { SocketContext, socketType } from '@src/component/socket/socketContext.js';
+import { SocketContext, socketType } from '@src/component/socket/SocketProvider';
 import { connect, useDispatch, useSelector, shallowEqual } from 'react-redux';
 import {
     setTableState,

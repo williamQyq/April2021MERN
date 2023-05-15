@@ -3,8 +3,8 @@ import { Navigate } from 'react-router-dom';
 import NotFound from '@src/component/utils/NotFound';
 import ServiceMaintain from '@src/component/utils/ServiceMaintain';
 const Alert = lazy(() => import('@view/Bot/Alert.tsx'));
-const StoreBB = lazy(() => import('@view/Bot/StoreBB.jsx'));
-const StoreMS = lazy(() => import('@view/Bot/StoreMS.jsx'));
+const BestbuyAlert = lazy(() => import('@view/Bot/Bestbuy.bot'));
+const MicrosoftAlert = lazy(() => import('@view/Bot/Microsoft.bot'));
 const OutBound = lazy(() => import('@src/component/Warehouse/OutBound.tsx'));
 const NeedToShip = lazy(() => import('@src/component/Warehouse/NeedToShip.jsx'));
 const InventoryReceived = lazy(() => import('@src/component/Warehouse/InventoryReceived.jsx'));
@@ -34,7 +34,7 @@ const routes = [
         element: <Alert />
       }, {
         path: "bestbuy-list",
-        element: <StoreBB />,
+        element: <BestbuyAlert />,
         children: [
           {
             path: "item-detail",
@@ -43,7 +43,7 @@ const routes = [
         ]
       }, {
         path: "microsoft-list",
-        element: <StoreMS />,
+        element: <MicrosoftAlert />,
         children: [
           {
             path: "item-detail",

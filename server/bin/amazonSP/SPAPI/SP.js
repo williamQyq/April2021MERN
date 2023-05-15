@@ -1,6 +1,6 @@
 import ProdPricing from './ProdPricing.js';
 import { bucket } from '../RateLimiter.js';
-import { updateProdPricingOffer, findAllProdPricing } from '#query/utilities.js'
+import { updateProdPricingOffer, findAllProdPricing } from 'lib/query/deals.query'
 import moment from 'moment'
 
 /* 

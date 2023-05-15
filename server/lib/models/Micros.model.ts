@@ -11,12 +11,6 @@ const MSItemSchema = new Schema({
         type: String,
         require: true
     },
-    upc: {
-        type: String,
-    },
-    qty: {
-        type: Number
-    },
     name: {
         type: String,
         require: true

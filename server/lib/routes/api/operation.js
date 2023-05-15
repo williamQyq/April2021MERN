@@ -2,7 +2,7 @@ import express from 'express';
 const router = express.Router();
 import auth from '#middleware/auth.js';
 import { updateProdPricingCatalogItems } from '#bin/amazonSP/SPAPI/SP.js';
-import { OperationApi } from '#query/utilities.js';
+import { AmazonSellingPartnerDataProcessor as OperationApi } from 'lib/query/amazon.query';
 
 // @route GET api/amazonSP
 // @desc: get all amazon seller central sync product pricing offers 
