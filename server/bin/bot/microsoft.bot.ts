@@ -1,5 +1,5 @@
-import { AlertApi } from '../../lib/query/deals.query.js';
-import Stores from './Stores.js';
+import { DealsAlert } from '#query/deals.query';
+import { DealBot, MyMessage } from './index';
 
 /*
 declare class Microsoft{

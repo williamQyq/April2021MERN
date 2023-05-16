@@ -1,69 +1,62 @@
-import express, { Router } from 'express';
+import express, { Request, Response, Router } from 'express';
+import mongoose from 'mongoose';
 import io from '#root/index';
 import auth from '#middleware/auth';
-import Bestbuy from '#bin/helper/BB.js';
-import { AlertApi } from 'lib/query/deals.query';
+import { DealsAlert } from 'lib/query/deals.query';
 import {
     getMostViewedOnCategoryId,
     getViewedUltimatelyBought,
     getAlsoBoughtOnSku
 } from '#bin/bestbuyIO/bestbuyIO.js';
+import { ItemSpecDocument } from '#models/Specification.model'
+import Bestbuy from 'bin/bot/bestbuy.bot';
 
-
-const router:Router = express.Router();
+const router: Router = express.Router();
 
 // @route GET api/items
 // @access private
 router.get('/v1/deals', auth, (req, res) => {
-    let deals = new AlertApi();
-    let model = alertApi.getBestbuyAlertModel();
+    let deals = new DealsAlert();
+    const model = DealsAlert._BestbuyDeal;
 
-    alertApi.getStoreItems(model)
+    deals.getDeals(model)
         .then(items => res.json(items))
-        .catch(err => {
-            res.status(503).json(
-                {
-                    msg: "Service Unavailable",
-                    reason: err.message
-                }
-            )
-        });
+        .catch(err => res.status(202).json({
+            msg: "Service Unavailable",
+            reason: err.message
+        }));
 });
 
 // @route GET api/items
 // @access public
-router.get('/peek/v0/getProductDetail/id/:_id', (req, res) => {
+router.get('/v1/deal/detail/id/:_id', (req: Request<{ _id: mongoose.ObjectId }>, res: Response) => {
     const { _id } = req.params
-    let alertApi = new AlertApi();
-    let model = alertApi.getBestbuyAlertModel();
-    alertApi.getStoreItemDetailById(model, _id)
-        .then(items => {
-            res.json(items)
-        })
-        .catch(err => {
-            res.status(400).json({ msg: "Item detail not exists" })
-        });
+    let deals = new DealsAlert();
+    const model = DealsAlert._BestbuyDeal;
+
+    deals.getDealById(model, _id).then(items => {
+        res.json(items)
+    }).catch(err => {
+        res.status(202).json({ msg: `[${_id}]Deal detail not found.` })
+    });
 });
 
 // @access private
 router.put('/itemSpec/add', auth, (req, res) => {
-    const { link, sku } = req.body;
+    const { link, sku } = req.body as { link: URL | string, sku: string };
     let bestbuy = new Bestbuy();
-    let alertApi = new AlertApi();
-    let model = alertApi.getBestbuyAlertModel();
+    let deals = new DealsAlert();
 
-    alertApi.findItemConfigDocumentOnSku(sku)
-        .then(doc => {
-            if (doc) {
-                res.status(400).json({ msg: `${doc.upc}[upc] Item config already exists.` })
-            }
-        })
-        .then(() => bestbuy.getAndSaveItemConfiguration(link))
-        .then((itemConfig) => alertApi.saveItemConfiguration(itemConfig, sku))
-        .then((doc) => res.json({ msg: `Upsert ${doc.upc} item config finished.` }))
+    deals.findItemSpecOnSku(sku).then((doc: ItemSpecDocument) => {
+        if (doc) {
+            return res.status(202).json({ msg: `${doc.upc}[upc] Item config already exists.` })
+        }
+    })
+        .then(() => { bestbuy.fetchAndSaveItemSpecification(link, sku); })
+        .then(() => res.json({ msg: `Request received and being processed.\n\n [URL]:${link}` }))
         .catch(errorMsg => {
             console.error(`[ERROR] Get item config error\n`, errorMsg)
-            res.status(502).json({ msg: "Get item spec failed." })
+            res.status(202).json({ msg: "Get item spec failed." })
         })
 })
 

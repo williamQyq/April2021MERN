@@ -1,7 +1,7 @@
 import express from 'express';
 import excel from 'exceljs';
 import moment from 'moment';
-import { GSpreadSheet as GsheetApis } from 'bin/gsheet/gsheet';
+import { GSpreadSheet as GsheetApis } from 'bin/gsheet/index';
 import { WmsDBApis as WMSDatabaseApis, shipmentStatus } from 'lib/query/WmsDBApis';
 import auth from '#middleware/auth.js';
 // import connectionTimeout from '#middleware/connectionTimeout';

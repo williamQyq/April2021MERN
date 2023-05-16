@@ -1,5 +1,12 @@
 import mongoose from 'mongoose';
+import { WithId } from 'mongodb';
 const Schema = mongoose.Schema;
+
+export interface ItemSpecDocument extends WithId<mongoose.Document> {
+    sku: string;
+    upc: string;
+    spec: { [key: string]: string };
+}
 
 //Create Schema for self tracking list 
 const ItemSpecSchema = new Schema({

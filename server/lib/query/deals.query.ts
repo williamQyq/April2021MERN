@@ -1,10 +1,8 @@
-import mongoose, { ObjectId } from 'mongoose';
-import moment from 'moment';
+import mongoose from 'mongoose';
 import ItemSpec from '#models/Specification.model';
 import BestbuyDeal from "#models/Bestbuy.model";
 import MicrosoftDeal from "lib/models/Micros.model";
 
-const { ObjectId } = mongoose.Types;
 import {
     PROJ_ITEM,
     PROJ_ITEM_DETAIL,
@@ -16,26 +14,24 @@ import {
 import { BestbuyDealDoc, MicrosoftDealDoc } from 'lib/models/interface.d';
 
 export class Deals {
-    protected _ItemSpec: mongoose.Model<Document>;
-    protected _BestbuyDeal: mongoose.Model<BestbuyDealDoc>;
-    protected _MicrosoftDeal: mongoose.Model<Document>;
+    static _ItemSpec: mongoose.Model<Document> = ItemSpec;
+    static _BestbuyDeal: mongoose.Model<BestbuyDealDoc> = BestbuyDeal;
+    static _MicrosoftDeal: mongoose.Model<Document> = MicrosoftDeal;
 
     constructor() {
-        this._ItemSpec = ItemSpec;
-        this._BestbuyDeal = BestbuyDeal;
-        this._MicrosoftDeal = MicrosoftDeal;
+        //    
     }
 }
 
-interface DealItemSpec {
-    UPC: string;
+export interface DealItemSpec {
+    UPC?: string;
     [key: string]: string | any
 }
-interface DealDataType {
+export interface DealDataType {
     sku?: string;
     name?: string;
     link?: string;
-    currentPrice?: string;
+    currentPrice?: number;
     [key: string]: any;
 }
 /**
@@ -53,7 +49,8 @@ export class DealsAlert extends Deals {
      * @returns mongoose.Document
      */
     async upsertItemConfiguration(itemSpec: DealItemSpec, sku: string) {
-        const query: mongoose.FilterQuery<unknown> = { upc: itemSpec.UPC, sku };
+        let query: mongoose.FilterQuery<unknown>;
+        query = itemSpec.UPC ? { upc: itemSpec.UPC, sku } : { sku };
         const update: mongoose.UpdateQuery<unknown> = {
             $setOnInsert: {
                 spec: itemSpec
@@ -61,7 +58,7 @@ export class DealsAlert extends Deals {
         }
         const option: mongoose.QueryOptions = { upsert: true, new: true, useFindAndModify: false, }
 
-        let doc = await this._ItemSpec.findOneAndUpdate(query, update, option).exec();
+        let doc = await Deals._ItemSpec.findOneAndUpdate(query, update, option).exec();
         return doc;
     }
 
@@ -185,7 +182,7 @@ export class DealsAlert extends Deals {
         return deals;
     }
 
-    async getDealById(model: mongoose.Model<BestbuyDealDoc | MicrosoftDealDoc>, _id: ObjectId) {
+    async getDealById(model: mongoose.Model<BestbuyDealDoc | MicrosoftDealDoc>, _id: mongoose.ObjectId) {
         let deals = await model.aggregate([
             PROJ_ITEM_DETAIL,
             {

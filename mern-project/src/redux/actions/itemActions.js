@@ -144,7 +144,7 @@ export const handleErrorOnRetrievedItemsOnlinePrice = (store, errorMsg) => dispa
 export const getItemDetail = (store, _id) => (dispatch, getState) => {
     dispatch(setItemsLoading());
     const { routes, type } = setRouteOnStore(store);    //get routes and action types on store selection
-    axios.get(`/api/${routes}/peek/v0/getProductDetail/id/${_id}`, tokenConfig(getState)).then(res => {
+    axios.get(`/api/${routes}/v1/deal/detail/id/${_id}`, tokenConfig(getState)).then(res => {
         let item = Object.values(res.data).pop();
         item.price_timestamps.forEach(ts => {
             ts.date = Moment(ts.date).format("MMM Do YYYY HH:mm a");

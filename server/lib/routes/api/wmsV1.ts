@@ -8,7 +8,7 @@ import {
     IReqBodyShipmentDownloadPickUpPDF,
     IResponseErrorMessage,
 } from "#root/@types/interface";
-import { GSheetNeedToShip } from "#root/bin/gsheet/gsheet";
+import { GSheetNeedToShip } from "bin/gsheet/index";
 
 const router: Router = Router();
 
