@@ -1,5 +1,7 @@
-import { DealsAlert } from '#query/deals.query';
-import { DealBot, MyMessage } from './index';
+import mongoose from 'mongoose';
+import { DealsAlert, DealDataType } from '#query/deals.query';
+import puppeteer, { Page } from 'puppeteer';
+import { DealBot, DealMessage, MyMessage, Pagination } from './index';
 
 /*
 declare class Microsoft{
@@ -37,85 +39,108 @@ interface PageNumFooter{
 }
 
 */
+interface ParsedDealDataType {
+    price: number;
+    isInStock: boolean;
+    pid: string;
+    cN: string;
+}
+export default class Microsoft extends DealBot {
+    storeName: string = "Microsoft";
+    static url: string = 'https://www.microsoft.com/en-us/store/b/shop-all-pcs?categories=2+in+1||Laptops||Desktops||PC+Gaming&s=store&skipitems=';
 
-export default class Microsoft extends Stores {
     constructor() {
         super();
-        this.url = 'https://www.microsoft.com/en-us/store/b/shop-all-pcs?categories=2+in+1||Laptops||Desktops||PC+Gaming&s=store&skipitems=';
     }
 
-    async getAndSaveMicrosoftLaptopsPrice() {
-        let erpApi = new AlertApi();
-        let databaseModel = erpApi.getMicrosoftAlertModel();
-        let storeUrl = this.initURL(0); //this. url + skipItemsNum
+    async getAndSaveLaptopsPrice() {
+        let alert = new DealsAlert();
+        let model = DealsAlert._MicrosoftDeal as mongoose.Model<unknown>;
+        let storeUrl = this.editParamPageNumInUrl(0); //this. url + skipItemsNum
 
-        let browser = await this.initBrowser();
-        let page = await this.initPage(browser);
-        await page.setDefaultNavigationTimeout(30000);
+        let browser: puppeteer.Browser = await this.initBrowser();
+        let page: puppeteer.Page = await this.initPage(browser);
 
-        let { pagesNum, numPerPage } = await this.getPagesNum(page, storeUrl);
-        console.log('total pages num: ', pagesNum);
+        page.setDefaultNavigationTimeout(30000);
+
+        let { pageCnt, itemCntPerPage } = await this.getPagination(page, storeUrl);
+        console.log('total pages num: ', pageCnt);
+
+        if (!pageCnt) throw new Error("*Get Pagination failed.*");
+
+        // Get Deals data and saved to database, for each deals retrieved print process status.
         try {
-            for (let i = 0; i < pagesNum; i++) {
-                let pageUrl = this.initURL(i * numPerPage);
-                let promisesRes = await this.getPageItems(page, pageUrl); //Array<{PromiseResolveType}>
-                let details = promisesRes.filter(prom => prom.status === 'fulfilled' && prom.value.price !== undefined)
+            for (let i = 0; i < pageCnt; i++) {
+                let pageUrl = this.editParamPageNumInUrl(i * pageCnt);
+                let dealsDataProms: PromiseSettledResult<ParsedDealDataType>[] = await this.getPageItems(page, pageUrl); //Array<{PromiseResolveType}>
+                let fulfilledDeals = dealsDataProms.filter(prom => prom.status === 'fulfilled' && prom.value.price !== undefined) as PromiseFulfilledResult<ParsedDealDataType>[];
                 await Promise.all(
-                    details.map((detail, index) => {
-                        const { pid, cN, price } = detail.value;
-                        let itemDetail = {
+                    fulfilledDeals.map((fulfilledDeal: PromiseFulfilledResult<ParsedDealDataType>, index: number) => {
+                        const { pid, cN, price } = fulfilledDeal.value;
+                        let deal: DealDataType = {
                             sku: pid,
                             name: cN,
                             link: 'https://www.microsoft.com/en-us/d/' + cN.replace(/\s/g, "-").replace(/"/g, "").toLowerCase() + '/' + pid,
                             currentPrice: price
                         }
-                        erpApi.saveStoreItemToDatabase(itemDetail, databaseModel).then(result => {
-                            this.printMsg(new Map(Object.entries({
-                                store: Microsoft.name,
-                                page: i,
-                                index: index,
-                                sku: itemDetail.sku,
-                                currentPrice: itemDetail.currentPrice,
-                                result: result
-                            })))
+                        alert.createDeal(deal, model).then(status => {
+                            let dealMsgContent: DealMessage = {
+                                storeName: Microsoft.name,
+                                indexPage: i,
+                                index,
+                                sku: deal.sku ? deal.sku : "",
+                                currentPrice: deal.currentPrice,
+                                status
+                            }
+                            let msg = new MyMessage(this.storeName);
+                            msg.printGetDealMsg(dealMsgContent);
                         });
                     }))
-                    .finally(console.log(`[${Microsoft.name}]===Page ${i} finished.===`))
+                    .finally(() => {
+                        //print split line.
+                        let finalMsg = new MyMessage(this.storeName);
+                        finalMsg.printPageEndLine(i);
+                    })
             }
-
-            await page.close();
-            await browser.close();
         } catch (e) {
             await page.close();
-            await browser.close()
-            console.error(`\nERROR:[${Microsoft.name}] Ended with exception.\n`, e.message)
-            throw new Error(e.message);
+            await browser.close();
+            let errMsg = new MyMessage(this.storeName);
+            errMsg.printError(e);
         }
 
+        await page.close();
+        await browser.close();
     }
 
-    initURL(skipItemsNum) {
-        return this.url + skipItemsNum
+    editParamPageNumInUrl(skipItemsNum: number): string {
+        return Microsoft.url + skipItemsNum;
     }
 
-    async parsePageNumFooter(page) {
-        let res = {
-            numPerPage: undefined,
-            totalNum: undefined
-        };
+    async parsePageNumFooter(page: Page): Promise<Pagination> {
+        let pagination: Pagination | undefined = undefined;
+
         const FOOTER_XPATH_EXPR = '//p[@class="c-paragraph-3"]'
-        const NUM_PAGE_REGEX_EXPR = /.*Showing\s\d*\s-\s(\d*)\sof\s\d*.*/
-        const TOTAL_NUM_REGEX_EXPR = /.*Showing.*of\s(\d*).*/
+        const NUM_PAGE_REGEX_EXPR = '/.*Showing\s\d*\s-\s(\d*)\sof\s\d*.*/'
+        const TOTAL_NUM_REGEX_EXPR = '/.*Showing.*of\s(\d*).*/'
 
         let footer = (await this.evaluateElementsText(page, FOOTER_XPATH_EXPR))[0]
-        res.numPerPage = Number(this.getRegexValue(footer, NUM_PAGE_REGEX_EXPR))
-        res.totalNum = Number(this.getRegexValue(footer, TOTAL_NUM_REGEX_EXPR))
 
-        console.log(`[${this.constructor.name}][Parse Page Num Footer] numPerPage:${res.numPerPage}, totalNum:${res.totalNum}`)
-        return res
+        let itemCntPerPage: number = Number(this.getRegexValue(footer, NUM_PAGE_REGEX_EXPR))
+        let itemsCount: number = Number(this.getRegexValue(footer, TOTAL_NUM_REGEX_EXPR))
+
+        pagination = {
+            pageCnt: Math.ceil(itemsCount / itemCntPerPage),
+            itemCntPerPage
+        }
+
+        let parsingMsg = new MyMessage(this.storeName);
+        parsingMsg.printPagination(pagination.pageCnt!, pagination.itemCntPerPage!);
+
+        return pagination
     }
 
-    async closeDialogIfAny(page) {
+    async closeDialogIfAny(page: Page) {
         try {
             await page.waitForXPath('//div[@class="sfw-dialog"]/div[@class="c-glyph glyph-cancel"]')
             let dialogCloseBtn = (await page.$x('//div[@class="sfw-dialog"]/div[@class="c-glyph glyph-cancel"]'))[0]
@@ -130,17 +155,12 @@ export default class Microsoft extends Stores {
     @param: url: string
     @return: PageNumFooter
     */
-    async getPagesNum(page, url) {
+    async getPagination(page: Page, url: string): Promise<Pagination> {
         await page.goto(url);
         await this.closeDialogIfAny(page)    //may or may not close the dialog, it depends if the dialog shows up.
-        let res = await this.parsePageNumFooter(page)
+        let pagination: Pagination = await this.parsePageNumFooter(page)
 
-        let pageNumFooter = {
-            pagesNum: Math.ceil(res.totalNum / res.numPerPage),
-            numPerPage: res.numPerPage
-        }
-
-        return pageNumFooter
+        return pagination;
     }
 
     /* 
@@ -148,7 +168,7 @@ export default class Microsoft extends Stores {
         @param: url: string
         @return: Array<Item>
     */
-    async parseItemsList(page) {
+    async parseItemsList(page: Page): Promise<PromiseSettledResult<ParsedDealDataType>[]> {
         const ITEM_ELEMENTS_EXPR = '//div[@class="m-channel-placement-item f-wide f-full-bleed-image"]'
         const PRICE_SPAN_EXPR = 'span[itemprop="price"]'
         const IS_INSTOCK_EXPR = 'strong[class="c-badge f-small f-lowlight x-hidden-focus"]'
@@ -162,42 +182,57 @@ export default class Microsoft extends Stores {
         let itemElements = await page.$x(ITEM_ELEMENTS_EXPR);
         // let itemElements = await page.$$('div.m-channel-placement-item f-wide f-full-bleed-image');
 
-        let results = await Promise.allSettled(itemElements.map(async (ele) => {
-            let price = undefined, isInStock = true;
-            let attrRes = await ele.$eval('a', (ele, ITEM_ATTRIBUTE_ID) => ele.getAttribute(ITEM_ATTRIBUTE_ID), ITEM_ATTRIBUTE_ID)
-            let data = JSON.parse(attrRes)//JSON text data-m attribute to JSON object
+        let deals = await Promise.allSettled<Promise<ParsedDealDataType>[]>(itemElements.map(async (ele) => {
+            let price: number | undefined = undefined, isInStock: boolean = true;
             try {
-                let priceRes = await ele.$eval(PRICE_SPAN_EXPR, (span, PRICE_ATTRIBUTE_ID) => span.getAttribute(PRICE_ATTRIBUTE_ID), PRICE_ATTRIBUTE_ID)
-                price = Number(priceRes.replace(/[$|,]/g, ""));
-            } catch {
-                return { ...data, price, isInStock: false } //if no price found, not in stock
-            }
-            try {
-                isInStockRes = await ele.$eval(IS_INSTOCK_EXPR, el => el.textContent)
-                isInStock = isInStockRes === "OUT OF STOCK" ? false : true;
-            } catch {
-                //if no OUT OF STOCK tag do nothing...
-            }
-            return { ...data, price, isInStock };   //found price and currently instock
-        }))
+                let attrRes = await ele.$eval<string>('a', (ele, ITEM_ATTRIBUTE_ID: unknown) => {
+                    const attributeValue = ele.getAttribute(ITEM_ATTRIBUTE_ID as string);
+                    return attributeValue !== null ? attributeValue : "null";
+                }, ITEM_ATTRIBUTE_ID);
 
-        return results;
+                let data = JSON.parse(attrRes)//JSON text data-m attribute to JSON object
+
+                //unable to get deal data:
+                if (data == null) throw new Error("*Fail to parse deal data attr*");
+
+                let priceText = await ele.$eval<string>(PRICE_SPAN_EXPR, (span: Element, PRICE_ATTRIBUTE_ID: unknown) => {
+                    const priceAttribute = span.getAttribute(PRICE_ATTRIBUTE_ID as string);
+                    return priceAttribute !== null ? priceAttribute : "null";
+                }, PRICE_ATTRIBUTE_ID);
+
+                price = Number(priceText.replace(/[$|,]/g, ""));
+
+                let isInStockText: string = await ele.$eval<string>(IS_INSTOCK_EXPR, (el) => {
+                    let isInStockText = el.textContent;
+                    return isInStockText !== null ? isInStockText : "";
+                });
+                isInStock = isInStockText === "OUT OF STOCK" ? false : true;
+
+                //found price and currently instock
+                return { ...data, price, isInStock };
+
+            } catch (err) {
+                //if no OUT OF STOCK tag do nothing...
+                console.error("parseItemLists Error.")
+            }
+        }));
+
+        return deals;
     }
     /* 
         @param: page:Puppeteer<page>
         @param: url: string
         @return: Array<Item>
     */
-    async getPageItems(page, url) {
+    async getPageItems(page: Page, url: string) {
         await page.goto(url)
         // await page.waitForTimeout(10000);
-
-        let items = await this.parseItemsList(page)
-        return items
+        let deals = await this.parseItemsList(page)
+        return deals;
     }
 
 
-    async getItemSpec(page, url) {
-        return
-    }
+    // async getItemSpec(page:Page, url:string) {
+    //     return
+    // }
 }

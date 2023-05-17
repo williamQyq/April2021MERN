@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Moment from 'moment';
-import { getBBItems } from './bestbuy.action.js';
+import { getBestbuyDeals } from './bestbuy.action';
 import { getMSItems } from './itemMSActions.js';
 import { clearErrors, returnErrors } from './errorActions'
 import {
@@ -164,7 +164,7 @@ export const getItems = (store) => dispatch => {
             getMSItems();
             break;
         case BESTBUY:
-            getBBItems();
+            getBestbuyDeals();
             break;
         default:
             let errorMsg = `[ERROR] getItems invalid ${store}`

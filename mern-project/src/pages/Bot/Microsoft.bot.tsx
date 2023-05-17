@@ -7,7 +7,7 @@ import { storeType } from '@src/component/utils/cmpt.global';
 import {
     handleErrorOnRetrievedItemsOnlinePrice,
     handleOnRetrievedItemsOnlinePrice
-} from '@redux-action/itemActions.js';
+} from '@redux-action/deal.action.js';
 import { getMSItems } from '@redux-action/itemMSActions.js';
 
 class MS extends React.Component {

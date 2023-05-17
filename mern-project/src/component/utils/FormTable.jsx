@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Table, Input, Button, Space } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
-import { setTableState } from '@redux-action//itemActions';
+import { setTableState } from '@redux-action/deal.action';
 import '@src/assets/FormTable.scss';
 import { normalizeStringValue } from './helper';
 

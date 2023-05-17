@@ -72,7 +72,7 @@ export const setTableSettings = (store: string, clickedId: string): ThunkAction<
  * @param categoryId 
  * @returns 
  */
-export const getMostViewedOnCategoryId = (categoryId: string): ThunkAction<void, RootState, any, AnyAction> =>
+export const getMostViewedOnCategoryId = (categoryId: string): ThunkAction<any, RootState, any, AnyAction> =>
     async (dispatch: AppDispatch, getState: () => RootState) => {
         dispatch(setMostViewedItemsLoading());
         console.log('Get most viewed request sent...')
@@ -93,7 +93,7 @@ export const getMostViewedOnCategoryId = (categoryId: string): ThunkAction<void,
  * @param sku 
  * @returns 
  */
-export const getViewedUltimatelyBoughtOnSku = (sku: string): ThunkAction<void, RootState, any, AnyAction> =>
+export const getViewedUltimatelyBoughtOnSku = (sku: string): ThunkAction<any, RootState, any, AnyAction> =>
     async (dispatch: AppDispatch, getState: () => RootState) => {
         dispatch(setMostViewedItemsLoading());
         axios.get<unknown>(`/api/bestbuy/peek/v0/getViewedUltimatelyBought/sku/${sku}`, tokenConfig(getState)).then(res => {

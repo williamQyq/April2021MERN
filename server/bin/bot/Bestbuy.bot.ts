@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { DealDataType, DealItemSpec, DealsAlert } from '#query/deals.query';
-import { DealBot, DealMessage, MyMessage } from './index';
-import { PuppeteerErrors } from 'puppeteer';
+import { DealBot, DealMessage, MyMessage, Pagination } from './index';
+import { Page } from 'puppeteer';
 
 /*
 declare class Bestbuy {
@@ -27,17 +27,9 @@ interface Item{
 */
 /* 
 interface ItemSpec{
-    [key:string]:value:string
+    [key:string]: string
     ...
 }
-*/
-
-/* 
-interface PageNumFooter{
-    numPerPage: number,
-    totalNum: number
-}
-
 */
 
 export default class Bestbuy extends DealBot {
@@ -47,7 +39,7 @@ export default class Bestbuy extends DealBot {
         super();
     }
 
-    async getAndSaveBestbuyLaptopsPrice() {
+    async getAndSaveLaptopsPrice() {
         let alert = new DealsAlert();
         const model = DealsAlert._BestbuyDeal;
         let storeUrl = this.editParamPageNumInUrl(1);
@@ -55,15 +47,18 @@ export default class Bestbuy extends DealBot {
         let browser = await this.initBrowser();
         let page = await this.initPage(browser);
 
-        let { pagesNum } = await this.getPagesNum(page, storeUrl);
-        console.log('total pages num: ', pagesNum);
+        const { pageCnt, itemCntPerPage }: Pagination = await this.getPagination(page, storeUrl);
 
-        // For each page, get deal and save to database. 
+        if (!pageCnt) throw new Error("*Parse Pagination fail*")
+        // For each page, get deals, save to database and print process status. 
         try {
-            for (let i = 0; i < pagesNum; i++) {
+            for (let i = 0; i < pageCnt; i++) {
                 // page = await this.initPage(browser);
                 let pageUrl = this.editParamPageNumInUrl(i + 1);
-                let dealsData: DealDataType[] = await this.getPageItems(page, pageUrl); //ItemType { link, sku, currentPrice, name }
+                let dealsData: DealDataType[] | undefined = await this.getPageItems(page, pageUrl); //ItemType { link, sku, currentPrice, name }
+
+                if (!dealsData) throw new Error("Fail to retrieve deals data.");
+
                 await Promise.all(dealsData.map((deal: DealDataType, index: number) =>
                     alert.createDeal(deal, model as mongoose.Model<unknown>)
                         .then((status: string) => {
@@ -95,7 +90,7 @@ export default class Bestbuy extends DealBot {
         await browser.close();
     }
 
-    async fetchAndSaveItemSpecification(url: URL | string, sku: string) {
+    async fetchAndSaveItemSpecification(url: string, sku: string) {
         let deals = new DealsAlert();
 
         console.log(`[getItemConfig] starting...`)
@@ -122,55 +117,56 @@ export default class Bestbuy extends DealBot {
     @param: url:string
     @return: itemSpec:ItemSpec
     */
-    async getItemSpec(page, url) {
+    async getItemSpec(page: Page, url: string) {
         await page.goto(url);
         await this.openSpecWrapper(page);
         let itemSpec = await this.parseItemSpec(page);
         return itemSpec;
     }
-    async openSpecWrapper(page) {
+    async openSpecWrapper(page: Page): Promise<void> {
         let specWrapper = (await page.$x('//div[@class="specs-container specs-wrapper all-specs-wrapper"]'))[0]
         specWrapper.click()
     }
-    async parseItemSpec(page) {
+    async parseItemSpec(page: Page): Promise<Map<string, string>> {
         const KEYS_XPATH_EXPR = '//div[@class="row-title"]'
         const VALUES_XPATH_EXPR = '//div[contains(@class,"row-value")]'
         let keys = await this.evaluateElementsText(page, KEYS_XPATH_EXPR)
         let values = await this.evaluateElementsText(page, VALUES_XPATH_EXPR)
 
-        let spec = {}
+        let spec = new Map();
         keys.forEach((key, index) => {
             // key= key.split(' ').join('')
-            key = key.replace(/\s/g, "")    //remove space
-            spec[key] = values[index]
+            key = key.replace(/\s/g, "");
+            spec.set(key, values[index]);
         })
 
         return spec
     }
+
     /* 
     @param: page:Puppeteer<page>
     @return: PageNumFooter
     */
-    async parsePageNumFooter(page) {
-        let pageNumFooter = {
-            numPerPage: undefined,
-            totalNum: undefined
+    async parsePageNumFooter(page: Page): Promise<Pagination> {
+        let pagination: Pagination = {
+            itemCntPerPage: undefined,
+            pageCnt: undefined
         };
         const FOOTER_XPATH_EXPR = '//div[@class="footer top-border wrapper"]//span'
-        const NUM_PAGE_REGEX_EXPR = /\d*-(\d*)\sof\s\d*/
-        const TOTAL_NUM_REGEX_EXPR = /.*of\s(\d*)\sitems/
+        const NUM_PAGE_REGEX_EXPR = '/\d*-(\d*)\sof\s\d*/'
+        const TOTAL_NUM_REGEX_EXPR = '/.*of\s(\d*)\sitems/'
 
         let footer = (await this.evaluateElementsText(page, FOOTER_XPATH_EXPR))[0]
-        pageNumFooter.numPerPage = Number(this.getRegexValue(footer, NUM_PAGE_REGEX_EXPR))
-        pageNumFooter.totalNum = Number(this.getRegexValue(footer, TOTAL_NUM_REGEX_EXPR))
+        let itemCntPerPage: number = Number(this.getRegexValue(footer, NUM_PAGE_REGEX_EXPR))
+        let itemsCount: number = Number(this.getRegexValue(footer, TOTAL_NUM_REGEX_EXPR))
 
-        console.log(`[${this.constructor.name}][Parse Page Num Footer] numPerPage:${pageNumFooter.numPerPage}, totalNum:${pageNumFooter.totalNum}`)
+        pagination.pageCnt = Math.ceil(itemsCount / itemCntPerPage);
+        pagination.itemCntPerPage = itemCntPerPage;
 
-        return pageNumFooter
-    }
+        let parsingMsg = new MyMessage(this.storeName);
+        parsingMsg.printPagination(pagination.pageCnt, pagination.itemCntPerPage);
 
-    async closeDialog(page) {
-
+        return pagination;
     }
 
     /* 
@@ -178,22 +174,19 @@ export default class Bestbuy extends DealBot {
     @param: url: string
     @return: PageNumFooter
     */
-    async getPagesNum(page, url) {
+    async getPagination(page: Page, url: string): Promise<Pagination> {
         await page.goto(url);
-        let { totalNum, numPerPage } = await this.parsePageNumFooter(page)
-        let pageNumFooter = {
-            pagesNum: Math.ceil(totalNum / numPerPage),
-            numPerPage: numPerPage
-        }
+        let pagination: Pagination = await this.parsePageNumFooter(page)
+        // can't remember why is the page count need to be recalculate.
 
-        return pageNumFooter
+        return pagination;
     }
     /* 
         @param: page:Puppeteer<page>
         @return: itemsArray:Array<Item>
         @access: private
     */
-    async parseItemsList(page) {
+    async parseItemsList(page: Page): Promise<DealDataType[]> {
         const SKU_LIST_EXPR = '//li[@class="sku-item"]'
         const PRICE_LIST_EXPR = SKU_LIST_EXPR + '//div[@class="priceView-hero-price priceView-customer-price"]/span[@aria-hidden="true"]'
         const NAME_LIST_EXPR = SKU_LIST_EXPR + '//h4[@class="sku-title"]/a'
@@ -204,22 +197,22 @@ export default class Bestbuy extends DealBot {
         let nameLists = await this.evaluateElementsText(page, NAME_LIST_EXPR)
 
         //Parsed Array<Item>
-        let itemsArray = skuAttrLists.map((sku, index) => {
+        let itemsArray = skuAttrLists.map((sku: string, index: number) => {
             let link = this.generateSiteLink(sku);
             let currentPrice = this.validatePrice(priceTextLists[index])
             let name = nameLists[index]
 
-            let item = { link, sku, currentPrice, name }
+            let item: DealDataType = { link, sku, currentPrice, name }
             return item;
         })
 
         return itemsArray;
     }
 
-    generateSiteLink(sku) {
+    generateSiteLink(sku: string): string {
         return (`https://api.bestbuy.com/click/-/${sku}/pdp`)
     }
-    validatePrice(priceText) {
+    validatePrice(priceText: string): number {
         return Number(priceText.replace(/[\s|$|,]/g, ""))
     }
 
@@ -228,22 +221,19 @@ export default class Bestbuy extends DealBot {
     @param: url: string
     @return: items: Array<Item>
     */
-    async getPageItems(page, url) {
-        let items;
+    async getPageItems(page: Page, url: string): Promise<DealDataType[] | undefined> {
+        let items = undefined;
         try {
-            await page.goto(url)
-            // await page.waitForTimeout(10000);
+            await page.goto(url);
             items = await this.parseItemsList(page)
-            return items;
         } catch (e) {
             console.log(`getPageItems err... retrying...\n\n${e}`)
             await this.retry(async () => {
                 await page.goto(url)
                 items = await this.parseItemsList(page)
-                return items;
-            }, 2000)
+            }, 2000);
         }
-        throw new Error("getPageItems Error\n", page, url)
+        return items;
     }
 
     /* 
@@ -252,7 +242,7 @@ export default class Bestbuy extends DealBot {
     @param: milisec:number
     @return: Promise<Array<Item>>
     */
-    retry(callback, milisec) {
+    retry(callback: () => Promise<any>, milisec: number) {
         return new Promise((resolve, reject) => {
             // let interval = setInterval(async () => {
             //     let res = await callback();

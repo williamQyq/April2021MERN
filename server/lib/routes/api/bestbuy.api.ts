@@ -52,7 +52,7 @@ router.put('/itemSpec/add', auth, (req, res) => {
             return res.status(202).json({ msg: `${doc.upc}[upc] Item config already exists.` })
         }
     })
-        .then(() => { bestbuy.fetchAndSaveItemSpecification(link, sku); })
+        .then(() => { bestbuy.fetchAndSaveItemSpecification(link as string, sku); })
         .then(() => res.json({ msg: `Request received and being processed.\n\n [URL]:${link}` }))
         .catch(errorMsg => {
             console.error(`[ERROR] Get item config error\n`, errorMsg)
@@ -97,8 +97,8 @@ router.get('/peek/v0/getAlsoBought/sku/:sku', auth, (req, res) => {
 })
 
 router.get('/crawl/v0/getOnlinePrice', auth, (req, res) => {
-    const pupeteer = new Bestbuy();
-    pupeteer.getAndSaveBestbuyLaptopsPrice()
+    let bestbuy = new Bestbuy();
+    bestbuy.getAndSaveLaptopsPrice()
         .then(() => {
             res.json({ msg: "get online price success" });
             io.sockets.emit("ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE", { msg: "get online price success" });

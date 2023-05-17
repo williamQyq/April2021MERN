@@ -9,7 +9,7 @@ import {
     getItemsOnlinePrice,
     handleOnRetrievedItemsOnlinePrice,
     handleErrorOnRetrievedItemsOnlinePrice
-} from '@redux-action/itemActions.js';
+} from '@redux-action/deal.action.js';
 import {
     SearchOutlined,
     PlusCircleOutlined,

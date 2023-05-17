@@ -14,6 +14,10 @@ declare class Stores{
 }
 
 */
+export interface Pagination {
+    itemCntPerPage?: number,
+    pageCnt?: number
+}
 export interface DealMessage {
     storeName: string;
     indexPage: number;
@@ -50,12 +54,18 @@ export class MyMessage {
         console.log("[End]");
         this.printSplitLine("*");
     }
+    printPagination(pageCnt: number, itemCntPerPage: number) {
+        const paginationTag = `[Pagination | ${this.storeName}]`;
+        console.log(`${paginationTag} | pageItemsCount: ${itemCntPerPage} | page count: ${pageCnt}`);
+    }
 }
 
-export class DealBot {
+export abstract class DealBot {
     // constructor() {
 
     // }
+    abstract editParamPageNumInUrl(pageIndex: number): void;
+    abstract getPagination(page: puppeteer.Page, url: string): Promise<Pagination>;
 
     async initBrowser(): Promise<puppeteer.Browser> {
         const browser: puppeteer.Browser = await puppeteer.launch({

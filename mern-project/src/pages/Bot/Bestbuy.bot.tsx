@@ -6,7 +6,7 @@ import {
     getMostViewedOnCategoryId,
     getViewedUltimatelyBoughtOnSku,
     getAlsoBoughtOnSku
-} from '@redux-action/bestbuy.action.js';
+} from '@redux-action/bestbuy.action';
 import { SocketContext, socketType } from '@src/component/socket/SocketProvider';
 import StoreTable from './StoreTable.jsx';
 import StoreAnalyticCards from './StoreAnalyticCards.jsx'
@@ -14,7 +14,7 @@ import StoreAnalyticCards from './StoreAnalyticCards.jsx'
 import {
     handleErrorOnRetrievedItemsOnlinePrice,
     handleOnRetrievedItemsOnlinePrice
-} from '@redux-action/itemActions.js';
+} from '@redux-action/deal.action.js';
 import { ThunkAction, AnyAction } from '@reduxjs/toolkit';
 import { RootState } from '@src/redux/store/store.js';
 
@@ -37,10 +37,13 @@ export const categoryIdGroup: BestbuyElectronicsCatgIds = {
     SAMSUNG_LAPTOPS: 'pcmcat1496261338353',
     SURFACE: 'pcmcat1492808199261'
 }
-
-interface IProps {
-    items: any;
+interface ReduxStateProps {
+    items: unknown[];
     loading: boolean;
+    mostViewedItems: unknown[];
+    tableState: unknown;
+}
+interface IProps extends ReduxStateProps {
     getBestBuyDeals: () => ThunkAction<void, RootState, any, AnyAction>;
     getMostViewedOnCategoryId: (catgId: string) => ThunkAction<void, RootState, any, AnyAction>;
     handleOnRetrievedItemsOnlinePrice: (targetStore: string, msg: unknown) => ThunkAction<void, RootState, any, AnyAction>;

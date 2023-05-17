@@ -76,7 +76,7 @@ export class DealsAlert extends Deals {
      * @description create and save deal info to database.
      * @param deal deal item info
      * @param model mongoose.model
-     * @returns message string
+     * @returns message string "UPDATED PRICE" | "PRICE NOT CHANGED" | "NEW ITEM UPSERT"
      */
     async createDeal(deal: DealDataType, model: mongoose.Model<unknown>) {
         let msg: string | undefined = undefined;
