@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import LeftPanel from './ItemDetailLeftPanel.jsx'
 import OrderPanel from './ItemDetailOrderCard.jsx';
-import { getItemDetail } from '@redux-action/deal.action.js';
+import { getItemDetail } from '@redux-action/deal.action';
 import { useNavigate } from 'react-router-dom';
 
 class ItemDetail extends React.Component {

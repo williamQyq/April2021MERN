@@ -3,7 +3,7 @@ import Moment from 'moment';
 import { GET_MS_ITEMS, ITEMS_LOADING_MS } from './types';
 import { tokenConfig } from './authActions';
 
-export const getMSItems = () => (dispatch, getState) => {
+export const getMicrosoftDeals = () => (dispatch, getState) => {
     dispatch(setItemsLoading());
     axios.get('/api/microsoft/peek/v0/prices', tokenConfig(getState))
         .then(res => {

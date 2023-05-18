@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { ConnectedProps, connect } from 'react-redux';
 import { storeType } from '@src/component/utils/cmpt.global';
 import {
     getBestbuyDeals,
@@ -12,10 +12,9 @@ import StoreTable from './StoreTable.jsx';
 import StoreAnalyticCards from './StoreAnalyticCards.jsx'
 // import BackTopHelper from 'component/utility/BackTop.jsx';
 import {
-    handleErrorOnRetrievedItemsOnlinePrice,
-    handleOnRetrievedItemsOnlinePrice
-} from '@redux-action/deal.action.js';
-import { ThunkAction, AnyAction } from '@reduxjs/toolkit';
+    handlePriceCrawlError,
+    handlePriceCrawlFinished
+} from '@redux-action/deal.action';
 import { RootState } from '@src/redux/store/store.js';
 
 interface BestbuyElectronicsCatgIds {
@@ -37,17 +36,12 @@ export const categoryIdGroup: BestbuyElectronicsCatgIds = {
     SAMSUNG_LAPTOPS: 'pcmcat1496261338353',
     SURFACE: 'pcmcat1492808199261'
 }
-interface ReduxStateProps {
-    items: unknown[];
-    loading: boolean;
-    mostViewedItems: unknown[];
-    tableState: unknown;
-}
-interface IProps extends ReduxStateProps {
-    getBestBuyDeals: () => ThunkAction<void, RootState, any, AnyAction>;
-    getMostViewedOnCategoryId: (catgId: string) => ThunkAction<void, RootState, any, AnyAction>;
-    handleOnRetrievedItemsOnlinePrice: (targetStore: string, msg: unknown) => ThunkAction<void, RootState, any, AnyAction>;
-    handleErrorOnRetrievedItemsOnlinePrice: (targetStore: string, msg: unknown) => ThunkAction<void, RootState, any, AnyAction>;
+
+interface IProps extends PropsFromRedux {
+    // getBestBuyDeals: () => void;
+    // getMostViewedOnCategoryId: (catgId: string) => void;
+    // handlePriceCrawlFinished: (targetStore: string) => void;
+    // handlePriceCrawlError: (targetStore: string, msg: unknown) => void;
 }
 interface IState {
     targetStore: string;
@@ -80,18 +74,18 @@ class BestBuyDeals extends React.Component<IProps, IState> {
         let socket = this.context!;
         const { targetStore } = this.state;
         socket.emit(`subscribe`, `StoreListingRoom`);
-        this.props.getBestBuyDeals();
+        this.props.getBestbuyDeals();
 
         socket.on('Store Listings Update', () => {
-            this.props.getBestBuyDeals();
+            this.props.getBestbuyDeals();
         })
-
         socket.on(socketType.ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE, (data) => {
             console.log(this.state.targetStore, data)
-            this.props.handleOnRetrievedItemsOnlinePrice(targetStore, data.msg);
+            this.props.handlePriceCrawlFinished(targetStore);
         })
         socket.on(socketType.RETRIEVE_BB_ITEMS_ONLINE_PRICE_ERROR, (err) => {
-            this.props.handleErrorOnRetrievedItemsOnlinePrice(targetStore, err.msg);
+            console.error(targetStore, err);
+            this.props.handlePriceCrawlError(targetStore);
         })
     }
 
@@ -173,11 +167,15 @@ const mapStateToProps = (state: RootState) => ({
     mostViewedItems: state.bestbuy.mostViewedItems,
 })
 
-export default connect(mapStateToProps, {
+const mapDispatchToProps = {
     getBestbuyDeals,
+    getAlsoBoughtOnSku,
     getMostViewedOnCategoryId,
     getViewedUltimatelyBoughtOnSku,
-    getAlsoBoughtOnSku,
-    handleOnRetrievedItemsOnlinePrice,
-    handleErrorOnRetrievedItemsOnlinePrice
-})(BestBuyDeals);
+    handlePriceCrawlFinished,
+    handlePriceCrawlError
+}
+const connector = connect(mapStateToProps, mapDispatchToProps);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+export default connector(BestBuyDeals);

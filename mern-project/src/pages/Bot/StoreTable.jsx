@@ -4,12 +4,12 @@ import './Store.scss';
 import { SocketContext, socketType } from '@src/component/socket/SocketProvider';
 import { connect, useDispatch, useSelector, shallowEqual } from 'react-redux';
 import {
-    setTableState,
+    saveUserTableSettings,
     addItemSpec,
-    getItemsOnlinePrice,
-    handleOnRetrievedItemsOnlinePrice,
-    handleErrorOnRetrievedItemsOnlinePrice
-} from '@redux-action/deal.action.js';
+    handlePriceCrawlFinished,
+    handlePriceCrawlError,
+    signalPriceCrawler
+} from '@redux-action/deal.action';
 import {
     SearchOutlined,
     PlusCircleOutlined,
@@ -109,7 +109,7 @@ const DropDownActions = (props) => {
     }, [record, storeName])
 
     const stableSaveActionHistory = useCallback(() => {
-        dispatch(setTableState({ ...prevTableState, store: storeName, clickedId: record._id }));
+        dispatch(saveUserTableSettings({ ...prevTableState, store: storeName, clickedId: record._id }));
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [prevTableState, record, storeName])
@@ -229,7 +229,7 @@ export const StoreOperationMenu = (props) => {
 
     const onClickRetrieval = (key) => {
         setSelectedMenuKey(key)
-        dispatch(getItemsOnlinePrice(store))
+        dispatch(signalPriceCrawler(store))
     }
 
     const treeData = [
@@ -311,6 +311,8 @@ const mapStateToProps = (state) => ({
 })
 
 export default connect(mapStateToProps, {
-    handleOnRetrievedItemsOnlinePrice,
-    handleErrorOnRetrievedItemsOnlinePrice
+    // handlePriceCrawlFinished,
+    // handlePriceCrawlError,
+    // saveUserTableSettings,
+    // signalPriceCrawler
 })(StoreTable);

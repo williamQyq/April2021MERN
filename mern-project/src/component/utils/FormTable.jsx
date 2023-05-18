@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Table, Input, Button, Space } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
-import { setTableState } from '@redux-action/deal.action';
+import { saveUserTableSettings } from '@redux-action/deal.action';
 import '@src/assets/FormTable.scss';
 import { normalizeStringValue } from './helper';
 
@@ -28,7 +28,7 @@ class FormTable extends React.Component {
     }
     componentDidUpdate(prevProps, prevState) {
         if (this.state.searchText !== prevState.searchText) {
-            this.props.setTableState({
+            this.props.saveUserTableSettings({
                 ...this.state.tableState,
                 searchText: this.state.searchText,
                 searchedRowId: this.state.searchedRowId,
@@ -204,4 +204,4 @@ class FormTable extends React.Component {
         )
     }
 }
-export default connect(null, { setTableState })(FormTable);
+export default connect(null, { saveUserTableSettings })(FormTable);

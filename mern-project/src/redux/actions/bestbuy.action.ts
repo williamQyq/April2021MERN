@@ -13,9 +13,8 @@ import {
 } from './types';
 import { tokenConfig } from './authActions';
 import { returnErrors } from './errorActions';
-import { ThunkAction } from 'redux-thunk';
+import { ThunkAction, AnyAction } from '@reduxjs/toolkit';
 import { RootState } from '../store/store';
-import { AnyAction } from 'redux';
 import { AppDispatch } from '../interface';
 
 interface DealDataType {

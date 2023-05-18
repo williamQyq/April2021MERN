@@ -42,7 +42,7 @@ router.get('/v1/deal/detail/id/:_id', (req: Request<{ _id: mongoose.ObjectId }>,
 });
 
 // @access private
-router.put('/itemSpec/add', auth, (req, res) => {
+router.put('/item-specification/', auth, (req, res) => {
     const { link, sku } = req.body as { link: URL | string, sku: string };
     let bestbuy = new Bestbuy();
     let deals = new DealsAlert();
@@ -96,7 +96,7 @@ router.get('/peek/v0/getAlsoBought/sku/:sku', auth, (req, res) => {
         })
 })
 
-router.get('/crawl/v0/getOnlinePrice', auth, (req, res) => {
+router.get('/crawl/v1/laptop/prices', auth, (req, res) => {
     let bestbuy = new Bestbuy();
     bestbuy.getAndSaveLaptopsPrice()
         .then(() => {
