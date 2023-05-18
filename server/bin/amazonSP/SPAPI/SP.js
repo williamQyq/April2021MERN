@@ -1,6 +1,6 @@
 import ProdPricing from './ProdPricing.js';
 import { bucket } from '../RateLimiter.js';
-import { updateProdPricingOffer, findAllProdPricing } from 'lib/query/deals.query'
+import { AmazonSellingPartnerDataProcessor } from 'lib/query/amazon.query';
 import moment from 'moment'
 
 /* 
@@ -9,9 +9,10 @@ import moment from 'moment'
 @return: Void
 */
 export const updateProdPricingCatalogItems = async () => {
-    await findAllProdPricing()
-        .then(prods => getSellingPartnerProdPricing(prods))
-        .then(taskResults => updateProdPricingOffers(taskResults))
+    let amz = new AmazonSellingPartnerDataProcessor();
+    let prods = await amz.findAllProdPricing();
+    let response = await getSellingPartnerProdPricing(prods)
+    updateProdPricingOffers(response);
 }
 /* 
     @desc:  Retrieve AMZ ProdPricing for each task in bucket queue

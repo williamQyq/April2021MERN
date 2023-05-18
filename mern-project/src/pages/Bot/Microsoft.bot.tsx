@@ -7,7 +7,7 @@ import {
     handlePriceCrawlError,
     handlePriceCrawlFinished
 } from '@redux-action/deal.action';
-import { getMicrosoftDeals } from '@redux-action/itemMSActions.js';
+import { getMicrosoftDeals } from '@redux-action/microsoft.action';
 import { RootState } from '@src/redux/store/store';
 
 interface IProps extends PropsFromRedux {

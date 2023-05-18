@@ -16,7 +16,7 @@ import { BestbuyDealDoc, MicrosoftDealDoc } from 'lib/models/interface.d';
 export class Deals {
     static _ItemSpec: mongoose.Model<Document> = ItemSpec;
     static _BestbuyDeal: mongoose.Model<BestbuyDealDoc> = BestbuyDeal;
-    static _MicrosoftDeal: mongoose.Model<Document> = MicrosoftDeal;
+    static _MicrosoftDeal: mongoose.Model<MicrosoftDealDoc> = MicrosoftDeal;
 
     constructor() {
         //    

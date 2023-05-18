@@ -1,6 +1,6 @@
 import express from 'express';
 import BestbuyRouter from 'lib/routes/api/bestbuy.api';
-import msItemsRouter from '#routes/api/ms_items.js';
+import msItemsRouter from 'lib/routes/api/microsoft.api';
 // import wmItemsRouter from '#routes/api/wm_items.js';
 import itemsRouter from '#routes/api/items.js';
 import usersRouter from '#routes/api/users.js';

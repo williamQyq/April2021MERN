@@ -1,29 +1,30 @@
 import express from 'express';
 import auth from '#middleware/auth';
-import { AlertApi } from 'lib/query/deals.query';
-import io from 'index.js';
-import Microsoft from '#bin/helper/MS.js';
+import { DealsAlert } from 'lib/query/deals.query';
+import io from '#root/index';
+import Microsoft from 'bin/bot/microsoft.bot';
+import { ObjectId } from 'mongoose';
 
 const router = express.Router();
 
 // @route GET api/items
-router.get('/peek/v0/prices', (req, res) => {
-    let alertApi = new AlertApi();
-    let model = alertApi.getMicrosoftAlertModel();
-    alertApi.getStoreItems(model)
+router.get('/v1/deals', (req, res) => {
+    let alert = new DealsAlert();
+    let model = DealsAlert._MicrosoftDeal;
+    alert.getDeals(model)
         .then(items => res.json(items))
         .catch(err => res.status(503).json({ msg: err }));
 });
 
-router.get('/peek/v0/getProductDetail/id/:_id', (req, res) => {
-    let alertApi = new AlertApi();
-    let model = alertApi.getMicrosoftAlertModel();
-    alertApi.getStoreItemDetailById(model, req.params._id)
+router.get<{ _id: ObjectId }>('/peek/v0/getProductDetail/id/:_id', (req, res) => {
+    let alert = new DealsAlert();
+    let model = DealsAlert._MicrosoftDeal;
+    alert.getDealById(model, req.params._id)
         .then(items => res.json(items))
         .catch(err => res.status(503).json({ msg: err }));
 });
 
-router.get('/crawl/v0/getOnlinePrice', auth, (req, res) => {
+router.get('/crawl/v1/laptop/prices', auth, (req, res) => {
     // setTimeout(() => {
     //     res.json({ msg: "get online price success" })
     //     // io.on('connection', (socket) => {
@@ -32,7 +33,7 @@ router.get('/crawl/v0/getOnlinePrice', auth, (req, res) => {
     //     io.sockets.emit("ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE", { msg: " online price success" })
     // }, 3000)
     let puppeteer = new Microsoft();
-    puppeteer.getAndSaveMicrosoftLaptopsPrice()
+    puppeteer.getAndSaveLaptopsPrice()
         .then(() => {
             res.json({ msg: "get online price success" })
             io.sockets.emit("ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE", { msg: "get online price success" });
