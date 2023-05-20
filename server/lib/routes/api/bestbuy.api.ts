@@ -1,6 +1,7 @@
 import express, { Request, Response, Router } from 'express';
 import mongoose from 'mongoose';
 import io from '#root/index';
+import { AxiosError } from 'axios';
 import auth from '#middleware/auth';
 import { DealsAlert } from 'lib/query/deals.query';
 import {
@@ -65,10 +66,11 @@ router.get('/peek/v0/getMostViewed/categoryId/:categoryId', auth, (req, res) => 
     getMostViewedOnCategoryId(req.params.categoryId)
         .then(result => {
             console.log(`\nbestbuy api most viewed request received...`)
-            if (result === undefined) {
-                res.status(400).json({ msg: "Bestbuy api most viewed no available data" })
-            }
             res.json(result)
+        })
+        .catch((err: AxiosError<{ errorCode: string, errorMessage: string }>) => {
+            let errorCode = err.response ? Number(err.response!.data.errorCode) : 400;
+            res.status(errorCode).json({ msg: err.response?.data.errorMessage });
         })
 });
 
@@ -77,10 +79,11 @@ router.get('/peek/v0/getViewedUltimatelyBought/sku/:sku', auth, (req, res) => {
     getViewedUltimatelyBought(req.params.sku)
         .then(result => {
             console.log(`\nbestbuy api ultimately bought request received...`)
-            if (result === undefined) {
-                res.status(400).json({ msg: "Bestbuy api ultimately bought no available data" })
-            }
             res.json(result)
+        })
+        .catch((err: AxiosError<{ errorCode: string, errorMessage: string }>) => {
+            let errorCode = err.response ? Number(err.response!.data.errorCode) : 400;
+            res.status(errorCode).json({ msg: err.response?.data.errorMessage });
         })
 })
 
@@ -99,14 +102,7 @@ router.get('/peek/v0/getAlsoBought/sku/:sku', auth, (req, res) => {
 router.get('/crawl/v1/laptop/prices', auth, (req, res) => {
     let bestbuy = new Bestbuy();
     bestbuy.getAndSaveLaptopsPrice()
-        .then(() => {
-            res.json({ msg: "get online price success" });
-            io.sockets.emit("ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE", { msg: "get online price success" });
-        })
-        .catch(err => {
-            res.status(500).json({ msg: `Fail to retrive Bestbuy Laptop Price \n\n${err}` })
-            io.sockets.emit("RETRIEVE_BB_ITEMS_ONLINE_PRICE_ERROR", { msg: `Fail to retrive Bestbuy Laptop Price \n\n${err}` })
-        })
+    res.status(202).json({ msg: "Currently working on retrieving the deals information." });
 })
 
 export default router;

@@ -141,9 +141,8 @@ export abstract class DealBot {
         }
         return obj1;
     }
-    getRegexValue(str: string, regexExpr: string) {
+    getRegexValue(str: string, regexExpr: string | RegExp) {
         let match = str.match(regexExpr);
-        let res = match?.slice(1)[0];
-        return res ? res : null;
+        return match ? match[1] : null;
     }
 }

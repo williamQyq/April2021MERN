@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { ConnectedProps, connect } from 'react-redux';
 import { Location, NavigateFunction } from 'react-router-dom';
 import { CgSun, CgMoon } from 'react-icons/cg';
 import { Avatar, Button, Switch } from 'antd';
@@ -9,19 +9,18 @@ import {
     ProLayout,
     SettingDrawer,
 } from '@ant-design/pro-components';
-import {ThemeContext} from './components/ThemeProvider';
+import { ThemeContext } from './components/ThemeProvider';
 import defaultProps from './components/_defaultProps';
 import WithNavigate from '@src/component/auth/WithNavigate';
 import MenuCard from '@view/Home/components/MenuCard';
 import SearchInput from '@view/Home/components/Search';
 import HomeContent from '@view/Home/components/HomeContent';
 import { loadUser, logout } from '@redux-action/authActions';
+import { RootState } from '@src/redux/store/store';
 
-interface IProHomeProps {
+interface IProHomeProps extends PropsFromRedux {
     location: Location;
     navigate: NavigateFunction;
-    logout: () => void;
-    loadUser: () => void;
 };
 
 interface IState {
@@ -53,9 +52,11 @@ class ProHome extends React.Component<IProHomeProps, IState>{
 
     render() {
         const { pathname } = this.state;
-        const { logout } = this.props;
+        const { logout, authUser } = this.props;
         const settings = this.context!.themeSettings;
         const toggleTheme = this.context!.toggleTheme;
+        const name = authUser.name ? authUser.name : "Hi Bro?";
+        const photo = authUser.photo ? authUser.photo : "https://images-rocky-public.s3.amazonaws.com/kisspng-rick-sanchez-morty-srick.jpg";
 
         return (
             <div
@@ -98,9 +99,9 @@ class ProHome extends React.Component<IProHomeProps, IState>{
                         collapsedShowGroupTitle: true,
                     }}
                     avatarProps={{
-                        src: 'https://images-rocky-public.s3.amazonaws.com/kisspng-rick-sanchez-morty-srick.jpg',
+                        src: photo,
                         size: 'default',
-                        title: 'Poppy Rick',
+                        title: `Hi ${name}!`,
                         // onClick(e) {
                         //     e?.preventDefault();
                         // },
@@ -196,4 +197,11 @@ class ProHome extends React.Component<IProHomeProps, IState>{
     }
 }
 
-export default WithNavigate(connect(null, { logout, loadUser })(ProHome));
+const mapStateToProps = (state: RootState) => ({
+    authUser: state.auth.user
+})
+
+const connector = connect(mapStateToProps, { logout, loadUser });
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+export default WithNavigate(connector(ProHome));

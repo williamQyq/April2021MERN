@@ -8,7 +8,7 @@ import {
     getAlsoBoughtOnSku
 } from '@redux-action/bestbuy.action';
 import { SocketContext, socketType } from '@src/component/socket/SocketProvider';
-import StoreTable from './StoreTable.jsx';
+import DealsTable, { DealsDataTableProps } from '@view/Bot/DealsTable';
 import StoreAnalyticCards from './StoreAnalyticCards.jsx'
 // import BackTopHelper from 'component/utility/BackTop.jsx';
 import {
@@ -37,12 +37,7 @@ export const categoryIdGroup: BestbuyElectronicsCatgIds = {
     SURFACE: 'pcmcat1492808199261'
 }
 
-interface IProps extends PropsFromRedux {
-    // getBestBuyDeals: () => void;
-    // getMostViewedOnCategoryId: (catgId: string) => void;
-    // handlePriceCrawlFinished: (targetStore: string) => void;
-    // handlePriceCrawlError: (targetStore: string, msg: unknown) => void;
-}
+interface IProps extends PropsFromRedux { };
 interface IState {
     targetStore: string;
     mostViewedCatgId: string | undefined;
@@ -73,25 +68,27 @@ class BestBuyDeals extends React.Component<IProps, IState> {
     componentDidMount() {
         let socket = this.context!;
         const { targetStore } = this.state;
-        socket.emit(`subscribe`, `StoreListingRoom`);
-        this.props.getBestbuyDeals();
-
-        socket.on('Store Listings Update', () => {
+        if (socket) {
+            socket.emit(`subscribe`, `StoreListingRoom`);
             this.props.getBestbuyDeals();
-        })
-        socket.on(socketType.ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE, (data) => {
-            console.log(this.state.targetStore, data)
-            this.props.handlePriceCrawlFinished(targetStore);
-        })
-        socket.on(socketType.RETRIEVE_BB_ITEMS_ONLINE_PRICE_ERROR, (err) => {
-            console.error(targetStore, err);
-            this.props.handlePriceCrawlError(targetStore);
-        })
+
+            socket.on('Store Listings Update', () => {
+                this.props.getBestbuyDeals();
+            })
+            socket.on(socketType.ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE, (data) => {
+                console.log(this.state.targetStore, data)
+                this.props.handlePriceCrawlFinished(targetStore);
+            })
+            socket.on(socketType.RETRIEVE_BB_ITEMS_ONLINE_PRICE_ERROR, (err) => {
+                console.error(targetStore, err);
+                this.props.handlePriceCrawlError(targetStore);
+            })
+        }
     }
 
     componentWillUnmount() {
         let socket = this.context!;
-        socket.emit(`unsubscribe`, `StoreListingRoom`)
+        if (socket) socket.emit(`unsubscribe`, `StoreListingRoom`);
     }
 
     /**
@@ -136,7 +133,7 @@ class BestBuyDeals extends React.Component<IProps, IState> {
     }
 
     render() {
-        const data = {
+        const data: DealsDataTableProps = {
             storeName: this.state.targetStore,
             items: this.props.items,
             loading: this.props.loading
@@ -152,7 +149,7 @@ class BestBuyDeals extends React.Component<IProps, IState> {
 
         return (
             <>
-                <StoreTable {...data} />
+                <DealsTable {...data} />
                 <StoreAnalyticCards {...categoryProps} />
             </>
         )

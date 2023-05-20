@@ -118,7 +118,7 @@ export default {
             icon: <GrAmazon style={{ fontSize: "48px" }} />,
             title: 'Amazon Selling Partner',
             desc: 'Amz Resource Management',
-            url: 'https://antv.vision/',
+            url: '',
             target: '_blank',
         },
         {

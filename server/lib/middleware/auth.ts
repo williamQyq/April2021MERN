@@ -7,6 +7,13 @@ import config from 'config';
  * @description my customized legacy jwt auth process  
  */
 export default function auth<T = any>(req: Request, res: Response, next: NextFunction): Response<T> | void {
+    // Passport OAuth authenticated user.
+    if (req.isAuthenticated()) {
+        next();
+        return;
+    }
+
+    // Legacy JWT authenticated user.
     const token: string | undefined = req.header('x-auth-token');
     const JWT_SECRET = config.get('JWT_SECRET') as string;
     if (!token) {

@@ -191,7 +191,7 @@ class FormTable extends React.Component {
 
 
     render() {
-        const { data, loading, columns, tableSettings } = this.props
+        const { data, loading, columns, tableSettings, handleRowClick } = this.props
         const searchPropsColumns = this.addSearchPropsToColumns(columns, this.getColumnSearchProps);
 
         return (
@@ -200,6 +200,9 @@ class FormTable extends React.Component {
                 {...tableSettings}
                 columns={searchPropsColumns}
                 dataSource={data}
+                onRow={(record) => ({
+                    onClick: () => handleRowClick(record)
+                })}
             />
         )
     }

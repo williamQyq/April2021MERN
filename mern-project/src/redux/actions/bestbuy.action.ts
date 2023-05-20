@@ -15,25 +15,12 @@ import { tokenConfig } from './authActions';
 import { returnErrors } from './errorActions';
 import { ThunkAction, AnyAction } from '@reduxjs/toolkit';
 import { RootState } from '../store/store';
-import { AppDispatch } from '../interface';
-
-interface DealDataType {
-    key: string;
-    link: number;
-    name: number;
-    sku: number;
-    qty: number;
-    upc: string;
-    currentPrice: number;
-    isCurrentPriceLower: boolean;
-    priceDiff: number;
-    captureDate: Date;
-}
+import { AppDispatch, DealsDataSourceType } from '../interface';
 
 export const getBestbuyDeals = (): ThunkAction<void, RootState, any, AnyAction> =>
     async (dispatch: AppDispatch, getState: () => RootState) => {
         dispatch(setItemsLoading());
-        axios.get<DealDataType>('/api/bestbuy/v1/deals', tokenConfig(getState)).then(res => {
+        axios.get<DealsDataSourceType>('/api/bestbuy/v1/deals', tokenConfig(getState)).then(res => {
             //modify created date time format in res.data
             let deals = Object.values(res.data).map(deal => {
                 deal.captureDate = Moment(deal.captureDate).format("MM-DD-YYYY HH:mm:ss");

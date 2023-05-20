@@ -27,6 +27,7 @@ import { tokenConfig } from './authActions';
 import { clearMessages, returnMessages } from './messageActions';
 import { RootState, AppDispatch } from '../store/store';
 import { AnyAction, ThunkAction } from '@reduxjs/toolkit';
+import { myAxiosResponse } from '../interface.js';
 
 const setItemsLoading = () => ({
     type: ITEMS_LOADING
@@ -43,7 +44,7 @@ function getRoutesAndActionTypes(selectedStore: string) {
                     GET_ITEM_ONLINE_PRICE: GET_MS_ITEMS_ONLINE_PRICE,
                     ITEMS_ONLINE_PRICE_LOADING: MS_ITEMS_ONLINE_PRICE_LOADING,
                     ON_RETRIEVED_ONLINE_PRICE: ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE,
-                    FAILED_RETRIEVE_ONLINE_PRICE: RETRIEVE_MS_ITEMS_ONLINE_PRICE_ERROR
+                    FAILED_RETRIEVE_DEALS_INFO: RETRIEVE_MS_ITEMS_ONLINE_PRICE_ERROR
                 }
             }
         case BESTBUY:
@@ -56,7 +57,7 @@ function getRoutesAndActionTypes(selectedStore: string) {
                     GET_ITEM_ONLINE_PRICE: GET_BB_ITEMS_ONLINE_PRICE,
                     ITEMS_ONLINE_PRICE_LOADING: BB_ITEMS_ONLINE_PRICE_LOADING,
                     ON_RETRIEVED_ONLINE_PRICE: ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE,
-                    RETRIEVE_BB_ITEMS_ONLINE_PRICE_ERROR: RETRIEVE_BB_ITEMS_ONLINE_PRICE_ERROR
+                    FAILED_RETRIEVE_DEALS_INFO: RETRIEVE_BB_ITEMS_ONLINE_PRICE_ERROR
                 }
             }
         default:
@@ -69,8 +70,10 @@ export const signalPriceCrawler = (store: string): ThunkAction<void, RootState, 
         const routerConfig = getRoutesAndActionTypes(store);    //get routes and action types on store selection
         if (!routerConfig) return;
         dispatch({ type: routerConfig.type.ITEMS_ONLINE_PRICE_LOADING });
-        dispatch(returnMessages("Working on online price retrieval...\nPlease wait.", 202, routerConfig.type.ITEMS_ONLINE_PRICE_LOADING));
         axios.get(`/api/${routerConfig.routes}/crawl/v1/laptop/prices`, tokenConfig(getState))
+            .then((res: myAxiosResponse) => {
+                dispatch(returnMessages(res.data.msg, res.status, routerConfig.type.ITEMS_ONLINE_PRICE_LOADING));
+            })
             .catch(err => {
                 dispatch(clearMessages())
                 dispatch(returnMessages(err.response.msg, err.response.status, GET_ERRORS))
@@ -92,8 +95,11 @@ export const handlePriceCrawlError = (store: string): ThunkAction<void, RootStat
     async (dispatch: AppDispatch) => {
         const routerConfig = getRoutesAndActionTypes(store);
         if (!routerConfig) return;
+        dispatch({
+            type: routerConfig.type.GET_ITEM_ONLINE_PRICE
+        })
         dispatch(clearErrors(routerConfig.type.CLEAR_ERRORS))
-        dispatch(returnErrors(`${store} Bot throw Exceptions`, 400, RETRIEVE_MS_ITEMS_ONLINE_PRICE_ERROR))
+        dispatch(returnErrors(`${store} Bot throw Exceptions`, 400, routerConfig.type.FAILED_RETRIEVE_DEALS_INFO))
     }
 
 export interface DealDataType {

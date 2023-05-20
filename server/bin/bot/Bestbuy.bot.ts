@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { DealDataType, DealItemSpec, DealsAlert } from '#query/deals.query';
 import { DealBot, DealMessage, MyMessage, Pagination } from './index';
 import { Page } from 'puppeteer';
+import io from 'index';
 
 /*
 declare class Bestbuy {
@@ -47,10 +48,12 @@ export default class Bestbuy extends DealBot {
         let browser = await this.initBrowser();
         let page = await this.initPage(browser);
 
-        const { pageCnt, itemCntPerPage }: Pagination = await this.getPagination(page, storeUrl);
-
+        const { pageCnt }: Pagination = await this.getPagination(page, storeUrl);
+        console.log(`pageCnt:`, pageCnt);
         if (!pageCnt) throw new Error("*Parse Pagination fail*")
         // For each page, get deals, save to database and print process status. 
+
+        // @TODO: use multi tab to crawl, instead one tab per page...
         try {
             for (let i = 0; i < pageCnt; i++) {
                 // page = await this.initPage(browser);
@@ -84,10 +87,14 @@ export default class Bestbuy extends DealBot {
             await browser.close();
             let errMsg = new MyMessage(this.storeName);
             errMsg.printError(e);
+
+            io.sockets.emit("RETRIEVE_BB_ITEMS_ONLINE_PRICE_ERROR", { msg: `Fail to retrive Bestbuy Laptop Price \n\n${e}` })
         }
 
         await page.close();
         await browser.close();
+
+        io.sockets.emit("ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE", { msg: "All deals retieved success" });
     }
 
     async fetchAndSaveItemSpecification(url: string, sku: string) {
@@ -153,10 +160,10 @@ export default class Bestbuy extends DealBot {
             pageCnt: undefined
         };
         const FOOTER_XPATH_EXPR = '//div[@class="footer top-border wrapper"]//span'
-        const NUM_PAGE_REGEX_EXPR = '/\d*-(\d*)\sof\s\d*/'
-        const TOTAL_NUM_REGEX_EXPR = '/.*of\s(\d*)\sitems/'
+        const NUM_PAGE_REGEX_EXPR: RegExp = /\d*-(\d*)\sof\s\d*/;
+        const TOTAL_NUM_REGEX_EXPR: RegExp = /.*of\s(\d*)\sitems/
 
-        let footer = (await this.evaluateElementsText(page, FOOTER_XPATH_EXPR))[0]
+        let footer: string = (await this.evaluateElementsText(page, FOOTER_XPATH_EXPR))[0]
         let itemCntPerPage: number = Number(this.getRegexValue(footer, NUM_PAGE_REGEX_EXPR))
         let itemsCount: number = Number(this.getRegexValue(footer, TOTAL_NUM_REGEX_EXPR))
 

@@ -7,9 +7,7 @@ import {
 } from "@src/redux/actions/types";
 import { Socket, io } from "socket.io-client";
 
-const socket: Socket = io();
-
-export const SocketContext = createContext<Socket | null>(socket);
+export const SocketContext = createContext<Socket | undefined>(undefined);
 export const socketType = {
     ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE,
     ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE,
@@ -20,28 +18,30 @@ interface SocketProviderProps {
     children: React.ReactNode;
 }
 export const SocketProvider: React.FC<SocketProviderProps> = (props) => {
+    const socketRef = React.useRef<Socket>();
     useEffect(() => {
-        socket.on('connect', () => {
-            console.log(`${socket.id} connected.\n`)
+        socketRef.current = io();
+        socketRef.current.on('connect', () => {
+            console.log(`${socketRef.current!.id} connected.\n`)
         })
-        socket.on('reconnect', (attemp) => {
-            console.log(`${socket.id} tried reconnect ${attemp}`)
+        socketRef.current.on('reconnect', (attemp) => {
+            console.log(`${socketRef.current!.id} tried reconnect ${attemp}`)
         })
-        socket.on('disconnect', () => {
+        socketRef.current.on('disconnect', () => {
             console.log(`socket disconnected.`)
             // socket.connect();
         })
-        socket.on('connect_error', (err) => {
+        socketRef.current.on('connect_error', (err) => {
             console.log(`socket exception: ${err}`)
         })
 
         return () => {
-            socket.disconnect();
+            socketRef.current!.disconnect();
         }
     }, [])
 
     return (
-        <SocketContext.Provider value={socket}>
+        <SocketContext.Provider value={socketRef.current}>
             {props.children}
         </SocketContext.Provider>
     );

@@ -57,6 +57,17 @@ export interface VerifiedSellerAllowedPriceDataSourceType {
     "fulfillment-center-id": FulfillmentCenterId;
     "merchant_shipping_group_name": MerchantShippingGroup;
 }
+export interface DealsDataSourceType {
+    _id: string;
+    sku: string;
+    link: string;
+    name: string;
+    key: string;
+    currentPrice: number;
+    isCurrentPriceLower: boolean;
+    priceDiff: number;
+    captureDate: Date;
+}
 
 export interface ReduxRootState {
     item: ItemReducerState;

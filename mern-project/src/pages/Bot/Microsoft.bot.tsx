@@ -1,7 +1,7 @@
 import React from 'react';
 import { ConnectedProps, connect } from 'react-redux';
 import { SocketContext, socketType } from '@src/component/socket/SocketProvider';
-import StoreTable from '@view/Bot/StoreTable.jsx';
+import StoreTable, { DealsDataTableProps } from '@view/Bot/DealsTable';
 import { storeType } from '@src/component/utils/cmpt.global';
 import {
     handlePriceCrawlError,
@@ -50,7 +50,7 @@ class MS extends React.Component<IProps, IState> {
     }
 
     render() {
-        const data = {
+        const data: DealsDataTableProps = {
             storeName: this.state.targetStore,
             items: this.props.items,
             loading: this.props.loading

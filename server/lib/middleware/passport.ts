@@ -4,6 +4,7 @@ import User from '#root/lib/models/User';
 import { IUserDoc } from '../models/interface';
 import mongoose from 'mongoose';
 import config from 'config';
+
 export default function passportSetup(passport: PassportStatic) {
     passport.use(
         new GoogleStrategy(
