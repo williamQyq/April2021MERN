@@ -28,18 +28,18 @@ declare global {
             //*******************************/
             BESTBUY_API_KEY: string;
 
-            private_key_id:string;
-            private_key:string;
+            private_key_id: string;
+            private_key: string;
 
-            GOOGLE_CLIENT_ID:string;
-            GOOGLE_CLIENT_SECRET:string;
-            private_key_id:string;
-            
+            GOOGLE_CLIENT_ID: string;
+            GOOGLE_CLIENT_SECRET: string;
+            private_key_id: string;
+
         }
     }
 
     namespace Express {
-        interface User extends IUserDoc { }
+        interface User extends IUserDoc { };
         interface Request {
             user?: JwtPayload<{ id: number, iat: number, exp: number }>
         }

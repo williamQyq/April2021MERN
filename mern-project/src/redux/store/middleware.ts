@@ -4,14 +4,16 @@ import {
     Dispatch,
     Middleware,
     MiddlewareAPI
-} from 'redux';
+} from '@reduxjs/toolkit';
 
-export const abortMiddleware = (abortSignal: AbortSignal | undefined): Middleware => (api: MiddlewareAPI) => (next: Dispatch<AnyAction>) => (action: Action) => {
-    console.log(`abortMiddleware`)
-    if (abortSignal && abortSignal.aborted) {
-        console.log(`Action aborted`)
-        return;
-    }
-    // api.dispatch({type:"ACTION_TYPE",payload:PAYLOAD})
-    return next(action);
-}
+export const abortMiddleware = (abortSignal: AbortSignal | undefined): Middleware<{}, any, Dispatch<AnyAction>> =>
+    (api: MiddlewareAPI) =>
+        (next: Dispatch<AnyAction>) =>
+            (action: Action) => {
+                if (abortSignal && abortSignal.aborted) {
+                    console.log(`Action aborted`)
+                    return;
+                }
+                // api.dispatch({type:"ACTION_TYPE",payload:PAYLOAD})
+                return next(action);
+            }

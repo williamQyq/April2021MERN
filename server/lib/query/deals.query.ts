@@ -178,7 +178,6 @@ export class DealsAlert extends Deals {
                 };
             },
         ]).exec();
-
         return deals;
     }
 

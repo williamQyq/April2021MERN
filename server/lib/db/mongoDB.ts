@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import io from '#root/index.js';    //socket io
+import io from '#root/index';    //socket io
 import config from 'config';
 import dotenv from 'dotenv';
 // import startScrapeScheduler from './bin/scrapeScheduler.js';    //scripts scheduler, node-cron

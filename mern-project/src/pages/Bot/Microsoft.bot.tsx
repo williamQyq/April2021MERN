@@ -16,7 +16,7 @@ interface IState {
     targetStore: string
 }
 
-class MS extends React.Component<IProps, IState> {
+class MicrosoftDeals extends React.Component<IProps, IState> {
     static contextType = SocketContext;
     declare context: React.ContextType<typeof SocketContext>;
     constructor(props: IProps) {
@@ -30,23 +30,24 @@ class MS extends React.Component<IProps, IState> {
     componentDidMount() {
         let socket = this.context!;
         const { targetStore } = this.state;
-        socket.emit(`subscribe`, `StoreListingRoom`);
         this.props.getMicrosoftDeals();
-        socket.on('Store Listings Update', () => {
-            this.props.getMicrosoftDeals();
-        })
-        socket.on(socketType.ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE, (data) => {
-            console.log(targetStore, data);
-            this.props.handlePriceCrawlFinished(targetStore);
-        })
-        socket.on(socketType.RETRIEVE_MS_ITEMS_ONLINE_PRICE_ERROR, (data) => {
-
-            this.props.handlePriceCrawlError(targetStore);
-        })
+        if (socket && socket.active) {
+            socket.emit(`subscribe`, `StoreListingRoom`);
+            socket.on('Store Listings Update', () => {
+                this.props.getMicrosoftDeals();
+            })
+            socket.on(socketType.ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE, (data) => {
+                console.log(targetStore, data);
+                this.props.handlePriceCrawlFinished(targetStore);
+            })
+            socket.on(socketType.RETRIEVE_MS_ITEMS_ONLINE_PRICE_ERROR, (data) => {
+                this.props.handlePriceCrawlError(targetStore);
+            })
+        }
     }
     componentWillUnmount() {
         let socket = this.context!;
-        socket.emit(`unsubscribe`, `StoreListingRoom`)
+        if (socket) socket.emit(`unsubscribe`, `StoreListingRoom`)
     }
 
     render() {
@@ -75,4 +76,4 @@ const connector = connect(mapStateToProps, {
 });
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-export default connector(MS);
+export default connector(MicrosoftDeals);

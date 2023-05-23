@@ -2,6 +2,12 @@ import jwt from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
 import { IResponseErrorMessage } from '#root/@types/interface';
 import config from 'config';
+
+// const ORIGIN: string = process.env.NODE_ENV === "production" ?
+//     config.get<string>("origin.prod")
+//     : config.get<string>("origin.dev");
+
+
 /**
  * 
  * @description my customized legacy jwt auth process  
@@ -20,7 +26,8 @@ export default function auth<T = any>(req: Request, res: Response, next: NextFun
         let errMsg: IResponseErrorMessage = {
             msg: "authorization denied"
         }
-        return res.status(401).json(errMsg)
+        res.status(401).json(errMsg);
+        return;
     }
 
     try {

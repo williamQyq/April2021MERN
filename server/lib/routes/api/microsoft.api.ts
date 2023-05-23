@@ -34,14 +34,7 @@ router.get('/crawl/v1/laptop/prices', auth, (req, res) => {
     // }, 3000)
     let puppeteer = new Microsoft();
     puppeteer.getAndSaveLaptopsPrice()
-        .then(() => {
-            res.json({ msg: "get online price success" })
-            io.sockets.emit("ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE", { msg: "get online price success" });
-        })
-        .catch(err => {
-            res.status(500).json({ msg: `Fail to retrive Microsoft Laptop Price \n\n${err}` });
-            io.sockets.emit("RETRIEVE_MS_ITEMS_ONLINE_PRICE_ERROR", { msg: `Fail to retrive Microsoft Laptop Price \n\n${err}` });
-        })
+    res.status(202).json({ msg: "Currently working on retrieving the deals information." });
 })
 
 export default router;

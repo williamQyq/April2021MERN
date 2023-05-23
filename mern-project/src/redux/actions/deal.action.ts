@@ -147,7 +147,7 @@ export const getItemDetail = (store: string, _id: string): ThunkAction<void, Roo
 //     }
 // }
 
-export const saveUserTableSettings = (settings: any[]): ThunkAction<void, RootState, any, AnyAction> =>
+export const saveUserTableSettings = (settings: any): ThunkAction<void, RootState, any, AnyAction> =>
     async (dispatch: AppDispatch) => {
         dispatch(setItemsLoading());
         dispatch({

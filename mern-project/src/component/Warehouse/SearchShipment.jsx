@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Col, Form, Row } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import DrawerSearch from '@src/component/utils/DrawerSearch.jsx';
-import FormTable from '@src/component/utils/FormTable.jsx';
+import FormTable from '@src/component/utils/FormTable';
 import {
     defaultSettings,
     searchReceivedShipmentColumns,

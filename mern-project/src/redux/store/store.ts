@@ -15,6 +15,7 @@ import {
 import storage from 'redux-persist/lib/storage';
 import { configureStore } from '@reduxjs/toolkit';
 import { ReduxRootState } from '../interface';
+import { abortMiddleware } from './middleware';
 
 const persistConfig: PersistConfig<ReduxRootState> = {
     key: "root",

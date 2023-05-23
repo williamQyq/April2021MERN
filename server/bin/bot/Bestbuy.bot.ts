@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { DealDataType, DealItemSpec, DealsAlert } from '#query/deals.query';
 import { DealBot, DealMessage, MyMessage, Pagination } from './index';
-import { Page } from 'puppeteer';
+import puppeteer, { Page } from 'puppeteer';
 import io from 'index';
 
 /*
@@ -44,17 +44,20 @@ export default class Bestbuy extends DealBot {
         let alert = new DealsAlert();
         const model = DealsAlert._BestbuyDeal;
         let storeUrl = this.editParamPageNumInUrl(1);
+        let browser: puppeteer.Browser | undefined;
+        let page: puppeteer.Page | undefined;
 
-        let browser = await this.initBrowser();
-        let page = await this.initPage(browser);
-
-        const { pageCnt }: Pagination = await this.getPagination(page, storeUrl);
-        console.log(`pageCnt:`, pageCnt);
-        if (!pageCnt) throw new Error("*Parse Pagination fail*")
-        // For each page, get deals, save to database and print process status. 
-
-        // @TODO: use multi tab to crawl, instead one tab per page...
         try {
+            browser = await this.initBrowser();
+            page = await this.initPage(browser);
+
+            const { pageCnt }: Pagination = await this.getPagination(page, storeUrl);
+            console.log(`pageCnt:`, pageCnt);
+            if (!pageCnt) throw new Error("*Parse Pagination fail*")
+            // For each page, get deals, save to database and print process status. 
+
+            // @TODO: use multi tab to crawl, instead one tab per page...
+
             for (let i = 0; i < pageCnt; i++) {
                 // page = await this.initPage(browser);
                 let pageUrl = this.editParamPageNumInUrl(i + 1);
@@ -83,16 +86,13 @@ export default class Bestbuy extends DealBot {
                     });
             }
         } catch (e) {
-            await page.close();
-            await browser.close();
             let errMsg = new MyMessage(this.storeName);
             errMsg.printError(e);
-
             io.sockets.emit("RETRIEVE_BB_ITEMS_ONLINE_PRICE_ERROR", { msg: `Fail to retrive Bestbuy Laptop Price \n\n${e}` })
         }
 
-        await page.close();
-        await browser.close();
+        if (page) await page.close();
+        if (browser) await browser.close();
 
         io.sockets.emit("ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE", { msg: "All deals retieved success" });
     }

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { CanceledError } from 'axios';
 import Moment from 'moment';
 import {
     GET_BB_ITEMS,
@@ -15,24 +15,44 @@ import { tokenConfig } from './authActions';
 import { returnErrors } from './errorActions';
 import { ThunkAction, AnyAction } from '@reduxjs/toolkit';
 import { RootState } from '../store/store';
-import { AppDispatch, DealsDataSourceType } from '../interface';
+import { AppDispatch, DealsDataSourceType, myAxiosError } from '../interface';
 
-export const getBestbuyDeals = (): ThunkAction<void, RootState, any, AnyAction> =>
+export const getBestbuyDeals = (abortSignal: AbortSignal | undefined): ThunkAction<void, RootState, any, AnyAction> =>
     async (dispatch: AppDispatch, getState: () => RootState) => {
         dispatch(setItemsLoading());
-        axios.get<DealsDataSourceType>('/api/bestbuy/v1/deals', tokenConfig(getState)).then(res => {
-            //modify created date time format in res.data
-            let deals = Object.values(res.data).map(deal => {
-                deal.captureDate = Moment(deal.captureDate).format("MM-DD-YYYY HH:mm:ss");
-                return deal;
+        // const abortController = new AbortController();
+        axios.get<DealsDataSourceType>(
+            '/api/bestbuy/v1/deals',
+            {
+                signal: abortSignal,
+                ...tokenConfig(getState)
+            }
+        )
+            .then(res => {
+                //modify created date time format in res.data
+                let deals = Object.values(res.data).map(deal => {
+                    deal.captureDate = Moment(deal.captureDate).format("MM-DD-YYYY HH:mm:ss");
+                    return deal;
+                })
+                dispatch({
+                    type: GET_BB_ITEMS,
+                    payload: deals
+                })
             })
-            dispatch({
-                type: GET_BB_ITEMS,
-                payload: deals
+            .catch((err: CanceledError<any> | myAxiosError) => {
+                if (axios.isCancel(err)) {
+                    console.log(`Request canceled`, err.name);
+                    return;
+                } else {
+                    let myErr = err as myAxiosError;
+                    dispatch(returnErrors(myErr.response?.data.msg, myErr.response!.status, GET_ERRORS))
+                }
+
             })
-        }).catch(err => {
-            dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS))
-        })
+
+        // return () => {
+        //     abortController.abort();
+        // }
     };
 
 const setItemsLoading = () => {

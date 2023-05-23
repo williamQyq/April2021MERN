@@ -1,10 +1,10 @@
 import express from 'express';
-import BestbuyRouter from 'lib/routes/api/bestbuy.api';
-import msItemsRouter from 'lib/routes/api/microsoft.api';
+import BestbuyRouter from '#routes/api/bestbuy.api';
+import msItemsRouter from '#routes/api/microsoft.api';
 // import wmItemsRouter from '#routes/api/wm_items.js';
 import itemsRouter from '#routes/api/items.js';
 import usersRouter from '#routes/api/users.js';
-import wmsRouter from 'lib/routes/api/wmsV0.api';
+import wmsRouter from '#routes/api/wmsV0.api';
 import operationRouter from '#routes/api/operation.js';
 import wmsV1Router from "#routes/api/wmsV1";
 import authRouter from '#routes/api/auth';
@@ -91,24 +91,24 @@ app.use('/api/operationV1', operationV1Router);
 
 // @Socket IO listner
 const io = new SocketIO.Server(server, {
+    path:"/socket.io",
     pingTimeout: 21000,
     pingInterval: 20000,
     cors: {
-        origin: ORIGIN,
+        origin: "http://localhost:3000",
         methods: ["GET", "POST"],
     },
     transports: ["websocket", "polling"]
 });
-
-// io.engine.on("connection_error", (err) => {
-//     console.log(err.code);     // the error code, for example 1
-//     console.log(err.message);  // the error message, for example "Session ID unknown"
-//     console.log(err.context);  // some additional error context
-// });
+io.engine.on("connection_error", (err: { code: any; message: any; context: any; }) => {
+    console.log(err.code);     // the error code, for example 1
+    console.log(err.message);  // the error message, for example "Session ID unknown"
+    console.log(err.context);  // some additional error context
+});
 
 io.on("connection", (socket) => {
     console.log(`${socket.id} connected!!! \n `)
-    socket.on(`subscribe`, (room) => {
+    socket.on(`subscribe`, (room: string) => {
         try {
             socket.join(room);
             console.log(`A user Connected: ${socket.id}. Joined Room: ${room}`)

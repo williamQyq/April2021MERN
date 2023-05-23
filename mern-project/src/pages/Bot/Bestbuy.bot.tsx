@@ -15,7 +15,7 @@ import {
     handlePriceCrawlError,
     handlePriceCrawlFinished
 } from '@redux-action/deal.action';
-import { RootState } from '@src/redux/store/store.js';
+import { RootState } from '@src/redux/store/store';
 
 interface BestbuyElectronicsCatgIds {
     ALL_LAPTOPS: string,
@@ -49,9 +49,11 @@ interface IState {
 class BestBuyDeals extends React.Component<IProps, IState> {
     static contextType = SocketContext  //This part is important to access context values which are socket
     declare context: React.ContextType<typeof SocketContext>;
+    // abortController: AbortController
 
     constructor(props: IProps) {
         super(props);
+        // this.abortController = new AbortController();
         this.state = {
             targetStore: storeType.BESTBUY,
             mostViewedCatgId: undefined,
@@ -68,12 +70,16 @@ class BestBuyDeals extends React.Component<IProps, IState> {
     componentDidMount() {
         let socket = this.context!;
         const { targetStore } = this.state;
-        if (socket) {
+        // const { signal } = this.abortController;
+        let abortSignal: undefined | AbortSignal = undefined
+        this.props.getBestbuyDeals(abortSignal);
+
+        if (socket && socket.active) {
+            console.log(socket)
             socket.emit(`subscribe`, `StoreListingRoom`);
-            this.props.getBestbuyDeals();
 
             socket.on('Store Listings Update', () => {
-                this.props.getBestbuyDeals();
+                this.props.getBestbuyDeals(abortSignal);
             })
             socket.on(socketType.ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE, (data) => {
                 console.log(this.state.targetStore, data)
@@ -89,6 +95,8 @@ class BestBuyDeals extends React.Component<IProps, IState> {
     componentWillUnmount() {
         let socket = this.context!;
         if (socket) socket.emit(`unsubscribe`, `StoreListingRoom`);
+        // if (!this.abortController.signal.aborted)
+        //     this.abortController.abort();
     }
 
     /**

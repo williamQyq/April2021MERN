@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Form } from 'antd';
 import { defaultSettings, searchReceivedShipmentColumns } from '@src/component/Warehouse/util';
 import InventoryReceivedControlPanel from './InventoryReceivedControlPanel.jsx';
-import FormTable from '@src/component/utils/FormTable.jsx';
+import FormTable from '@src/component/utils/FormTable';
 import { getInventoryReceived } from '@redux-action//inboundActions.js';
 import { ContentHeader } from '@src/component/utils/Layout.jsx';
 

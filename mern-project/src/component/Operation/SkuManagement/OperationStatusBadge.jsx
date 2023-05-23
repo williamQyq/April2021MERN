@@ -30,7 +30,7 @@ export const MainStatusBadge = ({ record }) => {
         }
 
 
-        return hasActiveOffers
+        return hasActiveOffers;
     }
 
 

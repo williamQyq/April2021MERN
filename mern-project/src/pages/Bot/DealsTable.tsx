@@ -1,6 +1,7 @@
 import React from 'react';
 import './Store.scss';
-import { SocketContext, socketType } from '@src/component/socket/SocketProvider';
+import { NavigateFunction } from 'react-router-dom';
+//redux
 import { connect, useDispatch, useSelector, ConnectedProps } from 'react-redux';
 import {
     saveUserTableSettings,
@@ -13,20 +14,22 @@ import {
 import { AppDispatch, DealsDataSourceType } from '@src/redux/interface';
 import { BESTBUY, MICROSOFT, COSTCO, WALMART } from "@redux-action/types.js";
 import { RootState } from '@src/redux/store/store';
+//Antd 
 import {
     ImportOutlined,
     LoadingOutlined
 } from '@ant-design/icons';
-import { ContentHeader } from '@src/component/utils/Layout';
-import FormTable from '@src/component/utils/FormTable';
 import { Tooltip, Typography, Tree, } from 'antd';
-import { ColumnProps } from 'antd/lib/table';
+import { ColumnGroupType, ColumnType, ColumnsType, TableProps } from 'antd/es/table';
 import { BaseType } from 'antd/es/typography/Base';
 import { DataNode } from 'antd/es/tree';
-import { CiMenuKebab } from 'react-icons/ci';
 import { Key } from '@ant-design/pro-components';
+import { CiMenuKebab } from 'react-icons/ci';
+
+import { ContentHeader } from '@src/component/utils/Layout';
 import WithNavigate from '@src/component/auth/WithNavigate';
-import { NavigateFunction } from 'react-router-dom';
+import { SocketContext, socketType } from '@src/component/socket/SocketProvider';
+import FormTable, { ColumnTypeWithSearchable } from '@src/component/utils/FormTable';
 
 const Text = Typography.Text;
 
@@ -37,7 +40,7 @@ const storeType = {
     WALMART
 }
 
-export const defaultTableSettings = {
+export const defaultTableSettings: TableProps<any> = {
     showSorterTooltip: false,
     pagination: {
         defaultPageSize: 20,
@@ -45,97 +48,13 @@ export const defaultTableSettings = {
         pageSizeOptions: ['10', '20', '50', '100'],
         position: ['topRight', 'bottomRight']
     },
-    size: "middle"
+    size: "middle",
+    expandable: undefined
     // scroll: { y: "calc(100vh)" }
 
 }
 
-// const ActionMenu = (props) => {
-//     const { addItemSpecification } = props;
-
-//     const buttonSetting = {
-//         block: true,
-//         size: "large",
-//         type: "link"
-//     }
-
-//     const menuItems = [
-//         {
-//             label: (<Button disabled {...buttonSetting} icon={< PlusCircleOutlined />} />)
-//         },
-//         {
-//             label: (
-//                 <Button {...buttonSetting} >
-//                     <Link to="item-detail" className="action-link" >
-//                         <SearchOutlined />
-//                         Detail
-//                     </Link>
-//                 </Button>
-//             )
-//         },
-//         {
-//             label: (
-//                 <Button disabled {...buttonSetting}>
-//                     <ShoppingCartOutlined />
-//                     Cart
-//                 </Button>
-//             )
-//         },
-//         {
-//             label: (
-//                 <Button
-//                     {...buttonSetting}
-//                     onClick={() => addItemSpecification()
-//                     }
-//                 >
-//                     <WindowsOutlined />
-//                     Spec
-//                 </Button>
-//             )
-//         }
-//     ]
-
-//     return (
-//         <Menu items={menuItems} />
-//     );
-// }
-
-// const DropDownActions = (props) => {
-//     const { record, storeName } = props
-//     const dispatch = useDispatch();
-//     const prevTableState = useSelector(state => state.item.tableState, shallowEqual)
-
-//     const stableAddItemSpecification = useCallback(() => {
-//         dispatch(addItemSpec(record, storeName));
-
-//         // eslint-disable-next-line react-hooks/exhaustive-deps
-//     }, [record, storeName])
-
-//     const stableSaveActionHistory = useCallback(() => {
-//         dispatch(saveUserTableSettings({ ...prevTableState, store: storeName, clickedId: record._id }));
-
-//         // eslint-disable-next-line react-hooks/exhaustive-deps
-//     }, [prevTableState, record, storeName])
-
-//     return (
-//         <Dropdown
-//             trigger={["click"]}
-//             menu={() => ActionMenu({ addItemSpecification: stableAddItemSpecification })}
-//             placement="bottom"
-//         >
-//             <TypoLink onClick={stableSaveActionHistory}>
-//                 More Actions < DownOutlined />
-//             </TypoLink>
-//         </Dropdown>
-//     );
-
-// }
-
-export interface CustomColumnProps<T> extends ColumnProps<T> {
-    searchable?: boolean;
-}
-
-const tableColumns: CustomColumnProps<DealsDataSourceType>[] = [
+const tableColumns: ColumnTypeWithSearchable<DealsDataSourceType>[] = [
     {
         title: 'Name',
         dataIndex: 'name',
@@ -196,6 +115,7 @@ const tableColumns: CustomColumnProps<DealsDataSourceType>[] = [
     }
 
 ]
+
 interface ICrawlerControlDropdownProps {
     storeName: string;
 }
@@ -255,7 +175,7 @@ export const CrawlerControlDropdown: React.FC<ICrawlerControlDropdownProps> = ({
 }
 export interface DealsDataTableProps {
     storeName: string;
-    items: unknown[];
+    items: readonly Record<string, string>[];
     loading: boolean;
 }
 
@@ -287,11 +207,13 @@ class DealsTable extends React.Component<IProps, IState> {
 
     }
 
-    handleRowClick = (record: DealsDataSourceType) => {
+    handleRowClick = (record: Record<string, string>) => {
         console.log(record);
         console.log(this.props.storeName)
-        let dealDetailRoute = `/app/deal-alert/${this.props.storeName.toLowerCase()}-list/item-detail`;
-        this.props.navigate(dealDetailRoute);
+
+        // TODO: navigate to Deal detail pages.
+        // let dealDetailRoute = `/app/deal-alert/${this.props.storeName.toLowerCase()}-list/item-detail`;
+        // this.props.navigate(dealDetailRoute);
     }
 
     render() {
@@ -301,10 +223,10 @@ class DealsTable extends React.Component<IProps, IState> {
                 <ContentHeader title={storeName} />
                 <CrawlerControlDropdown storeName={storeName} />
                 <FormTable
+                    {...defaultTableSettings}
                     loading={loading}
-                    tableSettings={{ ...defaultTableSettings, expandable: null, userTableSettings }}
-                    columns={tableColumns}
-                    data={items}
+                    columns={tableColumns as (ColumnGroupType<unknown> | ColumnType<unknown>)[]}
+                    dataSource={items}
                     handleRowClick={this.handleRowClick}
 
                 />

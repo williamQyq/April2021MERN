@@ -17,11 +17,17 @@
     "checkJs": false,
     "moduleResolution": "node",
     "outDir": "./dist",
-    "types": ["node","mongodb"]
+    "types": [
+      "node",
+      "mongodb"
+    ]
   },
   "tsc-alias": {
     "resolveFullPaths": true
   },
+  "files": [
+    "environment.d.ts",
+    "./index.ts"],
   "include": [
     "./**/*.ts",
   ],

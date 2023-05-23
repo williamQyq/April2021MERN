@@ -57,19 +57,21 @@ export default class Microsoft extends DealBot {
         let alert = new DealsAlert();
         let model = DealsAlert._MicrosoftDeal as mongoose.Model<unknown>;
         let storeUrl = this.editParamPageNumInUrl(0); //this. url + skipItemsNum
-
-        let browser: puppeteer.Browser = await this.initBrowser();
-        let page: puppeteer.Page = await this.initPage(browser);
-
-        page.setDefaultNavigationTimeout(30000);
-
-        let { pageCnt, itemCntPerPage } = await this.getPagination(page, storeUrl);
-        console.log('total pages num: ', pageCnt);
-
-        if (!pageCnt) throw new Error("*Get Pagination failed.*");
-
-        // Get Deals data and saved to database, for each deals retrieved print process status.
+        let browser: puppeteer.Browser | undefined;
+        let page: puppeteer.Page | undefined;
         try {
+            browser = await this.initBrowser();
+            page = await this.initPage(browser);
+
+            page.setDefaultNavigationTimeout(30000);
+
+            let { pageCnt } = await this.getPagination(page, storeUrl);
+            console.log('total pages num: ', pageCnt);
+
+            if (!pageCnt) throw new Error("*Get Pagination failed.*");
+
+            // Get Deals data and saved to database, for each deals retrieved print process status.
+
             for (let i = 0; i < pageCnt; i++) {
                 let pageUrl = this.editParamPageNumInUrl(i * pageCnt);
                 let dealsDataProms: PromiseSettledResult<ParsedDealDataType>[] = await this.getPageItems(page, pageUrl); //Array<{PromiseResolveType}>
@@ -103,14 +105,12 @@ export default class Microsoft extends DealBot {
                     })
             }
         } catch (e) {
-            await page.close();
-            await browser.close();
             let errMsg = new MyMessage(this.storeName);
             errMsg.printError(e);
         }
 
-        await page.close();
-        await browser.close();
+        if (page) await page.close();
+        if (browser) await browser.close();
     }
 
     editParamPageNumInUrl(skipItemsNum: number): string {
@@ -121,11 +121,10 @@ export default class Microsoft extends DealBot {
         let pagination: Pagination | undefined = undefined;
 
         const FOOTER_XPATH_EXPR = '//p[@class="c-paragraph-3"]'
-        const NUM_PAGE_REGEX_EXPR = '/.*Showing\s\d*\s-\s(\d*)\sof\s\d*.*/'
-        const TOTAL_NUM_REGEX_EXPR = '/.*Showing.*of\s(\d*).*/'
+        const NUM_PAGE_REGEX_EXPR: RegExp = /.*Showing\s\d*\s-\s(\d*)\sof\s\d*.*/;
+        const TOTAL_NUM_REGEX_EXPR: RegExp = /.*Showing.*of\s(\d*).*/;
 
-        let footer = (await this.evaluateElementsText(page, FOOTER_XPATH_EXPR))[0]
-
+        let footer: string = (await this.evaluateElementsText(page, FOOTER_XPATH_EXPR))[0]
         let itemCntPerPage: number = Number(this.getRegexValue(footer, NUM_PAGE_REGEX_EXPR))
         let itemsCount: number = Number(this.getRegexValue(footer, TOTAL_NUM_REGEX_EXPR))
 

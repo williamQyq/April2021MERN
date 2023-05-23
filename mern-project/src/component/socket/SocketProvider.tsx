@@ -20,7 +20,8 @@ interface SocketProviderProps {
 export const SocketProvider: React.FC<SocketProviderProps> = (props) => {
     const socketRef = React.useRef<Socket>();
     useEffect(() => {
-        socketRef.current = io();
+        const socket: Socket = io();
+        socketRef.current = socket;
         socketRef.current.on('connect', () => {
             console.log(`${socketRef.current!.id} connected.\n`)
         })

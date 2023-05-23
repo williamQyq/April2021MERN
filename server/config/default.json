@@ -1,7 +1,7 @@
 {
     "origin": {
-        "prod": "https://willwows.blog/",
-        "dev": "http://localhost:3000/"
+        "prod": "https://willwows.blog",
+        "dev": "http://localhost:3000"
     },
     "db": {
         "col": {
