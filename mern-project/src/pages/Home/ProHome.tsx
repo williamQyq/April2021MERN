@@ -52,11 +52,11 @@ class ProHome extends React.Component<IProHomeProps, IState>{
 
     render() {
         const { pathname } = this.state;
-        const { logout, authUser } = this.props;
+        const { logout, auth } = this.props;
         const settings = this.context!.themeSettings;
         const toggleTheme = this.context!.toggleTheme;
-        const name = authUser.name ? authUser.name : "Hi Bro?";
-        const photo = authUser.photo ? authUser.photo : "https://images-rocky-public.s3.amazonaws.com/kisspng-rick-sanchez-morty-srick.jpg";
+        const name = auth.user?.name ? auth.user.name : "Bro?";
+        const photo = auth.user?.photo ? auth.user.photo : "https://images-rocky-public.s3.amazonaws.com/kisspng-rick-sanchez-morty-srick.jpg";
 
         return (
             <div
@@ -198,7 +198,7 @@ class ProHome extends React.Component<IProHomeProps, IState>{
 }
 
 const mapStateToProps = (state: RootState) => ({
-    authUser: state.auth.user
+    auth: state.auth
 })
 
 const connector = connect(mapStateToProps, { logout, loadUser });

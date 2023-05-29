@@ -28,12 +28,14 @@ class OperationProductList extends React.Component {
     }
 
     componentDidMount() {
-        let socket = this.context
-        socket.emit(`subscribe`, `OperationRoom`);
-        this.props.getProductPricing()
-        socket.on(`Prod Pricing Update`, () => {
-            this.props.getProductPricing();
-        })
+        let socket = this.context;
+        this.props.getProductPricing();
+        if (socket && socket.active) {
+            socket.emit(`subscribe`, `OperationRoom`);
+            socket.on(`Prod Pricing Update`, () => {
+                this.props.getProductPricing();
+            })
+        }
     }
     componentDidUpdate(prevProps, nextProps) {
         const dataSource = this.props.sellingPartner
@@ -43,7 +45,8 @@ class OperationProductList extends React.Component {
     }
     componentWillUnmount() {
         let socket = this.context
-        socket.emit(`unsubscribe`, `OperationRoom`)
+
+        if (socket && socket.active) socket.emit(`unsubscribe`, `OperationRoom`)
     }
 
     isLoading = () => {

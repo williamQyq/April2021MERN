@@ -102,7 +102,7 @@ router.get('/peek/v0/getAlsoBought/sku/:sku', auth, (req, res) => {
 router.get('/crawl/v1/laptop/prices', auth, (req, res) => {
     let bestbuy = new Bestbuy();
     bestbuy.getAndSaveLaptopsPrice()
-    res.status(202).json({ msg: "Currently working on retrieving the deals information." });
+    res.status(202).json({ msg: "Now Retrieving the Deals..." });
 })
 
 export default router;

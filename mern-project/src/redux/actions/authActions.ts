@@ -1,5 +1,5 @@
-import axios, { AxiosRequestConfig } from "axios";
-import { MyThunkAction } from "@src/redux/interface.js";
+import axios, { AxiosRequestConfig, CanceledError } from "axios";
+import { MyThunkAction, myAxiosError } from "@src/redux/interface.js";
 import { RootState } from "@src/redux/store/store";
 import { AnyAction, Dispatch } from "redux";
 import { returnErrors } from './errorActions'
@@ -80,35 +80,41 @@ export const login = (authConfig: { username: string, password: string }) => asy
 // }
 
 //Check token & load user
-export const loadUser = (): MyThunkAction => (dispatch: Dispatch<AnyAction>) => {
-    dispatch({ type: USER_LOADING });
-    const config: AxiosRequestConfig = {
-        withCredentials: true,
-        headers: {
-            "Content-Type": "application/json",
+export const loadUser = (abortSignal?: AbortSignal): MyThunkAction =>
+    async (dispatch: Dispatch<AnyAction>) => {
+        dispatch({ type: USER_LOADING });
+        const config: AxiosRequestConfig = {
+            withCredentials: true,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            signal: abortSignal
         }
-    }
-    axios.get('/api/auth/user', config)
-        .then(res =>
-            dispatch({
-                type: USER_LOADED,
-                payload: res.data
-            })
-        )
-        .catch(err => {
-            // dispatch(returnErrors(err.response.data.msg, err.response.status));
-            dispatch({
-                type: AUTH_ERROR
+        axios.get('/api/auth/user', config)
+            .then(res =>
+                dispatch({
+                    type: USER_LOADED,
+                    payload: res.data
+                })
+            )
+            .catch((err: CanceledError<unknown> | myAxiosError) => {
+                if (err.name === "CanceledError") {
+                    console.log(`Reqeust canceled.`)
+                } else {
+                    // dispatch(returnErrors(err.response.data.msg, err.response.status));
+                    dispatch({ type: AUTH_ERROR });
+                }
             });
-        });
 
-}
+    }
 
 // Logout User
 export const logout = () => (dispatch: Dispatch<AnyAction>) => {
-    dispatch({
-        type: LOGOUT_SUCCESS
-    })
+    axios.get('/api/auth/logout')
+        .then(() => {
+            dispatch({ type: LOGOUT_SUCCESS })
+        })
+
 }
 
 export const register = () => (dispatch: Dispatch<AnyAction>) => {

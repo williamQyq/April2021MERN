@@ -1,6 +1,6 @@
 {
     "origin": {
-        "prod": "https://willwows.blog",
+        "prod": "https://willhopter.com",
         "dev": "http://localhost:3000"
     },
     "db": {

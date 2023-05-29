@@ -37,7 +37,7 @@ export default function passportSetup(passport: PassportStatic) {
                             console.log("created new user.")
                             done(null, user);
                         }
-                        done("[Warning] Auto Register User in Production not allowed.",undefined)
+                        done("[Warning] Auto Register User in Production not allowed.", undefined)
                     }
                 } catch (err: any) {
                     console.error(err);
@@ -54,7 +54,8 @@ export default function passportSetup(passport: PassportStatic) {
     // )
 
     passport.serializeUser((user, done) => {
-        console.log(`passport serialize user: `, user)
+        console.log(`passport serialize user:\n`);
+        console.log(user)
         done(null, user.googleId);
     });
 

@@ -17,17 +17,15 @@ import { ThunkAction, AnyAction } from '@reduxjs/toolkit';
 import { RootState } from '../store/store';
 import { AppDispatch, DealsDataSourceType, myAxiosError } from '../interface';
 
-export const getBestbuyDeals = (abortSignal: AbortSignal | undefined): ThunkAction<void, RootState, any, AnyAction> =>
+export const getBestbuyDeals = (abortSignal?: AbortSignal): ThunkAction<void, RootState, any, AnyAction> =>
     async (dispatch: AppDispatch, getState: () => RootState) => {
+        console.log(abortSignal)
         dispatch(setItemsLoading());
-        // const abortController = new AbortController();
         axios.get<DealsDataSourceType>(
-            '/api/bestbuy/v1/deals',
-            {
-                signal: abortSignal,
-                ...tokenConfig(getState)
-            }
-        )
+            '/api/bestbuy/v1/deals', {
+            signal: abortSignal,
+            ...tokenConfig(getState)
+        })
             .then(res => {
                 //modify created date time format in res.data
                 let deals = Object.values(res.data).map(deal => {
@@ -40,19 +38,15 @@ export const getBestbuyDeals = (abortSignal: AbortSignal | undefined): ThunkActi
                 })
             })
             .catch((err: CanceledError<any> | myAxiosError) => {
-                if (axios.isCancel(err)) {
+                if (err.name === "CanceledError") {
                     console.log(`Request canceled`, err.name);
-                    return;
+                   
                 } else {
                     let myErr = err as myAxiosError;
                     dispatch(returnErrors(myErr.response?.data.msg, myErr.response!.status, GET_ERRORS))
                 }
 
             })
-
-        // return () => {
-        //     abortController.abort();
-        // }
     };
 
 const setItemsLoading = () => {
@@ -61,6 +55,14 @@ const setItemsLoading = () => {
     };
 };
 
+/**
+ * 
+ * @param store 
+ * @param clickedId 
+ * @returns 
+ * @description 
+ *  #TODO save table user settings
+ */
 export const setTableSettings = (store: string, clickedId: string): ThunkAction<void, RootState, any, AnyAction> =>
     async (dispatch: AppDispatch) => {
         dispatch(setItemsLoading());

@@ -69,8 +69,8 @@ export abstract class DealBot {
 
     async initBrowser(): Promise<puppeteer.Browser> {
         const browser: puppeteer.Browser = await puppeteer.launch({
-            headless: true,
-            // headless: false, //show browser
+            // headless: true,
+            headless: false, //show browser
             args: [
                 '--single-process',
                 '--no-zygote',
@@ -103,7 +103,34 @@ export abstract class DealBot {
     //@param: puppeter page, xpath expression
     //@return: text context
     async evaluateElementsText(page: puppeteer.Page, XPATH_EXPR: string) {
-        await page.waitForXPath(XPATH_EXPR)
+        await page.waitForXPath(XPATH_EXPR) //wait until at least one matching elements loaded.
+
+        const elements = await page.$x(XPATH_EXPR)
+        const textResult = await page.evaluate((...elements) =>
+            (elements.map(e => e.textContent))
+            , ...elements)
+        return textResult;
+    }
+
+    /**
+     * 
+     * @param page 
+     * @param XPATH_EXPR 
+     * @returns 
+     * @description #TODO takes very long to wait for all elements loaded. Not working.
+     */
+    async evaluateElementsTextUntilAllLoaded(page: puppeteer.Page, XPATH_EXPR: string) {
+        // await page.waitForXPath(XPATH_EXPR)
+        await page.waitForFunction(
+            (xpath: string) => {
+                const elements = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+                const element = elements.iterateNext();
+                return element === null;
+            },
+            {},
+            XPATH_EXPR
+        );
+
         const elements = await page.$x(XPATH_EXPR)
         const textResult = await page.evaluate((...elements) =>
             (elements.map(e => e.textContent))

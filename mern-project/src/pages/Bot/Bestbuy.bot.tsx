@@ -40,26 +40,25 @@ export const categoryIdGroup: BestbuyElectronicsCatgIds = {
 interface IProps extends PropsFromRedux { };
 interface IState {
     targetStore: string;
-    mostViewedCatgId: string | undefined;
-    mostViewedSku: string | undefined;
-    mostViewedItems: {};
-    alsoBoughtItems: {};
+    mostViewedCatgId?: string;
+    mostViewedSku?: string;
+    mostViewedItems?: any[];
+    alsoBoughtItems?: any[];
 }
 
 class BestBuyDeals extends React.Component<IProps, IState> {
     static contextType = SocketContext  //This part is important to access context values which are socket
     declare context: React.ContextType<typeof SocketContext>;
-    // abortController: AbortController
+    abortController?: AbortController;
 
     constructor(props: IProps) {
         super(props);
-        // this.abortController = new AbortController();
         this.state = {
             targetStore: storeType.BESTBUY,
             mostViewedCatgId: undefined,
             mostViewedSku: undefined,
-            mostViewedItems: {},
-            alsoBoughtItems: {}
+            mostViewedItems: undefined,
+            alsoBoughtItems: undefined
         }
     }
 
@@ -70,16 +69,16 @@ class BestBuyDeals extends React.Component<IProps, IState> {
     componentDidMount() {
         let socket = this.context!;
         const { targetStore } = this.state;
-        // const { signal } = this.abortController;
-        let abortSignal: undefined | AbortSignal = undefined
-        this.props.getBestbuyDeals(abortSignal);
+        // let abortSignal = this.abortController ? this.abortController.signal : undefined;
+        this.abortController = new AbortController();
+        this.props.getBestbuyDeals(this.abortController.signal);
 
         if (socket && socket.active) {
             console.log(socket)
             socket.emit(`subscribe`, `StoreListingRoom`);
 
             socket.on('Store Listings Update', () => {
-                this.props.getBestbuyDeals(abortSignal);
+                this.props.getBestbuyDeals(this.abortController?.signal);
             })
             socket.on(socketType.ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE, (data) => {
                 console.log(this.state.targetStore, data)
@@ -92,11 +91,13 @@ class BestBuyDeals extends React.Component<IProps, IState> {
         }
     }
 
+    cancelRequest = () => {
+        this.abortController?.abort();
+    }
     componentWillUnmount() {
         let socket = this.context!;
         if (socket) socket.emit(`unsubscribe`, `StoreListingRoom`);
-        // if (!this.abortController.signal.aborted)
-        //     this.abortController.abort();
+        this.cancelRequest();
     }
 
     /**
@@ -148,11 +149,8 @@ class BestBuyDeals extends React.Component<IProps, IState> {
         }
 
         const categoryProps = {
-            switchContent: this.switchContent,
-            selectedMostViewedCategoryId: this.state.mostViewedCatgId,
-            selectedMostViewedSku: this.state.mostViewedSku,
-            mostViewedItems: this.state.mostViewedItems,
-            alsoBoughtItems: this.state.alsoBoughtItems,
+            ...this.state,
+            switchContent: this.switchContent
         }
 
         return (

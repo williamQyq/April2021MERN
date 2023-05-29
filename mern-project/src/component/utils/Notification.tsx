@@ -2,8 +2,6 @@ import React from 'react';
 import { SmileOutlined } from "@ant-design/icons";
 import { notification, Typography } from "antd";
 
-import type { NotificationPlacement } from "antd/es/notification/interface";
-
 type AlertStatus = "success" | "error" | "warning";
 export interface INotificationProps {
     status: AlertStatus;

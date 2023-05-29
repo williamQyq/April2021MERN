@@ -61,14 +61,7 @@ router.post('/', (req: Request, res: Response) => {
 // @desc:   get authorized users data
 // @access: private
 router.get('/user', ensureAuth, (req: Request, res: Response) => {
-    if (!req.user) {
-        return res.status(401).json({ msg: "Unable to get authorized user." });
-    }
     res.json(req.user);
-    // User.findById(req.user.id)
-    //     .select('-password')
-    //     .then(user => res.json(user));
-
 });
 
 

@@ -2,11 +2,10 @@ import React from 'react';
 import { isBrowser } from 'react-device-detect';
 import { ConfigProvider, theme } from 'antd';
 import { Route, Routes } from "react-router-dom";
-import { connect } from 'react-redux';
+import { ConnectedProps, connect } from 'react-redux';
 import { AppDispatch, IReduxAuth, IReduxError } from '@src/redux/interface';
 import { clearErrors } from '@redux-action/errorActions';
 import { clearMessages } from '@redux-action/messageActions';
-import { loadUser } from '@redux-action/authActions';
 
 /* View Components */
 import ProHome from '@view/Home/ProHome';
@@ -19,12 +18,7 @@ import HomeMobile from './component/mobile/HomeMobile';
 import openAlertNotification, { INotificationProps } from '@src/component/utils/Notification';
 import NotFound from '@src/component/utils/NotFound.jsx';
 
-interface IProps extends IReduxAuth {
-  error: IReduxError;
-  handleMessages: () => void;
-  handleErrors: () => void;
-  loadUser: () => void;
-}
+interface IProps extends PropsFromRedux { };
 
 type NotificationConfig = INotificationProps | undefined;
 
@@ -34,18 +28,18 @@ class App extends React.Component<IProps, {}> {
 
   componentDidUpdate(prevProps: IProps) {
     if (this.props.error !== prevProps.error) {
-      this.handleAlertNotification(this.props.error);
+      this.showNotification(this.props.error);
     }
 
   }
 
-  handleAlertNotification = (error: IReduxError) => {
+  showNotification = (error: IReduxError) => {
     const { status, msg, reason } = error;
     if (!status) return;
 
     let config: NotificationConfig = {
-      status: 'error',
       msg,
+      status: 'error',
       context: reason,
       handleAction: this.props.handleMessages
     };
@@ -100,7 +94,8 @@ const mapStateToProps = (state: { auth: IReduxAuth; error: IReduxError }) => ({
 const mapDispatchToProps = (dispatch: AppDispatch) => ({
   handleErrors: () => dispatch(clearErrors()),
   handleMessages: () => dispatch(clearMessages()),
-  loadUser: () => dispatch(loadUser())
 })
 
+const connector = connect(mapStateToProps, mapDispatchToProps);
+type PropsFromRedux = ConnectedProps<typeof connector>
 export default connect(mapStateToProps, mapDispatchToProps)(App);

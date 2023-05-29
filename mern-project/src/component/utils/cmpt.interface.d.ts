@@ -1,8 +1,6 @@
 import { UploadProps } from 'antd';
 import { UploadRequestOption } from 'rc-upload/lib/interface';
 import { VerifiedSellerAllowedPriceDataSourceType } from '@src/redux/interface';
-import { NavigateFunction } from 'react-router-dom';
-import { GlobalToken } from 'antd/es/theme';
 /**
  * ProSignIn interface
  * 
@@ -11,28 +9,6 @@ export type User = Record<{
     username: string;
     password: string;
 }>
-
-export interface ReduxStateSignIn {
-    auth: {
-        isAuthenticated: boolean;
-        isLoading: boolean;
-    }
-    error: {
-        msg: IErrorResp;
-        status: unknown;
-        id: unknown;
-        reason: unknown;
-    }
-}
-export interface IProSignInProps extends ReduxStateSignIn {
-    token: GlobalToken;
-    navigate: NavigateFunction;
-    register: () => void;
-    login: (user: IUser) => void;
-    clearErrors: () => void;
-    loadUser: () => void;
-}
-
 
 export interface MenuOption {
     key: string,

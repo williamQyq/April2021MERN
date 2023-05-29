@@ -248,7 +248,7 @@ manually clear stored credentials by emptying those files:
 </br>
 
 Docker Procedure example:  
-`docker build -t node-server:latest`  
+`docker build -t node-server:latest .`  
 `docker tag node-server:latest dockerwilliamqiao/mern_server:latest`  
 `docker push dockerwilliamqiao/mern_server:latest`  
 

@@ -13,17 +13,22 @@ import {
     ProFormCheckbox,
     ProFormText,
 } from '@ant-design/pro-components';
-import { Navigate } from 'react-router-dom';
-import { connect } from 'react-redux';
+import { Navigate, NavigateFunction } from 'react-router-dom';
+import { connect, ConnectedProps } from 'react-redux';
 import { css } from '@emotion/css';
 import { Divider, message, Space, Tabs, Typography } from 'antd';
-import { IProSignInProps, User, ReduxStateSignIn } from '@src/component/utils/cmpt.interface';
+import { User } from '@src/component/utils/cmpt.interface';
 import WithNavigate from '../../component/auth/WithNavigate';
 import withToken from '../../component/theme/WithToken';
 import { login, register, loadUser } from '@redux-action/authActions';
 import { clearErrors } from '@redux-action/errorActions';
+import { GlobalToken } from 'antd/es/theme';
+import { RootState } from '@src/redux/store/store';
 
-
+export interface IProSignInProps extends PropsFromRedux {
+    token: GlobalToken;
+    navigate: NavigateFunction;
+}
 type LoginType = 'phone' | 'account';
 
 const iconStyles: CSSProperties = {
@@ -36,9 +41,13 @@ interface IState {
     rootPath: string;
     loginType: LoginType;
 }
-
+enum LoginMethod {
+    oauth,
+    legacy
+}
 
 class ProSignIn extends React.Component<IProSignInProps, IState>{
+    abortController?: AbortController;
     constructor(props: IProSignInProps) {
         super(props);
         this.state = {
@@ -47,23 +56,37 @@ class ProSignIn extends React.Component<IProSignInProps, IState>{
         }
     }
 
+    componentDidMount(): void {
+        this.abortController = new AbortController();
+        this.props.loadUser(this.abortController.signal);
+    }
+    // componentDidUpdate(prevProps: Readonly<IProSignInProps>, prevState: Readonly<IState>, snapshot?: any): void {
+    //     const { auth } = this.props;
+    //     const { rootPath } = this.state;
 
-    componentDidUpdate(prevProps: Readonly<IProSignInProps>, prevState: Readonly<IState>, snapshot?: any): void {
-        const { auth } = this.props;
-        const { rootPath } = this.state;
-
-        //check authenticated status if props.auth changed
-        if (prevProps.auth !== auth) {
-            if (auth.isAuthenticated) {
-                this.props.clearErrors();
-                this.props.navigate(rootPath, { replace: true });
-            }
-        }
+    //     //check authenticated status if props.auth changed
+    //     if (prevProps.auth !== auth) {
+    //         if (auth.isAuthenticated) {
+    //             this.props.clearErrors();
+    //             this.props.navigate(rootPath, { replace: true });
+    //         }
+    //     }
+    // }
+    componentWillUnmount(): void {
+        this.abortController?.abort();
     }
 
     //email & psw login
-    handleLogin = async (user: User): Promise<void> => {
-        return this.props.login(user);
+    handleLogin = async (method: LoginMethod, user?: User): Promise<void> => {
+        switch (method) {
+            case LoginMethod.legacy:
+                if (user !== undefined) this.props.login(user);
+                break;
+            case LoginMethod.oauth:
+                this.handleGoogleOAuthLogin();
+                break;
+        }
+
     }
 
     //google oauth login
@@ -115,7 +138,7 @@ class ProSignIn extends React.Component<IProSignInProps, IState>{
                                 submitText: 'Login'
                             },
                         }}
-                        onFinish={(value) => this.handleLogin(value)}
+                        onFinish={(value) => this.handleLogin(LoginMethod.legacy, value)}
                         // subTitle=""
                         // activityConfig={{
                         //     style: {
@@ -169,7 +192,7 @@ class ProSignIn extends React.Component<IProSignInProps, IState>{
                                         }}
                                         onClick={(e) => {
                                             e.preventDefault();
-                                            this.handleGoogleOAuthLogin()
+                                            this.handleLogin(LoginMethod.oauth);
                                         }}
                                     >
                                         <FcGoogle style={{ ...iconStyles }} />
@@ -312,20 +335,15 @@ class ProSignIn extends React.Component<IProSignInProps, IState>{
     }
 };
 
-const mapStateToProps = (state: ReduxStateSignIn) => ({
+const mapStateToProps = (state: RootState) => ({
     auth: state.auth,
     error: state.error
 });
-
-export default withToken(
-    WithNavigate(
-        connect(
-            mapStateToProps,
-            {
-                login,
-                register,
-                clearErrors,
-                loadUser
-            }
-        )(ProSignIn)
-    ));
+const connector = connect(mapStateToProps, {
+    login,
+    register,
+    clearErrors,
+    loadUser
+})
+type PropsFromRedux = ConnectedProps<typeof connector>;
+export default withToken(WithNavigate(connector(ProSignIn)));
