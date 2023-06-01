@@ -4,9 +4,9 @@ import { IResponseErrorMessage } from '#root/@types/interface';
 import config from 'config';
 import User from 'lib/models/User';
 
-// const ORIGIN: string = process.env.NODE_ENV === "production" ?
-//     config.get<string>("origin.prod")
-//     : config.get<string>("origin.dev");
+const ORIGIN: string = process.env.NODE_ENV === "production" ?
+    config.get<string>("origin.prod")
+    : config.get<string>("origin.dev");
 
 
 /**
@@ -67,14 +67,14 @@ export function ensureAuth(req: Request, res: Response, next: NextFunction) {
             return;
         }
     } catch (err: unknown) {
-        console.error("[Error] ensureAuth went wrong.")
+        //not authenticated
+        // let errorMsg: IResponseErrorMessage = {
+        //     msg: "Not OAuth Authenticated"
+        // }
+        console.error("Not OAuth Authenticated");
     }
-    //not authenticated
-    console.error("Not OAuth Authenticated");
-    let errorMsg: IResponseErrorMessage = {
-        msg: "Not OAuth Authenticated"
-    }
-    res.status(401).json(errorMsg)
+
+    res.redirect(ORIGIN);
 }
 
 export function ensureGuest(req: Request, res: Response, next: NextFunction) {

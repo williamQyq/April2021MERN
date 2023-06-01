@@ -1,6 +1,6 @@
 import React from 'react';
 import { ConnectedProps, connect } from 'react-redux';
-import { SocketContext, socketType } from '@src/component/socket/SocketProvider';
+import { SocketContext } from '@src/component/socket/SocketProvider';
 import StoreTable, { DealsDataTableProps } from '@view/Bot/DealsTable';
 import { storeType } from '@src/component/utils/cmpt.global';
 import {
@@ -9,6 +9,7 @@ import {
 } from '@redux-action/deal.action';
 import { getMicrosoftDeals } from '@redux-action/microsoft.action';
 import { RootState } from '@src/redux/store/store';
+import { SocketAction } from '@src/component/socket/type';
 
 interface IProps extends PropsFromRedux {
 }
@@ -36,11 +37,11 @@ class MicrosoftDeals extends React.Component<IProps, IState> {
             socket.on('Store Listings Update', () => {
                 this.props.getMicrosoftDeals();
             })
-            socket.on(socketType.ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE, (data) => {
+            socket.on(SocketAction.retrievedMSItemsOnlinePrice, (data) => {
                 console.log(targetStore, data);
                 this.props.handlePriceCrawlFinished(targetStore);
             })
-            socket.on(socketType.RETRIEVE_MS_ITEMS_ONLINE_PRICE_ERROR, (data) => {
+            socket.on(SocketAction.retrievedMSItemsOnlinePriceErr, (data) => {
                 this.props.handlePriceCrawlError(targetStore);
             })
         }

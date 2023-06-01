@@ -25,28 +25,21 @@ import path from 'path';
 dotenv.config();
 passportSetup(passport);
 
-const app = express();
+myAtlasDb.connect(); //Mongo Atlas DB connection.
 
 //Cross-Origin Resource Sharing (CORS)
 const ORIGIN: string = process.env.NODE_ENV === "production" ?
     config.get<string>("origin.prod")
-    : config.get<string>("origin.dev");
+    :
+    config.get<string>("origin.dev");
+
+const app = express();
+const server = http.createServer(app);
 
 app.use(cors({ origin: ORIGIN }));
-
 //parse incoming JSON data and converts it to JS object which is then attached to req.body.
 app.use(express.json())
 
-// @server connection
-const port: number = process.env.PORT || 5000;
-const server: http.Server = app.listen(port, () => {
-    let env = process.env.NODE_ENV === "production" ?
-        "Production"
-        : "Development";
-    console.log(`***[${env}]***\n\nServer started on port ${port}...`);
-});
-
-myAtlasDb.connect();
 
 //development session config
 app.use(session(
@@ -91,11 +84,11 @@ app.use('/api/operationV1', operationV1Router);
 
 // @Socket IO listner
 const io = new SocketIO.Server(server, {
-    path:"/socket.io",
+    // path: "/socket.io",
     pingTimeout: 21000,
     pingInterval: 20000,
     cors: {
-        origin: "http://localhost:3000",
+        origin: ORIGIN,
         methods: ["GET", "POST"],
     },
     transports: ["websocket", "polling"]
@@ -135,5 +128,14 @@ io.on("connection", (socket) => {
     })
 })
 
+// @server connection
+const port: number = process.env.PORT || 5000;
+server.listen(port, () => {
+    let env = process.env.NODE_ENV === "production" ?
+        "Production"
+        :
+        "Development";
+    console.log(`***[${env}]***\n\nServer started on port ${port}...`);
+});
 
 export default io;

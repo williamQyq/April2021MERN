@@ -1,19 +1,8 @@
 import React, { createContext, useEffect } from "react";
-import {
-    ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE,
-    ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE,
-    RETRIEVE_BB_ITEMS_ONLINE_PRICE_ERROR,
-    RETRIEVE_MS_ITEMS_ONLINE_PRICE_ERROR
-} from "@src/redux/actions/types";
 import { Socket, io } from "socket.io-client";
 
 export const SocketContext = createContext<Socket | undefined>(undefined);
-export const socketType = {
-    ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE,
-    ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE,
-    RETRIEVE_BB_ITEMS_ONLINE_PRICE_ERROR,
-    RETRIEVE_MS_ITEMS_ONLINE_PRICE_ERROR
-}
+
 interface SocketProviderProps {
     children: React.ReactNode;
 }

@@ -30,6 +30,7 @@ interface IState {
 class ProHome extends React.Component<IProHomeProps, IState>{
     static contextType = ThemeContext;
     declare context: React.ContextType<typeof ThemeContext>;
+    abortController?: AbortController;
 
     constructor(props: IProHomeProps) {
         super(props);
@@ -38,9 +39,12 @@ class ProHome extends React.Component<IProHomeProps, IState>{
         }
     }
     componentDidMount(): void {
-        // this.props.loadUser();
+        this.abortController = new AbortController();
+        this.props.loadUser(this.abortController.signal);
     }
-
+    componentWillUnmount(): void {
+        this.abortController?.abort();
+    }
     setPathname = (pathname: string) => {
         this.setState({ pathname });
     }

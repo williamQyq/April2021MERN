@@ -19,7 +19,6 @@ import { AppDispatch, DealsDataSourceType, myAxiosError } from '../interface';
 
 export const getBestbuyDeals = (abortSignal?: AbortSignal): ThunkAction<void, RootState, any, AnyAction> =>
     async (dispatch: AppDispatch, getState: () => RootState) => {
-        console.log(abortSignal)
         dispatch(setItemsLoading());
         axios.get<DealsDataSourceType>(
             '/api/bestbuy/v1/deals', {

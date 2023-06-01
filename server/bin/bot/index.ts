@@ -61,6 +61,7 @@ export class MyMessage {
 }
 
 export abstract class DealBot {
+    USER_AGENT: string = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"
     // constructor() {
 
     // }
@@ -69,8 +70,8 @@ export abstract class DealBot {
 
     async initBrowser(): Promise<puppeteer.Browser> {
         const browser: puppeteer.Browser = await puppeteer.launch({
-            // headless: true,
-            headless: false, //show browser
+            headless: true,
+            // headless: false, //show browser
             args: [
                 '--single-process',
                 '--no-zygote',
@@ -86,7 +87,7 @@ export abstract class DealBot {
         const page: puppeteer.Page = await browser.newPage();
         await page.setViewport({ width: 1920, height: 1080 })   //set view port to 1920x1080
         // await page.setDefaultNavigationTimeout(0);
-        // await page.setUserAgent(USER_AGENT);
+        await page.setUserAgent(this.USER_AGENT);
 
         // Intercept assets request
         await page.setRequestInterception(true);
@@ -103,13 +104,66 @@ export abstract class DealBot {
     //@param: puppeter page, xpath expression
     //@return: text context
     async evaluateElementsText(page: puppeteer.Page, XPATH_EXPR: string) {
-        await page.waitForXPath(XPATH_EXPR) //wait until at least one matching elements loaded.
+        // const elements = await this.waitAllElementsForXPath(page, XPATH_EXPR) //wait until at least one matching elements loaded.
+        await page.waitForXPath(XPATH_EXPR);
+        const elements = await page.$x(XPATH_EXPR);
+        const textContents = await Promise.all<Promise<string>>(
+            elements.map((element) => page.evaluate((el) => el.textContent, element))
+        );
 
-        const elements = await page.$x(XPATH_EXPR)
-        const textResult = await page.evaluate((...elements) =>
-            (elements.map(e => e.textContent))
-            , ...elements)
-        return textResult;
+        return textContents;
+
+    }
+    /**
+     * 
+     * @param page 
+     * @param XPATH_EXPR 
+     * @returns 
+     * 
+     * @description
+     *      for elements that will loaded textContent only when scroll to its position.
+     */
+    async evaluateScrollLoadingElementsText(page: puppeteer.Page, XPATH_EXPR: string) {
+        await page.waitForXPath(XPATH_EXPR);
+        let elements = await page.$x(XPATH_EXPR);
+        let prevElementsCount = elements.length;
+
+        while (true) {
+            await page.evaluate((el) => {
+                el.scrollIntoView();    //not build-in in puppeteer, but excutable in browser.
+            }, elements[elements.length - 1]);
+            // Wait for new elements to load
+            await page.waitForTimeout(3000); // Adjust the timeout as needed
+
+            elements = await page.$x(XPATH_EXPR);
+            if (elements.length === prevElementsCount) {
+                break; // No more newly loaded elements
+            }
+            prevElementsCount = elements.length;
+        }
+
+        const textContents = await Promise.all(
+            elements.map((element) => page.evaluate((el) => el.textContent, element))
+        );
+
+        return textContents;
+    }
+
+    async scrollingPage(page: puppeteer.Page, scrollDelay: number = 2000) {
+
+        let currentHeight = await page.evaluate(() => document.documentElement.scrollHeight);
+        let previousHeight = 0;
+
+        while (currentHeight > previousHeight) {
+            previousHeight = currentHeight;
+            await page.evaluate(() => {
+                window.scrollTo(0, document.documentElement.scrollHeight);
+            });
+
+            await page.waitForTimeout(scrollDelay);
+            currentHeight = await page.evaluate(() => document.documentElement.scrollHeight);
+        }
+        return;
     }
 
     /**
@@ -119,23 +173,20 @@ export abstract class DealBot {
      * @returns 
      * @description #TODO takes very long to wait for all elements loaded. Not working.
      */
-    async evaluateElementsTextUntilAllLoaded(page: puppeteer.Page, XPATH_EXPR: string) {
-        // await page.waitForXPath(XPATH_EXPR)
+    async waitAllElementsForXPath(page: puppeteer.Page, XPATH_EXPR: string) {
         await page.waitForFunction(
             (xpath: string) => {
                 const elements = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
-                const element = elements.iterateNext();
-                return element === null;
+                let node;
+                while (node = elements.iterateNext()) {
+                    if (!node.textContent || node.textContent.trim().length === 0) return false;
+                }
+                return true;
             },
             {},
             XPATH_EXPR
         );
-
-        const elements = await page.$x(XPATH_EXPR)
-        const textResult = await page.evaluate((...elements) =>
-            (elements.map(e => e.textContent))
-            , ...elements)
-        return textResult;
+        return page.$x(XPATH_EXPR);
     }
 
     //@param: puppeter page, xpath expression, attribute id

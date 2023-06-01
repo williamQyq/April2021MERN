@@ -58,20 +58,9 @@ class ProSignIn extends React.Component<IProSignInProps, IState>{
 
     componentDidMount(): void {
         this.abortController = new AbortController();
-        this.props.loadUser(this.abortController.signal);
+        // this.props.loadUser(this.abortController.signal);
     }
-    // componentDidUpdate(prevProps: Readonly<IProSignInProps>, prevState: Readonly<IState>, snapshot?: any): void {
-    //     const { auth } = this.props;
-    //     const { rootPath } = this.state;
-
-    //     //check authenticated status if props.auth changed
-    //     if (prevProps.auth !== auth) {
-    //         if (auth.isAuthenticated) {
-    //             this.props.clearErrors();
-    //             this.props.navigate(rootPath, { replace: true });
-    //         }
-    //     }
-    // }
+   
     componentWillUnmount(): void {
         this.abortController?.abort();
     }

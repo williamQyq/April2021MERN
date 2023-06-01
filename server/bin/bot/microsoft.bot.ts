@@ -124,7 +124,9 @@ export default class Microsoft extends DealBot {
         const NUM_PAGE_REGEX_EXPR: RegExp = /.*Showing\s\d*\s-\s(\d*)\sof\s\d*.*/;
         const TOTAL_NUM_REGEX_EXPR: RegExp = /.*Showing.*of\s(\d*).*/;
 
-        let footer: string = (await this.evaluateElementsText(page, FOOTER_XPATH_EXPR))[0]
+        let footer = (await this.evaluateElementsText(page, FOOTER_XPATH_EXPR))[0]
+        if (!footer) throw new Error("footer element is evaluated as undefined.");
+
         let itemCntPerPage: number = Number(this.getRegexValue(footer, NUM_PAGE_REGEX_EXPR))
         let itemsCount: number = Number(this.getRegexValue(footer, TOTAL_NUM_REGEX_EXPR))
 

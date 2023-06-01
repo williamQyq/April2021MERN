@@ -59,26 +59,26 @@ export default class Bestbuy extends DealBot {
             // @TODO: use multi tab to crawl, instead one tab per page...
 
             for (let i = 0; i < pageCnt; i++) {
-                // page = await this.initPage(browser);
                 let pageUrl = this.editParamPageNumInUrl(i + 1);
-                let dealsData: DealDataType[] | undefined = await this.getPageItems(page, pageUrl); //ItemType { link, sku, currentPrice, name }
+                let dealsData: DealDataType[] | undefined = await this.getPageItems(page, pageUrl, { retryIfErr: true }); //ItemType { link, sku, currentPrice, name }
 
                 if (!dealsData) throw new Error("Fail to retrieve deals data.");
 
-                await Promise.all(dealsData.map((deal: DealDataType, index: number) =>
-                    alert.createDeal(deal, model as mongoose.Model<unknown>)
-                        .then((status: string) => {
-                            let dealMsg: DealMessage = {
-                                storeName: Bestbuy.name,
-                                indexPage: i,
-                                index,
-                                sku: deal.sku ? deal.sku : "",
-                                currentPrice: deal.currentPrice ? deal.currentPrice : undefined,
-                                status
-                            }
-                            let msg = new MyMessage(this.storeName);
-                            msg.printGetDealMsg(dealMsg); //print deal message.
-                        })
+                await Promise.all(dealsData.map(
+                    (deal: DealDataType, index: number) =>
+                        alert.createDeal(deal, model as mongoose.Model<unknown>)
+                            .then((status: string) => {
+                                let dealMsg: DealMessage = {
+                                    storeName: Bestbuy.name,
+                                    indexPage: i,
+                                    index,
+                                    sku: deal.sku ? deal.sku : "",
+                                    currentPrice: deal.currentPrice ? deal.currentPrice : undefined,
+                                    status
+                                }
+                                let msg = new MyMessage(this.storeName);
+                                msg.printGetDealMsg(dealMsg); //print deal message.
+                            })
                 ))
                     .finally(() => {
                         let finalMsg = new MyMessage(this.storeName);
@@ -91,8 +91,8 @@ export default class Bestbuy extends DealBot {
             io.sockets.emit("RETRIEVE_BB_ITEMS_ONLINE_PRICE_ERROR", { msg: `Fail to retrive Bestbuy Laptop Price \n\n${e}` })
         }
 
-        if (page) await page.close();
-        if (browser) await browser.close();
+        // if (page) await page.close();
+        // if (browser) await browser.close();
 
         io.sockets.emit("ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE", { msg: "All deals retieved success" });
     }
@@ -143,8 +143,10 @@ export default class Bestbuy extends DealBot {
         let spec = new Map();
         keys.forEach((key, index) => {
             // key= key.split(' ').join('')
-            key = key.replace(/\s/g, "");
-            spec.set(key, values[index]);
+            if (key != null) {
+                key = key.replace(/\s/g, "");
+                spec.set(key, values[index]);
+            }
         })
 
         return spec
@@ -161,9 +163,11 @@ export default class Bestbuy extends DealBot {
         };
         const FOOTER_XPATH_EXPR = '//div[@class="footer top-border wrapper"]//span'
         const NUM_PAGE_REGEX_EXPR: RegExp = /\d*-(\d*)\sof\s\d*/;
-        const TOTAL_NUM_REGEX_EXPR: RegExp = /.*of\s(\d*)\sitems/
+        const TOTAL_NUM_REGEX_EXPR: RegExp = /.*of\s(\d*)\sitems/;
 
-        let footer: string = (await this.evaluateElementsText(page, FOOTER_XPATH_EXPR))[0]
+        let footer = (await this.evaluateElementsText(page, FOOTER_XPATH_EXPR))[0]
+        if (!footer) throw new Error("footer element is evaluated as undefined.");
+
         let itemCntPerPage: number = Number(this.getRegexValue(footer, NUM_PAGE_REGEX_EXPR))
         let itemsCount: number = Number(this.getRegexValue(footer, TOTAL_NUM_REGEX_EXPR))
 
@@ -200,8 +204,15 @@ export default class Bestbuy extends DealBot {
         const SKU_ATTRIBUTE_ID = "data-sku-id"
 
         let skuAttrLists = await this.evaluateItemAttribute(page, SKU_LIST_EXPR, SKU_ATTRIBUTE_ID)
-        let priceTextLists = await this.evaluateElementsText(page, PRICE_LIST_EXPR)
-        let nameLists = await this.evaluateElementsText(page, NAME_LIST_EXPR)
+        let priceTextLists = await this.evaluateScrollLoadingElementsText(page, PRICE_LIST_EXPR)
+        let nameLists = await this.evaluateScrollLoadingElementsText(page, NAME_LIST_EXPR)
+        console.table(priceTextLists)
+        const combinedArray = skuAttrLists.map((sku, index) => ({
+            arraySku: sku,
+            arrayPrice: priceTextLists[index],
+            arrayName: nameLists[index]
+        }))
+        console.table(combinedArray);
 
         //Parsed Array<Item>
         let itemsArray = skuAttrLists.map((sku: string, index: number) => {
@@ -234,17 +245,18 @@ export default class Bestbuy extends DealBot {
     @param: url: string
     @return: items: Array<Item>
     */
-    async getPageItems(page: Page, url: string): Promise<DealDataType[] | undefined> {
+    async getPageItems(page: Page, url: string, options: { retryIfErr: boolean }): Promise<DealDataType[] | undefined> {
         let items = undefined;
         try {
             await page.goto(url);
-            items = await this.parseItemsList(page)
+            items = await this.parseItemsList(page);
         } catch (e) {
-            console.log(`getPageItems err... retrying...\n\n${e}`)
-            await this.retry(async () => {
-                await page.goto(url)
-                items = await this.parseItemsList(page)
-            }, 2000);
+            console.error(`Get Page Items Err:\n${e}\n`);
+            if (options.retryIfErr) {
+                items = this.retry<DealDataType[] | undefined>(() =>
+                    this.getPageItems(page, url, { retryIfErr: false })
+                    , 2000);
+            }
         }
         return items;
     }
@@ -255,7 +267,8 @@ export default class Bestbuy extends DealBot {
     @param: milisec:number
     @return: Promise<Array<Item>>
     */
-    retry(callback: () => Promise<any>, milisec: number) {
+    retry<T>(callback: () => Promise<T | undefined>, milisec: number): Promise<T | undefined> {
+        console.log(`Retrying...\n\n`);
         return new Promise((resolve, reject) => {
             // let interval = setInterval(async () => {
             //     let res = await callback();

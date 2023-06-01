@@ -28,7 +28,7 @@ import { CiMenuKebab } from 'react-icons/ci';
 
 import { ContentHeader } from '@src/component/utils/Layout';
 import WithNavigate from '@src/component/auth/WithNavigate';
-import { SocketContext, socketType } from '@src/component/socket/SocketProvider';
+import { SocketContext } from '@src/component/socket/SocketProvider';
 import FormTable, { ColumnTypeWithSearchable } from '@src/component/utils/FormTable';
 
 const Text = Typography.Text;
@@ -190,7 +190,6 @@ interface IState {
 // import BackTopHelper from 'component/utility/BackTop';
 class DealsTable extends React.Component<IProps, IState> {
     static contextType = SocketContext;
-    static socketType = socketType;
     declare context: React.ContextType<typeof SocketContext>;
 
     constructor(props: IProps) {

@@ -7,7 +7,7 @@ import {
     getViewedUltimatelyBoughtOnSku,
     getAlsoBoughtOnSku
 } from '@redux-action/bestbuy.action';
-import { SocketContext, socketType } from '@src/component/socket/SocketProvider';
+import { SocketContext } from '@src/component/socket/SocketProvider';
 import DealsTable, { DealsDataTableProps } from '@view/Bot/DealsTable';
 import StoreAnalyticCards from './StoreAnalyticCards.jsx'
 // import BackTopHelper from 'component/utility/BackTop.jsx';
@@ -16,6 +16,7 @@ import {
     handlePriceCrawlFinished
 } from '@redux-action/deal.action';
 import { RootState } from '@src/redux/store/store';
+import { SocketAction, SocketRoom } from '@src/component/socket/type';
 
 interface BestbuyElectronicsCatgIds {
     ALL_LAPTOPS: string,
@@ -72,19 +73,18 @@ class BestBuyDeals extends React.Component<IProps, IState> {
         // let abortSignal = this.abortController ? this.abortController.signal : undefined;
         this.abortController = new AbortController();
         this.props.getBestbuyDeals(this.abortController.signal);
-
+        console.log(socket)
         if (socket && socket.active) {
-            console.log(socket)
-            socket.emit(`subscribe`, `StoreListingRoom`);
+            socket.emit(SocketAction.subscribe, SocketRoom.dealsRoom);
 
-            socket.on('Store Listings Update', () => {
+            socket.on(SocketAction.dealsUpdated, () => {
                 this.props.getBestbuyDeals(this.abortController?.signal);
             })
-            socket.on(socketType.ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE, (data) => {
+            socket.on(SocketAction.retrievedBBItemsOnlinePrice, (data) => {
                 console.log(this.state.targetStore, data)
                 this.props.handlePriceCrawlFinished(targetStore);
             })
-            socket.on(socketType.RETRIEVE_BB_ITEMS_ONLINE_PRICE_ERROR, (err) => {
+            socket.on(SocketAction.retrievedMSItemsOnlinePrice, (err) => {
                 console.error(targetStore, err);
                 this.props.handlePriceCrawlError(targetStore);
             })
@@ -95,8 +95,8 @@ class BestBuyDeals extends React.Component<IProps, IState> {
         this.abortController?.abort();
     }
     componentWillUnmount() {
-        let socket = this.context!;
-        if (socket) socket.emit(`unsubscribe`, `StoreListingRoom`);
+        let socket = this.context;
+        if (socket) socket.off(`DEAL_UPDATED`);
         this.cancelRequest();
     }
 
