@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig, CanceledError } from "axios";
 import { MyThunkAction, myAxiosError } from "@src/redux/interface.js";
 import { RootState } from "@src/redux/store/store";
 import { AnyAction, Dispatch } from "redux";
-import { returnErrors } from './errorActions'
+import { clearErrors, returnErrors } from './errorActions'
 
 import {
     USER_LOADED,
@@ -56,7 +56,6 @@ export const login = (authConfig: { username: string, password: string }) => asy
     };
 
     const body = JSON.stringify({ email: username, password });
-
     return axios.post('/api/auth', body, config)
         .then(res => {
             dispatch({

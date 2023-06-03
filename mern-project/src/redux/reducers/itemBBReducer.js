@@ -26,11 +26,16 @@ export default function Reducer(state = initialState, action) {
                 items: action.payload,
                 loading: false
             };
-
         case ITEMS_LOADING_BB:
             return {
                 ...state,
                 loading: true
+            }
+        case GET_BB_ITEMS + "_ERROR":
+            return {
+                ...state,
+                items: [],
+                loading: false
             }
         case BB_ITEMS_ONLINE_PRICE_LOADING:
             return {

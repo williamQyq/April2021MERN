@@ -42,6 +42,13 @@ class ProHome extends React.Component<IProHomeProps, IState>{
         this.abortController = new AbortController();
         this.props.loadUser(this.abortController.signal);
     }
+    componentDidUpdate(prevProps: Readonly<IProHomeProps>, prevState: Readonly<IState>, snapshot?: any): void {
+        if (prevProps.error !== this.props.error) {
+            if (this.props.error.status === 401) {
+                this.props.loadUser(this.abortController?.signal);
+            }
+        }
+    }
     componentWillUnmount(): void {
         this.abortController?.abort();
     }
@@ -73,7 +80,7 @@ class ProHome extends React.Component<IProHomeProps, IState>{
                     logo={
                         <Avatar src="https://images-rocky-public.s3.amazonaws.com/logo.jpg" />
                     }
-                    title="w Citadel"
+                    title="Wiggle Citadel"
                     bgLayoutImgList={[
                         {
                             src: 'https://img.alicdn.com/imgextra/i2/O1CN01O4etvp1DvpFLKfuWq_!!6000000000279-2-tps-609-606.png',
@@ -202,7 +209,8 @@ class ProHome extends React.Component<IProHomeProps, IState>{
 }
 
 const mapStateToProps = (state: RootState) => ({
-    auth: state.auth
+    auth: state.auth,
+    error: state.error
 })
 
 const connector = connect(mapStateToProps, { logout, loadUser });

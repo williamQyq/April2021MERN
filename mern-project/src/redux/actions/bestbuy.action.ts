@@ -39,10 +39,14 @@ export const getBestbuyDeals = (abortSignal?: AbortSignal): ThunkAction<void, Ro
             .catch((err: CanceledError<any> | myAxiosError) => {
                 if (err.name === "CanceledError") {
                     console.log(`Request canceled`, err.name);
-                   
+
                 } else {
                     let myErr = err as myAxiosError;
-                    dispatch(returnErrors(myErr.response?.data.msg, myErr.response!.status, GET_ERRORS))
+                    dispatch(returnErrors(
+                        myErr.response?.data.msg,
+                        myErr.response!.status,
+                        GET_BB_ITEMS)
+                    );
                 }
 
             })
@@ -64,7 +68,6 @@ const setItemsLoading = () => {
  */
 export const setTableSettings = (store: string, clickedId: string): ThunkAction<void, RootState, any, AnyAction> =>
     async (dispatch: AppDispatch) => {
-        dispatch(setItemsLoading());
         dispatch({
             type: SET_TABLE_STATE,
             payload: {
@@ -90,7 +93,7 @@ export const getMostViewedOnCategoryId = (categoryId: string): ThunkAction<any, 
             })
         }).catch(err => {
             dispatch(resetBestbuyApiMostViewedItems());
-            dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS))
+            dispatch(returnErrors(err.response.data.msg, err.response.status, GET_BESTBUY_API_ERRORS))
         })
 
     }
@@ -110,7 +113,7 @@ export const getViewedUltimatelyBoughtOnSku = (sku: string): ThunkAction<any, Ro
             });
         }).catch(err => {
             dispatch(resetBestbuyApiMostViewedItems());
-            dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS));
+            dispatch(returnErrors(err.response.data.msg, err.response.status, GET_BESTBUY_API_ERRORS));
         })
 
     }
@@ -130,7 +133,7 @@ export const getAlsoBoughtOnSku = (sku: string): ThunkAction<void, RootState, an
             });
         }).catch(err => {
             dispatch(resetBestbuyApiMostViewedItems());
-            dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS));
+            dispatch(returnErrors(err.response.data.msg, err.response.status, GET_BESTBUY_API_ERRORS));
         });
     }
 
