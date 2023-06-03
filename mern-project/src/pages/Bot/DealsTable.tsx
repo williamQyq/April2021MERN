@@ -1,6 +1,6 @@
 import React from 'react';
 import './Store.scss';
-import { NavigateFunction } from 'react-router-dom';
+import { Location, NavigateFunction } from 'react-router-dom';
 //redux
 import { connect, useDispatch, useSelector, ConnectedProps } from 'react-redux';
 import {
@@ -9,7 +9,6 @@ import {
     handlePriceCrawlFinished,
     handlePriceCrawlError,
     signalPriceCrawler,
-    getItemDetail
 } from '@redux-action/deal.action';
 import { AppDispatch, DealsDataSourceType } from '@src/redux/interface';
 import { BESTBUY, MICROSOFT, COSTCO, WALMART } from "@redux-action/types.js";
@@ -181,6 +180,7 @@ export interface DealsDataTableProps {
 
 interface IProps extends PropsFromRedux, DealsDataTableProps {
     navigate: NavigateFunction;
+    location: Location;
 }
 interface IState {
     searchText: string;
@@ -206,10 +206,12 @@ class DealsTable extends React.Component<IProps, IState> {
 
     }
 
-    handleRowClick = (record: Record<string, string>) => {
+    handleRowClick = <T extends Record<string, string>>(record: T) => {
+        const { storeName, navigate, location } = this.props;
         console.log(record);
-        console.log(this.props.storeName)
-
+        console.log(storeName)
+        console.log(`location: `, location);
+        navigate(`deal-detail/store/${storeName}/id/${record._id}/sku/${record.sku}`);
         // TODO: navigate to Deal detail pages.
         // let dealDetailRoute = `/app/deal-alert/${this.props.storeName.toLowerCase()}-list/item-detail`;
         // this.props.navigate(dealDetailRoute);
@@ -242,7 +244,6 @@ const connector = connect(mapStateToProps, {
     handlePriceCrawlError,
     saveUserTableSettings,
     signalPriceCrawler,
-    getItemDetail
 })
 
 type PropsFromRedux = ConnectedProps<typeof connector>;

@@ -73,7 +73,6 @@ class BestBuyDeals extends React.Component<IProps, IState> {
         // let abortSignal = this.abortController ? this.abortController.signal : undefined;
         this.abortController = new AbortController();
         this.props.getBestbuyDeals(this.abortController.signal);
-        console.log(socket)
         if (socket && socket.active) {
             socket.emit(SocketAction.subscribe, SocketRoom.dealsRoom);
 

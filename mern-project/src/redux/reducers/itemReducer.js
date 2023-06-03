@@ -11,7 +11,8 @@ import {
 
 const initialState = {
     items: [],
-    loading: false
+    loading: false,
+    dealData: {}
 }
 
 export default function Reducer(state = initialState, action) {
@@ -46,13 +47,13 @@ export default function Reducer(state = initialState, action) {
         case GET_MS_ITEM_DETAIL:
             return {
                 ...state,
-                itemDetail: action.payload,
+                dealData: action.payload,
                 loading: false
             };
         case GET_BB_ITEM_DETAIL:
             return {
                 ...state,
-                itemDetail: action.payload,
+                dealData: action.payload,
                 loading: false
             };
 

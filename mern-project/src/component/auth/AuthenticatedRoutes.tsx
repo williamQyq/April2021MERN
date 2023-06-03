@@ -10,7 +10,7 @@ const NeedToShip = lazy(() => import('@src/component/Warehouse/NeedToShip.jsx'))
 const InventoryReceived = lazy(() => import('@src/component/Warehouse/InventoryReceived.jsx'));
 const SearchRecords = lazy(() => import('@src/component/Warehouse/SearchRecords.jsx'));
 // const Configuration = lazy(() => import('component/Operation/Configuration'));
-const ItemDetail = lazy(() => import('@src/component/ItemDetail/ItemDetail.jsx'));
+const DealDetail = lazy(() => import('@src/component/ItemDetail/DealDetail'));
 const OperationCategory = lazy(() => import('@src/component/Operation/Category.tsx'));
 const InitNewProdWorkflow = lazy(() => import('@src/component/Operation/InitWorkflow/InitWorkflow.tsx'));
 const OperationProductList = lazy(() => import('@src/component/Operation/SkuManagement/OperationProductList.jsx'));
@@ -37,8 +37,8 @@ const routes = [
         element: <BestbuyAlert />,
         children: [
           {
-            path: "item-detail",
-            element: <ItemDetail />
+            path: "deal-detail/store/:storeId/id/:dealId/sku/:sku/*",
+            element: <DealDetail />
           }
         ]
       }, {
@@ -46,8 +46,8 @@ const routes = [
         element: <MicrosoftAlert />,
         children: [
           {
-            path: "item-detail",
-            element: <ItemDetail />
+            path: "deal-detail/store/:storeId/id/:dealId",
+            element: <DealDetail />
           }
         ]
       }

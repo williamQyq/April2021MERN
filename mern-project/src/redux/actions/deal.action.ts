@@ -113,11 +113,16 @@ export interface DealDataType {
     priceDiff: number,
 }
 
-export const getItemDetail = (store: string, _id: string): ThunkAction<void, RootState, any, AnyAction> =>
+export const getDealDetail = (store: string, _id: string, abortSignal?: AbortSignal): ThunkAction<void, RootState, any, AnyAction> =>
     async (dispatch: AppDispatch, getState: () => RootState) => {
         dispatch(setItemsLoading());
         const routerConfig = getRoutesAndActionTypes(store);    //get routes and action types on store selection
-        axios.get<any, AxiosResponse<DealDataType>>(`/api/${routerConfig?.routes}/v1/deal/detail/id/${_id}`, tokenConfig(getState))
+        axios.get<any, AxiosResponse<DealDataType>>(
+            `/api/${routerConfig?.routes}/v1/deal/detail/id/${_id}`,
+            {
+                ...tokenConfig(getState),
+                signal: abortSignal
+            })
             .then(res => {
                 let deal = res.data;
                 deal.price_timestamps.forEach(ts => {
