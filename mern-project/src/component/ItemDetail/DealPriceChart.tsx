@@ -1,8 +1,11 @@
+import React, { useEffect } from 'react';
+import Chart, { ChartConfiguration } from 'chart.js/auto';
+import { DealDataType } from '@redux-action/deal.action';
+
 import UTILS from "@src/assets/global"
 
 type Labels = any[];
 type DataPoints = Labels;
-type Color = string;
 interface ChartData {
     labels: Labels,
     datasets: any[]
@@ -29,7 +32,7 @@ export const setChartData = (labels: Labels, datapoints: DataPoints, borderColor
         ]
     })
 }
-export const setChartConfig = (data: ChartData) => {
+export const setChartConfig = (data: ChartData): ChartConfiguration => {
     return ({
         type: 'line',
         data: data,
@@ -106,3 +109,31 @@ export function setColorOnPriceUpOrDrop(priceDiff: number) {
     }
     return borderColor;
 }
+
+/**
+ * @description Price Chart Component
+ */
+interface IProps {
+    dealData: DealDataType;
+    discount: number;
+}
+
+const PriceHistoryChart: React.FC<IProps> = ({ dealData, discount }: IProps) => {
+    const labels = setLabels(dealData.price_timestamps);
+    const datapoints = setDataPoints(dealData.price_timestamps);
+    const borderColor = setColorOnPriceUpOrDrop(discount);
+
+    const data = setChartData(labels, datapoints, borderColor);
+    const config: ChartConfiguration = setChartConfig(data);
+
+    useEffect(() => {
+        let myChart = new Chart('chart', config)
+        return () => myChart.destroy();
+    }, [])
+
+    return (
+        <canvas id='chart' width={"900px"} />
+    );
+}
+
+export default PriceHistoryChart;

@@ -1,5 +1,5 @@
-import axios, { AxiosResponse } from 'axios';
-import Moment from 'moment';
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import moment from 'moment';
 import { clearErrors, returnErrors } from './errorActions'
 import {
     // GET_ITEMS,
@@ -27,7 +27,7 @@ import { tokenConfig } from './authActions';
 import { clearMessages, returnMessages } from './messageActions';
 import { RootState, AppDispatch } from '../store/store';
 import { AnyAction, ThunkAction } from '@reduxjs/toolkit';
-import { myAxiosResponse } from '../interface.js';
+import { myAxiosError, myAxiosResponse } from '../interface.js';
 
 const setItemsLoading = () => ({
     type: ITEMS_LOADING
@@ -123,18 +123,22 @@ export const getDealDetail = (store: string, _id: string, abortSignal?: AbortSig
                 ...tokenConfig(getState),
                 signal: abortSignal
             })
-            .then(res => {
+            .then((res: AxiosResponse<DealDataType>) => {
                 let deal = res.data;
                 deal.price_timestamps.forEach(ts => {
-                    ts.date = Moment(ts.date).format("MMM Do YYYY HH:mm a");
+                    ts.date = moment(ts.date).format("MMM Do YYYY HH:mm a");
                 });
                 dispatch({
                     type: routerConfig!.type.GET_ITEM_DETAIL,
                     payload: deal
                 })
             })
-            .catch(err => {
-                dispatch(returnErrors(err.response.data.msg, err.response.status))
+            .catch((err: myAxiosError) => {
+                if (err.response) {
+                    dispatch(returnErrors(err.response.data.msg, err.response.status))
+                } else {
+                    console.error(err)
+                }
             })
     }
 

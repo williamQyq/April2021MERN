@@ -17,6 +17,7 @@ import {
 } from '@redux-action/deal.action';
 import { RootState } from '@src/redux/store/store';
 import { SocketAction, SocketRoom } from '@src/component/socket/type';
+import { Outlet } from 'react-router-dom';
 
 interface BestbuyElectronicsCatgIds {
     ALL_LAPTOPS: string,

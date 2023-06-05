@@ -3,7 +3,6 @@ import auth from '#middleware/auth';
 import { DealsAlert } from 'lib/query/deals.query';
 import io from '#root/index';
 import Microsoft from 'bin/bot/microsoft.bot';
-import { ObjectId } from 'mongoose';
 
 const router = express.Router();
 
@@ -16,7 +15,7 @@ router.get('/v1/deals', (req, res) => {
         .catch(err => res.status(503).json({ msg: err }));
 });
 
-router.get<{ _id: ObjectId }>('/peek/v0/getProductDetail/id/:_id', (req, res) => {
+router.get<{ _id: string }>('/peek/v0/getProductDetail/id/:_id', (req, res) => {
     let alert = new DealsAlert();
     let model = DealsAlert._MicrosoftDeal;
     alert.getDealById(model, req.params._id)

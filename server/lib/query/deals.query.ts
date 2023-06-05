@@ -181,12 +181,12 @@ export class DealsAlert extends Deals {
         return deals;
     }
 
-    async getDealById(model: mongoose.Model<BestbuyDealDoc | MicrosoftDealDoc>, _id: mongoose.ObjectId) {
+    async getDealById(model: mongoose.Model<BestbuyDealDoc | MicrosoftDealDoc>, _id: string) {
         let deals = await model.aggregate([
             PROJ_ITEM_DETAIL,
             {
                 $match: {
-                    _id
+                    _id: new mongoose.Types.ObjectId(_id)
                 }
             }
         ]).exec();

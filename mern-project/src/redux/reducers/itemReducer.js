@@ -12,7 +12,7 @@ import {
 const initialState = {
     items: [],
     loading: false,
-    dealData: {}
+    dealData: undefined
 }
 
 export default function Reducer(state = initialState, action) {

@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet, RouteObject } from 'react-router-dom';
 import NotFound from '@src/component/utils/NotFound';
 import ServiceMaintain from '@src/component/utils/ServiceMaintain';
 const Alert = lazy(() => import('@view/Bot/Alert.tsx'));
@@ -16,7 +16,7 @@ const InitNewProdWorkflow = lazy(() => import('@src/component/Operation/InitWork
 const OperationProductList = lazy(() => import('@src/component/Operation/SkuManagement/OperationProductList.jsx'));
 
 
-const routes = [
+const routes: RouteObject[] = [
   {
     path: "*",
     element: <NotFound />
@@ -34,19 +34,24 @@ const routes = [
         element: <Alert />
       }, {
         path: "bestbuy-list",
-        element: <BestbuyAlert />,
         children: [
           {
-            path: "deal-detail/store/:storeId/id/:dealId/sku/:sku/*",
+            index: true,
+            element: <BestbuyAlert />,
+          },
+          {
+            path: "detail/store/:storeId/id/:dealId/sku/:skuId",
             element: <DealDetail />
           }
         ]
       }, {
         path: "microsoft-list",
-        element: <MicrosoftAlert />,
         children: [
           {
-            path: "deal-detail/store/:storeId/id/:dealId",
+            index: true,
+            element: <MicrosoftAlert />,
+          }, {
+            path: "detail/store/:storeId/id/:dealId/sku/:skuId",
             element: <DealDetail />
           }
         ]

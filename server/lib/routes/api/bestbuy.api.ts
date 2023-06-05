@@ -30,16 +30,16 @@ router.get('/v1/deals', auth, (req, res) => {
 
 // @route GET api/items
 // @access public
-router.get('/v1/deal/detail/id/:_id', (req: Request<{ _id: mongoose.ObjectId }>, res: Response) => {
+router.get('/v1/deal/detail/id/:_id', (req: Request<{ _id: string }>, res: Response) => {
     const { _id } = req.params
     let deals = new DealsAlert();
     const model = DealsAlert._BestbuyDeal;
 
-    deals.getDealById(model, _id).then(items => {
-        res.json(items)
-    }).catch(err => {
-        res.status(202).json({ msg: `[${_id}]Deal detail not found.` })
-    });
+    deals.getDealById(model, _id)
+        .then(items => res.json(items))
+        .catch(err => {
+            res.status(202).json({ msg: `[${_id}] Deal detail not found.` })
+        });
 });
 
 // @access private

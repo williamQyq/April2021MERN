@@ -208,10 +208,7 @@ class DealsTable extends React.Component<IProps, IState> {
 
     handleRowClick = <T extends Record<string, string>>(record: T) => {
         const { storeName, navigate, location } = this.props;
-        console.log(record);
-        console.log(storeName)
-        console.log(`location: `, location);
-        navigate(`deal-detail/store/${storeName}/id/${record._id}/sku/${record.sku}`);
+        navigate(`detail/store/${storeName}/id/${record._id}/sku/${record.sku}`);
         // TODO: navigate to Deal detail pages.
         // let dealDetailRoute = `/app/deal-alert/${this.props.storeName.toLowerCase()}-list/item-detail`;
         // this.props.navigate(dealDetailRoute);
