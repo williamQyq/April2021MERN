@@ -10,8 +10,8 @@ import {
     searchShipmentColumns,
     searchLocationInventoryColumns,
     searchSellerInventoryColumns
-} from '@src/component/Warehouse/util';
-import { downloadShipment, getShipment } from '@redux-action//outboundActions.js';
+} from '@view/Warehouse/util';
+import { downloadShipment, getShipment } from '@redux-action/outboundActions.js';
 import {
     downloadInventoryReceived,
     downloadLocationInventory,

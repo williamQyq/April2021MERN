@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "server:dev": "set NODE_ENV=development&& nodemon",
-    "server:prod": "NODE_ENV=production node -r dotenv/config ./dist/index.js",
+    "server:prod": "NODE_ENV=production node -r dotenv/config --experimental-specifier-resolution=node --loader ./loader.js ./index.ts",
     "client": "cd ../mern-project && set NODE_ENV=development&& npm start",
     "dev": "concurrently \"npm run server:dev\" \"npm run client\"",
     "build": "tsc && tsc-alias",

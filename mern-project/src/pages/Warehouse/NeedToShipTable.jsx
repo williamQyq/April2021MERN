@@ -3,7 +3,7 @@ import { Table } from "antd";
 import { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import FormTable from "@src/component/utils/FormTable";
-import { defaultSettings, needToShipColumns } from "@src/component/Warehouse/util";
+import { defaultSettings, needToShipColumns } from "@view/Warehouse/util";
 import { getShippedNotVerifiedShipmentByDate } from "@redux-action//outboundActions.js";
 import { confirmShipmentAndSubTractQty } from "@redux-action//outboundActions.js";
 import NeedToShipTableTitle from "./NeedToShipTableTitle.jsx";

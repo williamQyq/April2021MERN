@@ -22,6 +22,8 @@ Edit import in `/server/dist/lib/db/wms.db.js`, because `tsc-alias` fail to reso
 `import { MongoClient } from 'mongodb.js';`
 -> `import {MongoClient} from 'mongodb';`
 
+!!! Or: use loader.js which implements tsconfig-path to resolve alias and load index.ts esm directly.
+
 ## Getting Started
 ---
 

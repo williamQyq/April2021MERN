@@ -174,7 +174,8 @@ export const getNeedToShipFromShipmentWithLimit = (abortSignal, docLimits, docSk
                 payload: []
             })
             dispatch(clearErrors());
-            dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS))
+            if (err.response)
+                dispatch(returnErrors(err.response.data.msg, err.response.status, GET_ERRORS))
         })
 }
 
