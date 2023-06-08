@@ -215,17 +215,22 @@ export default class Bestbuy extends DealBot {
         console.table(combinedArray);
 
         //Parsed Array<Item>
-        let itemsArray = skuAttrLists.map((sku: string, index: number) => {
-            let link = this.generateSiteLink(sku);
-            let priceInCurrency = priceTextLists[index];
-            let name = nameLists[index];
-            if (priceInCurrency && name) {
-                let currentPrice = this.validatePrice(priceInCurrency);
-                let item: DealDataType = { link, sku, currentPrice, name }
+        let itemsArray = combinedArray.map(deal => {
+            let link = this.generateSiteLink(deal.arraySku);
+            if (deal.arrayPrice && deal.arrayName) {
+                let currentPrice = this.validatePrice(deal.arrayPrice);
+                let item: DealDataType = {
+                    link,
+                    sku: deal.arraySku,
+                    currentPrice,
+                    name: deal.arrayName
+                };
+
                 return item;
+
             } else {
-                console.warn(`Parsed ${sku} have undefined value.`);
-                console.table({ link, name, priceInCurrency });
+                console.warn(`Parsed ${deal.arraySku} have undefined value.`);
+                console.table({ link, name: deal.arrayName, priceInCurrency: deal.arrayPrice });
                 return null;
             }
         }).filter(item => item !== null) as DealDataType[];

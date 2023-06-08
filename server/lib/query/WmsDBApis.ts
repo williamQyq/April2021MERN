@@ -1,7 +1,7 @@
 import moment from 'moment';
 import * as mongoDB from 'mongodb';
 import { IPickUp, IPickUpTask } from '#root/bin/pdfGenerator/pdfGenerator';
-import wms from "lib/db/wms.db";
+import { wms } from "lib/db/wms";
 import {
     BackUpLocationDoc,
     IAwaitingShipment,
@@ -68,7 +68,7 @@ export class WmsDBApis {
     };
 
     constructor() {
-        this.db = wms;
+        this.db = wms.db;
     }
 
     async createPickUpFromReadyShipment(forUpgradeTrackings: Set<string | undefined>): Promise<{ pickUpData: IPickUp, processedTrackings: Set<string> }> {

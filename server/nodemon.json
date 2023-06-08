@@ -3,5 +3,5 @@
         "."
     ],
     "ext": ".ts .js",
-    "exec": "node -r dotenv/config ./dist/index.js"
+    "exec": "node -r dotenv/config --experimental-specifier-resolution=node --loader ./loader.js ./index.ts"
 }

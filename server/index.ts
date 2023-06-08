@@ -21,11 +21,10 @@ import * as myAtlasDb from "#root/lib/db/mongoDB";
 
 import http from 'http';
 import path from 'path';
+import { wms } from './lib/db/wms';
 
 dotenv.config();
 passportSetup(passport);
-
-myAtlasDb.connect(); //Mongo Atlas DB connection.
 
 //Cross-Origin Resource Sharing (CORS)
 const ORIGIN: string = process.env.NODE_ENV === "production" ?
@@ -130,12 +129,20 @@ io.on("connection", (socket) => {
 
 // @server connection
 const port: number = process.env.PORT || 5000;
-server.listen(port, () => {
+server.listen(port, async () => {
     let env = process.env.NODE_ENV === "production" ?
         "Production"
         :
         "Development";
     console.log(`***[${env}]***\n\nServer started on port ${port}...`);
+
+    await myAtlasDb.connect(); //Mongo Atlas DB connection.
+
+    // @CREATE WMS CONNECTION
+    await wms.connect()
+        .then(() => console.log(`WMS Database Connected...`))
+        .catch((err) => console.error("\n***wms client not connected.***\n\n", err))
+
 });
 
 export default io;

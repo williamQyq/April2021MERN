@@ -2,7 +2,7 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "*":["*.ts","*.js"],
+            // "*":["*.ts","*.js"],
             "#root/*":["./*"],
             "#bin/*":["bin/*"],
             "#query/*":["lib/query/*"],

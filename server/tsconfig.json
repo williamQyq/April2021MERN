@@ -16,18 +16,15 @@
     "rootDir": ".",
     "checkJs": false,
     "moduleResolution": "node",
-    "outDir": "./dist",
-    "types": [
-      "node",
-      "mongodb"
-    ]
+    "outDir": "./dist"
   },
   "tsc-alias": {
-    "resolveFullPaths": true
+    "resolveFullPaths": true,
   },
   "files": [
     "environment.d.ts",
-    "./index.ts"],
+    "./index.ts"
+  ],
   "include": [
     "./**/*.ts",
   ],
@@ -35,6 +32,5 @@
     "node_modules",
     "dist",
     ".vscode",
-    "./lib/db/wms.db.ts"
   ]
 }
