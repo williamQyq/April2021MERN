@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '@src/assets/ProcessStreamStartUp.scss';
-import { css } from '@emotion/css';
-import { ContentHeader } from '@src/component/utils/Layout';
-// import { StepStatus } from 'types';
+import { ContentHeader, ContentLayout } from '@src/component/utils/Layout';
 import ProdDetachSpecInput from './ProdDetachSpecInput';
 import InitSkuAsinMapping from './InitSkuProcess/InitSkuAsinMapping';
 
@@ -10,22 +8,26 @@ import { MdOutlineTipsAndUpdates } from 'react-icons/md';
 import { SiAmazonaws } from 'react-icons/si';
 import { IoHardwareChipOutline } from 'react-icons/io5';
 import { TbListDetails } from 'react-icons/tb';
-import { GiRun } from 'react-icons/gi';
 
-import { Typography, Row, Col, Steps, theme } from 'antd';
+import { Row, Col, Steps } from 'antd';
 import ProdKeySpecInput from './ProdKeySpecInput';
-
-const { Title } = Typography;
 
 const InitNewProdWorkflow: React.FC = () => {
     const [currentStep, setCurrentStep] = useState(0);
-    const { token } = theme.useToken();
-    const [isScreenMaxWidthReach, setScreenMaxWidthisReach] = useState<boolean>(window.matchMedia("(max-width: 1600px)").matches);
+    const [isScreenMaxWidthReach, setScreenMaxWidthReach] = useState<boolean>(window.innerWidth > 1470);
 
     useEffect(() => {
-        const handler = (e: MediaQueryListEvent) => setScreenMaxWidthisReach(e.matches)
-        window.matchMedia("(max-width: 1600px)").addEventListener('change', handler);
+        const handleResize = () => {
+            setScreenMaxWidthReach(window.innerWidth > 1470);
+        };
 
+        handleResize(); // Call the handler once on initial render
+
+        window.addEventListener('resize', handleResize); // Add event listener
+
+        return () => {
+            window.removeEventListener('resize', handleResize); // Clean up the event listener
+        };
     }, []);
     //Set current Step status: error, process finish,wait
     // const getStepStatus = (index: number): StepStatus => {
@@ -51,15 +53,15 @@ const InitNewProdWorkflow: React.FC = () => {
     const steps = [
         {
             key: "init-sku",
-            title: "Init Amazon SKU",
-            description: "Generate SKU for AWS Selling Partner",
+            title: "Generate Amazon SKU",
+            // description: "",
             icon: <SiAmazonaws />,
             content: <InitSkuAsinMapping nextCatag={next} prevCatag={prev} />
         },
         {
             key: "init-product-detachable-spec",
-            title: 'Detachable Specification',
-            description: "RAM Slots, SSD Slots...",
+            title: 'Detachable Parts',
+            // description: "RAM Slots, SSD Slots...",
             icon: <IoHardwareChipOutline />,
             content: <ProdDetachSpecInput nextCatag={next} prevCatag={prev} />
         },
@@ -90,52 +92,70 @@ const InitNewProdWorkflow: React.FC = () => {
     ]
 
     return (
-        <>
-            <Row align='middle'>
-                <Col>
-                    <ContentHeader title="Init New Product" />
-                </Col>
-                <Col>
-                    <MdOutlineTipsAndUpdates />
-                </Col>
-            </Row>
 
-            <Row gutter={[8, 16]}>
-                <Col span={20}>
-                    <Title level={3}> {steps[currentStep].title} </Title>
-                    {steps[currentStep].content}
-                </Col>
-                <Col span={4}>
-                    {
-                        isScreenMaxWidthReach ?
-                            <div style={{ display: "flex", flexDirection: 'row', alignItems: "center", minWidth: "180px" }}>
+        isScreenMaxWidthReach ? (
+            <>
+                <Row>
+                    <Col>
+                        <ContentHeader title="Init New Product" subTitle={steps[currentStep].title} />
+                    </Col>
+                    <Col>
+                        <MdOutlineTipsAndUpdates />
+                    </Col>
+                </Row>
+                <Row >
+                    <Col span={21} style={{ overflow: "auto" }}>
+                        {steps[currentStep].content}
+                    </Col>
+                    <Col span={3}>
+                        <Steps
+                            responsive
+                            labelPlacement='vertical'
+                            size='small'
+                            type='navigation'
+                            direction='vertical'
+                            current={currentStep}
+                            onChange={(current: number) => setCurrentStep(current)}
+                            items={steps}
+                        />
+                    </Col>
+                </Row>
+            </>
+        ) : (
+            <ContentLayout>
+                <Row align="middle">
+                    <Col>
+                        <ContentHeader title="Init New Product" subTitle={steps[currentStep].title} />
+                    </Col>
+                    <Col>
+                        <MdOutlineTipsAndUpdates />
+                    </Col>
+                </Row>
+                <Row>
+                    <div style={{ display: "flex", flexDirection: 'row', alignItems: "center" }}>
+                        <Steps
+                            type='default'
+                            style={{ alignItems: "center", marginRight: "4px" }}
+                            direction='horizontal'
+                            current={currentStep}
+                            onChange={(current: number) => setCurrentStep(current)}
+                            items={miniSteps}
+                        />
+                        {/* <GiRun className={css`
+                                    stroke: ${token.colorTextSecondary};
+                                    fill: ${token.colorTextSecondary};
+                                    font-size: 18px;
+                                    `} /> */}
+                    </div>
+                </Row>
+                <Row>
+                    <Col span={24}>
+                        {steps[currentStep].content}
+                    </Col>
+                </Row>
 
-                                <Steps
-                                    style={{ alignItems: "center", marginRight: "4px" }}
-                                    direction='horizontal'
-                                    current={currentStep}
-                                    onChange={(current: number) => setCurrentStep(current)}
-                                    items={miniSteps}
-                                />
-                                <GiRun className={css`
-                                stroke: ${token.colorTextSecondary};
-                                fill: ${token.colorTextSecondary};
-                                font-size: 18px;
-                                `} />
-                            </div>
-                            :
-                            <Steps
-                                style={{ marginTop: "36px", height: "70vh" }}
-                                direction='vertical'
-                                current={currentStep}
-                                onChange={(current: number) => setCurrentStep(current)}
-                                items={steps}
-                            />
-                    }
-
-                </Col>
-            </Row>
-        </>
+            </ContentLayout >
+        )
     );
 
 }

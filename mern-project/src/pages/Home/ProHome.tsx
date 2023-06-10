@@ -184,7 +184,6 @@ class ProHome extends React.Component<IProHomeProps, IState>{
                     >
                         <ProCard
                             style={{
-                                height: '200vh',
                                 minHeight: 800,
                             }}
                         >

@@ -8,7 +8,7 @@ import {
 } from '@redux-action//outboundActions.js';
 import AwaitingShipmentList from './AwaitingShipmentList.jsx';
 import NeedToShipControlPanel from '@view/Warehouse/NeedToShipControlPanel.jsx';
-import { ContentHeader, SubContentHeader } from '@src/component/utils/Layout.jsx';
+import { ContentHeader, SubContentHeader } from '@src/component/utils/Layout';
 import { Button, Col, Progress, Row } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 

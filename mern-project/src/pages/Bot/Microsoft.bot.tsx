@@ -10,6 +10,7 @@ import {
 import { getMicrosoftDeals } from '@redux-action/microsoft.action';
 import { RootState } from '@src/redux/store/store';
 import { SocketAction } from '@src/component/socket/type';
+import { ContentLayout } from '@src/component/utils/Layout';
 
 interface IProps extends PropsFromRedux {
 }
@@ -29,7 +30,7 @@ class MicrosoftDeals extends React.Component<IProps, IState> {
     }
 
     componentDidMount() {
-        let socket = this.context!;
+        const { socket } = this.context!;
         const { targetStore } = this.state;
         this.props.getMicrosoftDeals();
         if (socket && socket.active) {
@@ -47,7 +48,7 @@ class MicrosoftDeals extends React.Component<IProps, IState> {
         }
     }
     componentWillUnmount() {
-        let socket = this.context!;
+        const { socket } = this.context!;
         if (socket) socket.emit(`unsubscribe`, `StoreListingRoom`)
     }
 
@@ -58,7 +59,9 @@ class MicrosoftDeals extends React.Component<IProps, IState> {
             loading: this.props.loading
         }
         return (
-            <StoreTable {...data} />
+            <ContentLayout>
+                <StoreTable {...data} />
+            </ContentLayout>
         )
     }
 }

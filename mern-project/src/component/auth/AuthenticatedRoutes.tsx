@@ -7,7 +7,7 @@ const BestbuyAlert = lazy(() => import('@view/Bot/Bestbuy.bot'));
 const MicrosoftAlert = lazy(() => import('@view/Bot/Microsoft.bot'));
 const OutBound = lazy(() => import('@view/Warehouse/OutBound.tsx'));
 const NeedToShip = lazy(() => import('@view/Warehouse/NeedToShip.jsx'));
-const InventoryReceived = lazy(() => import('@src/component/Warehouse/InventoryReceived.jsx'));
+const InventoryReceived = lazy(() => import('@view/Warehouse/InventoryReceived.jsx'));
 const SearchRecords = lazy(() => import('@view/Warehouse/SearchRecords.jsx'));
 // const Configuration = lazy(() => import('component/Operation/Configuration'));
 const DealDetail = lazy(() => import('@view/DealChart/DealDetail'));

@@ -52,26 +52,25 @@ const DealDetail: React.FC = () => {
         return "Not Available";
     }, [dealData])
 
+    //product name, product latest price
+    const { name, currentPrice } = dealData || {};
     return (
-        <Skeleton loading={loading} >
-            {dealData && Object.keys(dealData).length > 0 ? (
-                <Row style={{ "display": "flex", "justifyContent": "center" }} gutter={[48, 24]}>
-                    <Col span={12} className="left-panel" >
-                        <ContentHeader title={dealData.name} />
-                        <Row className="price-row">
-                            <Title level={5} className="price-row-price">${dealData.currentPrice}</Title>
-                            <Spin indicator={<SyncOutlined spin />} style={{ fontSize: 0, color: 'black' }} />
-                        </Row>
-                        <Title level={5}>${discount} | {priceDelta}%</Title>
-                        <Title level={5}>Last Record Time: {latestRecordTime}</Title>
+        <Skeleton loading={loading} active>
+            {name && (
+                <Row gutter={[24, 24]} style={{ "display": "flex", "justifyContent": "center" }} >
+                    <Col span={18} >
+                        <ContentHeader title={name} />
+                        <Col style={{marginLeft:16}}>
+                            <Row >
+                                <Title level={5} className="price-row-price">${currentPrice}</Title>
+                                <Spin indicator={<SyncOutlined spin />} style={{ fontSize: 0, color: 'black' }} />
+                            </Row>
+                            <Title level={5}>${discount} | {priceDelta}%</Title>
+                            <Title level={5}>Last Record Time: {latestRecordTime}</Title>
+                        </Col>
                         <PriceHistoryChart dealData={dealData} discount={discount} />
                     </Col>
-                    {/* <Col span={6} className="right-panel">
-                    <OrderPanel />
-                </Col> */}
                 </Row>
-            ) : (
-                <></>
             )}
         </Skeleton>
     )

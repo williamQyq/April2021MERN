@@ -18,10 +18,11 @@ module.exports = function (app) {
     '/socket.io',
     createProxyMiddleware({
       target: targetURL,
+      ws: true,
       changeOrigin: true,
-      pathRewrite: {
-        '^/socket.io': "/socket.io"
-      }
+      // pathRewrite: {
+      //   '^/socket.io': "/socket.io"
+      // }
     })
   )
 };

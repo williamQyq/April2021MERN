@@ -108,14 +108,20 @@ const SkuConfigInputStepForm: React.FC<IProps> = (props) => {
             }}
         >
             <MyProCard title="Create SKU">
-                <SkuEditableCreationTable
-                    dataSource={dataSource}
-                    setDataSource={setDataSource}
-                    accessoriesValueEnum={{
-                        ramValueEnum,
-                        ssdValueEnum
-                    }} />
-                <SpreadSheetComponent />
+                <div style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center"
+                }}>
+                    <SkuEditableCreationTable
+                        dataSource={dataSource}
+                        setDataSource={setDataSource}
+                        accessoriesValueEnum={{
+                            ramValueEnum,
+                            ssdValueEnum
+                        }} />
+                    <SpreadSheetComponent />
+                </div>
             </MyProCard>
 
             <MyProCard title="Supplement Info">

@@ -17,7 +17,8 @@ import {
 } from '@redux-action/deal.action';
 import { RootState } from '@src/redux/store/store';
 import { SocketAction, SocketRoom } from '@src/component/socket/type';
-import { Outlet } from 'react-router-dom';
+import { Row, Col } from 'antd';
+import { ContentLayout } from '@src/component/utils/Layout';
 
 interface BestbuyElectronicsCatgIds {
     ALL_LAPTOPS: string,
@@ -69,7 +70,8 @@ class BestBuyDeals extends React.Component<IProps, IState> {
      * Trigger View updates on retrieve "bestbuy deals update"
      */
     componentDidMount() {
-        let socket = this.context!;
+        const { socket } = this.context;
+        console.log(socket)
         const { targetStore } = this.state;
         // let abortSignal = this.abortController ? this.abortController.signal : undefined;
         this.abortController = new AbortController();
@@ -95,8 +97,10 @@ class BestBuyDeals extends React.Component<IProps, IState> {
         this.abortController?.abort();
     }
     componentWillUnmount() {
-        let socket = this.context;
-        if (socket) socket.off(`DEAL_UPDATED`);
+        const { socket } = this.context;
+        if (socket) {
+            socket.removeAllListeners();
+        }
         this.cancelRequest();
     }
 
@@ -154,10 +158,11 @@ class BestBuyDeals extends React.Component<IProps, IState> {
         }
 
         return (
-            <>
+            <ContentLayout>
                 <DealsTable {...data} />
                 <StoreAnalyticCards {...categoryProps} />
-            </>
+            </ContentLayout>
+
         )
     }
 }

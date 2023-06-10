@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { Card, Col, Row, Skeleton, Typography, Menu, Input } from 'antd';
-import { SubContentHeader } from '@src/component/utils/Layout.jsx';
+import { SubContentHeader } from '@src/component/utils/Layout';
 import './Store.scss';
 import { getAlsoBoughtOnSku, getViewedUltimatelyBoughtOnSku } from '@redux-action/bestbuy.action';
 

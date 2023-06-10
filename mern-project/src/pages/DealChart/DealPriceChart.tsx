@@ -114,22 +114,33 @@ export function setColorOnPriceUpOrDrop(priceDiff: number) {
  * @description Price Chart Component
  */
 interface IProps {
-    dealData: DealDataType;
+    dealData?: DealDataType;
     discount: number;
 }
 
 const PriceHistoryChart: React.FC<IProps> = ({ dealData, discount }: IProps) => {
-    const labels = setLabels(dealData.price_timestamps);
-    const datapoints = setDataPoints(dealData.price_timestamps);
-    const borderColor = setColorOnPriceUpOrDrop(discount);
+    const chartRef = React.useRef<Chart>();
 
-    const data = setChartData(labels, datapoints, borderColor);
-    const config: ChartConfiguration = setChartConfig(data);
 
     useEffect(() => {
-        let myChart = new Chart('chart', config)
-        return () => myChart.destroy();
-    }, [])
+        if (dealData) {
+            const labels = setLabels(dealData.price_timestamps);
+            const datapoints = setDataPoints(dealData.price_timestamps);
+            const borderColor = setColorOnPriceUpOrDrop(discount);
+
+            const data = setChartData(labels, datapoints, borderColor);
+            const config: ChartConfiguration = setChartConfig(data);
+            if (chartRef.current) {
+                chartRef.current.destroy();
+            }
+            chartRef.current = new Chart('chart', config);
+        }
+        return () => {
+            if (chartRef.current) {
+                chartRef.current.destroy();
+            }
+        };
+    }, [dealData, discount]);
 
     return (
         <canvas id='chart' width={"900px"} />
