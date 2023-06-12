@@ -11,7 +11,7 @@ import Category from '@src/component/utils/Category';
 const operationFeaturesMenu: MenuOption[] = [
     {
         key: "init-new-product",
-        title: "Get Started",
+        title: "SKU Creation",
         description: "Start Creating a new Product",
         cover: <IconCover Icon={MdOutlineTipsAndUpdates} />
     },

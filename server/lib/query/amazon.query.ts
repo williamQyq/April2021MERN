@@ -34,7 +34,7 @@ export class AmazonSellingPartnerDataProcessor {
         const filter = { "upc": upc, "identifiers.asin": asin }
         const update = { $set: { "identifiers.$.offers": offers } }
         const option = { useFindAndModify: false }
-        await this._AmzProdPricing.findOneAndUpdate(filter, update, option).exec();
+        return await this._AmzProdPricing.findOneAndUpdate(filter, update, option).exec();
     }
 
     async upsertProdPricingNewAsin(upc: string, asin: string) {

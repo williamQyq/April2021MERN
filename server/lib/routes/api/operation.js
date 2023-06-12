@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router();
 import auth from '#middleware/auth.js';
-import { updateProdPricingCatalogItems } from '#bin/amazonSP/SPAPI/SP.js';
+import { SPAPI } from '#root/bin/amazonSP/SPAPI/index';
 import { AmazonSellingPartnerDataProcessor as OperationApi } from 'lib/query/amazon.query';
 
 // @route GET api/amazonSP
@@ -16,10 +16,11 @@ router.get('/products/pricing/v0/price', (req, res) => {
 // @desc: save upc asin mapping Schema for ProductPricing API
 router.post('/upload/v0/asinsMapping', auth, (req, res) => {
     const { uploadFile } = req.body
+    const sellingPartner = new SPAPI();
     console.log(`=======received file:======\n${JSON.stringify(uploadFile)}\n\n`)
     processMappingFile(uploadFile)
         .then(() => { res.json({ msg: 'success' }) })
-        .then(() => updateProdPricingCatalogItems())
+        .then(() => sellingPartner.updateProdPricingCatalogItems())
         .catch(e => {
             res.status(400).json({ msg: `Upload File contains Invalid Input\n\n${e}` })
         })
