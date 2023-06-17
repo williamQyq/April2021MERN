@@ -1,15 +1,15 @@
 import { Date, Types } from "mongoose";
 
 export interface DealDoc extends Document {
-    link: URL;
+    link: URL | string;
     sku: string;
     name: string;
-    price_timestamps: Array<{ price: number, date: Date }>;
-    created_date: Date;
+    price_timestamps: Array<{ price: number, date?: Date }>;
+    created_date?: Date;
 };
 
 export interface BestbuyDealDoc extends DealDoc {
-    
+
 }
 export interface MicrosoftDealDoc extends DealDoc {
 

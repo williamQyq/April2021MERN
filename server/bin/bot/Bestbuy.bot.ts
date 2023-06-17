@@ -60,26 +60,14 @@ export default class Bestbuy extends DealBot {
 
             for (let i = 0; i < pageCnt; i++) {
                 let pageUrl = this.editParamPageNumInUrl(i + 1);
-                let dealsData: DealDataType[] | undefined = await this.getPageItems(page, pageUrl, { retryIfErr: true }); //ItemType { link, sku, currentPrice, name }
+                let dealsData: DealDataType[] | undefined = await this.getPageItems(page, pageUrl, { retryIfErr: true });
 
                 if (!dealsData) throw new Error("Fail to retrieve deals data.");
 
-                await Promise.all(dealsData.map(
-                    (deal: DealDataType, index: number) =>
-                        alert.createDeal(deal, model as mongoose.Model<unknown>)
-                            .then((status: string) => {
-                                let dealMsg: DealMessage = {
-                                    storeName: Bestbuy.name,
-                                    indexPage: i,
-                                    index,
-                                    sku: deal.sku ? deal.sku : "",
-                                    currentPrice: deal.currentPrice ? deal.currentPrice : undefined,
-                                    status
-                                }
-                                let msg = new MyMessage(this.storeName);
-                                msg.printGetDealMsg(dealMsg); //print deal message.
-                            })
-                ))
+                await alert.createMultiDeals(
+                    dealsData as Required<DealDataType>[],
+                    model
+                )
                     .finally(() => {
                         let finalMsg = new MyMessage(this.storeName);
                         finalMsg.printPageEndLine(i);

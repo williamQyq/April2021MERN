@@ -12,6 +12,9 @@ import {
     LAST_PRICE,
 } from './aggregate.js';
 import { BestbuyDealDoc, MicrosoftDealDoc } from 'lib/models/interface.d';
+import { AnyBulkWriteOperation, BulkWriteResult } from 'mongodb';
+
+export type DealDoc = BestbuyDealDoc | MicrosoftDealDoc;
 
 export class Deals {
     static _ItemSpec: mongoose.Model<Document> = ItemSpec;
@@ -78,7 +81,7 @@ export class DealsAlert extends Deals {
      * @param model mongoose.model
      * @returns message string "UPDATED PRICE" | "PRICE NOT CHANGED" | "NEW ITEM UPSERT"
      */
-    async createDeal(deal: DealDataType, model: mongoose.Model<unknown>) {
+    async createDeal(deal: DealDataType, model: mongoose.Model<DealDoc>) {
         let msg: string | undefined = undefined;
         let isUpserted: boolean = await this.insertDealItem(deal, model)    //insert if no document
 
@@ -91,9 +94,69 @@ export class DealsAlert extends Deals {
         }
 
         return msg
-
+        /**
+         * Todo: print MyMessage
+         * 
+         * e.g.: 
+         * 
+         *  let dealMsg: DealMessage = {
+                            storeName: Bestbuy.name,
+                            indexPage: i,
+                            index,
+                            sku: deal.sku ? deal.sku : "",
+                            currentPrice: deal.currentPrice ? deal.currentPrice : undefined,
+                            status
+                        }
+                        let msg = new MyMessage(this.storeName);
+                        msg.printGetDealMsg(dealMsg); //print deal message.
+        */
     }
-    async insertDealItem(deal: DealDataType, model: mongoose.Model<unknown>) {
+    /**
+     * @description create and save multiple deal info to database.
+     * @param deal deal item info
+     * @param model mongoose.model
+     * @returns message string "UPDATED PRICE" | "PRICE NOT CHANGED" | "NEW ITEM UPSERT"
+     */
+    async createMultiDeals(dealsData: Required<DealDataType>[], model: mongoose.Model<DealDoc>) {
+        let msg: string | undefined = undefined;
+
+        const bulkOps: AnyBulkWriteOperation<DealDoc>[] = dealsData.map((deal) => (
+            {
+                updateOne: {
+                    filter: { sku: deal.sku },
+                    update: {
+                        $setOnInsert: {
+                            sku: deal.sku,
+                            name: deal.name,
+                            link: deal.link,
+                            price_timestamps: [{
+                                price: deal.currentPrice
+                            }]
+                        }
+                    },
+                    upsert: true
+                }
+            })
+        );
+
+        const bulkWirteRes = await model.bulkWrite(bulkOps);
+        // filter deals that have been upserted before. 
+        // push price data to their price_timestamps instead of upsert whole deal doc.
+        const nonUpsertedRecords = dealsData.filter((_, index) => {
+            let upsertedOpIndexs: number[] = Object.keys(bulkWirteRes.upsertedIds).map(Number);
+            return upsertedOpIndexs.some(upsertedOpIndex => upsertedOpIndex !== index)
+        })
+        nonUpsertedRecords.map(async (deal) => {
+            let isPricedPushed = await this.updateDealOnPriceChanged(deal, model);
+            msg = isPricedPushed ? "UPDATED PRICE" : "PRICE NOT CHANGED"
+        })
+        //push updated price to priceTimestamps field
+        // let isPricedPushed = await this.updateDealOnPriceChanged(deal, model);
+        // msg = isPricedPushed ? "UPDATED PRICE" : "PRICE NOT CHANGED"
+        // msg = "NEW ITEM UPSERT"
+    }
+
+    async insertDealItem(deal: DealDataType, model: mongoose.Model<DealDoc>) {
         const query: mongoose.FilterQuery<unknown> = { sku: deal.sku };
         const update: mongoose.UpdateQuery<unknown> = {
             $setOnInsert: {
@@ -115,7 +178,7 @@ export class DealsAlert extends Deals {
         return isUpserted
     }
 
-    async updateDealOnPriceChanged(deal: DealDataType, model: mongoose.Model<unknown>) {
+    async updateDealOnPriceChanged(deal: DealDataType, model: mongoose.Model<DealDoc>) {
         const { sku, currentPrice } = deal;
 
         let priceChangedDeals = await model.aggregate([{
@@ -151,7 +214,7 @@ export class DealsAlert extends Deals {
      * @param model 
      * @returns 
      */
-    async insertAlteredDealPrice(alteredDeal: DealDataType, deal: DealDataType, model: mongoose.Model<unknown>) {
+    async insertAlteredDealPrice(alteredDeal: DealDataType, deal: DealDataType, model: mongoose.Model<DealDoc>) {
         let options: mongoose.QueryOptions = { upsert: true, new: true, setDefaultsOnInsert: true, useFindAndModify: false }
         let update: mongoose.UpdateQuery<unknown> = {
             $push: {
