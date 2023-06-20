@@ -41,24 +41,26 @@ export default class Bestbuy extends DealBot {
     }
 
     async getAndSaveLaptopsPrice() {
-        let alert = new DealsAlert();
+        const logger = new MyMessage();
+        const alert = new DealsAlert({ logger, storeName: this.storeName });
         const model = DealsAlert._BestbuyDeal;
         let storeUrl = this.editParamPageNumInUrl(1);
         let browser: puppeteer.Browser | undefined;
         let page: puppeteer.Page | undefined;
+
+        let testMode = false;    //For Testing*
 
         try {
             browser = await this.initBrowser();
             page = await this.initPage(browser);
 
             const { pageCnt }: Pagination = await this.getPagination(page, storeUrl);
-            console.log(`pageCnt:`, pageCnt);
             if (!pageCnt) throw new Error("*Parse Pagination fail*")
             // For each page, get deals, save to database and print process status. 
 
-            // @TODO: use multi tab to crawl, instead one tab per page...
+            let dealPageCnt = testMode ? 1 : pageCnt;
 
-            for (let i = 0; i < pageCnt; i++) {
+            for (let i = 0; i < dealPageCnt; i++) {
                 let pageUrl = this.editParamPageNumInUrl(i + 1);
                 let dealsData: DealDataType[] | undefined = await this.getPageItems(page, pageUrl, { retryIfErr: true });
 
@@ -69,24 +71,22 @@ export default class Bestbuy extends DealBot {
                     model
                 )
                     .finally(() => {
-                        let finalMsg = new MyMessage(this.storeName);
-                        finalMsg.printPageEndLine(i);
+                        logger.printPageEndLine({ storeName: this.storeName, index: i });
                     });
             }
         } catch (e) {
-            let errMsg = new MyMessage(this.storeName);
-            errMsg.printError(e);
+            logger.printError(e);
             io.sockets.emit("RETRIEVE_BB_ITEMS_ONLINE_PRICE_ERROR", { msg: `Fail to retrive Bestbuy Laptop Price \n\n${e}` })
         }
 
-        // if (page) await page.close();
-        // if (browser) await browser.close();
+        if (page) await page.close();
+        if (browser) await browser.close();
 
         io.sockets.emit("ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE", { msg: "All deals retieved success" });
     }
 
     async fetchAndSaveItemSpecification(url: string, sku: string) {
-        let deals = new DealsAlert();
+        let deals = new DealsAlert({ storeName: this.storeName });
 
         console.log(`[getItemConfig] starting...`)
         let browser = await this.initBrowser();
@@ -145,10 +145,9 @@ export default class Bestbuy extends DealBot {
     @return: PageNumFooter
     */
     async parsePageNumFooter(page: Page): Promise<Pagination> {
-        let pagination: Pagination = {
-            itemCntPerPage: undefined,
-            pageCnt: undefined
-        };
+        const logger = new MyMessage();
+        let pagination: Required<Pagination> | undefined;
+
         const FOOTER_XPATH_EXPR = '//div[@class="footer top-border wrapper"]//span'
         const NUM_PAGE_REGEX_EXPR: RegExp = /\d*-(\d*)\sof\s\d*/;
         const TOTAL_NUM_REGEX_EXPR: RegExp = /.*of\s(\d*)\sitems/;
@@ -159,11 +158,12 @@ export default class Bestbuy extends DealBot {
         let itemCntPerPage: number = Number(this.getRegexValue(footer, NUM_PAGE_REGEX_EXPR))
         let itemsCount: number = Number(this.getRegexValue(footer, TOTAL_NUM_REGEX_EXPR))
 
-        pagination.pageCnt = Math.ceil(itemsCount / itemCntPerPage);
-        pagination.itemCntPerPage = itemCntPerPage;
+        pagination = {
+            pageCnt: Math.ceil(itemsCount / itemCntPerPage),
+            itemCntPerPage
+        }
 
-        let parsingMsg = new MyMessage(this.storeName);
-        parsingMsg.printPagination(pagination.pageCnt, pagination.itemCntPerPage);
+        logger.printPagination({ ...pagination, storeName: this.storeName });
 
         return pagination;
     }
@@ -194,7 +194,7 @@ export default class Bestbuy extends DealBot {
         let skuAttrLists = await this.evaluateItemAttribute(page, SKU_LIST_EXPR, SKU_ATTRIBUTE_ID)
         let priceTextLists = await this.evaluateScrollLoadingElementsText(page, PRICE_LIST_EXPR)
         let nameLists = await this.evaluateScrollLoadingElementsText(page, NAME_LIST_EXPR)
-        console.table(priceTextLists)
+
         const combinedArray = skuAttrLists.map((sku, index) => ({
             arraySku: sku,
             arrayPrice: priceTextLists[index],

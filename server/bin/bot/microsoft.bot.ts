@@ -55,7 +55,7 @@ export default class Microsoft extends DealBot {
 
     async getAndSaveLaptopsPrice() {
         let alert = new DealsAlert();
-        let model = DealsAlert._MicrosoftDeal as mongoose.Model<unknown>;
+        let model = DealsAlert._MicrosoftDeal;
         let storeUrl = this.editParamPageNumInUrl(0); //this. url + skipItemsNum
         let browser: puppeteer.Browser | undefined;
         let page: puppeteer.Page | undefined;

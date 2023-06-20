@@ -1,9 +1,7 @@
 import express, { Request, Response, Router } from 'express';
-import mongoose from 'mongoose';
-import io from '#root/index';
 import { AxiosError } from 'axios';
 import auth from '#middleware/auth';
-import { DealsAlert } from 'lib/query/deals.query';
+import { DealsAlert, Deals } from 'lib/query/deals.query';
 import {
     getMostViewedOnCategoryId,
     getViewedUltimatelyBought,
@@ -11,14 +9,16 @@ import {
 } from '#bin/bestbuyIO/bestbuyIO.js';
 import { ItemSpecDocument } from '#models/Specification.model'
 import Bestbuy from 'bin/bot/bestbuy.bot';
+import { MyMessage } from '#root/bin/bot';
 
 const router: Router = express.Router();
+const logger = new MyMessage();
+const deals = new DealsAlert({ storeName: Deals.Bestbuy, logger });
 
 // @route GET api/items
 // @access private
 router.get('/v1/deals', auth, (req, res) => {
-    let deals = new DealsAlert();
-    const model = DealsAlert._BestbuyDeal;
+    const model = Deals._BestbuyDeal;
 
     deals.getDeals(model)
         .then(items => res.json(items))
@@ -32,7 +32,6 @@ router.get('/v1/deals', auth, (req, res) => {
 // @access public
 router.get('/v1/deal/detail/id/:_id', (req: Request<{ _id: string }>, res: Response) => {
     const { _id } = req.params
-    let deals = new DealsAlert();
     const model = DealsAlert._BestbuyDeal;
 
     deals.getDealById(model, _id)
@@ -46,7 +45,6 @@ router.get('/v1/deal/detail/id/:_id', (req: Request<{ _id: string }>, res: Respo
 router.put('/item-specification/', auth, (req, res) => {
     const { link, sku } = req.body as { link: URL | string, sku: string };
     let bestbuy = new Bestbuy();
-    let deals = new DealsAlert();
 
     deals.findItemSpecOnSku(sku).then((doc: ItemSpecDocument) => {
         if (doc) {
@@ -100,8 +98,8 @@ router.get('/peek/v0/getAlsoBought/sku/:sku', auth, (req, res) => {
 })
 
 router.get('/crawl/v1/laptop/prices', auth, (req, res) => {
-    let bestbuy = new Bestbuy();
-    bestbuy.getAndSaveLaptopsPrice()
+    let bot = new Bestbuy();
+    bot.getAndSaveLaptopsPrice()
     res.status(202).json({ msg: "Now Retrieving the Deals..." });
 })
 

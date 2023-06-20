@@ -1,46 +1,41 @@
 import puppeteer from 'puppeteer';
 
-/* 
-declare class Stores{
-    printMsg(msgMap)
-    async initBrowser()
-    async initPage(browser)
-    async evaluateElementsText(page, XPATH_EXPR)
-    async evaluateItemAttribute(page, XPATH_EXPR, ATTRIBUTE_ID)
-    async evaluatePriceAttribute(page, XPATH_EXPR, ATTRIBUTE_ID)
-    compareMapHelper(obj1, obj2)
-    getRegexValue(str, regexExpr)
-
-}
-
-*/
 export interface Pagination {
     itemCntPerPage?: number,
     pageCnt?: number
 }
 export interface DealMessage {
     storeName: string;
-    indexPage: number;
-    index: number;
-    sku: string;
-    currentPrice: number | undefined;
+    indexPage?: number;
+    index?: number;
+    sku?: string;
+    currentPrice?: number;
     status: "Success" | "Fail" | "In Progress" | string;
 }
+interface DealPageEndLineMessageParms {
+    storeName: string,
+    index: number
+}
+
+interface DealPrintPaginationMessageParms {
+    pageCnt: number,
+    itemCntPerPage: number,
+    storeName: string
+}
+
 export class MyMessage {
-    storeName: string;
-    constructor(storeName: string) {
-        this.storeName = storeName;
+    constructor() {
     }
     printGetDealMsg(deal: DealMessage) {
         const storeTag = `[${deal.storeName}]`.padEnd(10, " ");
-        const page = deal.indexPage.toString().padEnd(4, " ");
-        const index = deal.index.toString().padEnd(4, " ");
+        // const page = deal.indexPage?.toString().padEnd(4, " ");
+        const index = deal.index?.toString().padEnd(4, " ");
         const status = deal.status.padEnd(9, " ");
         const sku = deal.sku;
-        console.log(`${storeTag} | Page: ${page} | Index: ${index} | Status: ${status} | Current SKU: ${sku}`);
+        console.log(`${storeTag} | Index: ${index} | Status: ${status} | Current SKU: ${sku}`);
     }
-    printPageEndLine(index: number) {
-        const storeTag = `[${this.storeName}]`.padEnd(10, " ");
+    printPageEndLine({ storeName, index }: DealPageEndLineMessageParms) {
+        const storeTag = `[${storeName}]`.padEnd(10, " ");
         console.log(`${storeTag}=== Page: ${index} done ===`);
     }
     printSplitLine(char: string) {
@@ -54,8 +49,8 @@ export class MyMessage {
         console.log("[End]");
         this.printSplitLine("*");
     }
-    printPagination(pageCnt: number, itemCntPerPage: number) {
-        const paginationTag = `[Pagination | ${this.storeName}]`;
+    printPagination({ pageCnt, itemCntPerPage, storeName }: DealPrintPaginationMessageParms) {
+        const paginationTag = `[Pagination | ${storeName}]`;
         console.log(`${paginationTag} | pageItemsCount: ${itemCntPerPage} | page count: ${pageCnt}`);
     }
 }

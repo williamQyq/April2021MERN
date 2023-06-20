@@ -59,10 +59,14 @@ export default function passportSetup(passport: PassportStatic) {
         done(null, user.googleId);
     });
 
-    passport.deserializeUser((id, done) => {
+    passport.deserializeUser(async (id, done) => {
         console.log(`passport deserialize user id: `, id)
-        User.findOne({ googleId: id }, (err: mongoose.Error, user: IUserDoc) => {
-            done(err, user);
-        })
+        try {
+            const user: IUserDoc | null = await User.findOne({ googleId: id })
+            if (user)
+                done(null, user);
+        } catch (err: any) {
+            done(err as mongoose.Error);
+        }
     })
 }

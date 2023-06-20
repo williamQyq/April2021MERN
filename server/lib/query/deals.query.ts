@@ -13,6 +13,7 @@ import {
 } from './aggregate.js';
 import { BestbuyDealDoc, MicrosoftDealDoc } from 'lib/models/interface.d';
 import { AnyBulkWriteOperation, BulkWriteResult } from 'mongodb';
+import { MyMessage } from '#root/bin/bot/index.js';
 
 export type DealDoc = BestbuyDealDoc | MicrosoftDealDoc;
 
@@ -20,9 +21,10 @@ export class Deals {
     static _ItemSpec: mongoose.Model<Document> = ItemSpec;
     static _BestbuyDeal: mongoose.Model<BestbuyDealDoc> = BestbuyDeal;
     static _MicrosoftDeal: mongoose.Model<MicrosoftDealDoc> = MicrosoftDeal;
-
-    constructor() {
-        //    
+    static Bestbuy: string = "Bestbuy";
+    storeName: string;
+    constructor(storeName: string) {
+        this.storeName = storeName
     }
 }
 
@@ -37,13 +39,19 @@ export interface DealDataType {
     currentPrice?: number;
     [key: string]: any;
 }
+interface DealsAlertParms {
+    storeName: string,
+    logger?: MyMessage
+}
 /**
  * 
  * @description Class that handles CRUD operations for deals from BESTBUY MICORS in a database.
  */
 export class DealsAlert extends Deals {
-    constructor() {
-        super();
+    logger?: MyMessage;
+    constructor({ storeName, logger }: DealsAlertParms) {
+        super(storeName);
+        this.logger = logger;
     }
     /**
      * @description upsert deal item specification to database.
@@ -81,7 +89,7 @@ export class DealsAlert extends Deals {
      * @param model mongoose.model
      * @returns message string "UPDATED PRICE" | "PRICE NOT CHANGED" | "NEW ITEM UPSERT"
      */
-    async createDeal(deal: DealDataType, model: mongoose.Model<DealDoc>) {
+    async createDeal(deal: DealDataType, model: mongoose.Model<DealDoc>): Promise<void> {
         let msg: string | undefined = undefined;
         let isUpserted: boolean = await this.insertDealItem(deal, model)    //insert if no document
 
@@ -92,24 +100,13 @@ export class DealsAlert extends Deals {
         } else {
             msg = "NEW ITEM UPSERT"
         }
+        this.logger?.printGetDealMsg({
+            ...deal,
+            storeName: this.storeName,
+            status: msg
+        })
 
-        return msg
-        /**
-         * Todo: print MyMessage
-         * 
-         * e.g.: 
-         * 
-         *  let dealMsg: DealMessage = {
-                            storeName: Bestbuy.name,
-                            indexPage: i,
-                            index,
-                            sku: deal.sku ? deal.sku : "",
-                            currentPrice: deal.currentPrice ? deal.currentPrice : undefined,
-                            status
-                        }
-                        let msg = new MyMessage(this.storeName);
-                        msg.printGetDealMsg(dealMsg); //print deal message.
-        */
+        return
     }
     /**
      * @description create and save multiple deal info to database.
@@ -140,16 +137,42 @@ export class DealsAlert extends Deals {
         );
 
         const bulkWirteRes = await model.bulkWrite(bulkOps);
-        // filter deals that have been upserted before. 
+        const noUpserted = bulkWirteRes.upsertedCount === 0;
+        let upsertedOpIndexs = Object.keys(bulkWirteRes.upsertedIds).map(Number);
+
+        if (!noUpserted) {
+            console.log("upsertedid:\n")
+            console.table(bulkWirteRes.upsertedIds)
+
+        }
+        // filter new deals, attached upsert status.
+        const upsertedRecords = noUpserted ? [] : dealsData
+            .filter((_, index) => {
+                return upsertedOpIndexs.some(upsertedOpIndex => upsertedOpIndex === index);
+            })
+            .map(deal => {
+                return { ...deal, status: "NEW ITEM UPSERT" };
+            });
+
+        // filter deals sku already in db, not new prod. 
+        const nonUpsertedRecords = await Promise.all(dealsData
+            .filter((_, index) => noUpserted ?
+                true
+                :
+                upsertedOpIndexs.some(upsertedOpIndex => upsertedOpIndex !== index)
+            )
+            .map(async (deal) => {
+                let isPricedPushed = await this.updateDealOnPriceChanged(deal, model);
+                msg = isPricedPushed ? "UPDATED PRICE" : "PRICE NOT CHANGED"
+                return { ...deal, status: msg };
+            }))
+
+        const allRec = [...upsertedRecords, ...nonUpsertedRecords];
+        allRec.map((rec, index) => {
+            this.logger?.printGetDealMsg({ ...rec, storeName: this.storeName, index })
+        })
+
         // push price data to their price_timestamps instead of upsert whole deal doc.
-        const nonUpsertedRecords = dealsData.filter((_, index) => {
-            let upsertedOpIndexs: number[] = Object.keys(bulkWirteRes.upsertedIds).map(Number);
-            return upsertedOpIndexs.some(upsertedOpIndex => upsertedOpIndex !== index)
-        })
-        nonUpsertedRecords.map(async (deal) => {
-            let isPricedPushed = await this.updateDealOnPriceChanged(deal, model);
-            msg = isPricedPushed ? "UPDATED PRICE" : "PRICE NOT CHANGED"
-        })
         //push updated price to priceTimestamps field
         // let isPricedPushed = await this.updateDealOnPriceChanged(deal, model);
         // msg = isPricedPushed ? "UPDATED PRICE" : "PRICE NOT CHANGED"
