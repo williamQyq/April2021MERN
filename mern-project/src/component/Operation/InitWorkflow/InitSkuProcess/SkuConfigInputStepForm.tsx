@@ -12,21 +12,22 @@ import {
     InitSkuStepsFormDataType,
     SkuDataSourceType,
     FileUploadRequestOption,
-} from 'component/utility/cmpt.interface';
+} from '@src/component/utils/cmpt.interface';
 import { createAccessoriesEnumObj, waitTime } from '../utilities';
-import { AppDispatch } from 'reducers/store/store';
+import { AppDispatch, RootState } from '@src/redux/store/store';
 import { useDispatch } from 'react-redux';
 import {
     calcVerifiedSkuPrimeCost,
     downloadProductPrimeCostTemplate,
     uploadProductsPrimeCost
-} from 'reducers/actions/operationAction';
-import MyProCard from 'component/utility/MyProCard';
-import FileUploader from 'component/utility/FileUploader';
+} from '@src/redux/actions/operationAction';
+import MyProCard from '@src/component/utils/MyProCard';
+import FileUploader from '@src/component/utils/FileUploader';
 import SkuEditableCreationTable from './SkuEditableTable';
 import TemplateDownloader from '../TemplateDownloader';
-import { RAM, SSD } from 'component/utility/types.enum';
-import SpreadSheetComponent from 'component/utility/SpreadSheetComponent';
+import { RAM, SSD } from '@src/component/utils/types.enum';
+import SpreadSheetComponent from '@src/component/utils/SpreadSheetComponent';
+import { ThunkAction, AnyAction } from '@reduxjs/toolkit';
 
 
 const { StepForm } = StepsForm;
@@ -79,8 +80,10 @@ const SkuConfigInputStepForm: React.FC<IProps> = (props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const handlePrimeCostUpload = (options: FileUploadRequestOption) => {
-        dispatch(uploadProductsPrimeCost(options));
+    const handlePrimeCostUpload = (options: FileUploadRequestOption): ThunkAction<void, RootState, any, AnyAction> => {
+        return async (dispatch: AppDispatch) => {
+            dispatch(uploadProductsPrimeCost(options));
+        }
     }
     //Accessories key, type Map, e.g <4GB_0, 4GB>
     const ramValueEnum = createAccessoriesEnumObj(ramOptions);
@@ -105,14 +108,20 @@ const SkuConfigInputStepForm: React.FC<IProps> = (props) => {
             }}
         >
             <MyProCard title="Create SKU">
-                <SkuEditableCreationTable
-                    dataSource={dataSource}
-                    setDataSource={setDataSource}
-                    accessoriesValueEnum={{
-                        ramValueEnum,
-                        ssdValueEnum
-                    }} />
-                <SpreadSheetComponent />
+                <div style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center"
+                }}>
+                    <SkuEditableCreationTable
+                        dataSource={dataSource}
+                        setDataSource={setDataSource}
+                        accessoriesValueEnum={{
+                            ramValueEnum,
+                            ssdValueEnum
+                        }} />
+                    <SpreadSheetComponent />
+                </div>
             </MyProCard>
 
             <MyProCard title="Supplement Info">

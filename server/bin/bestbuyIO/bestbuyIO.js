@@ -28,7 +28,7 @@ export const getMostViewedOnCategoryId = async (categoryId, pageSize = DEFAULT_P
             return validPropertiesProd;
         })
     } catch (error) {
-        console.error(error)
+        throw error;
     }
 
     return mostViewedProducts;
@@ -57,7 +57,7 @@ export const getViewedUltimatelyBought = async (sku) => {
             return validPropertiesProd;
         })
     } catch (error) {
-        console.error(error)
+        throw error;
     }
 
     return viewedUltimatelyBoughtProducts;

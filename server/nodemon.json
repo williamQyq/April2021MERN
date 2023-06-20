@@ -1,7 +1,7 @@
 {
-    "watch":[
+    "watch": [
         "."
     ],
-    "ext":".ts .js",
-    "exec": "node ./dist/index.js"
+    "ext": ".ts .js",
+    "exec": "node -r dotenv/config --experimental-specifier-resolution=node --loader ./loader.js ./index.ts"
 }

@@ -1,2 +1,8 @@
 User-agent: *
-Disallow:/
+Disallow: /api/*.json
+
+User-agent: GetIntentCrawler
+Disallow: /
+
+#Crawler specific settings
+User-agent: Adsbot-Google

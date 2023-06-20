@@ -1,16 +1,16 @@
 import React from 'react';
-import 'styles/Operation.scss';
+import '@src/assets/Operation.scss';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Form } from 'antd';
-import { defaultSettings } from 'component/Operation/_Settings';
-import { mainColumns } from 'component/Operation/SkuManagement/OperationEditableEle.jsx';
-import { getProductPricing } from 'reducers/actions/operationActions.js';
-import OperationMenu from 'component/Operation/SkuManagement/OperationMenu.jsx';
-import { SocketContext } from 'component/socket/socketContext';
+import { defaultSettings } from '@src/component/Operation/_Settings';
+import { mainColumns } from '@src/component/Operation/SkuManagement/OperationEditableEle.jsx';
+import { getProductPricing } from '@redux-action//operationActions.js';
+import OperationMenu from '@src/component/Operation/SkuManagement/OperationMenu.jsx';
+import { SocketContext } from '@src/component/socket/SocketProvider';
 // import BackTopHelper from 'component/utility/BackTop.jsx';
-import FormTable from 'component/utility/FormTable';
-import { ContentHeader, SubContentHeader } from 'component/utility/Layout';
+import FormTable from '@src/component/utils/FormTable';
+import { ContentHeader, SubContentHeader } from '@src/component/utils/Layout';
 
 class OperationProductList extends React.Component {
     static contextType = SocketContext //This part is important to access context values which are socket
@@ -28,12 +28,14 @@ class OperationProductList extends React.Component {
     }
 
     componentDidMount() {
-        let socket = this.context
-        socket.emit(`subscribe`, `OperationRoom`);
-        this.props.getProductPricing()
-        socket.on(`Prod Pricing Update`, () => {
-            this.props.getProductPricing();
-        })
+        let socket = this.context;
+        this.props.getProductPricing();
+        if (socket && socket.active) {
+            socket.emit(`subscribe`, `OperationRoom`);
+            socket.on(`Prod Pricing Update`, () => {
+                this.props.getProductPricing();
+            })
+        }
     }
     componentDidUpdate(prevProps, nextProps) {
         const dataSource = this.props.sellingPartner
@@ -43,7 +45,8 @@ class OperationProductList extends React.Component {
     }
     componentWillUnmount() {
         let socket = this.context
-        socket.emit(`unsubscribe`, `OperationRoom`)
+
+        if (socket && socket.active) socket.emit(`unsubscribe`, `OperationRoom`)
     }
 
     isLoading = () => {

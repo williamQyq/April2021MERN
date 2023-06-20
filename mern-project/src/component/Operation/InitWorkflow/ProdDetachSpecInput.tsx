@@ -7,10 +7,12 @@ import {
 } from '@ant-design/pro-components';
 import { message } from 'antd';
 import React, { useState } from 'react';
-import FileUpload from 'component/utility/FileUploader';
+// import FileUpload from '@src/component/utils/FileUploader';
 import { waitTime } from './utilities';
-import { StepComponentProps } from 'component/utility/cmpt.interface.d';
-import { HDD, OS, RAM, SSD } from 'component/utility/types.enum';
+import { StepComponentProps } from '@src/component/utils/cmpt.interface';
+import { HDD, OS, RAM, SSD } from '@src/component/utils/types.enum';
+import { AppDispatch } from '@src/redux/interface';
+import { useDispatch } from 'react-redux';
 
 const defaultData = {
     upc: "987654",
@@ -28,10 +30,11 @@ const ProdDetachSpecInput: React.FC<StepComponentProps> = (props: StepComponentP
     const hddOptions: HDD[] = [HDD.HDD_1TB, HDD.HDD_2TB];
     const osOptions: OS[] = [OS.W10H, OS.W10P];
     const [sourceData, setSourceData] = useState<Record<string, any>>(defaultData);
+    const dispatch = useDispatch<AppDispatch>();
 
-    const handlePictureUpload = () => {
-
-    }
+    // const handlePictureUpload = (): MyThunkAction => {
+    //     // @TODO:
+    // }
 
     return (
         <StepsForm
@@ -152,7 +155,7 @@ const ProdDetachSpecInput: React.FC<StepComponentProps> = (props: StepComponentP
                         marginBlockEnd: 16,
                     }}
                 >
-                    <FileUpload customizedUpload={handlePictureUpload} />
+                    {/* <FileUpload customizedUpload={handlePictureUpload} /> */}
                 </ProCard>
             </StepsForm.StepForm>
             <StepsForm.StepForm

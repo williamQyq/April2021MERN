@@ -16,12 +16,15 @@
     "rootDir": ".",
     "checkJs": false,
     "moduleResolution": "node",
-    "outDir": "./dist",
-    "types": ["node","mongodb"]
+    "outDir": "./dist"
   },
   "tsc-alias": {
-    "resolveFullPaths": true
+    "resolveFullPaths": true,
   },
+  "files": [
+    "environment.d.ts",
+    "./index.ts"
+  ],
   "include": [
     "./**/*.ts",
   ],

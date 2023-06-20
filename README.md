@@ -11,13 +11,22 @@ description: MERN stack project
 <br/>
 
 ## What is this project for?
----
+
 This project has access to the `MongoDB database` of the warehouse, the Amazon Seller Central via the `Selling Partner API`, the `Walmart Open I/O`, `Google services`, and `OpenAI`. It makes it easier for small to medium companies to maintain, track, and manage assets, with support for Typescript and ESNext modules.
 <br/>
-## Getting Started
----
 
-1. ### Create your own `.env` - ***not provided***:  
+## Before Started  
+
+Edit import in `/server/dist/lib/db/wms.db.js`, because `tsc-alias` fail to resolve typescript imports for mongodb module.
+
+`import { MongoClient } from 'mongodb.js';`
+-> `import {MongoClient} from 'mongodb';`
+
+!!! Or: use loader.js which implements tsconfig-path to resolve alias and load index.ts esm directly.
+
+## Getting Started
+
+1. ### Create your own secrets in `.env`:  
    `.env` contains Mongo URI, WMS credentials, Amazon credentials, and google secrets...  
 
 2. ### Connect to the `legacy mongo wms db` using tunnel-ssh
@@ -215,7 +224,7 @@ After installed nginx, edit below files.
 - `sudo apt update && sudo apt install -y gconf-service libgbm-dev libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget`
 
 ## FAQ：
----
+
 ### Q: Unable to git push to repository using `SourceTree` because PAT is expired?  
 
 manually clear stored credentials by emptying those files:
@@ -240,7 +249,7 @@ manually clear stored credentials by emptying those files:
 </br>
 
 Docker Procedure example:  
-`docker build -t node-server:latest`  
+`docker build -t node-server:latest .`  
 `docker tag node-server:latest dockerwilliamqiao/mern_server:latest`  
 `docker push dockerwilliamqiao/mern_server:latest`  
 

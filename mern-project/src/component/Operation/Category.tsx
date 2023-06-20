@@ -3,15 +3,15 @@ import { GrAmazon } from 'react-icons/gr';
 import { TbHeartRateMonitor } from 'react-icons/tb';
 import { RiUploadCloud2Line } from 'react-icons/ri';
 import { MdOutlineTipsAndUpdates } from 'react-icons/md';
-import IconCover from 'component/utility/IconCover.jsx';
-import { MenuOption } from 'component/utility/cmpt.interface.d';
-import Category from 'component/utility/Category';
+import IconCover from '@src/component/utils/IconCover.jsx';
+import { MenuOption } from '@src/component/utils/cmpt.interface';
+import Category from '@src/component/utils/Category';
 
 
 const operationFeaturesMenu: MenuOption[] = [
     {
         key: "init-new-product",
-        title: "Get Started",
+        title: "SKU Creation",
         description: "Start Creating a new Product",
         cover: <IconCover Icon={MdOutlineTipsAndUpdates} />
     },

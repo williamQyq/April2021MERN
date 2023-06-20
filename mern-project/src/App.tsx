@@ -1,84 +1,48 @@
 import React from 'react';
-import { Route, Routes } from "react-router-dom";
-import PrivateRoute from 'component/auth/PrivateRoute.js';
-import { connect } from 'react-redux';
-// import Proptypes from 'prop-types';
-import ProHome from 'component/Home/ProHome';
-import HomeMobile from 'component/Home/HomeMobile.jsx';
 import { isBrowser } from 'react-device-detect';
-import openAlertNotification from 'component/utility/errorAlert.js';
-import { clearErrors } from 'reducers/actions/errorActions';
-import { clearMessages } from 'reducers/actions/messageActions';
-import NotFound from 'component/utility/NotFound.jsx';
-import { AppDispatch, IReduxAuth, IReduxError } from 'reducers/interface';
-import { ThemeContext } from 'component/Home/ThemeProvider';
 import { ConfigProvider, theme } from 'antd';
-import ProSignIn from 'component/auth/ProSignIn';
-import { loadUser } from 'reducers/actions/authActions';
-import ProSignInSuccess from 'component/auth/ProSignInSuccess';
+import { Route, Routes } from "react-router-dom";
+import { ConnectedProps, connect } from 'react-redux';
+import { IReduxAuth, IReduxError } from '@src/redux/interface';
 
-interface IProps extends IReduxAuth {
-  error: IReduxError;
-  handleMessages: () => void;
-  handleErrors: () => void;
-  loadUser: () => void;
-}
+/* View Components */
+import ProHome from '@view/Home/ProHome';
+import ProSignIn from '@view/SignIn/ProSignIn';
+import ProSignInSuccess from '@view/SignIn/ProSignInSuccess';
+import { ThemeContext as MyThemeContext } from '@view/Home/components/ThemeProvider';
 
-interface IState { };
+import PrivateRoute from './component/auth/PrivateRoute';
+import HomeMobile from './component/mobile/HomeMobile';
+import { Notification } from '@src/component/utils/Notification';
+import NotFound from '@src/component/utils/NotFound.jsx';
 
-class App extends React.Component<IProps, IState> {
-  static contextType = ThemeContext;
-  context!: React.ContextType<typeof ThemeContext>;
+interface IProps extends PropsFromRedux { };
 
-
-  componentDidUpdate(prevProps: IProps) {
-    if (this.props.error !== prevProps.error) {
-      this.handleRequestErrorStatus(this.props.error);
-    }
-
-  }
-
-  handleRequestErrorStatus = (error: IReduxError) => {
-    const { status, msg, reason } = error;
-    if (!status) return;
-
-    switch (status) {
-      case 200:
-        openAlertNotification('success', msg, this.props.handleMessages, reason)
-        break;
-      case 202:
-        openAlertNotification('warning', msg, this.props.handleMessages, reason)
-        break;
-      default:
-        openAlertNotification('error', msg, this.props.handleErrors, reason)
-    }
-  }
+class App extends React.Component<IProps, {}> {
+  static contextType = MyThemeContext;
+  declare context: React.ContextType<typeof MyThemeContext>;
 
   render() {
-    const isDark = this.context?.isDark;
+    const isDark = this.context!.isDark;
     return (
       <ConfigProvider
         theme={{
           algorithm: isDark ? theme.defaultAlgorithm : theme.darkAlgorithm
-        }}
-      >
+        }}>
+        <Notification />
         <Routes>
           <Route path="/" element={<ProSignIn />} />
           <Route path="/login/success" element={<ProSignInSuccess />} />
           <Route
             path="app/*"
             element={
-              <PrivateRoute isAuthenticated={this.props.isAuthenticated} >
+              <PrivateRoute
+                isAuthenticated={this.props.isAuthenticated} >
                 {
-                  isBrowser ? (
-                    <ProHome />
-                  ) : (
-                    <HomeMobile />
-                  )
+                  isBrowser ? <ProHome /> : <HomeMobile />
                 }
               </PrivateRoute>
-            }
-          />
+            } />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </ConfigProvider>
@@ -88,13 +52,12 @@ class App extends React.Component<IProps, IState> {
 
 const mapStateToProps = (state: { auth: IReduxAuth; error: IReduxError }) => ({
   isAuthenticated: state.auth.isAuthenticated,
-  error: state.error
 })
 
-const mapDispatchToProps = (dispatch: AppDispatch) => ({
-  handleErrors: () => dispatch(clearErrors()),
-  handleMessages: () => dispatch(clearMessages()),
-  loadUser: () => dispatch(loadUser())
-})
+// const mapDispatchToProps = (dispatch: AppDispatch) => ({
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+// })
+
+const connector = connect(mapStateToProps, {});
+type PropsFromRedux = ConnectedProps<typeof connector>
+export default connector(App);

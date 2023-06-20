@@ -5,13 +5,15 @@ import passport from 'passport';
 import config from 'config';
 import User from '#models/User';
 import { IUserDoc } from '#models/interface';
-import auth, { ensureAuth } from '#middleware/auth'
+import { ensureAuth } from '#middleware/auth'
 import { IResponseErrorMessage } from './interface';
 
 const router = express.Router();
-
 const JWT_SECRET = config.get('JWT_SECRET') as string;
-const ORIGIN: string = "http://localhost:3000";
+const ORIGIN: string = process.env.NODE_ENV === "production" ?
+    config.get<string>("origin.prod")
+    : config.get<string>("origin.dev");
+
 // @route:  POST api/auth
 // @access: public
 // @desc:   authorize users login
@@ -59,14 +61,7 @@ router.post('/', (req: Request, res: Response) => {
 // @desc:   get authorized users data
 // @access: private
 router.get('/user', ensureAuth, (req: Request, res: Response) => {
-    if (!req.user) {
-        return res.status(401).json({ msg: "Unable to get authorized user." });
-    }
     res.json(req.user);
-    // User.findById(req.user.id)
-    //     .select('-password')
-    //     .then(user => res.json(user));
-
 });
 
 
@@ -92,7 +87,7 @@ router.get("/logout", (req: Request, res: Response) => {
         });
         res.redirect(ORIGIN as string);
     } catch (err) {
-        res.status(203).json(err).redirect(ORIGIN as string);
+        res.status(203).json(err);
     }
 })
 

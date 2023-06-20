@@ -1,6 +1,6 @@
-import SellingPartner from 'amazon-sp-api';
 import moment from 'moment';
-import { sellingPartner, bucket } from '../RateLimiter.js';
+import { bucket } from '../RateLimiter.js';
+import { sellingPartner } from '../Bucket';
 
 type DeepReadOnly<T> = {
     readonly [P in keyof T]: DeepReadOnly<T[P]>;
@@ -20,7 +20,7 @@ export interface Orders {
         endpoint: string,
         query: GetOrdersQuery
     };
-    sellingPartner: SellingPartner;
+    sellingPartner: typeof sellingPartner;
     bucket: any;
 }
 interface ReqLimit {
@@ -29,6 +29,7 @@ interface ReqLimit {
 }
 
 export class Orders {
+    sellingPartner = sellingPartner;
     static limit = {
         ratePerSec: 0.0167,
         burst: 20
@@ -45,7 +46,6 @@ export class Orders {
                 OrderStatuses: ["Unshipped", "Shipped"]
             }
         }
-        this.sellingPartner = sellingPartner();
         this.bucket = bucket;
     }
 

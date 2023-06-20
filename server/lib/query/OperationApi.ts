@@ -1,4 +1,4 @@
-import { FilterQuery, UpdateQuery, QueryOptions, Model } from "mongoose";
+import mongoose, { FilterQuery, UpdateQuery, QueryOptions } from "mongoose";
 import PrimeCost from "#root/lib/models/PrimeCost";
 import { IPrimeCostDoc } from "../models/interface";
 import { IPrimeCost as IRoutePrimeCost, ISkuUploadFeedsType, listingItem, Upc } from "../routes/api/interface.d";
@@ -12,7 +12,7 @@ interface IOperationApi {
  * @description lagacy version of OperationApi is in ./utitlities.js
  */
 export class OperationApi implements IOperationApi {
-    private _PrimeCost: Model<IPrimeCostDoc>;
+    private _PrimeCost: mongoose.Model<IPrimeCostDoc>;
 
     constructor() {
         this._PrimeCost = PrimeCost;

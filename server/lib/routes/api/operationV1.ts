@@ -1,6 +1,8 @@
 import auth from "#root/lib/middleware/auth";
 import { Request, Response, Router } from "express";
 import { Listings, OperationApi } from "#root/lib/query/OperationApi";
+import { AmazonSellingPartnerDataProcessor as AmzDbProcessor } from "#root/lib/query/amazon.query";
+import { AmzProdPricingDoc } from "#root/lib/models/Amazon.model";
 import { parseCsvHelper } from "#root/bin/helper/parseHelper";
 import {
     IPrimeCost as IRoutePrimeCost,
@@ -8,16 +10,66 @@ import {
     IPrimeCostXlsxTemplateDataType,
     ISkuUploadFeedsType,
     IPrimeCostCalcReqBody,
-    listingItem
+    listingItem,
+    Upc,
+    Asin
 } from "./interface";
 import { MongoError } from "mongodb";
 import excel from 'exceljs';
+import { SPAPI } from "#root/bin/amazonSP/SPAPI";
 
 interface PromiseRejectedResult {
     reason: MongoError;
 }
+type MappingFile<T, S> = [T, S][];
+type UpcAsinMappingFile = MappingFile<string, string>;
 
 const router: Router = Router();
+
+// @route GET api/amazonSP
+// @desc: get all amazon seller central sync product pricing offers 
+router.get('/products/pricing/v1/price', (req, res) => {
+    let db = new AmzDbProcessor();
+    db.findAllProdPricing()
+        .then((products: AmzProdPricingDoc[]) => res.json(products));
+});
+
+// @route POST api/amazonSP
+// @desc: save upc asin mapping Schema for ProductPricing API
+router.post('/upload/v0/asinsMapping', auth, (req: Request<{}, {}, { uploadFile: UpcAsinMappingFile }>, res: Response) => {
+    const { uploadFile } = req.body;
+    const sellingPartner = new SPAPI();
+
+    console.log(`[Received File]:\n`)
+    console.table(uploadFile);
+
+    processMappingFile(uploadFile)
+        .then(() => { res.json({ msg: 'success' }) })
+        .then(() => sellingPartner.updateProdPricingCatalogItems())
+        .catch(e => {
+            res.status(400).json({ msg: `Upload File contains Invalid Input\n\n${e}` })
+        })
+        .finally(() => console.log('Upload Finished'))
+})
+
+/* 
+@attention: can be improve later, grouping upc asin, reduce I/O
+@param: file: Array<Array<upc:string,asin:string>>
+@return: Promise.allSettled
+*/
+async function processMappingFile(fileWithHeaderRow: UpcAsinMappingFile) {
+    let dbOperation = new AmzDbProcessor();
+    fileWithHeaderRow.shift(); //remove header row;
+
+    return Promise.allSettled(
+        fileWithHeaderRow.map((row: [Upc, Asin]) => {
+            let upc = row[0];
+            let asin = row[1];
+            return dbOperation.upsertProdPricingNewAsin(upc, asin)
+        })
+    )
+}
+
 
 router.get('/upload/v1/getProductsPrimeCost/:upc', auth, (req: Request, res: Response) => {
     const { upc } = req.params as { upc: string };

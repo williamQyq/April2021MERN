@@ -4,6 +4,7 @@ import User from '#root/lib/models/User';
 import { IUserDoc } from '../models/interface';
 import mongoose from 'mongoose';
 import config from 'config';
+
 export default function passportSetup(passport: PassportStatic) {
     passport.use(
         new GoogleStrategy(
@@ -36,7 +37,7 @@ export default function passportSetup(passport: PassportStatic) {
                             console.log("created new user.")
                             done(null, user);
                         }
-                        done("[Warning] Auto Register User in Production not allowed.",undefined)
+                        done("[Warning] Auto Register User in Production not allowed.", undefined)
                     }
                 } catch (err: any) {
                     console.error(err);
@@ -53,14 +54,19 @@ export default function passportSetup(passport: PassportStatic) {
     // )
 
     passport.serializeUser((user, done) => {
-        console.log(`passport serialize user: `, user)
+        console.log(`passport serialize user:\n`);
+        console.log(user)
         done(null, user.googleId);
     });
 
-    passport.deserializeUser((id, done) => {
+    passport.deserializeUser(async (id, done) => {
         console.log(`passport deserialize user id: `, id)
-        User.findOne({ googleId: id }, (err: mongoose.Error, user: IUserDoc) => {
-            done(err, user);
-        })
+        try {
+            const user: IUserDoc | null = await User.findOne({ googleId: id })
+            if (user)
+                done(null, user);
+        } catch (err: any) {
+            done(err as mongoose.Error);
+        }
     })
 }

@@ -1,6 +1,4 @@
-import SellingPartner from 'amazon-sp-api';
 import { performance } from 'perf_hooks';
-import config from "config";
 
 type T = any;
 type Time = number;
@@ -10,8 +8,11 @@ type RequestLimit = {
     burst?: number
 };
 type TaskResponse = T;
-type Region = "eu" | "na" | "fe";
-interface LeakyBucket {
+
+/**
+ * Todo: deprecate this bucket soon, use Bucket instead
+ */
+export interface LeakyBucket {
     readonly capacity: number;
     performance: Time;
     queue: Task[];
@@ -29,19 +30,7 @@ interface LeakyBucket {
 
 }
 
-export const sellingPartner = (): SellingPartner => new SellingPartner({
-    region: config.get("aws.region") as Region,
-    credentials: {
-        SELLING_PARTNER_APP_CLIENT_ID: process.env.AMZ_SELLING_PARTNER_APP_CLIENT_ID,
-        SELLING_PARTNER_APP_CLIENT_SECRET: process.env.AMZ_SELLING_PARTNER_APP_CLIENT_SECRET,
-        AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
-        AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
-        AWS_SELLING_PARTNER_ROLE: process.env.AWS_SELLING_PARTNER_ROLE
-    },
-    refresh_token: process.env.AMZ_REFRESH_TOKEN
-});
-
-class LeakyBucket {
+export class LeakyBucket {
     static capacity = 100;
     _performance: Time = 0;
     constructor() {

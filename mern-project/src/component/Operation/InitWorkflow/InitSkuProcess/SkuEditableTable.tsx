@@ -8,8 +8,8 @@ import React, { useRef, useState } from 'react';
 import {
     SkuDataSourceType,
     HddEnum, OsEnum, RAM, SSD
-} from 'component/utility/cmpt.interface.d';
-import { OS, HDD } from 'component/utility/types.enum';
+} from '@src/component/utils/cmpt.interface';
+import { OS, HDD } from '@src/component/utils/types.enum';
 import { Button } from 'antd';
 
 interface IProps {
