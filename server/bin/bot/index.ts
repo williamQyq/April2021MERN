@@ -56,13 +56,13 @@ export class MyMessage {
 }
 
 export abstract class DealBot {
-    USER_AGENT: string = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"
+    USER_AGENT: string = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
     // constructor() {
 
     // }
     abstract editParamPageNumInUrl(pageIndex: number): void;
-    abstract getPagination(page: puppeteer.Page, url: string): Promise<Pagination>;
-
+    abstract getPagination(page: puppeteer.Page, url: string): Promise<Pagination> | Promise<unknown>;
+    abstract startScheduler(): void;
     async initBrowser(): Promise<puppeteer.Browser> {
         const browser: puppeteer.Browser = await puppeteer.launch({
             headless: true,
@@ -82,7 +82,7 @@ export abstract class DealBot {
         const page: puppeteer.Page = await browser.newPage();
         await page.setViewport({ width: 1920, height: 1080 })   //set view port to 1920x1080
         // await page.setDefaultNavigationTimeout(0);
-        await page.setUserAgent(this.USER_AGENT);
+        await page.setUserAgent(this.USER_AGENT,);
 
         // Intercept assets request
         await page.setRequestInterception(true);

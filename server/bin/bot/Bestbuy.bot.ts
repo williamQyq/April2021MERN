@@ -3,6 +3,7 @@ import { DealDataType, DealItemSpec, DealsAlert } from '#query/deals.query';
 import { DealBot, DealMessage, MyMessage, Pagination } from './index';
 import puppeteer, { Page } from 'puppeteer';
 import io from 'index';
+import Scheduler from '#root/bin/helper/Scheduler';
 
 /*
 declare class Bestbuy {
@@ -287,5 +288,13 @@ export default class Bestbuy extends DealBot {
                 }
             }, milisec)
         })
+    }
+    startScheduler() {
+        const sc = new Scheduler({
+            schedule: '00 00 08 * * *',
+            process: this.getAndSaveLaptopsPrice
+        });
+
+        sc.start();
     }
 }

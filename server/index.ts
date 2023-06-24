@@ -22,6 +22,8 @@ import * as myAtlasDb from "#root/lib/db/mongoDB";
 import http from 'http';
 import path from 'path';
 import { wms } from './lib/db/wms';
+import Scheduler from './bin/helper/Scheduler';
+import BlueOcean from './bin/bot/blueocean.bot';
 
 dotenv.config();
 passportSetup(passport);
@@ -90,7 +92,6 @@ const io = new SocketIO.Server(server, {
         origin: ORIGIN,
         methods: ["GET", "POST"],
     },
-    transports: ["websocket", "polling"]
 });
 io.engine.on("connection_error", (err: { code: any; message: any; context: any; }) => {
     console.log(err.code);     // the error code, for example 1
@@ -145,4 +146,9 @@ server.listen(port, async () => {
 
 });
 
+const schduler = new Scheduler();
+schduler.scheduleBestbuyCrawler("00 00 08 * * *");
+
+// const bot = new BlueOcean();
+// await bot.getDeal();
 export default io;
