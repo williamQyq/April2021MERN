@@ -1,6 +1,5 @@
 import React from 'react';
 import './Store.scss';
-import { Location, NavigateFunction } from 'react-router-dom';
 //redux
 import { connect, useDispatch, useSelector, ConnectedProps } from 'react-redux';
 import {
@@ -19,14 +18,14 @@ import {
     LoadingOutlined
 } from '@ant-design/icons';
 import { Tooltip, Typography, Tree, } from 'antd';
-import { ColumnGroupType, ColumnType, ColumnsType, TableProps } from 'antd/es/table';
+import { ColumnGroupType, ColumnType, TableProps } from 'antd/es/table';
 import { BaseType } from 'antd/es/typography/Base';
 import { DataNode } from 'antd/es/tree';
 import { Key } from '@ant-design/pro-components';
 import { CiMenuKebab } from 'react-icons/ci';
 
 import { ContentHeader } from '@src/component/utils/Layout';
-import WithNavigate from '@src/component/auth/WithNavigate';
+import WithNavigate, { WithNavigateProps } from '@src/component/auth/WithNavigate';
 import { SocketContext } from '@src/component/socket/SocketProvider';
 import FormTable, { ColumnTypeWithSearchable } from '@src/component/utils/FormTable';
 
@@ -178,10 +177,7 @@ export interface DealsDataTableProps {
     loading: boolean;
 }
 
-interface IProps extends PropsFromRedux, DealsDataTableProps {
-    navigate: NavigateFunction;
-    location: Location;
-}
+interface IProps extends PropsFromRedux, DealsDataTableProps, WithNavigateProps { };
 interface IState {
     searchText: string;
     searchedRowId: string;
@@ -208,10 +204,7 @@ class DealsTable extends React.Component<IProps, IState> {
 
     handleRowClick = <T extends Record<string, string>>(record: T) => {
         const { storeName, navigate, location } = this.props;
-        navigate(`detail/store/${storeName}/id/${record._id}/sku/${record.sku}`);
-        // TODO: navigate to Deal detail pages.
-        // let dealDetailRoute = `/app/deal-alert/${this.props.storeName.toLowerCase()}-list/item-detail`;
-        // this.props.navigate(dealDetailRoute);
+        if (navigate) navigate(`detail/store/${storeName}/id/${record._id}/sku/${record.sku}`);
     }
 
     render() {

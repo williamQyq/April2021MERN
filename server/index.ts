@@ -92,6 +92,8 @@ const io = new SocketIO.Server(server, {
         origin: ORIGIN,
         methods: ["GET", "POST"],
     },
+    transports: ["websocket"],
+    allowUpgrades: false
 });
 io.engine.on("connection_error", (err: { code: any; message: any; context: any; }) => {
     console.log(err.code);     // the error code, for example 1

@@ -1,4 +1,5 @@
 import puppeteer from 'puppeteer';
+import { ElementHandle } from 'puppeteer';
 
 export interface Pagination {
     itemCntPerPage?: number,
@@ -22,7 +23,11 @@ interface DealPrintPaginationMessageParms {
     itemCntPerPage: number,
     storeName: string
 }
-
+interface ElementInfo {
+    element: ElementHandle<Element>,
+    attributeId: string,
+    selector: string
+}
 export class MyMessage {
     constructor() {
     }
@@ -217,5 +222,16 @@ export abstract class DealBot {
     getRegexValue(str: string, regexExpr: string | RegExp) {
         let match = str.match(regexExpr);
         return match ? match[1] : null;
+    }
+    async evaluateOneElementAttribute({ element, attributeId, selector }: ElementInfo): Promise<string> {
+        try {
+            return await element.$eval<string>(selector, (ele) => {
+                const attributeValue = ele.getAttribute(attributeId);
+                return attributeValue ?? "null";
+            });
+        } catch (err) {
+            console.error(`Error evaluating attribute: ${attributeId}`);
+            throw err;
+        }
     }
 }

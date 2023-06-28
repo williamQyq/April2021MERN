@@ -17,7 +17,6 @@ import {
 } from '@redux-action/deal.action';
 import { RootState } from '@src/redux/store/store';
 import { SocketAction, SocketRoom } from '@src/component/socket/type';
-import { Row, Col } from 'antd';
 import { ContentLayout } from '@src/component/utils/Layout';
 
 interface BestbuyElectronicsCatgIds {
@@ -43,6 +42,8 @@ export const categoryIdGroup: BestbuyElectronicsCatgIds = {
 interface IProps extends PropsFromRedux { };
 interface IState {
     targetStore: string;
+    items: Record<string, string>[];
+    loading: boolean;
     mostViewedCatgId?: string;
     mostViewedSku?: string;
     mostViewedItems?: any[];
@@ -57,6 +58,8 @@ class BestBuyDeals extends React.Component<IProps, IState> {
     constructor(props: IProps) {
         super(props);
         this.state = {
+            items: props.items, //store redux deal data state, prevent re-render
+            loading: props.loading, //store redux loading state, prevent re-render
             targetStore: storeType.BESTBUY,
             mostViewedCatgId: undefined,
             mostViewedSku: undefined,
@@ -71,7 +74,6 @@ class BestBuyDeals extends React.Component<IProps, IState> {
      */
     componentDidMount() {
         const { socket } = this.context;
-        console.log(socket)
         const { targetStore } = this.state;
         // let abortSignal = this.abortController ? this.abortController.signal : undefined;
         this.abortController = new AbortController();
@@ -148,8 +150,8 @@ class BestBuyDeals extends React.Component<IProps, IState> {
     render() {
         const data: DealsDataTableProps = {
             storeName: this.state.targetStore,
-            items: this.props.items,
-            loading: this.props.loading
+            items: this.state.items,
+            loading: this.state.loading
         }
 
         const categoryProps = {

@@ -42,13 +42,6 @@ class ProHome extends React.Component<IProHomeProps, IState>{
         this.abortController = new AbortController();
         this.props.loadUser(this.abortController.signal);
     }
-    componentDidUpdate(prevProps: Readonly<IProHomeProps>, prevState: Readonly<IState>, snapshot?: any): void {
-        if (prevProps.error !== this.props.error) {
-            if (this.props.error.status === 401) {
-                this.props.loadUser(this.abortController?.signal);
-            }
-        }
-    }
     componentWillUnmount(): void {
         this.abortController?.abort();
     }

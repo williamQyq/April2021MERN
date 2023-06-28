@@ -36,7 +36,7 @@ router.get('/v1/deal/detail/id/:_id', (req: Request<{ _id: string }>, res: Respo
 
     deals.getDealById(model, _id)
         .then(items => res.json(items))
-        .catch(err => {
+        .catch((_) => {
             res.status(202).json({ msg: `[${_id}] Deal detail not found.` })
         });
 });

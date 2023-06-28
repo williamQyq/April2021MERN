@@ -17,8 +17,7 @@ const { Title } = Typography;
 const DealDetail: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { dealData, loading }: { dealData?: DealDataType, loading: boolean } = useSelector((state: RootState) => state.item);
-    const { storeId, dealId, skuId } = useParams();
-    console.log(storeId, skuId);
+    const { storeId, dealId } = useParams();
     useEffect(() => {
         let abortController = new AbortController();
         if (storeId && dealId)

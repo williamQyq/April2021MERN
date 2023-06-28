@@ -3,13 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Col, Form, Row } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import DrawerSearch from '@src/component/utils/DrawerSearch.jsx';
-import FormTable from '@src/component/utils/FormTable';
+import FormTable, { ColumnTypeWithSearchable } from '@src/component/utils/FormTable';
 import {
     defaultSettings,
     searchReceivedShipmentColumns,
     searchShipmentColumns,
     searchLocationInventoryColumns,
-    searchSellerInventoryColumns
+    searchSellerInventoryColumns,
+    SearchableColumnsType
 } from '@view/Warehouse/util';
 import { downloadShipment, getShipment } from '@redux-action/outboundActions.js';
 import {
@@ -27,15 +28,21 @@ import {
 } from '@src/redux/actions/types.js';
 import { normalizeObjectStringValuesToLowerCase } from '@src/component/utils/helper.js';
 import '@src/assets/SearchShipment.scss';
+import { RootState } from '@src/redux/store/store';
+import { AppDispatch } from '@src/redux/interface';
 
-const SearchShipment = () => {
-    const dispatch = useDispatch();
+interface IProps { };
+
+const SearchShipment: React.FC<IProps> = () => {
+    const dispatch = useDispatch<AppDispatch>();
     const [form] = Form.useForm();
     const [formValues, setFormValues] = useState(null);
 
     const [visible, setVisible] = useState(false);
-    const [columns, setColumns] = useState(searchSellerInventoryColumns);
-    const { items, category, itemsLoading } = useSelector((state) => state.warehouse.shipmentSearch)
+    const [columns, setColumns] = useState<SearchableColumnsType>(searchSellerInventoryColumns);
+    const { items, category, itemsLoading } = useSelector((state: RootState) =>
+        state.warehouse.shipmentSearch
+    );
 
 
     useEffect(() => {
@@ -45,7 +52,7 @@ const SearchShipment = () => {
     }, [])
 
     //memorized stable fetchData function since dispatch is changing.
-    const handleSearchCategoryChange = useCallback((values) => {
+    const handleSearchCategoryChange = useCallback((values: any) => {
         (() => {
             let category = typeof values.type === "string" ? values.type.toUpperCase() : values.type;
             switch (category) {
@@ -94,18 +101,20 @@ const SearchShipment = () => {
     }
 
     const handleDownload = useCallback(() => {
-        switch (category) {
-            case SEARCH_OUTBOUND_SHIPMENT:
-                dispatch(downloadShipment(formValues));
-                break;
-            case SEARCH_RECEIVAL_SHIPMENT:
-                dispatch(downloadInventoryReceived(formValues));
-                break;
-            case SEARCH_LOCATION_INVENTORY:
-                dispatch(downloadLocationInventory(formValues));
-                break;
-            default:
-                return;
+        if (formValues !== null) {
+            switch (category) {
+                case SEARCH_OUTBOUND_SHIPMENT:
+                    dispatch(downloadShipment(formValues));
+                    break;
+                case SEARCH_RECEIVAL_SHIPMENT:
+                    dispatch(downloadInventoryReceived(formValues));
+                    break;
+                case SEARCH_LOCATION_INVENTORY:
+                    dispatch(downloadLocationInventory(formValues));
+                    break;
+                default:
+                    return;
+            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [category, formValues])
@@ -114,10 +123,10 @@ const SearchShipment = () => {
         <Row>
             <Col id={`${category}`}>
                 <FormTable
-                    data={items}
+                    dataSource={items}
                     columns={columns}
                     loading={itemsLoading}
-                    tableSettings={{
+                    tableUserSettings={{
                         ...defaultSettings,
                         title: () => (
                             <>

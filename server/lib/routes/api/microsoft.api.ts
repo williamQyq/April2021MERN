@@ -1,38 +1,31 @@
 import express from 'express';
 import auth from '#middleware/auth';
-import { DealsAlert } from 'lib/query/deals.query';
-import io from '#root/index';
+import { DealsAlert, Deals } from 'lib/query/deals.query';
 import Microsoft from 'bin/bot/microsoft.bot';
+import { MyMessage } from '#root/bin/bot';
 
-const router = express.Router();
-
+const router: express.Router = express.Router();
+const logger = new MyMessage();
+const deals = new DealsAlert({ storeName: Deals.Microsoft, logger })
 // @route GET api/items
 router.get('/v1/deals', (req, res) => {
-    let alert = new DealsAlert();
     let model = DealsAlert._MicrosoftDeal;
-    alert.getDeals(model)
+    deals.getDeals(model)
         .then(items => res.json(items))
-        .catch(err => res.status(503).json({ msg: err }));
+        .catch(err => res.status(202).json({ msg: err }));
 });
 
 router.get<{ _id: string }>('/peek/v0/getProductDetail/id/:_id', (req, res) => {
-    let alert = new DealsAlert();
     let model = DealsAlert._MicrosoftDeal;
-    alert.getDealById(model, req.params._id)
+    const { _id } = req.params;
+    deals.getDealById(model, _id)
         .then(items => res.json(items))
-        .catch(err => res.status(503).json({ msg: err }));
+        .catch((_) => res.status(202).json({ msg: `[${_id}] Deal detail not found.` }));
 });
 
 router.get('/crawl/v1/laptop/prices', auth, (req, res) => {
-    // setTimeout(() => {
-    //     res.json({ msg: "get online price success" })
-    //     // io.on('connection', (socket) => {
-    //     //     socket.emit("ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE", { msg: " online price success" })
-    //     // })
-    //     io.sockets.emit("ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE", { msg: " online price success" })
-    // }, 3000)
-    let puppeteer = new Microsoft();
-    puppeteer.getAndSaveLaptopsPrice()
+    let bot = new Microsoft();
+    bot.getAndSaveLaptopsPrice()
     res.status(202).json({ msg: "Now Retrieving the Deals..." });
 })
 

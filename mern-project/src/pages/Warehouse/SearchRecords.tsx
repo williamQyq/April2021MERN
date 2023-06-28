@@ -1,20 +1,21 @@
 import React from "react";
-import { connect } from "react-redux";
-import SearchShipment from "./SearchShipment.jsx";
+import { ConnectedProps, connect } from "react-redux";
+import SearchShipment from "./SearchShipment";
 import { ContentHeader } from "@src/component/utils/Layout";
 import { SEARCH_LOCATION_INVENTORY, SEARCH_OUTBOUND_SHIPMENT, SEARCH_RECEIVAL_SHIPMENT, SEARCH_SELLER_INVENTORY } from "@src/redux/actions/types.js";
-import Proptypes from 'prop-types';
+import { RootState } from "@src/redux/store/store.js";
 
-class SearchRecords extends React.Component {
+interface IProps extends PropsFromRedux {
 
-    constructor(props) {
+};
+interface IState { };
+class SearchRecords extends React.Component<IProps, IState> {
+
+    constructor(props: IProps) {
         super(props);
-        this.state = {
-
-        }
     }
 
-    createCategoryHeader = (category) => {
+    createCategoryHeader = (category: string): string => {
         switch (category) {
             case SEARCH_OUTBOUND_SHIPMENT:
                 return "Search OutBound Shipment";
@@ -25,13 +26,13 @@ class SearchRecords extends React.Component {
             case SEARCH_SELLER_INVENTORY:
                 return "Search Seller Inventory";
             default:
-                return;
+                return "UNKNOWN";
         }
     }
 
     render() {
         const { category } = this.props;
-        let title = this.createCategoryHeader(category);
+        const title = this.createCategoryHeader(category);
         return (
             <>
                 <ContentHeader title={title} />
@@ -43,12 +44,9 @@ class SearchRecords extends React.Component {
 
 }
 
-SearchRecords.prototypes = {
-    category: Proptypes.string.isRequired
-}
-
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState) => ({
     category: state.warehouse.shipmentSearch.category,
 })
-
-export default connect(mapStateToProps, null)(SearchRecords);
+const connector = connect(mapStateToProps, null);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+export default connector(SearchRecords);

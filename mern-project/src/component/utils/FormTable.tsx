@@ -11,9 +11,9 @@ import { normalizeStringValue } from './helper';
 import type { ColumnType, TableProps } from 'antd/es/table';
 import { ExpandableConfig, FilterConfirmProps } from 'antd/es/table/interface';
 
-interface IProps<T = unknown> extends TableProps<T>, PropsFromRedux {
-    // tableUserSettings: TableProps<T>;
-    handleRowClick: (record: Record<string, string>) => void;
+interface IProps extends TableProps<any>, PropsFromRedux {
+    tableUserSettings?: Partial<TableProps<any>>;
+    handleRowClick?: (record: Record<string, string>) => void;
 }
 interface TableUserSettingsType extends Record<string, string> {
     searchText: string;
@@ -25,6 +25,7 @@ interface IState extends TableUserSettingsType { };
 export type ColumnTypeWithSearchable<T> = ColumnType<T> & {
     dataIndex: string;
     searchable?: boolean;
+    editable?: boolean;
 }
 // interface TableDataType extends Readonly<Record<string, string>> {
 //     _id: string;
@@ -48,7 +49,7 @@ class FormTable extends React.Component<IProps, IState> {
             this.handleScrollPosition(data, { ...this.state });  //scroll to clicked row
     }
 
-    componentDidUpdate<T = Record<string, string>>(_prevProps: Readonly<IProps<T>>, prevState: Readonly<IState>) {
+    componentDidUpdate<T = Record<string, string>>(_prevProps: Readonly<IProps>, prevState: Readonly<IState>) {
 
         if (this.state.searchText !== prevState.searchText) {
             this.props.saveUserTableSettings({
@@ -219,23 +220,26 @@ class FormTable extends React.Component<IProps, IState> {
     }
 
     render() {
-        const { dataSource, loading, handleRowClick } = this.props;
-        const { showSorterTooltip, pagination, size, expandable } = this.props;
+        const {
+            dataSource,
+            loading,
+            handleRowClick,
+            tableUserSettings } = this.props;
         const columns = this.props.columns as ColumnTypeWithSearchable<Record<string, string | number | undefined>>[];
         const searchPropsColumns = this.addSearchPropsToColumns(columns, this.getColumnSearchProps);
 
         return (
             <Table
-                dataSource={dataSource as object[] | undefined}
+                dataSource={dataSource}
                 loading={loading}
                 showSorterTooltip
-                pagination={pagination}
-                size={size}
-                expandable={expandable as ExpandableConfig<object> | undefined}
+                // pagination={pagination}
+                // expandable={expandable as ExpandableConfig<object> | undefined}
                 columns={searchPropsColumns}
-                onRow={(record) => ({
+                onRow={handleRowClick ? (record) => ({
                     onClick: () => handleRowClick(record as Record<string, string>)
-                })}
+                }) : undefined}
+                {...tableUserSettings}
             />
         )
     }
