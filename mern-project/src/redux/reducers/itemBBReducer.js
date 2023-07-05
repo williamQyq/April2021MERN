@@ -15,7 +15,8 @@ import {
 
 const initialState = {
     items: [],
-    loading: false
+    loading: false,
+    onlinePriceLoading:false
 }
 
 export default function Reducer(state = initialState, action) {

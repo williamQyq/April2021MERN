@@ -95,6 +95,12 @@ class BestBuyDeals extends React.Component<IProps, IState> {
         }
     }
 
+    componentDidUpdate(prevProps: Readonly<IProps>, prevState: Readonly<IState>, snapshot?: any): void {
+        if (prevProps.loading !== this.props.loading) {
+            this.setState({ loading: this.props.loading })
+        }
+    }
+
     cancelRequest = () => {
         this.abortController?.abort();
     }
