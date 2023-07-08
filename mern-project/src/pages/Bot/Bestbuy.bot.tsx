@@ -58,7 +58,7 @@ class BestBuyDeals extends React.Component<IProps, IState> {
     constructor(props: IProps) {
         super(props);
         this.state = {
-            items: props.items, //store redux deal data state, prevent re-render
+            items: [...props.items], //store redux deal data state, prevent re-render
             loading: props.loading, //store redux loading state, prevent re-render
             targetStore: storeType.BESTBUY,
             mostViewedCatgId: undefined,
@@ -157,7 +157,8 @@ class BestBuyDeals extends React.Component<IProps, IState> {
         const data: DealsDataTableProps = {
             storeName: this.state.targetStore,
             items: this.state.items,
-            loading: this.state.loading
+            loading: this.state.loading,
+            onlinePriceLoading: this.props.onlinePriceLoading
         }
 
         const categoryProps = {
@@ -177,9 +178,10 @@ class BestBuyDeals extends React.Component<IProps, IState> {
 
 
 const mapStateToProps = (state: RootState) => ({
+    items: state.bestbuy.items,
     tableState: state.item.tableState,
     loading: state.bestbuy.loading,
-    items: state.bestbuy.items,
+    onlinePriceLoading: state.bestbuy.onlinePriceLoading,
     mostViewedItems: state.bestbuy.mostViewedItems,
 })
 

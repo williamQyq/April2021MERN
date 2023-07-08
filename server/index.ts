@@ -35,7 +35,7 @@ const ORIGIN: string = process.env.NODE_ENV === "production" ?
     config.get<string>("origin.dev");
 
 const app = express();
-const server = http.createServer(app);
+// const server = http.createServer(app);
 
 app.use(cors({ origin: ORIGIN }));
 //parse incoming JSON data and converts it to JS object which is then attached to req.body.
@@ -84,17 +84,18 @@ app.use('/api/operationV1', operationV1Router);
 
 
 // @Socket IO listner
-const io = new SocketIO.Server(server, {
-    // path: "/socket.io",
-    pingTimeout: 21000,
-    pingInterval: 20000,
-    cors: {
-        origin: ORIGIN,
-        methods: ["GET", "POST"],
-    },
-    transports: ["websocket"],
-    allowUpgrades: false
-});
+const io = new SocketIO.Server(5050,
+    {
+        pingTimeout: 21000,
+        pingInterval: 20000,
+        cors: {
+            origin: ORIGIN,
+            methods: ["GET", "POST"],
+        },
+        transports: ["polling", "websocket"],
+        // allowUpgrades: false
+    }
+);
 io.engine.on("connection_error", (err: { code: any; message: any; context: any; }) => {
     console.log(err.code);     // the error code, for example 1
     console.log(err.message);  // the error message, for example "Session ID unknown"
@@ -132,7 +133,7 @@ io.on("connection", (socket) => {
 
 // @server connection
 const port: number = process.env.PORT || 5000;
-server.listen(port, async () => {
+app.listen(port, async () => {
     let env = process.env.NODE_ENV === "production" ?
         "Production"
         :

@@ -116,24 +116,11 @@ const tableColumns: ColumnTypeWithSearchable<DealsDataSourceType>[] = [
 
 interface ICrawlerControlDropdownProps {
     storeName: string;
+    loading: boolean;
 }
-export const CrawlerControlDropdown: React.FC<ICrawlerControlDropdownProps> = ({ storeName }) => {
+export const CrawlerControlDropdown: React.FC<ICrawlerControlDropdownProps> = ({ storeName, loading }) => {
 
     const dispatch = useDispatch<AppDispatch>()
-    const bestbuyOnlinePriceRetriving = useSelector((state: RootState) => state.bestbuy.onlinePriceLoading)
-    const microsoftOnlinePriceRetriving = useSelector((state: RootState) => state.microsoft.onlinePriceLoading)
-
-    //if puppeteer is retrieving online price on store return true else false
-    let isRetrievingDeals = ((selectedStore: string): boolean => {
-        switch (selectedStore) {
-            case storeType.BESTBUY:
-                return bestbuyOnlinePriceRetriving
-            case storeType.MICROSOFT:
-                return microsoftOnlinePriceRetriving
-            default:
-                return false;
-        }
-    })(storeName);
 
     const handleSelectedMenuAction = (keys: Key[]) => {
         switch (keys[0]) {
@@ -150,8 +137,8 @@ export const CrawlerControlDropdown: React.FC<ICrawlerControlDropdownProps> = ({
             children: [
                 {
                     key: 'crawl',
-                    disabled: isRetrievingDeals ? isRetrievingDeals : false,
-                    icon: () => (isRetrievingDeals ? <LoadingOutlined /> : <ImportOutlined />),
+                    disabled: loading,
+                    icon: () => (loading ? <LoadingOutlined /> : <ImportOutlined />),
                     title: "Initiate Bot",
                 }
             ]
@@ -175,6 +162,7 @@ export interface DealsDataTableProps {
     storeName: string;
     items: readonly Record<string, string>[];
     loading: boolean;
+    onlinePriceLoading: boolean;
 }
 
 interface IProps extends PropsFromRedux, DealsDataTableProps, WithNavigateProps { };
@@ -208,11 +196,17 @@ class DealsTable extends React.Component<IProps, IState> {
     }
 
     render() {
-        const { items, storeName, loading, userTableSettings } = this.props
+        const {
+            items,
+            storeName,
+            loading,
+            onlinePriceLoading,
+            userTableSettings
+        } = this.props;
         return (
             <>
                 <ContentHeader title={storeName} />
-                <CrawlerControlDropdown storeName={storeName} />
+                <CrawlerControlDropdown loading={onlinePriceLoading} storeName={storeName} />
                 <FormTable
                     {...defaultTableSettings}
                     loading={loading}
