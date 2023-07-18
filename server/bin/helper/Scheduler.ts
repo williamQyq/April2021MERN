@@ -22,7 +22,7 @@ class Scheduler {
 
     scheduleBestbuyCrawler(scheduleTime: string): void {
         let bot = new Bestbuy();
-        cron.schedule(scheduleTime, bot.getAndSaveLaptopsPrice);
+        cron.schedule(scheduleTime, bot.getAndSaveLaptopsPrice)
     }
 }
 export default Scheduler;

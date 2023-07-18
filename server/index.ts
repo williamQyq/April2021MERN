@@ -19,11 +19,10 @@ import session from 'express-session';
 import passportSetup from '#root/lib/middleware/passport';
 import * as myAtlasDb from "#root/lib/db/mongoDB";
 
-import http from 'http';
 import path from 'path';
 import { wms } from './lib/db/wms';
 import Scheduler from './bin/helper/Scheduler';
-import BlueOcean from './bin/bot/blueocean.bot';
+// import BlueOcean from './bin/bot/blueocean.bot';
 
 dotenv.config();
 passportSetup(passport);
@@ -152,6 +151,5 @@ app.listen(port, async () => {
 const schduler = new Scheduler();
 schduler.scheduleBestbuyCrawler("00 00 08 * * *");
 
-// const bot = new BlueOcean();
-// await bot.getDeal();
+
 export default io;
