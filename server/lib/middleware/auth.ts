@@ -23,8 +23,8 @@ export default function auth<T = any>(req: Request, res: Response, next: NextFun
     // Legacy JWT authenticated user.
     const token: string | undefined = req.header('x-auth-token');
     if (!token) {
-        let errMsg: IResponseErrorMessage = {
-            msg: "authorization denied"
+        const errMsg: IResponseErrorMessage = {
+            msg: "Authorization denied"
         }
         res.status(401).json(errMsg);
         return;
@@ -54,27 +54,26 @@ export default function auth<T = any>(req: Request, res: Response, next: NextFun
  */
 export function ensureAuth(req: Request, res: Response, next: NextFunction) {
     const token: string | undefined = req.header('x-auth-token');
+    const JWT_SECRET = config.get<string>("JWT_SECRET");
+    const errorMsg: IResponseErrorMessage = {
+        msg: "Not OAuth Authenticated"
+    }
+
     try {
         if (req.isAuthenticated()) { // is OAuth?
             next();
-            return;
         } else if (token) { // is JWT authenticated?
-            const JWT_SECRET = config.get<string>("JWT_SECRET");
             const decoded = jwt.verify(token, JWT_SECRET);
             req.user = decoded;
             // User.findById(req.user._id).select('-password').then(user => req.user = user);
             next();
-            return;
+        } else {
+            res.status(401).json(errorMsg);
         }
     } catch (err: unknown) {
-        //not authenticated
-        // let errorMsg: IResponseErrorMessage = {
-        //     msg: "Not OAuth Authenticated"
-        // }
         console.error("Not OAuth Authenticated");
+        res.status(401).json(errorMsg);
     }
-
-    res.redirect(ORIGIN);
 }
 
 export function ensureGuest(req: Request, res: Response, next: NextFunction) {

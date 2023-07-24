@@ -1,37 +1,8 @@
-import mongoose from 'mongoose';
 import { DealDataType, DealItemSpec, DealsAlert } from '#query/deals.query';
-import { DealBot, DealMessage, MyMessage, Pagination } from './index';
+import { DealBot, MyMessage, Pagination } from './index';
 import puppeteer, { Page } from 'puppeteer';
 import io from 'index';
-
-/*
-declare class Bestbuy {
-    public  initURL(cp):url
-    public  async getItemSpec(page, url):Array<ItemSpec>
-    private async #openSpecWrapper(page):void
-    private async #parseItemSpec(page):ItemSpec
-    private async #parsePageNumFooter(page):PageNumFooter
-    public  async closeDialog(page):void
-    public  async getPagesNum(page, url):PageNumFooter
-    private async #parseItemsList(page): Array<Item>
-    public  async getPageItems(page, url):Array<Item>
-
-}
-*/
-/* 
-interface Item{
-    link: url,
-    sku: string,
-    currentPrice: string,
-    name: string
-}
-*/
-/* 
-interface ItemSpec{
-    [key:string]: string
-    ...
-}
-*/
+import Scheduler from '#root/bin/helper/Scheduler';
 
 export default class Bestbuy extends DealBot {
     storeName: string = "Bestbuy";
@@ -82,6 +53,7 @@ export default class Bestbuy extends DealBot {
         if (page) await page.close();
         if (browser) await browser.close();
 
+        //notify browser
         io.sockets.emit("ON_RETRIEVED_BB_ITEMS_ONLINE_PRICE", { msg: "All deals retieved success" });
     }
 
@@ -287,5 +259,13 @@ export default class Bestbuy extends DealBot {
                 }
             }, milisec)
         })
+    }
+    startScheduler(): void {
+        const sc = new Scheduler({
+            schedule: '00 00 08 * * *',
+            process: this.getAndSaveLaptopsPrice
+        });
+
+        sc.start();
     }
 }

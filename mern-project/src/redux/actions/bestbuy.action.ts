@@ -39,14 +39,12 @@ export const getBestbuyDeals = (abortSignal?: AbortSignal): ThunkAction<void, Ro
             .catch((err: CanceledError<any> | myAxiosError) => {
                 if (err.name === "CanceledError") {
                     console.log(`Request canceled`, err.name);
-
                 } else {
                     let myErr = err as myAxiosError;
                     dispatch(returnErrors(
-                        myErr.response?.data.msg,
-                        myErr.response!.status,
-                        GET_BB_ITEMS)
-                    );
+                        myErr.response.data.msg,
+                        myErr.response.status,
+                    ));
                 }
 
             })

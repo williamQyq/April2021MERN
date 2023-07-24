@@ -61,6 +61,7 @@ router.post('/', (req: Request, res: Response) => {
 // @desc:   get authorized users data
 // @access: private
 router.get('/user', ensureAuth, (req: Request, res: Response) => {
+    console.log('api/auth/user: auth')
     res.json(req.user);
 });
 

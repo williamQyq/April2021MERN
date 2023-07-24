@@ -12,12 +12,14 @@ interface IProps {
 export const ContentHeader: React.FC<IProps> = ({ title, subTitle }: IProps) => {
 
     const navigate = useNavigate();
-
+    const handleGoBack = () => {
+        navigate(-1);
+    }
     return (
         <PageHeader
             // className="site-page-header"
             style={{ width: '100%', paddingBlock: 0, paddingInline: 0 }}
-            onBack={() => navigate(-1)}
+            onBack={handleGoBack}
             title={
                 <Title level={2} style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{title}</Title>
             }

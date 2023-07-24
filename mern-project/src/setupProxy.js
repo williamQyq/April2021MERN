@@ -17,7 +17,7 @@ module.exports = function (app) {
   app.use(
     '/socket.io',
     createProxyMiddleware({
-      target: targetURL,
+      target: 'ws://localhost:5050',
       ws: true,
       changeOrigin: true,
       // pathRewrite: {

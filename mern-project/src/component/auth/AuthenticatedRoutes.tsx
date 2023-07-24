@@ -8,7 +8,7 @@ const MicrosoftAlert = lazy(() => import('@view/Bot/Microsoft.bot'));
 const OutBound = lazy(() => import('@view/Warehouse/OutBound.tsx'));
 const NeedToShip = lazy(() => import('@view/Warehouse/NeedToShip.jsx'));
 const InventoryReceived = lazy(() => import('@view/Warehouse/InventoryReceived.jsx'));
-const SearchRecords = lazy(() => import('@view/Warehouse/SearchRecords.jsx'));
+const SearchRecords = lazy(() => import('@view/Warehouse/SearchRecords'));
 // const Configuration = lazy(() => import('component/Operation/Configuration'));
 const DealDetail = lazy(() => import('@view/DealChart/DealDetail'));
 const OperationCategory = lazy(() => import('@src/component/Operation/Category.tsx'));

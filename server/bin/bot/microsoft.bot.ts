@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 import { DealsAlert, DealDataType } from '#query/deals.query';
 import puppeteer, { Page } from 'puppeteer';
 import { DealBot, DealMessage, MyMessage, Pagination } from './index';
+import io from '#root/index';
+import Scheduler from '#root/bin/helper/Scheduler';
 
 /*
 declare class Microsoft{
@@ -39,11 +41,10 @@ interface PageNumFooter{
 }
 
 */
-interface ParsedDealDataType {
-    price: number;
-    isInStock: boolean;
-    pid: string;
-    cN: string;
+interface DealEleAttribute {
+    pid: string,
+    cN: string,
+    price: string
 }
 export default class Microsoft extends DealBot {
     storeName: string = "Microsoft";
@@ -54,7 +55,8 @@ export default class Microsoft extends DealBot {
     }
 
     async getAndSaveLaptopsPrice() {
-        let alert = new DealsAlert();
+        const logger = new MyMessage();
+        let alert = new DealsAlert({ logger, storeName: this.storeName });
         let model = DealsAlert._MicrosoftDeal;
         let storeUrl = this.editParamPageNumInUrl(0); //this. url + skipItemsNum
         let browser: puppeteer.Browser | undefined;
@@ -63,7 +65,7 @@ export default class Microsoft extends DealBot {
             browser = await this.initBrowser();
             page = await this.initPage(browser);
 
-            page.setDefaultNavigationTimeout(30000);
+            // page.setDefaultNavigationTimeout(30000);
 
             let { pageCnt } = await this.getPagination(page, storeUrl);
             console.log('total pages num: ', pageCnt);
@@ -74,43 +76,24 @@ export default class Microsoft extends DealBot {
 
             for (let i = 0; i < pageCnt; i++) {
                 let pageUrl = this.editParamPageNumInUrl(i * pageCnt);
-                let dealsDataProms: PromiseSettledResult<ParsedDealDataType>[] = await this.getPageItems(page, pageUrl); //Array<{PromiseResolveType}>
-                let fulfilledDeals = dealsDataProms.filter(prom => prom.status === 'fulfilled' && prom.value.price !== undefined) as PromiseFulfilledResult<ParsedDealDataType>[];
-                await Promise.all(
-                    fulfilledDeals.map((fulfilledDeal: PromiseFulfilledResult<ParsedDealDataType>, index: number) => {
-                        const { pid, cN, price } = fulfilledDeal.value;
-                        let deal: DealDataType = {
-                            sku: pid,
-                            name: cN,
-                            link: 'https://www.microsoft.com/en-us/d/' + cN.replace(/\s/g, "-").replace(/"/g, "").toLowerCase() + '/' + pid,
-                            currentPrice: price
-                        }
-                        alert.createDeal(deal, model).then(status => {
-                            let dealMsgContent: DealMessage = {
-                                storeName: Microsoft.name,
-                                indexPage: i,
-                                index,
-                                sku: deal.sku ? deal.sku : "",
-                                currentPrice: deal.currentPrice,
-                                status
-                            }
-                            let msg = new MyMessage(this.storeName);
-                            msg.printGetDealMsg(dealMsgContent);
-                        });
-                    }))
-                    .finally(() => {
-                        //print split line.
-                        let finalMsg = new MyMessage(this.storeName);
-                        finalMsg.printPageEndLine(i);
-                    })
+                let dealsData: DealDataType[] | undefined = await this.getPageItems(page, pageUrl); //Array<{PromiseResolveType}>
+                // let fulfilledDeals = dealsDataProms.filter(prom => prom.status === 'fulfilled' && prom.value.price !== undefined) as PromiseFulfilledResult<ParsedDealDataType>[];
+                await alert.createMultiDeals(
+                    dealsData as Required<DealDataType>[],
+                    model
+                )
+                    .finally(() => logger.printPageEndLine({ storeName: this.storeName, index: i }))
             }
         } catch (e) {
-            let errMsg = new MyMessage(this.storeName);
-            errMsg.printError(e);
+            logger.printError(e);
+            io.sockets.emit("RETRIEVE_MS_ITEMS_ONLINE_PRICE_ERROR", { msg: `Fail to retrive Bestbuy Laptop Price \n\n${e}` })
         }
 
         if (page) await page.close();
         if (browser) await browser.close();
+
+        //notify browser
+        io.sockets.emit("ON_RETRIEVED_MS_ITEMS_ONLINE_PRICE", { msg: "All deals retieved success" });
     }
 
     editParamPageNumInUrl(skipItemsNum: number): string {
@@ -118,7 +101,8 @@ export default class Microsoft extends DealBot {
     }
 
     async parsePageNumFooter(page: Page): Promise<Pagination> {
-        let pagination: Pagination | undefined = undefined;
+        let pagination: Required<Pagination> | undefined = undefined;
+        const logger = new MyMessage();
 
         const FOOTER_XPATH_EXPR = '//p[@class="c-paragraph-3"]'
         const NUM_PAGE_REGEX_EXPR: RegExp = /.*Showing\s\d*\s-\s(\d*)\sof\s\d*.*/;
@@ -135,9 +119,7 @@ export default class Microsoft extends DealBot {
             itemCntPerPage
         }
 
-        let parsingMsg = new MyMessage(this.storeName);
-        parsingMsg.printPagination(pagination.pageCnt!, pagination.itemCntPerPage!);
-
+        logger.printPagination({ ...pagination, storeName: this.storeName })
         return pagination
     }
 
@@ -169,7 +151,7 @@ export default class Microsoft extends DealBot {
         @param: url: string
         @return: Array<Item>
     */
-    async parseItemsList(page: Page): Promise<PromiseSettledResult<ParsedDealDataType>[]> {
+    async parseItemsList(page: Page): Promise<DealDataType[]> {
         const ITEM_ELEMENTS_EXPR = '//div[@class="m-channel-placement-item f-wide f-full-bleed-image"]'
         const PRICE_SPAN_EXPR = 'span[itemprop="price"]'
         const IS_INSTOCK_EXPR = 'strong[class="c-badge f-small f-lowlight x-hidden-focus"]'
@@ -180,44 +162,37 @@ export default class Microsoft extends DealBot {
         // let priceAttrLists = await this.evaluatePriceAttribute(page, PRICE_LIST_EXPR, PRICE_ATTRIBUTE_ID)
 
         await page.waitForXPath(ITEM_ELEMENTS_EXPR);
-        let itemElements = await page.$x(ITEM_ELEMENTS_EXPR);
+        const itemElements = await page.$x(ITEM_ELEMENTS_EXPR);
         // let itemElements = await page.$$('div.m-channel-placement-item f-wide f-full-bleed-image');
 
-        let deals = await Promise.allSettled<Promise<ParsedDealDataType>[]>(itemElements.map(async (ele) => {
-            let price: number | undefined = undefined, isInStock: boolean = true;
-            try {
-                let attrRes = await ele.$eval<string>('a', (ele, ITEM_ATTRIBUTE_ID: unknown) => {
-                    const attributeValue = ele.getAttribute(ITEM_ATTRIBUTE_ID as string);
-                    return attributeValue !== null ? attributeValue : "null";
-                }, ITEM_ATTRIBUTE_ID);
+        const deals = await Promise.allSettled<Promise<DealDataType>[]>(
+            itemElements.map(async (ele) => {
+                let price: number, isInStock: boolean;
 
-                let data = JSON.parse(attrRes)//JSON text data-m attribute to JSON object
-
-                //unable to get deal data:
-                if (data == null) throw new Error("*Fail to parse deal data attr*");
-
-                let priceText = await ele.$eval<string>(PRICE_SPAN_EXPR, (span: Element, PRICE_ATTRIBUTE_ID: unknown) => {
-                    const priceAttribute = span.getAttribute(PRICE_ATTRIBUTE_ID as string);
-                    return priceAttribute !== null ? priceAttribute : "null";
-                }, PRICE_ATTRIBUTE_ID);
-
-                price = Number(priceText.replace(/[$|,]/g, ""));
-
-                let isInStockText: string = await ele.$eval<string>(IS_INSTOCK_EXPR, (el) => {
-                    let isInStockText = el.textContent;
-                    return isInStockText !== null ? isInStockText : "";
+                const attributeResult = await this.evaluateOneElementAttribute({ element: ele, attributeId: ITEM_ATTRIBUTE_ID, selector: "a" });
+                const priceText = await this.evaluateOneElementAttribute({ element: ele, attributeId: PRICE_ATTRIBUTE_ID, selector: PRICE_SPAN_EXPR });
+                isInStock = await ele.$eval<boolean>(IS_INSTOCK_EXPR, (el) => {
+                    return el.textContent !== "OUT OF STOCK";
                 });
-                isInStock = isInStockText === "OUT OF STOCK" ? false : true;
+                price = Number(priceText.replace(/[$|,]/g, ""));
+                let data: DealEleAttribute;
+                try {
+                    data = JSON.parse(attributeResult);
+                    return {
+                        sku: data.pid,
+                        currentPrice: price,
+                        name: data.cN,
+                        link: 'https://www.microsoft.com/en-us/d/' + data.cN.replace(/\s/g, "-").replace(/"/g, "").toLowerCase() + '/' + data.pid,
+                        isInStock
+                    };
+                } catch (err) {
+                    console.error("Failed to parse deal data attribute.");
+                    throw err;
+                }
+            }));
 
-                //found price and currently instock
-                return { ...data, price, isInStock };
-
-            } catch (err) {
-                //if no OUT OF STOCK tag do nothing...
-                console.error("parseItemLists Error.")
-            }
-        }));
-
+        //TODO: fulfilledDeals unfinished
+        const fulfilledDeals = deals.filter(prom => prom.status === "fulfilled" && prom.value.currentPrice) as PromiseFulfilledResult<DealDataType>[];
         return deals;
     }
     /* 
@@ -225,15 +200,20 @@ export default class Microsoft extends DealBot {
         @param: url: string
         @return: Array<Item>
     */
-    async getPageItems(page: Page, url: string) {
+    async getPageItems(page: Page, url: string, options?: { retry: boolean }): Promise<DealDataType[]> {
         await page.goto(url)
         // await page.waitForTimeout(10000);
-        let deals = await this.parseItemsList(page)
+        let deals = await this.parseItemsList(page);
+
         return deals;
     }
 
+    startScheduler(): void {
+        const sc = new Scheduler({
+            schedule: '00 00 08 * * *',
+            process: this.getAndSaveLaptopsPrice
+        });
 
-    // async getItemSpec(page:Page, url:string) {
-    //     return
-    // }
+        sc.start();
+    }
 }

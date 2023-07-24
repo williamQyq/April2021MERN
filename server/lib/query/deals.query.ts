@@ -22,6 +22,7 @@ export class Deals {
     static _BestbuyDeal: mongoose.Model<BestbuyDealDoc> = BestbuyDeal;
     static _MicrosoftDeal: mongoose.Model<MicrosoftDealDoc> = MicrosoftDeal;
     static Bestbuy: string = "Bestbuy";
+    static Microsoft: string = "Microsoft";
     storeName: string;
     constructor(storeName: string) {
         this.storeName = storeName

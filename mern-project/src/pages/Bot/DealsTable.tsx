@@ -1,6 +1,5 @@
 import React from 'react';
 import './Store.scss';
-import { Location, NavigateFunction } from 'react-router-dom';
 //redux
 import { connect, useDispatch, useSelector, ConnectedProps } from 'react-redux';
 import {
@@ -19,14 +18,14 @@ import {
     LoadingOutlined
 } from '@ant-design/icons';
 import { Tooltip, Typography, Tree, } from 'antd';
-import { ColumnGroupType, ColumnType, ColumnsType, TableProps } from 'antd/es/table';
+import { ColumnGroupType, ColumnType, TableProps } from 'antd/es/table';
 import { BaseType } from 'antd/es/typography/Base';
 import { DataNode } from 'antd/es/tree';
 import { Key } from '@ant-design/pro-components';
 import { CiMenuKebab } from 'react-icons/ci';
 
 import { ContentHeader } from '@src/component/utils/Layout';
-import WithNavigate from '@src/component/auth/WithNavigate';
+import WithNavigate, { WithNavigateProps } from '@src/component/auth/WithNavigate';
 import { SocketContext } from '@src/component/socket/SocketProvider';
 import FormTable, { ColumnTypeWithSearchable } from '@src/component/utils/FormTable';
 
@@ -117,24 +116,11 @@ const tableColumns: ColumnTypeWithSearchable<DealsDataSourceType>[] = [
 
 interface ICrawlerControlDropdownProps {
     storeName: string;
+    loading: boolean;
 }
-export const CrawlerControlDropdown: React.FC<ICrawlerControlDropdownProps> = ({ storeName }) => {
+export const CrawlerControlDropdown: React.FC<ICrawlerControlDropdownProps> = ({ storeName, loading }) => {
 
     const dispatch = useDispatch<AppDispatch>()
-    const bestbuyOnlinePriceRetriving = useSelector((state: RootState) => state.bestbuy.onlinePriceLoading)
-    const microsoftOnlinePriceRetriving = useSelector((state: RootState) => state.microsoft.onlinePriceLoading)
-
-    //if puppeteer is retrieving online price on store return true else false
-    let isRetrievingDeals = ((selectedStore: string): boolean => {
-        switch (selectedStore) {
-            case storeType.BESTBUY:
-                return bestbuyOnlinePriceRetriving
-            case storeType.MICROSOFT:
-                return microsoftOnlinePriceRetriving
-            default:
-                return false;
-        }
-    })(storeName);
 
     const handleSelectedMenuAction = (keys: Key[]) => {
         switch (keys[0]) {
@@ -151,8 +137,8 @@ export const CrawlerControlDropdown: React.FC<ICrawlerControlDropdownProps> = ({
             children: [
                 {
                     key: 'crawl',
-                    disabled: isRetrievingDeals ? isRetrievingDeals : false,
-                    icon: () => (isRetrievingDeals ? <LoadingOutlined /> : <ImportOutlined />),
+                    disabled: loading,
+                    icon: () => (loading ? <LoadingOutlined /> : <ImportOutlined />),
                     title: "Initiate Bot",
                 }
             ]
@@ -176,12 +162,10 @@ export interface DealsDataTableProps {
     storeName: string;
     items: readonly Record<string, string>[];
     loading: boolean;
+    onlinePriceLoading: boolean;
 }
 
-interface IProps extends PropsFromRedux, DealsDataTableProps {
-    navigate: NavigateFunction;
-    location: Location;
-}
+interface IProps extends PropsFromRedux, DealsDataTableProps, WithNavigateProps { };
 interface IState {
     searchText: string;
     searchedRowId: string;
@@ -208,18 +192,21 @@ class DealsTable extends React.Component<IProps, IState> {
 
     handleRowClick = <T extends Record<string, string>>(record: T) => {
         const { storeName, navigate, location } = this.props;
-        navigate(`detail/store/${storeName}/id/${record._id}/sku/${record.sku}`);
-        // TODO: navigate to Deal detail pages.
-        // let dealDetailRoute = `/app/deal-alert/${this.props.storeName.toLowerCase()}-list/item-detail`;
-        // this.props.navigate(dealDetailRoute);
+        if (navigate) navigate(`detail/store/${storeName}/id/${record._id}/sku/${record.sku}`);
     }
 
     render() {
-        const { items, storeName, loading, userTableSettings } = this.props
+        const {
+            items,
+            storeName,
+            loading,
+            onlinePriceLoading,
+            userTableSettings
+        } = this.props;
         return (
             <>
                 <ContentHeader title={storeName} />
-                <CrawlerControlDropdown storeName={storeName} />
+                <CrawlerControlDropdown loading={onlinePriceLoading} storeName={storeName} />
                 <FormTable
                     {...defaultTableSettings}
                     loading={loading}

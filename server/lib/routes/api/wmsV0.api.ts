@@ -51,7 +51,9 @@ router.post('/inventoryReceive/v0/getInventoryReceived', auth, (req, res) => {
     const { requiredFields } = req.body;
     let wms = new WMSDatabaseApis();
     wms.getInventoryReceive(requiredFields)
-        .then(validRecItems => { res.json(validRecItems) })
+        .then(validRecItems => {
+            res.json(validRecItems)
+        })
         .catch(err => {
             console.error(err.message);
             res.status(400).json({ msg: "Fail to get Inventory Received", reason: err.message })

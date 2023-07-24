@@ -10,7 +10,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = (props) => {
     const socketRef = React.useRef<Socket>();
     const [socket, setSocket] = React.useState<Socket | null>(null);
     useEffect(() => {
-        const newSocket: Socket = io()
+        const newSocket: Socket = io("ws://localhost:5050");
         setSocket(newSocket);
         socketRef.current = newSocket;
         socketRef.current.on('connect', () => {
